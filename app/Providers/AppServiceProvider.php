@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider {
         }
 
         // Register the 2FA Auth Provider
-        app()->singleton(TwoFactorAuthContract::class, fn($app) => new TwoFactorAuthProvider(
+        app()->singleton(TwoFactorAuthContract::class, fn ($app) => new TwoFactorAuthProvider(
             $app->make(Google2FA::class),
             $app->make(Repository::class),
         ));

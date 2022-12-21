@@ -32,6 +32,15 @@ Route::prefix('/account')->middleware(['auth', '2fa', 'verified'])->group(functi
             Route::delete('/', [AccountSettings\ImagesController::class, 'clearProfilePhoto'])->name('account.settings.profilephoto.delete');
         });
 
+        /* Api Keys */
+        Route::prefix('/api-keys')->group(function() {
+            Route::get('/', [Account\Security\ApiKeysController::class, 'create'])->name('account.settings.api-keys.create');
+            Route::post('/', [Account\Security\ApiKeysController::class, 'createApiKey']);
+            Route::get('/{apiKey}', [Account\Security\ApiKeysController::class, 'show'])->name('account.settings.api-keys.show');
+            Route::patch('/{apiKey}', [Account\Security\ApiKeysController::class, 'updateApiKey'])->name('account.settings.api-keys.update');
+            Route::delete('/{apiKey}', [Account\Security\ApiKeysController::class, 'deleteApiKey'])->name('account.settings.api-keys.delete');
+        });
+
         /* Privacy */
         Route::post('/privacy', [AccountSettings\PrivacyController::class, 'update'])->name('account.settings.privacy.update');
     });

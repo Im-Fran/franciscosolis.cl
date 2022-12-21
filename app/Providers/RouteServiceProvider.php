@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ApiKey;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -55,6 +56,12 @@ class RouteServiceProvider extends ServiceProvider {
             $user = User::whereSlug($value)->first();
 
             return $user != null ? $user : abort(404);
+        });
+
+        Route::bind('apiKey', function($value) {
+            $apiKey = ApiKey::whereId($value)->first();
+
+            return $apiKey != null ? $apiKey : abort(404);
         });
     }
 }

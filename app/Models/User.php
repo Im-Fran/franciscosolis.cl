@@ -120,8 +120,8 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     protected function twoFactorSecret(): Attribute {
         return new Attribute(
-            get: fn($value) => $value != null ? decrypt($value) : null,
-            set: fn($value) => $value != null ? encrypt($value) : null,
+            get: fn ($value) => $value != null ? decrypt($value) : null,
+            set: fn ($value) => $value != null ? encrypt($value) : null,
         );
     }
 
@@ -132,8 +132,8 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     protected function twoFactorRecoveryCodes(): Attribute {
         return new Attribute(
-            get: fn($value) => $value != null ? json_decode(decrypt($value)) : null,
-            set: fn($value) => $value != null ? encrypt(json_encode($value)) : null,
+            get: fn ($value) => $value != null ? json_decode(decrypt($value)) : null,
+            set: fn ($value) => $value != null ? encrypt(json_encode($value)) : null,
         );
     }
 
@@ -151,10 +151,10 @@ class User extends Authenticatable implements MustVerifyEmail {
             return true;
         }
 
-        if (collect($this->two_factor_recovery_codes)->filter(fn($it) => preg_match('/[0-9]{6}|[A-Za-z0-9]{6}\.[A-Za-z0-9]{4}\.[A-Za-z0-9]{6}\.[A-Za-z0-9]{4}/', $it))->contains($input)) {
+        if (collect($this->two_factor_recovery_codes)->filter(fn ($it) => preg_match('/[0-9]{6}|[A-Za-z0-9]{6}\.[A-Za-z0-9]{4}\.[A-Za-z0-9]{6}\.[A-Za-z0-9]{4}/', $it))->contains($input)) {
             // Replace the used code with a new one
             $this->update([
-                'two_factor_recovery_codes' => collect($this->two_factor_recovery_codes)->map(fn($it) => $it == $input ? Helpers::generateRecoveryCode() : $it),
+                'two_factor_recovery_codes' => collect($this->two_factor_recovery_codes)->map(fn ($it) => $it == $input ? Helpers::generateRecoveryCode() : $it),
             ]);
 
             return true;
@@ -184,5 +184,10 @@ class User extends Authenticatable implements MustVerifyEmail {
             $this->settings[$key] = $value ?: UserSettings::$defaultSettings[$key];
             $this->save();
         }
+    }
+
+    /* Gets the API keys */
+    public function apiKeys() {
+        return $this->hasMany(ApiKey::class);
     }
 }

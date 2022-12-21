@@ -23,7 +23,7 @@ class LogoutDestroyedSession {
             return $next($request);
         }
 
-        $logouts = Cache::rememberForever("logout-{$user->id}", fn() => collect());
+        $logouts = Cache::rememberForever("logout-{$user->id}", fn () => collect());
         $sessionId = $request->session()->getId();
         if ($logouts->contains($sessionId)) {
             $request->session()->invalidate();

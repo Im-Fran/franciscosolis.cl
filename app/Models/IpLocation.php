@@ -33,8 +33,8 @@ class IpLocation extends Model {
 
     public function ipAddress(): Attribute {
         return new Attribute(
-            get: fn($value) => decrypt($value),
-            set: fn($value) => encrypt($value)
+            get: fn ($value) => decrypt($value),
+            set: fn ($value) => encrypt($value)
         );
     }
 

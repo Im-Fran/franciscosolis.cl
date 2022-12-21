@@ -11,12 +11,12 @@ class NotificationsController extends Controller {
         $user = $request->user();
 
         return inertia('Account/Notifications', [
-            'notifications' => fn() => $user->readNotifications()->paginate(
+            'notifications' => fn () => $user->readNotifications()->paginate(
                 $request->input('notifications_per_page', 5) ?? 5,
                 ['*'],
                 'notifications_page',
             ),
-            'unreadNotifications' => fn() => $user->unreadNotifications()->paginate(
+            'unreadNotifications' => fn () => $user->unreadNotifications()->paginate(
                 $request->input('unread_notifications_per_page', 5) ?? 5,
                 ['*'],
                 'unread_notifications_page',

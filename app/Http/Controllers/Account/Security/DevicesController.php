@@ -15,10 +15,10 @@ class DevicesController extends Controller {
         $user = $request->user();
 
         return inertia('Account/Security/Devices', [
-            'sessions' => fn() => collect(
+            'sessions' => fn () => collect(
                 DB::connection(config('session.connection'))->table(config('session.table', 'session'))
                     ->where('user_id', $request->user()->id)
-                    ->whereNotIn('id', Cache::rememberForever("logout-{$user->id}", fn() => collect()))
+                    ->whereNotIn('id', Cache::rememberForever("logout-{$user->id}", fn () => collect()))
                     ->orderByDesc('last_activity')
                     ->get(['id', 'user_agent', 'ip_address', 'last_activity'])
             )->map(function($session) use ($request) {
@@ -45,7 +45,7 @@ class DevicesController extends Controller {
         $sessionId = $request->session_id;
 
         if ($sessionId === 'all') {
-            $logouts = Cache::rememberForever("logout-{$user->id}", fn() => collect());
+            $logouts = Cache::rememberForever("logout-{$user->id}", fn () => collect());
             $ids = DB::connection(config('session.connection'))->table(config('session.table', 'session'))
                 ->where('user_id', $user->id)
                 ->where('id', '!=', $request->session()->getId())
@@ -63,7 +63,7 @@ class DevicesController extends Controller {
             ->first();
 
         if ($session) {
-            $logouts = Cache::rememberForever("logout-{$user->id}", fn() => collect());
+            $logouts = Cache::rememberForever("logout-{$user->id}", fn () => collect());
             if (!$logouts->contains($sessionId)) {
                 $logouts->push($sessionId);
                 Cache::forever("logout-{$user->id}", $logouts);
@@ -88,6 +88,6 @@ class DevicesController extends Controller {
     }
 
     protected function createAgent($session) {
-        return tap(new Agent(), fn($agent) => $agent->setUserAgent($session->user_agent));
+        return tap(new Agent(), fn ($agent) => $agent->setUserAgent($session->user_agent));
     }
 }

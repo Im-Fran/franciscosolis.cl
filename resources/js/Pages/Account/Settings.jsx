@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useForm, usePage} from "@inertiajs/inertia-react";
 import {Inertia} from '@inertiajs/inertia';
-import {handleError, fixForms, handleImageSize, handleChange} from '@/js/Utils/Utils'
+import {handleError, fixForms, handleChange} from '@/js/Utils/Utils'
 import toast from 'react-hot-toast';
 
 import { Cog6ToothIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';

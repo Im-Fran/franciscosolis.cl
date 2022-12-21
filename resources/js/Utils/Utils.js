@@ -64,3 +64,11 @@ export const uuidv4 = () => {
         return v.toString(16);
     });
 }
+
+export const ucFirst = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export const capitalize = (string) => {
+    return string.split(' ').map(it => ucFirst(it)).join(' ');
+}
