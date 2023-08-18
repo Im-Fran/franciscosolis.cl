@@ -867,6 +867,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@solidjs/router@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "@solidjs/router@npm:0.8.3"
+  peerDependencies:
+    solid-js: ^1.5.3
+  checksum: ad3aafcaa009588e350d8f29841d97300d63e3fce04a5451e59d631066e0f6def61855bfd4305fbfbc5026aa8222ad3113c09184ce3c8e20649c3d4fcf0d4acb
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -1533,6 +1542,22 @@ __metadata:
   checksum: 8c76a6e21dedea87109d6171a0ac77afa14205794a565d71cb10d2925f629a3922da61bf45ea52dbc30bce4d8636dc0a27213a88cbd600eab047d82f9a3a94c5
   languageName: node
   linkType: hard
+
+"franciscosolis@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "franciscosolis@workspace:."
+  dependencies:
+    "@solidjs/router": ^0.8.3
+    autoprefixer: ^10.4.14
+    postcss: ^8.4.24
+    solid-devtools: ^0.27.3
+    solid-js: ^1.7.6
+    tailwindcss: ^3.3.2
+    typescript: ^5.1.3
+    vite: ^4.3.9
+    vite-plugin-solid: ^2.7.0
+  languageName: unknown
+  linkType: soft
 
 "fs-minipass@npm:^2.0.0":
   version: 2.1.0
@@ -2938,21 +2963,6 @@ __metadata:
   checksum: 1631b17f0cdd9c3aaa0a8a8f630a44accdd274d6644eea909929960aba19ca0f0f9a7ded37acc74c7ce047cb61b23badbee5336eb6e8e4ef1a69e25347415d46
   languageName: node
   linkType: hard
-
-"vite-template-solid@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "vite-template-solid@workspace:."
-  dependencies:
-    autoprefixer: ^10.4.14
-    postcss: ^8.4.24
-    solid-devtools: ^0.27.3
-    solid-js: ^1.7.6
-    tailwindcss: ^3.3.2
-    typescript: ^5.1.3
-    vite: ^4.3.9
-    vite-plugin-solid: ^2.7.0
-  languageName: unknown
-  linkType: soft
 
 "vite@npm:^4.3.9":
   version: 4.4.9
