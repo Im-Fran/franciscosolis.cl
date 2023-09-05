@@ -1,4 +1,4 @@
-import Wave from "@/icons/wave";
+import Wave from "@/icons/Wave";
 import TypeAnimation from "@/components/TypeAnimation";
 
 const Home = () => <div class={"flex flex-col items-center justify-center min-h-screen"}>
