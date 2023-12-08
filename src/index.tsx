@@ -1,9 +1,7 @@
 /* @refresh reload */
 import "tailwindcss/tailwind.css";
 import { render } from "solid-js/web";
-import {Router, useRoutes} from "@solidjs/router";
-
-import {lazy} from "solid-js";
+import Routes from "./routes";
 
 const root = document.getElementById("root");
 
@@ -12,21 +10,13 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 const App = () => {
-    const Routes = useRoutes([
-        {
-            path: '/',
-            component: lazy(() => import('@/pages/Home'))
-        }
-    ])
 
     const darkClass = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "";
 
     return <div class={darkClass}>
         <div class={"bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100"}>
             <div class={"container mx-auto w-full min-h-screen"}>
-                <Router>
-                    <Routes/>
-                </Router>
+                <Routes/>
             </div>
         </div>
     </div>

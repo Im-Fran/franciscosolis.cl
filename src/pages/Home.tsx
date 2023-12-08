@@ -1,7 +1,8 @@
 import Wave from "@/icons/Wave";
 import TypeAnimation from "@/components/TypeAnimation";
+import Layout from "../layouts/Layout";
 
-const Home = () => <div class={"flex flex-col items-center justify-center min-h-screen"}>
+const Home = () => <Layout>
     <div class={"flex items-center gap-5"}>
         <Wave class={"h-16 w-16"}/>
         <h2 class={"text-6xl"}>Hello! I&apos;m Fran</h2>
@@ -30,6 +31,6 @@ const Home = () => <div class={"flex flex-col items-center justify-center min-h-
         />
 
     </div>
-</div>
+</Layout>
 
 export default Home;
