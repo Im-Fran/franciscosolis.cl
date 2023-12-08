@@ -2,7 +2,7 @@ version: '3'
 services:
     app:
         image: 'node:latest'
-        restart: always
+        restart: unless-stopped
         working_dir: /app
         volumes:
             - ./:/app

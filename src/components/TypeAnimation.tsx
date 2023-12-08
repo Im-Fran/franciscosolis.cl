@@ -34,7 +34,7 @@ export default function TypeAnimation({ sequence = [], infinite = false, writing
             setDisplay(display() + item[index]);
             events.push(setTimeout(() => {
                 addCharacters(index + 1);
-            }, writingSpeed?.value ?? 100))
+            }, writingSpeed))
         }
 
         if(display() === '') {
@@ -59,7 +59,7 @@ export default function TypeAnimation({ sequence = [], infinite = false, writing
                     return addCharacters(display().length);
                 }
                 removeCharacters(index - 1);
-            }, deletionSpeed?.value ?? 100))
+            }, deletionSpeed))
         }
 
         return removeCharacters();

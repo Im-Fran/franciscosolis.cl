@@ -7,7 +7,7 @@ export interface ButtonProps {
 }
 
 const colors = {
-    default: 'text-neutral-100 bg-[#323232] border border-[#323232]',
+    default: 'text-neutral-100 bg-[#323232] border border-[#323232] hover:text-[#323232] dark:hover:text-white',
     disabled: 'text-neutral-100 bg-[#9f9f9f] dark:bg-[#191919] border border-[#9f9f9f] dark:border-[#191919] disabled cursor-not-allowed',
     success: 'text-neutral-100 hover:text-[#00b728] bg-[#00b728] border border-[#00b728]',
     info: 'text-neutral-100 hover:text-[#1e40af] bg-[#1e40af] border border-[#1e40af]',

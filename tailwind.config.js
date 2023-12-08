@@ -1,6 +1,3 @@
-import type {Config} from 'tailwindcss';
-import daisyui from "daisyui";
-
 module.exports = {
     content: [
         './index.html',
@@ -27,6 +24,6 @@ module.exports = {
         },
     },
     plugins: [
-        daisyui,
+        require('daisyui'),
     ],
 }

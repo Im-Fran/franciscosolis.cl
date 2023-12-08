@@ -1,4 +1,4 @@
-const Layout = ({ children }) => <div class={"flex flex-col items-center justify-center min-h-screen"}>
+const Layout = ({children, ...rest}) => <div {...rest} class={`flex flex-col min-h-screen w-full ${rest.class || ''}`}>
     {children}
 </div>;
 
