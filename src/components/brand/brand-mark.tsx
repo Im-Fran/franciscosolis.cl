@@ -6,11 +6,26 @@ export const BRAND_MARK_MIN_SIZE = 16;
 
 /** The mark is drawn on a 64×64 grid; every ratio below is expressed against it. */
 const GRID = 64;
-const TILE_RADIUS = 14;
+/**
+ * Tile corner radius as a ratio of the tile's edge — 20%, uniform on all four corners and at every
+ * size, and identical to the value in scripts/generate-brand-icons.mjs. Keep the two in step: the
+ * whole point of a ratio is that the mark's curve reads the same in the favicon, the handoff PNGs
+ * and here. Where a platform applies its own mask or crop, pass `shape="square"` rather than
+ * letting it re-cut corners that are already rounded.
+ */
+const TILE_RADIUS_RATIO = 0.2;
+const TILE_RADIUS = GRID * TILE_RADIUS_RATIO;
 /** Peak inset inside the gradient tile. */
 const TILE_PEAK = "M32 14 L50 50 H37.5 L32 39 L26.5 50 H14 Z";
 /** Full-bleed peak used by the single-color marks. */
 const MONO_PEAK = "M32 6 L58 58 H40.5 L32 41 L23.5 58 H6 Z";
+
+/** Corner radius per tile shape, in grid units. */
+const TILE_RX = {
+  rounded: TILE_RADIUS,
+  square: 0,
+  circle: GRID / 2,
+} as const;
 
 const MONO_FILL = {
   ink: "var(--color-brand-ink)",
@@ -22,8 +37,12 @@ export type BrandMarkProps = Omit<SVGProps<SVGSVGElement>, "viewBox" | "width" |
   size?: number;
   /** Single-color peak instead of the gradient tile, for print and one-color contexts. */
   mono?: "ink" | "white";
-  /** Circular tile, for platforms that force a circular crop. The artwork is unchanged. */
-  circle?: boolean;
+  /**
+   * Tile shape. `square` is the full-bleed tile for platforms that apply their own rounding or
+   * crop — an avatar upload, an app store listing — and `circle` for the ones that force a
+   * circular crop. The artwork inside is unchanged in all three.
+   */
+  shape?: "rounded" | "square" | "circle";
   /** Set when the mark sits next to the wordmark, so the name is announced only once. */
   decorative?: boolean;
 };
@@ -37,7 +56,7 @@ export type BrandMarkProps = Omit<SVGProps<SVGSVGElement>, "viewBox" | "width" |
 export const BrandMark = ({
   size = 32,
   mono,
-  circle = false,
+  shape = "rounded",
   decorative = false,
   className,
   ...rest
@@ -72,7 +91,7 @@ export const BrandMark = ({
           <rect
             width={GRID}
             height={GRID}
-            rx={circle ? GRID / 2 : TILE_RADIUS}
+            rx={TILE_RX[shape]}
             fill={`url(#${gradientId})`}
           />
           <path d={TILE_PEAK} fill="#fff"/>

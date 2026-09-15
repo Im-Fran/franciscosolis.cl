@@ -74,9 +74,10 @@ const ASSETS: Array<{ useKey: string; name: string; downloads: Download[] }> = [
     downloads: pack("fs-lockup-vertical-dark", ["svg", "png", "webp"]),
   },
   {useKey: "mark", name: "fs-mark", downloads: pack("fs-mark", ["svg", "png", "webp"])},
+  {useKey: "mark_square", name: "fs-mark-square", downloads: pack("fs-mark-square", ["svg", "png", "webp"])},
   {useKey: "mark_mono_ink", name: "fs-mark-mono-ink", downloads: pack("fs-mark-mono-ink", ["svg", "png", "webp"])},
   {useKey: "mark_mono_white", name: "fs-mark-mono-white", downloads: pack("fs-mark-mono-white", ["svg", "png", "webp"])},
-  {useKey: "avatar", name: "fs-avatar-circle", downloads: pack("fs-avatar-circle", ["png", "webp"])},
+  {useKey: "avatar", name: "fs-avatar-circle", downloads: pack("fs-avatar-circle", ["svg", "png", "webp"])},
   {
     useKey: "favicons",
     name: "favicon-16…512",
@@ -243,12 +244,17 @@ export const Brand = () => {
                   </span>
                 ))}
                 <span className="flex flex-col items-center gap-2">
-                  <BrandMark size={48} circle/>
+                  <BrandMark size={48} shape="square"/>
+                  <span className="font-mono text-[10px] text-neutral-500">{t("brand:mark.square_label")}</span>
+                </span>
+                <span className="flex flex-col items-center gap-2">
+                  <BrandMark size={48} shape="circle"/>
                   <span className="font-mono text-[10px] text-neutral-500">{t("brand:mark.circle_label")}</span>
                 </span>
               </div>
             </Stage>
           </div>
+          <p className="mt-4 text-sm leading-[1.6] text-neutral-500">{t("brand:mark.shapes_note")}</p>
 
           <h3 className="mt-8 mb-2 text-lg text-text">{t("brand:mark.mono_title")}</h3>
           <p className="max-w-2xl text-[15px] leading-[1.65] text-neutral-300">{t("brand:mark.mono_body")}</p>
@@ -379,7 +385,8 @@ export const Brand = () => {
 <BrandLockup variant="vertical" />    // square placements
 <BrandMark size={24} />               // mark alone
 <BrandMark mono="ink" size={24} />    // single-color mark
-<BrandMark circle size={48} />        // forced circular crops`}
+<BrandMark shape="square" size={48} />// platforms that round it themselves
+<BrandMark shape="circle" size={48} />// forced circular crops`}
           </pre>
         </Section>
 

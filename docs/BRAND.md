@@ -12,6 +12,13 @@ An upward peak cut from a rounded tile: a summit (growth), a checkmark echo (app
 signed, appointments confirmed), and an F/S ligature reduced to pure geometry. The tile carries the
 brand gradient; the peak is always white.
 
+The tile's corners are rounded at **20% of its edge**, uniformly — the same ratio on all four
+corners and at every size, so the curve reads the same in a 16 px favicon and a 1024 px export.
+It is deliberately under the ~22% masks iOS and Android apply on top of an app icon: anywhere a
+platform rounds or crops the artwork itself, ship `fs-mark-square` — the full-bleed tile with no
+rounding — rather than letting it re-cut corners that are already rounded, which is what leaves the
+mark looking clipped.
+
 ![Horizontal lockup](../public/brand/png/fs-lockup-horizontal.png)
 
 On dark surfaces:
@@ -31,8 +38,9 @@ Vertical, for square placements and splash screens:
 | `fs-lockup-vertical` | Square placements, splash screens (light) |
 | `fs-lockup-vertical-dark` | Same, on dark surfaces |
 | `fs-mark` | App icon, avatar, favicon |
+| `fs-mark-square` | Full-bleed, no rounding — platforms that round or crop the icon themselves |
 | `fs-mark-mono-ink` / `-white` | Single-color contexts (print, engraving, watermarks) |
-| `fs-avatar-circle` | Platforms that force circular crops |
+| `fs-avatar-circle` | Platforms that force circular crops, with no square option |
 | `favicon-16/32/64/192/512` | Favicon + PWA icon set |
 
 Formats: SVG (source of truth) in `public/brand/svg/`, PNG 4× (universal) in `public/brand/png/`,
@@ -111,13 +119,25 @@ Sora is the wordmark face only — the product UI runs on Inter.
 
 ## Generated icons
 
-`public/favicon.svg`, `public/favicon.ico`, `public/apple-touch-icon.png`, `public/icon-192.png`,
-`public/icon-512.png` and `public/icon-maskable-512.png` are produced from the mark geometry by
-`scripts/generate-brand-icons.mjs` — it samples the peak and the gradient directly rather than
-depending on a rasterizer. Re-run `pnpm brand:icons` after any change to the mark.
+`scripts/generate-brand-icons.mjs` is the single source of the mark's geometry outside the React
+components: it samples the peak and the gradient directly rather than depending on a rasterizer, and
+it holds the tile radius as one ratio so that value can never drift between the favicon, the handoff
+files and the app. Re-run `pnpm brand:icons` after any change to the mark. It writes:
 
-The `favicon-*.png` files under `public/brand/png/` are the handoff set from the brand package and
-are not touched by that script.
+- `public/favicon.svg`, `public/favicon.ico`, `public/apple-touch-icon.png`, `public/icon-192.png`,
+  `public/icon-512.png`, `public/icon-maskable-512.png`
+- `public/brand/svg/fs-mark.svg`, `fs-mark-square.svg`, `fs-avatar-circle.svg`
+- `public/brand/png/fs-mark.png`, `fs-mark-square.png`, `fs-avatar-circle.png` and the
+  `favicon-16/32/64/192/512.png` set
+
+`apple-touch-icon.png` is the square variant on purpose: iOS flattens the icon's transparency and
+then applies its own squircle, so a pre-rounded tile comes back with dark, clipped corners.
+`icon-maskable-512.png` is square too, with the artwork inside Android's 80% safe zone.
+
+The lockup files and the mono marks are not generated — they carry the wordmark's baked type, or no
+tile at all. Their SVGs are the sources of truth; the WEBP copies of every asset are re-encoded from
+the matching PNG. When the tile geometry changes, the lockup rasters have to be re-exported so the
+tile in them matches.
 
 ## Using the brand in this site
 
@@ -137,7 +157,8 @@ import {BrandLockup, BrandMark} from "@/components/brand";
 <BrandLockup variant="vertical" />       {/* square placements */}
 <BrandMark size={24} />                  {/* mark alone */}
 <BrandMark mono="ink" size={24} />       {/* single-color mark: "ink" or "white" */}
-<BrandMark circle size={48} />           {/* avatar for forced circular crops */}
+<BrandMark shape="square" size={48} />   {/* platforms that round or crop it themselves */}
+<BrandMark shape="circle" size={48} />   {/* avatar for forced circular crops */}
 ```
 
 Both clamp up to the minimum sizes in the spacing guide: 16 px for the mark, 24 px of height for the
