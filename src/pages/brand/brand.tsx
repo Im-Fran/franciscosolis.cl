@@ -1,7 +1,7 @@
 import {type ReactNode, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
-import {ArrowLeft, Check, Copy, GlobeSimple, Prohibit} from "@phosphor-icons/react";
+import {ArrowLeft, Check, Copy, DownloadSimple, FileMd, GlobeSimple, Prohibit} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {BRAND_MARK_MIN_SIZE, BrandLockup, BrandMark} from "@/components/brand";
 import {useLanguageToggle} from "@/hooks/useLanguageToggle.ts";
@@ -89,6 +89,15 @@ const ASSETS: Array<{ useKey: string; name: string; downloads: Download[] }> = [
 ];
 
 const CLEAR_SPACE_MARK = 64;
+
+/**
+ * The kit is packed on demand by scripts/brand-kit.mjs — served in dev, emitted into the bundle on
+ * build — so it is never a committed binary that can drift from the assets. Keep these in step with
+ * BRAND_KIT_URL there; the agent-facing guide is a plain file under public/, readable without
+ * unzipping anything.
+ */
+const KIT_URL = "/brand/franciscosolis-brand-kit.zip";
+const KIT_GUIDE_URL = "/brand/BRAND.md";
 
 const Section = ({title, body, children}: { title: string; body?: string; children?: ReactNode }) => (
   <section className="mt-16">
@@ -391,7 +400,30 @@ export const Brand = () => {
         </Section>
 
         <Section title={t("brand:assets.title")} body={t("brand:assets.body")}>
-          <ul className="mt-6 divide-y divide-neutral-800 rounded-[var(--radius-md)] border border-neutral-800 bg-surface">
+          <div className="mt-6 flex flex-wrap items-center gap-3 rounded-[var(--radius-md)] border border-neutral-800 bg-surface p-5">
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] text-text">{t("brand:assets.kit.title")}</span>
+              <span className="mt-1 block text-sm leading-[1.6] text-neutral-500">
+                {t("brand:assets.kit.body")}
+              </span>
+            </span>
+            <span className="flex shrink-0 flex-wrap gap-2">
+              <Button asChild data-fs-hover>
+                <a href={KIT_URL} download>
+                  <DownloadSimple size={16}/>
+                  {t("brand:assets.kit.download")}
+                </a>
+              </Button>
+              <Button asChild variant="secondary" data-fs-hover>
+                <a href={KIT_GUIDE_URL} target="_blank" rel="noreferrer">
+                  <FileMd size={16}/>
+                  {t("brand:assets.kit.guide")}
+                </a>
+              </Button>
+            </span>
+          </div>
+
+          <ul className="mt-4 divide-y divide-neutral-800 rounded-[var(--radius-md)] border border-neutral-800 bg-surface">
             {ASSETS.map(({useKey, name, downloads}) => (
               <li key={useKey} className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <span className="min-w-0">
