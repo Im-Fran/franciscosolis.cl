@@ -3,7 +3,7 @@ import {ArrowClockwise} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {useAuth} from "@/lib/auth/auth-context.ts";
 import {useCms} from "@/lib/cms/cms-context.ts";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
 import {JumpBackIn} from "@/pages/cms/overview/jump-back-in.tsx";
 import {NeedsAttention} from "@/pages/cms/overview/needs-attention.tsx";
 import {QuickLinks} from "@/pages/cms/overview/quick-links.tsx";
@@ -53,7 +53,7 @@ export const Overview = () => {
         description={t("cms_overview:subtitle")}
         actions={
           <Button variant="ghost" size="sm" onClick={refresh} data-fs-hover>
-            <ArrowClockwise size={14}/> {t("cms:common.refresh")}
+            <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
       />

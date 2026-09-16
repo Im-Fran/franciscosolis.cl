@@ -10,7 +10,7 @@ export type PageHeaderProps = {
   actions?: ReactNode;
 };
 
-/** The top of a CMS screen: where it sits, what it is, and what can be done to it. */
+/** The top of an administration screen: where it sits, what it is, and what can be done to it. */
 export const PageHeader = ({title, description, back, actions}: PageHeaderProps) => (
   <header className="mb-8">
     {back && (

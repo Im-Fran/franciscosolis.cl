@@ -11,17 +11,17 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {SLUG_PATTERN, fromDateTimeLocal, orNull, slugify, toDateTimeLocal} from "@/lib/cms/format.ts";
+import {SLUG_PATTERN, fromDateTimeLocal, orNull, slugify, toDateTimeLocal} from "@/lib/admin/format.ts";
 import {parseJsonObject, stringifyJson} from "@/lib/cms/json.ts";
-import {useToast} from "@/lib/cms/toast-context.ts";
+import {useToast} from "@/lib/admin/toast-context.ts";
 import {CONTENT_STATUSES} from "@/lib/cms/types.ts";
 import type {ContentItem, ContentPayload, ContentStatus, NewContent, Translations} from "@/lib/cms/types.ts";
-import {useMutation} from "@/lib/cms/useMutation.ts";
-import {ConfirmDialog} from "@/pages/cms/components/confirm-dialog.tsx";
-import {JsonEditor} from "@/pages/cms/components/json-editor.tsx";
+import {useMutation} from "@/lib/admin/useMutation.ts";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
+import {JsonEditor} from "@/components/admin/json-editor.tsx";
 import {MarkdownEditor} from "@/pages/cms/components/markdown-editor.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
-import {TagInput} from "@/pages/cms/components/tag-input.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
+import {TagInput} from "@/components/admin/tag-input.tsx";
 import {TranslationsPanel} from "@/pages/cms/components/translations-panel.tsx";
 import {useCollectionMeta} from "@/pages/cms/content/use-collection.ts";
 
@@ -302,19 +302,19 @@ export const ContentEditor = () => {
 
     setDirty(false);
     if (creating) {
-      notify(t("cms:common.created"));
+      notify(t("admin:common.created"));
       /* Replaced, so "back" from the saved record lands on the list and not on an empty form. */
       navigate(cmsRoute.contentItem(collection, outcome.data.id), {replace: true});
       return;
     }
-    notify(t("cms:common.saved"));
+    notify(t("admin:common.saved"));
     item.reload();
   };
 
   const confirmDelete = async () => {
     const outcome = await remove.run();
     if (!outcome.ok) return;
-    notify(t("cms:common.deleted"));
+    notify(t("admin:common.deleted"));
     setDirty(false);
     setConfirmingDelete(false);
     navigate(cmsRoute.content(collection), {replace: true});
@@ -369,7 +369,7 @@ export const ContentEditor = () => {
                 }}
                 data-fs-hover
               >
-                <Trash size={15}/> {t("cms:common.delete")}
+                <Trash size={15}/> {t("admin:common.delete")}
               </Button>
             )}
             <Button
@@ -382,10 +382,10 @@ export const ContentEditor = () => {
             >
               {submitting ? <Spinner size={14}/> : <FloppyDisk size={15}/>}
               {creating ?
-                submitting ? t("cms:common.creating")
-                : t("cms:common.create")
-              : submitting ? t("cms:common.saving")
-              : t("cms:common.save")}
+                submitting ? t("admin:common.creating")
+                : t("admin:common.create")
+              : submitting ? t("admin:common.saving")
+              : t("admin:common.save")}
             </Button>
           </>
         }
@@ -394,16 +394,16 @@ export const ContentEditor = () => {
       <form id="content-form" onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
         {save.error && (
           <Alert tone="error" title={t("cms_content:editor.save_failed")}>
-            {t(`cms:errors.${save.error}`, {defaultValue: save.error})}
+            {t(`admin:errors.${save.error}`, {defaultValue: save.error})}
           </Alert>
         )}
 
         {dirty && (
-          <Alert tone="info" title={t("cms:common.unsaved")}>
+          <Alert tone="info" title={t("admin:common.unsaved")}>
             <div className="flex flex-wrap items-center gap-3">
               <span>{t("cms_content:editor.unsaved_body")}</span>
               <Button variant="ghost" size="sm" type="button" onClick={discard} data-fs-hover>
-                <ArrowCounterClockwise size={14}/> {t("cms:common.discard")}
+                <ArrowCounterClockwise size={14}/> {t("admin:common.discard")}
               </Button>
             </div>
           </Alert>
@@ -482,7 +482,7 @@ export const ContentEditor = () => {
                   onChange={(event) => update("status", event.target.value as ContentStatus)}
                 >
                   {CONTENT_STATUSES.map((entry) => (
-                    <option key={entry} value={entry}>{t(`cms:status.${entry}`)}</option>
+                    <option key={entry} value={entry}>{t(`admin:status.${entry}`)}</option>
                   ))}
                 </Select>
               </Field>
@@ -649,7 +649,7 @@ export const ContentEditor = () => {
         open={confirmingDelete}
         title={t("cms_content:editor.delete_title", {name: meta.singular})}
         body={t("cms_content:editor.delete_body", {title: loaded?.title ?? form.title})}
-        confirmLabel={remove.pending ? t("cms:common.deleting") : t("cms:common.delete")}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("admin:common.delete")}
         pending={remove.pending}
         error={remove.error}
         onConfirm={() => void confirmDelete()}

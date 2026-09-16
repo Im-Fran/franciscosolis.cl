@@ -1,7 +1,7 @@
 import {Navigate} from "react-router-dom";
 import {useCms, firstCollection} from "@/lib/cms/cms-context.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {useTranslation} from "react-i18next";
 
 /**
@@ -15,5 +15,5 @@ export const ContentRedirect = () => {
 
   if (slug) return <Navigate to={cmsRoute.content(slug)} replace/>;
 
-  return <EmptyState title={t("cms:common.no_collections")}/>;
+  return <EmptyState title={t("admin:common.no_collections")}/>;
 };

@@ -52,50 +52,6 @@
     "sign_out": "Cerrar sesión",
     "back_home": "Volver al sitio"
   },
-  "common": {
-    "loading": "Cargando…",
-    "checking": "Comprobando tu acceso…",
-    "restoring": "Restaurando tu sesión…",
-    "failed": "Algo salió mal",
-    "retry": "Reintentar",
-    "refresh": "Actualizar",
-    "empty": "No hay nada que mostrar.",
-    "no_collections": "Este CMS todavía no administra colecciones.",
-    "yes": "Sí",
-    "no": "No",
-    "none": "—",
-    "optional": "Opcional",
-    "forbidden_title": "No disponible para tu cuenta",
-    "forbidden_body": "Esta sección necesita un permiso que tu cuenta no tiene.",
-    "cancel": "Cancelar",
-    "close": "Cerrar",
-    "back": "Volver",
-    "save": "Guardar cambios",
-    "saving": "Guardando…",
-    "create": "Crear",
-    "creating": "Creando…",
-    "delete": "Eliminar",
-    "deleting": "Eliminando…",
-    "saved": "Cambios guardados.",
-    "created": "Creado.",
-    "deleted": "Eliminado.",
-    "discard": "Descartar cambios",
-    "unsaved": "Tienes cambios sin guardar.",
-    "notifications": "Notificaciones",
-    "pagination": "Paginación",
-    "page_range": "Mostrando {{from}}–{{to}}",
-    "page_empty": "No hay filas en esta página",
-    "previous": "Anterior",
-    "next": "Siguiente",
-    "search": "Buscar",
-    "search_placeholder": "Buscar…",
-    "filter_all": "Todos",
-    "clear_filters": "Limpiar filtros",
-    "copy": "Copiar",
-    "copied": "Copiado al portapapeles.",
-    "count_rows_one": "{{count}} fila",
-    "count_rows_other": "{{count}} filas"
-  },
   "validation": {
     "required": "Este campo es obligatorio.",
     "slug_invalid": "Usa minúsculas, dígitos y guiones — hasta 80 caracteres, sin empezar ni terminar en guion.",
@@ -103,14 +59,6 @@
     "invalid_url": "Escribe una URL completa, que empiece con http:// o https://.",
     "invalid_email": "Escribe una dirección de correo válida.",
     "invalid_json": "Corrige el JSON antes de guardar."
-  },
-  "status": {
-    "draft": "Borrador",
-    "published": "Publicado",
-    "archived": "Archivado",
-    "queued": "En cola",
-    "sent": "Enviado",
-    "failed": "Fallido"
   },
   "markdown": {
     "bold": "Negrita",
@@ -140,21 +88,11 @@
   "reorder": {
     "handle": "Reordenar — elemento {{position}} de {{total}}. Pulsa espacio y usa las flechas."
   },
-  "errors": {
-    "network": "No se pudo contactar al servicio. Revisa tu conexión e inténtalo de nuevo.",
-    "session-expired": "Tu sesión del CMS terminó. Vuelve a iniciar sesión para seguir editando.",
-    "missing-code": "A esta dirección le falta el código de autorización que el proveedor debía enviar.",
-    "missing-transaction": "Este navegador no tiene registro del inicio de sesión que originó este enlace. Empieza de nuevo desde la página de inicio de sesión del CMS.",
-    "state-mismatch": "No se pudo verificar el inicio de sesión. Empieza de nuevo desde la página de inicio de sesión del CMS.",
-    "forbidden": "Tu cuenta no puede hacer esto.",
-    "not_found": "Ese registro ya no existe.",
-    "conflict": "Otro registro ya usa ese slug.",
-    "invalid-email": "Escribe una dirección de correo con el formato nombre@ejemplo.com.",
-    "unexpected": "Algo falló de nuestro lado. Inténtalo de nuevo en un momento.",
-    "malformed-response": "El servicio envió una respuesta que este navegador no pudo leer. Inténtalo de nuevo en un momento."
-  },
   "locales": {
     "en": "Inglés",
     "es": "Español"
+  },
+  "common": {
+    "no_collections": "Este CMS todavía no administra colecciones."
   }
 }

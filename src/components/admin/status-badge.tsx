@@ -2,8 +2,8 @@ import {useTranslation} from "react-i18next";
 import {cn} from "@/lib/utils.ts";
 
 /**
- * Every lifecycle value the CMS shows — content and legal statuses, and the delivery state of an
- * email — rendered the same way, so a colour means one thing across the whole interface.
+ * Every lifecycle value an administration panel shows — a content status, an email's delivery state,
+ * an invitation, a client secret — rendered the same way, so a colour means one thing everywhere.
  *
  * The API types these as plain strings, so an unknown value is shown verbatim in the neutral tone
  * rather than dropped: a state the service adds later still reads correctly here.
@@ -30,7 +30,7 @@ export const StatusBadge = ({status, className}: {status: string; className?: st
       )}
     >
       <span className="size-1.5 rounded-full bg-current opacity-80" aria-hidden="true"/>
-      {t(`cms:status.${key}`, {defaultValue: status})}
+      {t(`admin:status.${key}`, {defaultValue: status})}
     </span>
   );
 };

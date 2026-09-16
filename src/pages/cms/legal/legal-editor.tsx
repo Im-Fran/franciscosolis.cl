@@ -12,14 +12,14 @@ import {formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {SLUG_PATTERN, fromDateTimeLocal, orNull, slugify, toDateTimeLocal} from "@/lib/cms/format.ts";
-import {useToast} from "@/lib/cms/toast-context.ts";
+import {SLUG_PATTERN, fromDateTimeLocal, orNull, slugify, toDateTimeLocal} from "@/lib/admin/format.ts";
+import {useToast} from "@/lib/admin/toast-context.ts";
 import {CONTENT_STATUSES} from "@/lib/cms/types.ts";
 import type {ContentStatus, LegalDocument, LegalPayload, Translations} from "@/lib/cms/types.ts";
-import {useMutation} from "@/lib/cms/useMutation.ts";
-import {ConfirmDialog} from "@/pages/cms/components/confirm-dialog.tsx";
+import {useMutation} from "@/lib/admin/useMutation.ts";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {MarkdownEditor} from "@/pages/cms/components/markdown-editor.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
 import {TranslationsPanel} from "@/pages/cms/components/translations-panel.tsx";
 
 const TITLE_MAX = 200;
@@ -218,14 +218,14 @@ export const LegalEditor = () => {
     setAskPublish(false);
 
     if (!id) {
-      notify(t("cms:common.created"));
+      notify(t("admin:common.created"));
       /* Settled before the route changes, so the unsaved-changes warning does not flash on the way. */
       setBaseline(form);
       navigate(cmsRoute.legalItem(outcome.data.id), {replace: true});
       return;
     }
 
-    notify(t("cms:common.saved"));
+    notify(t("admin:common.saved"));
     /* The response only guarantees id/slug/title/status, so the fresh state comes from a re-read. */
     setBaseline(form);
     record.reload();
@@ -248,7 +248,7 @@ export const LegalEditor = () => {
   const confirmDelete = async () => {
     const outcome = await remove.run();
     if (!outcome.ok) return;
-    notify(t("cms:common.deleted"));
+    notify(t("admin:common.deleted"));
     navigate(cmsRoute.legal, {replace: true});
   };
 
@@ -262,7 +262,7 @@ export const LegalEditor = () => {
       back={{to: cmsRoute.legal, label: t("cms_legal:editor.back")}}
       actions={
         <>
-          {dirty && <span className="text-[13px] text-amber-300">{t("cms:common.unsaved")}</span>}
+          {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
           {id && (
             <Button
               type="button"
@@ -271,18 +271,18 @@ export const LegalEditor = () => {
               className="border-red-500/50 text-red-300 hover:bg-red-500/10"
               data-fs-hover
             >
-              <Trash size={16}/> {t("cms:common.delete")}
+              <Trash size={16}/> {t("admin:common.delete")}
             </Button>
           )}
           <Button type="submit" form={formId} disabled={save.pending} data-fs-hover>
             {save.pending ? <Spinner size={16}/> : <FloppyDisk size={16}/>}
             {save.pending
               ? id
-                ? t("cms:common.saving")
-                : t("cms:common.creating")
+                ? t("admin:common.saving")
+                : t("admin:common.creating")
               : id
-                ? t("cms:common.save")
-                : t("cms:common.create")}
+                ? t("admin:common.save")
+                : t("admin:common.create")}
           </Button>
         </>
       }
@@ -315,8 +315,8 @@ export const LegalEditor = () => {
 
       <form id={formId} onSubmit={submit} className="flex flex-col gap-6" noValidate>
         {save.error && (
-          <Alert tone="error" title={t("cms:common.failed")}>
-            {t(`cms:errors.${save.error}`, {defaultValue: save.error})}
+          <Alert tone="error" title={t("admin:common.failed")}>
+            {t(`admin:errors.${save.error}`, {defaultValue: save.error})}
           </Alert>
         )}
 
@@ -392,7 +392,7 @@ export const LegalEditor = () => {
               >
                 {CONTENT_STATUSES.map((status) => (
                   <option key={status} value={status}>
-                    {t(`cms:status.${status}`)}
+                    {t(`admin:status.${status}`)}
                   </option>
                 ))}
               </Select>
@@ -468,7 +468,7 @@ export const LegalEditor = () => {
         open={askPublish}
         title={t("cms_legal:editor.publish_title")}
         body={t("cms_legal:editor.publish_body", {title: form.title.trim()})}
-        confirmLabel={save.pending ? t("cms:common.saving") : t("cms_legal:editor.publish_confirm")}
+        confirmLabel={save.pending ? t("admin:common.saving") : t("cms_legal:editor.publish_confirm")}
         onConfirm={() => void persist()}
         onClose={() => setAskPublish(false)}
         pending={save.pending}
@@ -479,7 +479,7 @@ export const LegalEditor = () => {
         open={askDelete}
         title={t("cms_legal:editor.delete_title")}
         body={t("cms_legal:editor.delete_body", {title: form.title.trim()})}
-        confirmLabel={remove.pending ? t("cms:common.deleting") : t("cms_legal:editor.delete_confirm")}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_legal:editor.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setAskDelete(false)}
         pending={remove.pending}

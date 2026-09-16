@@ -22,7 +22,7 @@ export const CmsLayout = () => {
   const {me} = useAuth();
   const {loading, forbidden, error, reload} = useCms();
 
-  if (loading) return <AuthLoading label={t("cms:common.checking")}/>;
+  if (loading) return <AuthLoading label={t("admin:common.checking")}/>;
 
   if (forbidden) return <NoAccess email={me?.user.email}/>;
 
@@ -30,11 +30,11 @@ export const CmsLayout = () => {
   if (error) {
     return (
       <CmsShell>
-        <Alert tone="error" title={t("cms:common.failed")}>
+        <Alert tone="error" title={t("admin:common.failed")}>
           <div className="flex flex-wrap items-center gap-3">
-            <span>{t(`cms:errors.${error}`, {defaultValue: error})}</span>
+            <span>{t(`admin:errors.${error}`, {defaultValue: error})}</span>
             <Button variant="ghost" size="sm" onClick={reload} data-fs-hover>
-              <ArrowClockwise size={14}/> {t("cms:common.retry")}
+              <ArrowClockwise size={14}/> {t("admin:common.retry")}
             </Button>
           </div>
         </Alert>
@@ -49,7 +49,7 @@ export const CmsLayout = () => {
    */
   return (
     <CmsShell>
-      <Suspense fallback={<AuthLoading label={t("cms:common.loading")}/>}>
+      <Suspense fallback={<AuthLoading label={t("admin:common.loading")}/>}>
         <Outlet/>
       </Suspense>
     </CmsShell>

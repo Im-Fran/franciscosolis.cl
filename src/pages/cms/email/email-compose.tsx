@@ -11,10 +11,10 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {useToast} from "@/lib/cms/toast-context.ts";
-import {useMutation} from "@/lib/cms/useMutation.ts";
-import {ConfirmDialog} from "@/pages/cms/components/confirm-dialog.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
+import {useToast} from "@/lib/admin/toast-context.ts";
+import {useMutation} from "@/lib/admin/useMutation.ts";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
 import {EmailRecipients} from "@/pages/cms/email/email-recipients.tsx";
 import {Segmented} from "@/pages/cms/email/email-segmented.tsx";
 import {
@@ -218,7 +218,7 @@ export const EmailCompose = () => {
       <form className="flex flex-col gap-6" onSubmit={submit} noValidate>
         {send.error && (
           <Alert tone="error" title={t("cms_emails:compose.failed_title")}>
-            {t(`cms:errors.${send.error}`, {defaultValue: send.error})}
+            {t(`admin:errors.${send.error}`, {defaultValue: send.error})}
           </Alert>
         )}
 
@@ -312,8 +312,8 @@ export const EmailCompose = () => {
           {mode === "template" ? (
             <div className="flex flex-col gap-5">
               {templates.error && (
-                <Alert tone="error" title={t("cms:common.failed")}>
-                  {t(`cms:errors.${templates.error}`, {defaultValue: templates.error})}
+                <Alert tone="error" title={t("admin:common.failed")}>
+                  {t(`admin:errors.${templates.error}`, {defaultValue: templates.error})}
                 </Alert>
               )}
 
@@ -331,7 +331,7 @@ export const EmailCompose = () => {
                   onChange={(event) => setTemplateSlug(event.target.value)}
                 >
                   <option value="">
-                    {templates.loading ? t("cms:common.loading") : t("cms_emails:compose.template_none")}
+                    {templates.loading ? t("admin:common.loading") : t("cms_emails:compose.template_none")}
                   </option>
                   {unknownTemplate && <option value={templateSlug}>{templateSlug}</option>}
                   {(templates.data ?? []).map((template) => (
@@ -384,7 +384,7 @@ export const EmailCompose = () => {
 
                     {detail.loading || templates.loading ? (
                       <p className="flex items-center gap-2 text-[13px] text-neutral-500">
-                        <Spinner size={14} label={t("cms:common.loading")}/> {t("cms:common.loading")}
+                        <Spinner size={14} label={t("admin:common.loading")}/> {t("admin:common.loading")}
                       </p>
                     ) : names.length === 0 ? (
                       <p className="text-[13px] text-neutral-500">{t("cms_emails:compose.variables_empty")}</p>
@@ -602,7 +602,7 @@ export const EmailCompose = () => {
             {send.pending ? t("cms_emails:compose.sending") : t("cms_emails:compose.send")}
           </Button>
           <Button asChild variant="ghost" data-fs-hover>
-            <Link to={cmsRoute.emails}>{t("cms:common.cancel")}</Link>
+            <Link to={cmsRoute.emails}>{t("admin:common.cancel")}</Link>
           </Button>
         </div>
       </form>

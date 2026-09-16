@@ -12,11 +12,11 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {SLUG_PATTERN, orNull, slugify} from "@/lib/cms/format.ts";
-import {useMutation} from "@/lib/cms/useMutation.ts";
-import {useToast} from "@/lib/cms/toast-context.ts";
-import {ConfirmDialog} from "@/pages/cms/components/confirm-dialog.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
+import {SLUG_PATTERN, orNull, slugify} from "@/lib/admin/format.ts";
+import {useMutation} from "@/lib/admin/useMutation.ts";
+import {useToast} from "@/lib/admin/toast-context.ts";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
 import type {EmailTemplate, EmailTemplatePayload, NewEmailTemplate} from "@/lib/cms/types.ts";
 
 /* The API's own limits, from `/cms/admin/email-templates` in the OpenAPI document. */
@@ -193,14 +193,14 @@ export const TemplateEditor = () => {
     if (id) {
       const outcome = await save.run(id, body);
       if (!outcome.ok) return;
-      notify(t("cms:common.saved"));
+      notify(t("admin:common.saved"));
       template.reload();
       return;
     }
 
     const outcome = await create.run(body);
     if (!outcome.ok) return;
-    notify(t("cms:common.created"));
+    notify(t("admin:common.created"));
     navigate(cmsRoute.templateItem(outcome.data.id), {replace: true});
   };
 
@@ -208,7 +208,7 @@ export const TemplateEditor = () => {
     if (!id) return;
     const outcome = await remove.run(id);
     if (!outcome.ok) return;
-    notify(t("cms:common.deleted"));
+    notify(t("admin:common.deleted"));
     setConfirming(false);
     navigate(cmsRoute.templates, {replace: true});
   };
@@ -263,15 +263,15 @@ export const TemplateEditor = () => {
                   }}
                   data-fs-hover
                 >
-                  <Trash size={14}/> {t("cms:common.delete")}
+                  <Trash size={14}/> {t("admin:common.delete")}
                 </Button>
               )}
               <Button type="submit" form={formId} size="sm" disabled={pending} data-fs-hover>
                 {pending && <Spinner size={14}/>}
                 {id ?
-                  pending ? t("cms:common.saving") : t("cms:common.save")
-                : pending ? t("cms:common.creating")
-                : t("cms:common.create")}
+                  pending ? t("admin:common.saving") : t("admin:common.save")
+                : pending ? t("admin:common.creating")
+                : t("admin:common.create")}
               </Button>
             </>
           )
@@ -292,8 +292,8 @@ export const TemplateEditor = () => {
         </Panel>
       : <form id={formId} onSubmit={(event) => void submit(event)} className="flex flex-col gap-6" noValidate>
           {failure && (
-            <Alert tone="error" title={t("cms:common.failed")}>
-              {t(`cms:errors.${failure}`, {defaultValue: failure})}
+            <Alert tone="error" title={t("admin:common.failed")}>
+              {t(`admin:errors.${failure}`, {defaultValue: failure})}
             </Alert>
           )}
 
@@ -478,16 +478,16 @@ export const TemplateEditor = () => {
           </Panel>
 
           <div className="flex flex-wrap items-center justify-end gap-3">
-            {dirty && <span className="mr-auto text-[13px] text-neutral-500">{t("cms:common.unsaved")}</span>}
+            {dirty && <span className="mr-auto text-[13px] text-neutral-500">{t("admin:common.unsaved")}</span>}
             <Button variant="ghost" size="sm" asChild data-fs-hover>
-              <Link to={cmsRoute.templates}>{t("cms:common.cancel")}</Link>
+              <Link to={cmsRoute.templates}>{t("admin:common.cancel")}</Link>
             </Button>
             <Button type="submit" size="sm" disabled={pending} data-fs-hover>
               {pending && <Spinner size={14}/>}
               {id ?
-                pending ? t("cms:common.saving") : t("cms:common.save")
-              : pending ? t("cms:common.creating")
-              : t("cms:common.create")}
+                pending ? t("admin:common.saving") : t("admin:common.save")
+              : pending ? t("admin:common.creating")
+              : t("admin:common.create")}
             </Button>
           </div>
         </form>
@@ -497,7 +497,7 @@ export const TemplateEditor = () => {
         open={confirming}
         title={t("cms_templates:editor.delete_title")}
         body={t("cms_templates:editor.delete_body", {name: form.name.trim() || slug, slug})}
-        confirmLabel={remove.pending ? t("cms:common.deleting") : t("cms_templates:editor.delete_confirm")}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_templates:editor.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setConfirming(false)}
         pending={remove.pending}

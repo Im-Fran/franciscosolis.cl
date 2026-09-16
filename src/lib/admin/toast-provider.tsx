@@ -1,15 +1,15 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import type {ReactNode} from "react";
 import type {AlertTone} from "@/components/ui/alert.tsx";
-import {ToastContext} from "@/lib/cms/toast-context.ts";
-import type {Toast} from "@/lib/cms/toast-context.ts";
+import {ToastContext} from "@/lib/admin/toast-context.ts";
+import type {Toast} from "@/lib/admin/toast-context.ts";
 
 /** How long a toast stays up. Errors linger, since they usually carry something worth reading. */
 const LIFETIME: Record<AlertTone, number> = {success: 4000, info: 5000, error: 9000};
 
 /**
- * Transient confirmations for the CMS's writes. A saved record already shows its new state in the
- * screen behind it, so the toast only has to say the write landed — never to carry the result.
+ * Transient confirmations for an administration panel's writes. A saved record already shows its new
+ * state in the screen behind it, so the toast only has to say the write landed, never the result.
  */
 export const ToastProvider = ({children}: {children: ReactNode}) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -38,7 +38,7 @@ export const ToastProvider = ({children}: {children: ReactNode}) => {
     [dismiss],
   );
 
-  /* Timers outlive a route change, so they have to be cleared when the CMS subtree goes away. */
+  /* Timers outlive a route change, so they have to be cleared when the subtree goes away. */
   const pending = timers.current;
   useEffect(() => () => pending.forEach(clearTimeout), [pending]);
 

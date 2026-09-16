@@ -6,7 +6,7 @@ import {RequireAuth} from "@/components/auth/require-auth.tsx";
 import {AuthProvider} from "@/lib/auth/auth-provider.tsx";
 import {cmsAuth} from "@/lib/cms/client.ts";
 import {CmsProvider} from "@/lib/cms/cms-provider.tsx";
-import {ToastProvider} from "@/lib/cms/toast-provider.tsx";
+import {ToastProvider} from "@/lib/admin/toast-provider.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {CmsLayout} from "@/pages/cms/components/cms-layout.tsx";
 import {ContentRedirect} from "@/pages/cms/components/content-redirect.tsx";
@@ -49,7 +49,7 @@ export const cmsRoutes: RouteObject = {
     {
       /* Pathless layout route, so every screen the CMS grows shares one gate and one frame. */
       element: (
-        <RequireAuth restoringKey="cms:common.restoring">
+        <RequireAuth restoringKey="admin:common.restoring">
           <ToastProvider>
             <CmsProvider>
               <CmsLayout/>

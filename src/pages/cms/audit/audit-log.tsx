@@ -8,9 +8,9 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import type {AuditEntry} from "@/lib/cms/types.ts";
 import {AuditEntryItem} from "@/pages/cms/audit/audit-entry.tsx";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
-import {Pagination} from "@/pages/cms/components/pagination.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
+import {Pagination} from "@/components/admin/pagination.tsx";
 
 /* The API caps `limit` at 200; these are the sizes worth offering, and 25 is a comfortable default. */
 const PAGE_SIZES = [25, 50, 100];
@@ -94,7 +94,7 @@ export const AuditLog = () => {
             title={t("cms_audit:refresh_hint")}
             data-fs-hover
           >
-            <ArrowClockwise size={14}/> {t("cms:common.refresh")}
+            <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
       />
@@ -172,7 +172,7 @@ export const AuditLog = () => {
                 {t("cms_audit:search.none_body")}
               </p>
               <Button variant="ghost" size="sm" onClick={() => setSearch("")} data-fs-hover>
-                {t("cms:common.clear_filters")}
+                {t("admin:common.clear_filters")}
               </Button>
             </div>
           ) : (

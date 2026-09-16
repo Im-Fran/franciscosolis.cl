@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button/button.tsx";
 import {Panel} from "@/components/ui/panel.tsx";
 import {cmsRoute} from "@/lib/cms/config.ts";
 import type {CmsCollection} from "@/lib/cms/types.ts";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
 
 export type JumpBackInProps = {collections: CmsCollection[]; className?: string};
 
@@ -27,7 +27,7 @@ export const JumpBackIn = ({collections, className}: JumpBackInProps) => {
       description={t("cms_overview:collections.description")}
     >
       {collections.length === 0 ? (
-        <EmptyState title={t("cms:common.no_collections")} description={t("cms_overview:collections.empty_hint")}/>
+        <EmptyState title={t("admin:common.no_collections")} description={t("cms_overview:collections.empty_hint")}/>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {collections.map((collection) => (

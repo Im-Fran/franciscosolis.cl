@@ -18,7 +18,7 @@ export type ConfirmDialogProps = {
   error?: string | null;
 };
 
-/** The one gate in front of every destructive write in the CMS: deletes are not undoable here. */
+/** The one gate in front of every destructive write: nothing on these APIs is undoable. */
 export const ConfirmDialog = ({
   open,
   title,
@@ -37,14 +37,14 @@ export const ConfirmDialog = ({
         <p className="text-sm leading-relaxed text-neutral-300">{body}</p>
 
         {error && (
-          <Alert tone="error" title={t("cms:common.failed")}>
-            {t(`cms:errors.${error}`, {defaultValue: error})}
+          <Alert tone="error" title={t("admin:common.failed")}>
+            {t(`admin:errors.${error}`, {defaultValue: error})}
           </Alert>
         )}
 
         <div className="flex flex-wrap justify-end gap-2">
           <Button variant="ghost" onClick={onClose} disabled={pending} data-fs-hover>
-            {t("cms:common.cancel")}
+            {t("admin:common.cancel")}
           </Button>
           <Button
             variant="secondary"

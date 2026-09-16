@@ -9,14 +9,14 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
 import {EMAIL_STATUSES} from "@/lib/cms/types.ts";
-import {DataTable} from "@/pages/cms/components/data-table.tsx";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
-import {Pagination} from "@/pages/cms/components/pagination.tsx";
-import {StatusBadge} from "@/pages/cms/components/status-badge.tsx";
+import {DataTable} from "@/components/admin/data-table.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
+import {Pagination} from "@/components/admin/pagination.tsx";
+import {StatusBadge} from "@/components/admin/status-badge.tsx";
 import {Segmented} from "@/pages/cms/email/email-segmented.tsx";
 import {recipientsOf} from "@/pages/cms/email/email-shared.ts";
-import type {Column} from "@/pages/cms/components/data-table.tsx";
+import type {Column} from "@/components/admin/data-table.tsx";
 import type {EmailMessage, EmailStatus} from "@/lib/cms/types.ts";
 
 const PAGE_SIZE = 25;
@@ -29,7 +29,7 @@ const Recipients = ({message}: {message: EmailMessage}) => {
   const {t} = useTranslation(["cms_emails", "cms"]);
   const to = recipientsOf(message);
 
-  if (to.length === 0) return <span className="text-neutral-600">{t("cms:common.none")}</span>;
+  if (to.length === 0) return <span className="text-neutral-600">{t("admin:common.none")}</span>;
 
   return (
     <span className="flex min-w-0 items-center gap-1.5" title={to.join(", ")}>
@@ -118,7 +118,7 @@ export const EmailList = () => {
       header: t("cms_emails:list.columns.created"),
       hideBelowLg: true,
       className: "whitespace-nowrap text-neutral-500",
-      cell: (row) => formatDateTime(row.created_at, i18n.language) ?? t("cms:common.none"),
+      cell: (row) => formatDateTime(row.created_at, i18n.language) ?? t("admin:common.none"),
     },
   ];
 
@@ -144,7 +144,7 @@ export const EmailList = () => {
              change to this tab. Polling in the background would spend requests on a screen nobody
              is watching most of the time, so the refresh is deliberate, obvious and cheap instead. */
           <Button variant="ghost" size="sm" onClick={emails.reload} disabled={emails.loading} data-fs-hover>
-            <ArrowClockwise size={14}/> {t("cms:common.refresh")}
+            <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
       >
@@ -159,8 +159,8 @@ export const EmailList = () => {
               setOffset(0);
             }}
             options={[
-              {value: "" as StatusFilter, label: t("cms:common.filter_all")},
-              ...EMAIL_STATUSES.map((value) => ({value: value as StatusFilter, label: t(`cms:status.${value}`)})),
+              {value: "" as StatusFilter, label: t("admin:common.filter_all")},
+              ...EMAIL_STATUSES.map((value) => ({value: value as StatusFilter, label: t(`admin:status.${value}`)})),
             ]}
           />
         </div>
