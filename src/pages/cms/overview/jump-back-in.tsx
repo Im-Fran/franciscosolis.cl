@@ -27,7 +27,7 @@ export const JumpBackIn = ({collections, className}: JumpBackInProps) => {
       description={t("cms_overview:collections.description")}
     >
       {collections.length === 0 ? (
-        <EmptyState title={t("admin:common.no_collections")} description={t("cms_overview:collections.empty_hint")}/>
+        <EmptyState title={t("cms:common.no_collections")} description={t("cms_overview:collections.empty_hint")}/>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {collections.map((collection) => (

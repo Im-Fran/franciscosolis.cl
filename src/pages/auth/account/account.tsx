@@ -4,6 +4,9 @@ import {ArrowClockwise} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Badge} from "@/components/ui/badge/badge.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
+import {ToastViewport} from "@/components/admin/toast-viewport.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
+import {ToastProvider} from "@/lib/admin/toast-provider.tsx";
 import {useAuth} from "@/lib/auth/auth-context.ts";
 import {formatDateTime} from "@/lib/auth/format.ts";
 import {AuthShell} from "@/pages/auth/components/auth-shell.tsx";
@@ -12,17 +15,18 @@ import {IdentitiesPanel} from "@/pages/auth/account/identities-panel.tsx";
 import {ProfileForm} from "@/pages/auth/account/profile-form.tsx";
 import {SessionsPanel} from "@/pages/auth/account/sessions-panel.tsx";
 
-/** What the account holds: profile, granted access, linked providers and live sessions. */
-export const Account = () => {
+/**
+ * What the account holds: profile, granted access, linked providers and live sessions.
+ *
+ * This is not the console and does not pretend to be one — it has no sidebar, because there is one
+ * screen — but everything on it is the console's furniture: the same page header, the same panels,
+ * the same confirmation before a destructive write and the same place a saved change is announced.
+ */
+const AccountScreen = () => {
   const {t, i18n} = useTranslation();
   const {me, error, reload} = useAuth();
 
-  const heading = (
-    <div className="mb-8">
-      <h1 className="text-[clamp(26px,4vw,36px)] leading-tight text-text">{t("auth:account.title")}</h1>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400">{t("auth:account.subtitle")}</p>
-    </div>
-  );
+  const heading = <PageHeader title={t("auth:account.title")} description={t("auth:account.subtitle")}/>;
 
   /*
    * The session outlived a profile load that failed: the provider keeps a session whose fault says
@@ -117,6 +121,14 @@ export const Account = () => {
     </AuthShell>
   );
 };
+
+/** The toast host sits outside the screen, so a write announced during a reload is not unmounted. */
+export const Account = () => (
+  <ToastProvider>
+    <AccountScreen/>
+    <ToastViewport/>
+  </ToastProvider>
+);
 
 const Detail = ({label, children}: {label: string; children: ReactNode}) => (
   <div className="flex flex-wrap items-baseline justify-between gap-3">

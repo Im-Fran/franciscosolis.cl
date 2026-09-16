@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import type {FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {FloppyDisk} from "@phosphor-icons/react";
@@ -6,9 +6,10 @@ import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input} from "@/components/ui/input.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {useToast} from "@/lib/admin/toast-context.ts";
+import {useMutation} from "@/lib/admin/useMutation.ts";
 import {authApi} from "@/lib/auth/api.ts";
 import {useAuth} from "@/lib/auth/auth-context.ts";
-import {describeError} from "@/lib/auth/useResource.ts";
 import {Panel} from "@/pages/auth/components/panel.tsx";
 import {Avatar} from "@/components/ui/avatar.tsx";
 import type {ProfileUpdate, User} from "@/lib/auth/types.ts";
@@ -28,23 +29,20 @@ const toForm = (user: User): Record<EditableField, string> => ({
 export const ProfileForm = ({user}: {user: User}) => {
   const {t} = useTranslation();
   const {reload} = useAuth();
+  const {notify} = useToast();
   const [form, setForm] = useState(() => toForm(user));
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const save = useMutation(useCallback((changes: ProfileUpdate) => authApi.updateMe(changes), []));
 
   const original = toForm(user);
   const dirty = EDITABLE.some((key) => form[key] !== original[key]);
 
   const set = (key: EditableField) => (event: {target: {value: string}}) => {
     setForm((current) => ({...current, [key]: event.target.value}));
-    setSaved(false);
+    save.reset();
   };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    setError(null);
-    setSaving(true);
 
     /* Only send what changed, and turn cleared fields into the nulls the API uses for "unset". */
     const changes: ProfileUpdate = {};
@@ -52,15 +50,11 @@ export const ProfileForm = ({user}: {user: User}) => {
       if (form[key] !== original[key]) changes[key] = form[key].trim() || null;
     }
 
-    try {
-      await authApi.updateMe(changes);
-      await reload();
-      setSaved(true);
-    } catch (cause) {
-      setError(describeError(cause).message);
-    } finally {
-      setSaving(false);
-    }
+    const result = await save.run(changes);
+    if (!result.ok) return;
+
+    await reload();
+    notify(t("auth:account.saved"));
   };
 
   return (
@@ -125,12 +119,11 @@ export const ProfileForm = ({user}: {user: User}) => {
           <Input id="profile-locale" value={form.locale} onChange={set("locale")} maxLength={20} placeholder="es-CL"/>
         </Field>
 
-        {error && <Alert tone="error">{t(`auth:errors.${error}`, {defaultValue: error})}</Alert>}
-        {saved && !dirty && <Alert tone="success">{t("auth:account.saved")}</Alert>}
+        {save.error && <Alert tone="error">{t(`auth:errors.${save.error}`, {defaultValue: save.error})}</Alert>}
 
         <div className="flex items-center gap-3">
-          <Button type="submit" disabled={!dirty || saving} data-fs-hover>
-            {saving ? <Spinner size={16}/> : <FloppyDisk size={16}/>}
+          <Button type="submit" disabled={!dirty || save.pending} data-fs-hover>
+            {save.pending ? <Spinner size={16}/> : <FloppyDisk size={16}/>}
             {t("auth:account.save")}
           </Button>
           {dirty && (
@@ -139,7 +132,7 @@ export const ProfileForm = ({user}: {user: User}) => {
               variant="ghost"
               onClick={() => {
                 setForm(toForm(user));
-                setError(null);
+                save.reset();
               }}
               data-fs-hover
             >

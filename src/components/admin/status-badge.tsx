@@ -8,13 +8,28 @@ import {cn} from "@/lib/utils.ts";
  * The API types these as plain strings, so an unknown value is shown verbatim in the neutral tone
  * rather than dropped: a state the service adds later still reads correctly here.
  */
+const GOOD = "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
+const PENDING = "border-amber-500/40 bg-amber-500/10 text-amber-300";
+const BAD = "border-red-500/40 bg-red-500/10 text-red-300";
+const INERT = "border-neutral-700 bg-neutral-800/60 text-neutral-400";
+
 const tones: Record<string, string> = {
-  published: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
-  sent: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
-  draft: "border-amber-500/40 bg-amber-500/10 text-amber-300",
-  queued: "border-amber-500/40 bg-amber-500/10 text-amber-300",
-  failed: "border-red-500/40 bg-red-500/10 text-red-300",
-  archived: "border-neutral-700 bg-neutral-800/60 text-neutral-400",
+  /* CMS: content, legal documents and the delivery state of an email. */
+  published: GOOD,
+  sent: GOOD,
+  draft: PENDING,
+  queued: PENDING,
+  failed: BAD,
+  archived: INERT,
+  /* Auth: accounts, invitations, client applications and their secrets. */
+  active: GOOD,
+  accepted: GOOD,
+  pending: PENDING,
+  expiring: PENDING,
+  disabled: INERT,
+  inactive: INERT,
+  expired: INERT,
+  revoked: BAD,
 };
 
 export const StatusBadge = ({status, className}: {status: string; className?: string}) => {

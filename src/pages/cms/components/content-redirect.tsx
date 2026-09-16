@@ -15,5 +15,5 @@ export const ContentRedirect = () => {
 
   if (slug) return <Navigate to={cmsRoute.content(slug)} replace/>;
 
-  return <EmptyState title={t("admin:common.no_collections")}/>;
+  return <EmptyState title={t("cms:common.no_collections")}/>;
 };

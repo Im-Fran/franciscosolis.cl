@@ -145,6 +145,18 @@ export type Session = {
 
 /* ── Admin ────────────────────────────────────────────────────────────────── */
 
+/**
+ * `GET /admin/me`: whether this account belongs in the console at all, asked once above the
+ * screens. It is the only admin endpoint that names no permission — it answers 403 for an account
+ * holding none of them, which is the single no-access state the whole console is gated on.
+ */
+export type AdminMe = {
+  user: User;
+  application_id: string;
+  roles: string[];
+  permissions: string[];
+};
+
 export type AdminUserSummary = {
   id: string;
   email: string;
@@ -164,6 +176,24 @@ export type AdminUserDetail = {
   sessions?: Session[];
 };
 
+/** A session as the admin endpoints render it: the account and application resolved server-side. */
+export type AdminSession = Session & {
+  user_id?: string;
+  user_email?: string | null;
+  user_name?: string | null;
+  user_picture?: string | null;
+  application_name?: string | null;
+  revoked_reason?: string | null;
+};
+
+export type AdminSessionFilters = {
+  user_id?: string;
+  application_id?: string;
+  include_revoked?: boolean;
+  limit?: number;
+  offset?: number;
+};
+
 export type InvitationStatus = "pending" | "accepted" | "expired" | "revoked" | (string & {});
 
 export type Invitation = {
@@ -172,10 +202,13 @@ export type Invitation = {
   status: InvitationStatus;
   application_id?: string | null;
   role_id?: string | null;
+  invited_by?: string | null;
   expires_at?: string | null;
   accepted_at?: string | null;
   revoked_at?: string | null;
   created_at?: string;
+  /** Only on the answer to a create or a resend: whether an email actually went out. */
+  emailed?: boolean;
 };
 
 export type NewInvitation = {
@@ -187,14 +220,42 @@ export type NewInvitation = {
   login_url?: string;
 };
 
+export type ResendInvitation = {
+  login_url?: string;
+  expires_in_days?: number;
+};
+
+/**
+ * How a client proves who it is at the token endpoint. `none` is a public client: it holds no
+ * secret, so PKCE is the only thing binding an authorization code to the process that asked for it.
+ */
+export type ClientAuthMethod = "none" | "client_secret_post" | "client_secret_basic";
+
+export type GrantType = "authorization_code" | "refresh_token" | "client_credentials";
+
+export const CLIENT_AUTH_METHODS: ClientAuthMethod[] = ["none", "client_secret_post", "client_secret_basic"];
+export const GRANT_TYPES: GrantType[] = ["authorization_code", "refresh_token", "client_credentials"];
+/** The scopes the service understands. An empty list on an application means "every one of them". */
+export const SUPPORTED_SCOPES = ["openid", "profile", "email", "offline_access", "roles", "groups"];
+
 export type Application = {
   client_id: string;
   name: string;
   description?: string | null;
-  redirect_uris?: string[];
+  /** Derived server-side from whether the client holds any secret; not settable on its own. */
   confidential?: boolean;
+  token_endpoint_auth_method?: ClientAuthMethod;
+  redirect_uris?: string[];
+  post_logout_redirect_uris?: string[];
+  grant_types?: GrantType[];
+  /** Empty means the client may ask for every supported scope. */
+  scopes?: string[];
+  require_pkce?: boolean;
+  /** Extra browser origins allowed to call the OAuth endpoints cross-origin. */
+  allowed_origins?: string[];
   is_active?: boolean;
   created_at?: string;
+  updated_at?: string;
 };
 
 export type NewApplication = {
@@ -202,17 +263,48 @@ export type NewApplication = {
   name: string;
   description?: string | null;
   redirect_uris: string[];
-  confidential?: boolean;
+  post_logout_redirect_uris?: string[];
+  token_endpoint_auth_method?: ClientAuthMethod;
+  grant_types?: GrantType[];
+  scopes?: string[];
+  require_pkce?: boolean;
+  allowed_origins?: string[];
 };
 
 /** The generated secret comes back on creation and is never readable again. */
-export type CreatedApplication = Application & { client_secret?: string | null };
+export type CreatedApplication = Application & {client_secret?: string | null};
 
-export type ApplicationUpdate = {
-  name?: string;
-  description?: string | null;
-  redirect_uris?: string[];
-  is_active?: boolean;
+export type ApplicationUpdate = Partial<Omit<NewApplication, "client_id">> & {is_active?: boolean};
+
+/**
+ * One client secret, as the API describes it: never its value, only enough to tell two apart.
+ * `last_used_at` is what says whether an old one is safe to revoke.
+ */
+export type ApplicationSecret = {
+  id: string;
+  hint: string;
+  label: string | null;
+  active: boolean;
+  expires_at: string | null;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  created_at: string;
+};
+
+export type NewSecret = {
+  label?: string | null;
+  /** Seconds until the new secret expires on its own. Omitted means it never does. */
+  expires_in?: number;
+  /** Gives the client's other secrets a deadline instead of cutting them off. */
+  rotate?: boolean;
+  grace_seconds?: number;
+};
+
+/** The one response that carries a secret in the clear. It cannot be read back afterwards. */
+export type IssuedSecret = ApplicationSecret & {
+  client_id: string;
+  client_secret: string;
+  retired_secrets?: number;
 };
 
 export type Role = {
@@ -235,9 +327,56 @@ export type NewRole = {
   permissions?: string[];
 };
 
+/** The slug and the scope are immutable: they are what grants and issued tokens name a role by. */
+export type RoleUpdate = {
+  name?: string;
+  description?: string | null;
+  is_default?: boolean;
+  /** Replaces the whole set rather than merging into it. */
+  permissions?: string[];
+};
+
 export type Permission = {
   id: string;
   slug: string;
   name: string;
   description?: string | null;
+};
+
+export type NewPermission = {
+  slug: string;
+  name: string;
+  description?: string | null;
+};
+
+/** A permission's slug is immutable for the same reason a role's is. */
+export type PermissionUpdate = {
+  name?: string;
+  description?: string | null;
+};
+
+/** One entry of the authentication audit trail, with its account and application resolved. */
+export type AuditEntry = {
+  id: string;
+  event: string;
+  created_at: string;
+  user_id?: string | null;
+  user_email?: string | null;
+  user_name?: string | null;
+  application_id?: string | null;
+  application_name?: string | null;
+  ip?: string | null;
+  user_agent?: string | null;
+  metadata?: Record<string, unknown> | null;
+};
+
+export type AuditFilters = {
+  event?: string;
+  user_id?: string;
+  application_id?: string;
+  /** Inclusive bounds, as ISO instants. */
+  from?: string;
+  to?: string;
+  limit?: number;
+  offset?: number;
 };
