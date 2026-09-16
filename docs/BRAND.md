@@ -47,6 +47,25 @@ Formats: SVG (source of truth) in `public/brand/svg/`, PNG 4× (universal) in `p
 WEBP (web-optimized) in `public/brand/webp/`. Lockup SVGs require the Sora font installed;
 PNGs/WEBPs have it baked in.
 
+## The downloadable kit
+
+The `/brand` page offers the whole set as one archive, `/brand/franciscosolis-brand-kit.zip`:
+`public/brand/{svg,png,webp}/` plus `public/brand/BRAND.md`, under a single
+`franciscosolis-brand-kit/` folder.
+
+`public/brand/BRAND.md` is the third-party, agent-facing guide — written for AI assistants and
+coding agents that place the marks without a designer in the loop, so it is literal and
+checkable: a decision table for picking a file, minimum sizes, clear space, the token and contrast
+tables, the lockup-SVG font trap, and a pre-ship checklist. It ships inside the kit and is also
+served on its own at `/brand/BRAND.md`. This file, `docs/BRAND.md`, stays the internal source —
+rationale, generation pipeline, how the site itself uses the components. Keep the two in step.
+
+`scripts/brand-kit.mjs` packs the archive: a Vite plugin serves it in dev and preview and emits it
+into the client bundle on build, so it is built from the files on disk every time rather than
+committed as a binary that could drift from what `pnpm brand:icons` last wrote. Timestamps inside
+the archive are fixed, so identical assets always pack to identical bytes. Run `pnpm brand:kit` to
+write a copy to the repo root and look inside; that copy is gitignored.
+
 ## Color tokens
 
 | Token | Hex | RGB | Use |

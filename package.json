@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "brand:icons": "node scripts/generate-brand-icons.mjs",
+    "brand:kit": "node scripts/brand-kit.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },

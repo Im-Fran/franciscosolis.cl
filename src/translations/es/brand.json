@@ -141,6 +141,12 @@
   "assets": {
     "title": "Recursos",
     "body": "SVG es la fuente de verdad, PNG viene a 4× para uso universal, y WEBP es la exportación optimizada para web. Úsalos para handoff — herramientas de diseño, documentos y terceros.",
+    "kit": {
+      "title": "Kit de marca completo",
+      "body": "Un ZIP con todos los archivos de esta página en SVG, PNG y WEBP, más un BRAND.md escrito para agentes de IA: qué archivo usar en cada contexto, tamaños mínimos, espacio libre, tokens de color, contraste y una checklist antes de publicar. Se arma con los archivos actuales, así que nunca queda desactualizado.",
+      "download": "Descargar kit (.zip)",
+      "guide": "Ver BRAND.md"
+    },
     "note": "Los SVG de los lockups necesitan Sora instalada en la máquina que los renderiza; las exportaciones PNG y WEBP ya traen la tipografía incrustada.",
     "uses": {
       "horizontal": "Header del sitio, documentación, firmas de correo (claro)",

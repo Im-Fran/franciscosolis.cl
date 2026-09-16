@@ -141,6 +141,12 @@
   "assets": {
     "title": "Assets",
     "body": "SVG is the source of truth, PNG ships at 4× for universal use, WEBP is the web-optimized export. Use these for handoff — design tools, documents, and third parties.",
+    "kit": {
+      "title": "Full brand kit",
+      "body": "One ZIP with every file on this page in SVG, PNG and WEBP, plus a BRAND.md written for AI agents: which file to use where, minimum sizes, clear space, color tokens, contrast and a pre-ship checklist. It is packed from the current files, so it can never fall out of date.",
+      "download": "Download kit (.zip)",
+      "guide": "Read BRAND.md"
+    },
     "note": "Lockup SVGs require Sora to be installed on the machine rendering them; the PNG and WEBP exports have the type baked in.",
     "uses": {
       "horizontal": "Website header, docs, email signatures (light)",
