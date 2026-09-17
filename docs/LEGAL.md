@@ -42,16 +42,13 @@ the next person to edit it from here will silently revert the change.
 clause needs to start with one. Anything before the first `##` is kept as a leading section rather
 than dropped, but there is no reason to write one.
 
-## Filling in the RUT
+## Two copies of the identity, on purpose
 
-`RUT` in `src/lib/company.ts` is empty until the number is confirmed. Every place that shows it
-omits the row while it is empty, so nothing renders a blank field — but nothing shows the RUT
-either. Setting that one constant puts it in the footer, in the `/legal` identity block and in the
-email signature at once.
-
-The `Organization` JSON-LD in `index.html` is the exception: it is static markup in the document
-head, read by crawlers before any script runs, so its `taxID` has to be filled in by hand in the
-same commit. There is a comment there saying so.
+`src/lib/company.ts` is the source, and everything in the running site reads from it. The one place
+that does not is the `Organization` JSON-LD in `index.html`: it is static markup in the document
+head, read by crawlers before any script runs, so injecting it from React would be too late. Its
+`legalName`, `taxID` and `PostalAddress` duplicate the module's values and have to be edited in the
+same commit whenever those change. There is a comment there saying so.
 
 ## What is deliberately not claimed
 

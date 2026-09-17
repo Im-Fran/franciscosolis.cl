@@ -41,7 +41,7 @@
       It mirrors src/lib/company.ts, and it is static markup rather than something a script injects
       because it is read before any script runs — a rich result built from an empty <head> is the
       one case where rendering it in React would be too late. The two have to be kept in step by
-      hand; `taxID` is the field to add once the RUT is confirmed (see docs/LEGAL.md).
+      hand.
     -->
     <script type="application/ld+json">
       {
@@ -50,6 +50,7 @@
         "@id": "https://franciscosolis.cl/#organization",
         "name": "FranciscoSolis",
         "legalName": "DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.",
+        "taxID": "78.473.345-9",
         "url": "https://franciscosolis.cl",
         "logo": "https://franciscosolis.cl/brand/png/fs-mark.png",
         "image": "https://franciscosolis.cl/brand/png/fs-avatar-circle.png",

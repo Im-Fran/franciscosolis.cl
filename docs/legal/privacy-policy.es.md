@@ -1,6 +1,6 @@
 ## 1. Responsable del tratamiento
 
-El responsable del tratamiento de los datos personales recogidos a través de este sitio es **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**, empresa individual de responsabilidad limitada constituida en Chile, con giro de desarrollo y mantención de servicios informáticos y domicilio comercial en Av. Irarrázaval 2401, Oficina 607, Ñuñoa, Santiago, Chile.
+El responsable del tratamiento de los datos personales recogidos a través de este sitio es **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**, RUT 78.473.345-9, empresa individual de responsabilidad limitada constituida en Chile, con giro de desarrollo y mantención de servicios informáticos y domicilio comercial en Av. Irarrázaval 2401, Oficina 607, Ñuñoa, Santiago, Chile.
 
 Canal de contacto para materias de privacidad: fsolism@franciscosolis.cl.
 
@@ -69,5 +69,6 @@ Esta Política puede actualizarse periódicamente. La versión vigente es la pub
 ## 13. Contacto
 
 **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**
+RUT 78.473.345-9
 Av. Irarrázaval 2401, Oficina 607, Ñuñoa, Santiago, Chile
 fsolism@franciscosolis.cl

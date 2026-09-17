@@ -1,6 +1,6 @@
 ## 1. Data controller
 
-The controller of the personal data collected through this site is **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**, a sole proprietorship company (*empresa individual de responsabilidad limitada*) incorporated in Chile, whose line of business is the development and maintenance of IT services, with registered offices at Av. Irarrázaval 2401, Office 607, Ñuñoa, Santiago, Chile.
+The controller of the personal data collected through this site is **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**, Chilean tax ID (RUT) 78.473.345-9, a sole proprietorship company (*empresa individual de responsabilidad limitada*) incorporated in Chile, whose line of business is the development and maintenance of IT services, with registered offices at Av. Irarrázaval 2401, Office 607, Ñuñoa, Santiago, Chile.
 
 Privacy contact: fsolism@franciscosolis.cl.
 
@@ -69,5 +69,6 @@ This Policy may be updated from time to time. The version in force is the one pu
 ## 13. Contact
 
 **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**
+RUT 78.473.345-9
 Av. Irarrázaval 2401, Office 607, Ñuñoa, Santiago, Chile
 fsolism@franciscosolis.cl

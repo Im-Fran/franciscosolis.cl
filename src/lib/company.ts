@@ -31,14 +31,13 @@ export const TRADE_NAME = "FranciscoSolis";
 export const SHORT_LEGAL_NAME = "FranciscoSolis E.I.R.L.";
 
 /**
- * El RUT de la empresa.
+ * El RUT de la empresa, con puntos y guion — la forma en que se lee en Chile, no la normalizada.
  *
- * Vacío mientras no esté confirmado, y cada lugar que lo muestra lo omite cuando lo está: es
- * preferible que el dato falte a que aparezca uno equivocado en un documento legal. Al completarlo
- * acá aparece en el footer, en las páginas legales y en el JSON-LD sin tocar nada más — el
- * `index.html` es la única excepción, porque su JSON-LD es estático (ver el comentario ahí).
+ * Los lugares que lo muestran siguen omitiendo la fila si queda vacío: no es una defensa contra un
+ * valor faltante hoy, sino contra el día en que alguien lo borre sin darse cuenta de que el dato
+ * aparece en tres pantallas y en la firma de correo de todo el mundo.
  */
-export const RUT = "";
+export const RUT = "78.473.345-9";
 
 /** El giro, tal como lo declara la razón social. */
 export const BUSINESS_ACTIVITY = "Desarrollo y mantención de servicios informáticos";

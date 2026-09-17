@@ -1,6 +1,6 @@
 ## 1. Quién presta el servicio
 
-Este sitio y los servicios asociados al dominio `franciscosolis.cl` son operados por **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.** (en adelante, "la Empresa", "FranciscoSolis" o "nosotros"), empresa individual de responsabilidad limitada constituida y domiciliada en Chile, con giro de desarrollo y mantención de servicios informáticos y domicilio comercial en Av. Irarrázaval 2401, Oficina 607, Ñuñoa, Santiago, Chile.
+Este sitio y los servicios asociados al dominio `franciscosolis.cl` son operados por **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.** (en adelante, "la Empresa", "FranciscoSolis" o "nosotros"), RUT 78.473.345-9, empresa individual de responsabilidad limitada constituida y domiciliada en Chile, con giro de desarrollo y mantención de servicios informáticos y domicilio comercial en Av. Irarrázaval 2401, Oficina 607, Ñuñoa, Santiago, Chile.
 
 Cualquier comunicación relativa a estos Términos puede dirigirse a fsolism@franciscosolis.cl.
 
@@ -75,5 +75,6 @@ Estos Términos se rigen por las leyes de la República de Chile. Cualquier cont
 Ante cualquier consulta relacionada con estos Términos de Servicio:
 
 **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**
+RUT 78.473.345-9
 Av. Irarrázaval 2401, Oficina 607, Ñuñoa, Santiago, Chile
 fsolism@franciscosolis.cl

@@ -1,6 +1,6 @@
 ## 1. Who provides the service
 
-This site and the services under the `franciscosolis.cl` domain are operated by **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.** (the "Company", "FranciscoSolis" or "we"), a sole proprietorship company (*empresa individual de responsabilidad limitada*) incorporated and domiciled in Chile, whose line of business is the development and maintenance of IT services, with registered offices at Av. Irarrázaval 2401, Office 607, Ñuñoa, Santiago, Chile.
+This site and the services under the `franciscosolis.cl` domain are operated by **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.** (the "Company", "FranciscoSolis" or "we"), Chilean tax ID (RUT) 78.473.345-9, a sole proprietorship company (*empresa individual de responsabilidad limitada*) incorporated and domiciled in Chile, whose line of business is the development and maintenance of IT services, with registered offices at Av. Irarrázaval 2401, Office 607, Ñuñoa, Santiago, Chile.
 
 Any communication regarding these Terms may be addressed to fsolism@franciscosolis.cl.
 
@@ -75,5 +75,6 @@ These Terms are governed by the laws of the Republic of Chile. Any dispute arisi
 For any question regarding these Terms of Service:
 
 **DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.**
+RUT 78.473.345-9
 Av. Irarrázaval 2401, Office 607, Ñuñoa, Santiago, Chile
 fsolism@franciscosolis.cl
