@@ -18,6 +18,14 @@ export const COMPANY = {
   website: "https://franciscosolis.cl",
   /** Absolute, because an email is read far away from this origin — a relative path is a broken image. */
   logo: "https://franciscosolis.cl/brand/png/fs-avatar-circle.png",
+  /**
+   * The company's own profiles, which are the same wherever this signature is pasted.
+   *
+   * They seed the second list rather than replacing it: the form still owns what ends up in the
+   * signature, so adding the company somewhere new is one field on the screen and not a release,
+   * and "use my profile" puts this canonical set back.
+   */
+  socials: ["https://www.linkedin.com/company/franciscosolis"],
 } as const;
 
 /** Only accounts on the company domain have a corporate signature to generate. */
@@ -43,7 +51,10 @@ export type SignatureData = {
   email: string;
   /** Absolute URL of the person's picture. Empty falls back to the company mark. */
   picture: string;
-  socials: SocialLink[];
+  /** Yours: rendered under your address, where a recipient looks for the person. */
+  personSocials: SocialLink[];
+  /** The company's: rendered under the website, where a recipient looks for the business. */
+  companySocials: SocialLink[];
 };
 
 /** True when this address belongs to the company — the gate for the whole section. */
@@ -127,7 +138,7 @@ const link = (href: string, text: string, color: string, extra = "") =>
   `<a href="${escapeHtml(href)}" style="color:${color};text-decoration:none;${extra}">${escapeHtml(text)}</a>`;
 
 /** One favicon in its own cell, so the row survives clients that collapse inline spacing. */
-const socialCell = (social: SocialLink) => {
+const socialCell = (social: SocialLink, size: number) => {
   const href = safeUrl(social.url);
   const icon = faviconFor(social.url);
   if (!href || !icon) return "";
@@ -136,9 +147,26 @@ const socialCell = (social: SocialLink) => {
   return (
     `<td style="padding:0 8px 0 0;">` +
     `<a href="${escapeHtml(href)}" style="text-decoration:none;">` +
-    `<img src="${escapeHtml(icon)}" width="20" height="20" alt="${escapeHtml(label)}" title="${escapeHtml(label)}" ` +
-    `style="display:block;width:20px;height:20px;border:0;border-radius:4px;"/>` +
+    `<img src="${escapeHtml(icon)}" width="${size}" height="${size}" alt="${escapeHtml(label)}" title="${escapeHtml(label)}" ` +
+    `style="display:block;width:${size}px;height:${size}px;border:0;border-radius:4px;"/>` +
     `</a></td>`
+  );
+};
+
+/**
+ * A row of favicons, or nothing at all when none of the links are usable.
+ *
+ * It is its own one-row table rather than a run of inline anchors: a `<td>` per icon is the only
+ * spacing a mail client cannot collapse, and the row then sits wherever it is dropped — under the
+ * person's address in the outer table, under the website inside the company cell.
+ */
+const socialRow = (socials: SocialLink[], size: number) => {
+  const cells = socials.map((social) => socialCell(social, size)).join("");
+  if (!cells) return "";
+
+  return (
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
+    `<tr>${cells}</tr></table>`
   );
 };
 
@@ -154,12 +182,13 @@ export const buildSignature = (data: SignatureData): string => {
   const email = data.email.trim();
   const picture = safeUrl(data.picture) ?? COMPANY.logo;
 
-  const socials = data.socials.map(socialCell).join("");
-  const socialRow = socials
-    ? `<tr><td style="padding-top:12px;">` +
-      `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
-      `<tr>${socials}</tr></table></td></tr>`
-    : "";
+  /*
+   * Two rows of links, each under what it belongs to: yours under your address, the company's under
+   * the website. A recipient looking for the person and a recipient looking for the business read
+   * different halves of a signature, and one mixed row makes them guess which icon is which.
+   */
+  const personRow = socialRow(data.personSocials, 20);
+  const companyRow = socialRow(data.companySocials, 18);
 
   return (
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" ` +
@@ -183,8 +212,10 @@ export const buildSignature = (data: SignatureData): string => {
 
     `<tr><td style="font-size:16px;font-weight:700;color:${INK};padding:0 0 2px;">${escapeHtml(name)}</td></tr>` +
     (email
-      ? `<tr><td style="font-size:13px;padding:0 0 10px;">${link(`mailto:${email}`, email, IRIS)}</td></tr>`
+      ? `<tr><td style="font-size:13px;padding:0 0 ${personRow ? "8" : "10"}px;">` +
+        `${link(`mailto:${email}`, email, IRIS)}</td></tr>`
       : "") +
+    (personRow ? `<tr><td style="padding:0 0 10px;">${personRow}</td></tr>` : "") +
 
     `<tr><td style="border-top:1px solid ${RULE};padding-top:10px;">` +
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
@@ -197,10 +228,9 @@ export const buildSignature = (data: SignatureData): string => {
     `<div style="font-weight:600;color:${INK};">${escapeHtml(COMPANY.name)}</div>` +
     `<div>${escapeHtml(COMPANY.address)}</div>` +
     `<div>${link(COMPANY.website, COMPANY.website.replace(/^https?:\/\//, ""), IRIS)}</div>` +
+    (companyRow ? `<div style="padding-top:6px;">${companyRow}</div>` : "") +
     `</td>` +
     `</tr></table></td></tr>` +
-
-    socialRow +
 
     `</table></td></tr></table>`
   );

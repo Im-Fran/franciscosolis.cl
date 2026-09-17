@@ -19,45 +19,62 @@ import type {SignatureData, SocialLink} from "@/pages/auth/account/signature/bui
 import type {User} from "@/lib/auth/types.ts";
 
 /* Versioned, so a later change to the stored shape can be ignored rather than mis-read. */
-const STORAGE_KEY = "fs.auth.signature.v1";
+const STORAGE_KEY = "fs.auth.signature.v2";
+/** The shape before the links were split in two; its drafts are read once and then rewritten as v2. */
+const STORAGE_KEY_V1 = "fs.auth.signature.v1";
+
+/** The list a row belongs to. Every edit names one, so the two lists share all of their handling. */
+type ListKey = "personSocials" | "companySocials";
 
 const newId = () =>
-  (globalThis.crypto?.randomUUID?.() ?? `s${Date.now()}${Math.random().toString(16).slice(2)}`);
+  globalThis.crypto?.randomUUID?.() ?? `s${Date.now()}${Math.random().toString(16).slice(2)}`;
+
+const toLinks = (urls: readonly string[]): SocialLink[] => urls.map((url) => ({id: newId(), url}));
 
 const fromProfile = (user: User): SignatureData => ({
   name: user.name ?? "",
   email: user.email,
   picture: user.picture ?? "",
-  socials: [],
+  personSocials: [],
+  /* The company's own profiles are the same everywhere, so the second list starts filled in. */
+  companySocials: toLinks(COMPANY.socials),
 });
+
+const readLinks = (value: unknown): SocialLink[] =>
+  Array.isArray(value)
+    ? value
+        .filter((social): social is SocialLink => !!social && typeof (social as SocialLink).url === "string")
+        .map((social) => ({id: social.id || newId(), url: social.url}))
+    : [];
 
 /**
  * What was stored, or nothing.
  *
  * The draft is read defensively because `localStorage` is shared with every other tab and version
- * of this site: anything that is not the shape written here is treated as absent rather than
- * trusted, and a private-mode browser that throws on read simply starts from the profile.
+ * of this site: anything that is not a shape written here is treated as absent rather than trusted,
+ * and a private-mode browser that throws on read simply starts from the profile. A v1 draft — one
+ * list of links, written before they were split — is read as the person's own, which is what every
+ * link in it was.
  */
 const readDraft = (): SignatureData | null => {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem(STORAGE_KEY_V1);
     if (!raw) return null;
 
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return null;
 
-    const draft = parsed as Partial<SignatureData>;
+    const draft = parsed as Partial<SignatureData> & {socials?: unknown};
     if (typeof draft.email !== "string") return null;
 
+    const companySocials = readLinks(draft.companySocials);
     return {
       name: typeof draft.name === "string" ? draft.name : "",
       email: draft.email,
       picture: typeof draft.picture === "string" ? draft.picture : "",
-      socials: Array.isArray(draft.socials)
-        ? draft.socials
-            .filter((social): social is SocialLink => !!social && typeof (social as SocialLink).url === "string")
-            .map((social) => ({id: social.id || newId(), url: social.url}))
-        : [],
+      personSocials: readLinks(draft.personSocials ?? draft.socials),
+      /* A v1 draft has no company list at all, so it gets the canonical one rather than none. */
+      companySocials: "companySocials" in draft ? companySocials : toLinks(COMPANY.socials),
     };
   } catch {
     return null;
@@ -91,25 +108,13 @@ export const SignaturePanel = ({user}: {user: User}) => {
   }, [data]);
 
   const html = useMemo(() => buildSignature(data), [data]);
-  const preview = useMemo(
-    () => DOMPurify.sanitize(html, {ADD_ATTR: ["target", "role"]}),
-    [html],
-  );
+  const preview = useMemo(() => DOMPurify.sanitize(html, {ADD_ATTR: ["target", "role"]}), [html]);
 
   const set = (key: "name" | "email" | "picture") => (event: {target: {value: string}}) =>
     setData((current) => ({...current, [key]: event.target.value}));
 
-  const setSocial = (id: string, url: string) =>
-    setData((current) => ({
-      ...current,
-      socials: current.socials.map((social) => (social.id === id ? {...social, url} : social)),
-    }));
-
-  const addSocial = () =>
-    setData((current) => ({...current, socials: [...current.socials, {id: newId(), url: ""}]}));
-
-  const removeSocial = (id: string) =>
-    setData((current) => ({...current, socials: current.socials.filter((social) => social.id !== id)}));
+  const setList = (list: ListKey, socials: SocialLink[]) =>
+    setData((current) => ({...current, [list]: socials}));
 
   /*
    * Copied as `text/html` *and* as plain text: the rich flavour is what Gmail and Outlook paste as
@@ -135,19 +140,16 @@ export const SignaturePanel = ({user}: {user: User}) => {
     }
   };
 
-  const invalid = data.socials.filter((social) => social.url.trim() && !safeUrl(social.url));
+  const unusable = [...data.personSocials, ...data.companySocials].some(
+    (social) => social.url.trim() && !safeUrl(social.url),
+  );
 
   return (
     <Panel
       title={t("auth:account.signature.title")}
       description={t("auth:account.signature.description")}
       action={
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setData(fromProfile(user))}
-          data-fs-hover
-        >
+        <Button variant="ghost" size="sm" onClick={() => setData(fromProfile(user))} data-fs-hover>
           <ArrowCounterClockwise size={14}/> {t("auth:account.signature.reset")}
         </Button>
       }
@@ -184,55 +186,26 @@ export const SignaturePanel = ({user}: {user: User}) => {
           />
         </Field>
 
-        <section className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <div>
-              <h3 className="text-sm font-medium text-neutral-300">{t("auth:account.signature.socials_title")}</h3>
-              <p className="mt-1 text-xs text-neutral-500">{t("auth:account.signature.socials_hint")}</p>
-            </div>
-            <Button variant="secondary" size="sm" onClick={addSocial} data-fs-hover>
-              <Plus size={14}/> {t("auth:account.signature.add_social")}
-            </Button>
-          </div>
+        {/* One list per half of the signature, in the order the signature itself renders them. */}
+        <SocialFieldset
+          title={t("auth:account.signature.person_socials_title")}
+          hint={t("auth:account.signature.person_socials_hint")}
+          emptyLabel={t("auth:account.signature.person_socials_empty")}
+          placeholder="https://linkedin.com/in/…"
+          socials={data.personSocials}
+          onChange={(socials) => setList("personSocials", socials)}
+        />
 
-          {data.socials.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t("auth:account.signature.socials_empty")}</p>
-          ) : (
-            <SortableList
-              items={data.socials}
-              itemKey={(social) => social.id}
-              onReorder={(socials) => setData((current) => ({...current, socials}))}
-              label={t("auth:account.signature.socials_title")}
-              renderItem={(social) => (
-                <div className="flex items-center gap-3">
-                  <SocialIcon url={social.url}/>
-                  <Input
-                    aria-label={t("auth:account.signature.social_url_label")}
-                    type="url"
-                    inputMode="url"
-                    value={social.url}
-                    onChange={(event) => setSocial(social.id, event.target.value)}
-                    placeholder="https://linkedin.com/in/…"
-                    className="h-9"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeSocial(social.id)}
-                    aria-label={t("auth:account.signature.remove_social")}
-                    data-fs-hover
-                  >
-                    <Trash size={14}/>
-                  </Button>
-                </div>
-              )}
-            />
-          )}
+        <SocialFieldset
+          title={t("auth:account.signature.company_socials_title")}
+          hint={t("auth:account.signature.company_socials_hint")}
+          emptyLabel={t("auth:account.signature.company_socials_empty")}
+          placeholder="https://linkedin.com/company/…"
+          socials={data.companySocials}
+          onChange={(socials) => setList("companySocials", socials)}
+        />
 
-          {invalid.length > 0 && (
-            <Alert tone="info">{t("auth:account.signature.invalid_social")}</Alert>
-          )}
-        </section>
+        {unusable && <Alert tone="info">{t("auth:account.signature.invalid_social")}</Alert>}
 
         <section className="flex flex-col gap-3">
           <h3 className="text-sm font-medium text-neutral-300">{t("auth:account.signature.preview_title")}</h3>
@@ -260,13 +233,87 @@ export const SignaturePanel = ({user}: {user: User}) => {
   );
 };
 
+type SocialFieldsetProps = {
+  title: string;
+  hint: string;
+  emptyLabel: string;
+  placeholder: string;
+  socials: SocialLink[];
+  onChange: (socials: SocialLink[]) => void;
+};
+
+/** One list of links: add, edit, reorder, remove. Both halves of the signature are edited with it. */
+const SocialFieldset = ({title, hint, emptyLabel, placeholder, socials, onChange}: SocialFieldsetProps) => {
+  const {t} = useTranslation();
+
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-sm font-medium text-neutral-300">{title}</h3>
+          <p className="mt-1 text-xs text-neutral-500">{hint}</p>
+        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => onChange([...socials, {id: newId(), url: ""}])}
+          data-fs-hover
+        >
+          <Plus size={14}/> {t("auth:account.signature.add_social")}
+        </Button>
+      </div>
+
+      {socials.length === 0 ? (
+        <p className="text-sm text-neutral-500">{emptyLabel}</p>
+      ) : (
+        <SortableList
+          items={socials}
+          itemKey={(social) => social.id}
+          onReorder={onChange}
+          label={title}
+          renderItem={(social) => (
+            <div className="flex items-center gap-3">
+              <SocialIcon url={social.url}/>
+              <Input
+                aria-label={t("auth:account.signature.social_url_label", {list: title})}
+                type="url"
+                inputMode="url"
+                value={social.url}
+                onChange={(event) =>
+                  onChange(socials.map((item) => (item.id === social.id ? {...item, url: event.target.value} : item)))
+                }
+                placeholder={placeholder}
+                className="h-9"
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onChange(socials.filter((item) => item.id !== social.id))}
+                aria-label={t("auth:account.signature.remove_social")}
+                data-fs-hover
+              >
+                <Trash size={14}/>
+              </Button>
+            </div>
+          )}
+        />
+      )}
+    </section>
+  );
+};
+
 /** The favicon as the signature will render it, so a wrong URL is visible before it is pasted. */
 const SocialIcon = ({url}: {url: string}) => {
   const icon = faviconFor(url);
   const label = labelFor(url);
 
   if (!icon) {
-    return <span aria-hidden className="size-5 shrink-0 rounded-[var(--radius-sm)] border border-dashed border-neutral-700"/>;
+    return (
+      <span
+        aria-hidden
+        className="size-5 shrink-0 rounded-[var(--radius-sm)] border border-dashed border-neutral-700"
+      />
+    );
   }
 
   return <img src={icon} alt={label ?? ""} width={20} height={20} className="size-5 shrink-0 rounded-[var(--radius-sm)]"/>;

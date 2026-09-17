@@ -24,9 +24,10 @@ generator for the corporate email signature, ready to paste into Gmail, Outlook 
 It is deliberately the *only* thing on these screens that talks to no API. A signature is not
 account state — it is a block of HTML a person pastes into their mail client once and then owns —
 so there is nothing for the service to store and nothing for an administrator to manage. The draft
-lives in this browser's `localStorage` under `fs.auth.signature.v1` so that returning to the screen
+lives in this browser's `localStorage` under `fs.auth.signature.v2` so that returning to the screen
 does not mean retyping every link, keyed to the address that wrote it; the profile is the default it
-is restored from.
+is restored from. A `v1` draft — one list of links, written before they were split in two — is read
+once as the person's own links and rewritten in the current shape.
 
 **Tables, not the design system.** `build-signature.ts` emits nested tables with every rule inline,
 because mail clients are not browsers: Gmail drops `<style>` blocks and Outlook renders through Word,
@@ -34,6 +35,13 @@ which ignores flexbox, grid and most of `display`. The preview beside the form r
 string, so what is previewed is what is pasted. Both avatars are circled with `border-radius`, which
 every webmail honours and Word does not — it falls back to a square, which is why the pictures are
 square to begin with.
+
+**Two rows of links, not one.** The person's go under their address and the company's under the
+website, because a recipient looking for the person and a recipient looking for the business read
+different halves of a signature, and one mixed row makes them guess which icon is which. Both are
+edited with the same list in the form. The company's row is seeded from `COMPANY.socials` rather
+than fixed by it: that keeps the official set canonical and restorable, while adding the company
+somewhere new stays one field on the screen instead of a release.
 
 **Icons come from the host, not from a list.** A social link is just a URL; the icon is
 `https://favicon.is/<host>` and the `alt` is read from the same host. A per-network mapping would be
