@@ -15,8 +15,30 @@ export const Callback = lazy(() =>
   import("@/pages/auth/callback.tsx").then((module) => ({default: module.Callback})),
 );
 
+/*
+ * The account is a layout with a section under it, the same shape as the console: the tab column
+ * and the shell stay mounted, and each section arrives as its own chunk.
+ */
 export const Account = lazy(() =>
-  import("@/pages/auth/account/account.tsx").then((module) => ({default: module.Account})),
+  import("@/pages/auth/account/account-layout.tsx").then((m) => ({default: m.Account})),
+);
+export const AccountProfile = lazy(() =>
+  import("@/pages/auth/account/profile-form.tsx").then((m) => ({default: m.ProfileSection})),
+);
+export const AccountSignature = lazy(() =>
+  import("@/pages/auth/account/signature/signature-panel.tsx").then((m) => ({default: m.SignatureSection})),
+);
+export const AccountAccess = lazy(() =>
+  import("@/pages/auth/account/access-panel.tsx").then((m) => ({default: m.AccessPanel})),
+);
+export const AccountIdentities = lazy(() =>
+  import("@/pages/auth/account/identities-panel.tsx").then((m) => ({default: m.IdentitiesPanel})),
+);
+export const AccountSessions = lazy(() =>
+  import("@/pages/auth/account/sessions-panel.tsx").then((m) => ({default: m.SessionsPanel})),
+);
+export const AccountDetails = lazy(() =>
+  import("@/pages/auth/account/details-panel.tsx").then((m) => ({default: m.DetailsPanel})),
 );
 
 /*

@@ -1,5 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
+import {Navigate} from "react-router-dom";
 import {ArrowCounterClockwise, Copy, Code, Plus, Trash} from "@phosphor-icons/react";
 import DOMPurify from "dompurify";
 import {Alert} from "@/components/ui/alert.tsx";
@@ -7,11 +8,14 @@ import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input} from "@/components/ui/input.tsx";
 import {SortableList} from "@/components/admin/sortable-list.tsx";
 import {useToast} from "@/lib/admin/toast-context.ts";
+import {useAuth} from "@/lib/auth/auth-context.ts";
+import {accountRoute} from "@/lib/auth/config.ts";
 import {Panel} from "@/pages/auth/components/panel.tsx";
 import {
   COMPANY,
   buildSignature,
   faviconFor,
+  isCompanyEmail,
   labelFor,
   safeUrl,
 } from "@/pages/auth/account/signature/build-signature.ts";
@@ -334,4 +338,20 @@ const SocialIcon = ({url}: {url: string}) => {
   }
 
   return <img src={icon} alt={label ?? ""} width={20} height={20} className="size-5 shrink-0 rounded-[var(--radius-sm)]"/>;
+};
+
+/**
+ * The signature section as the router mounts it.
+ *
+ * The tab is only offered to company accounts, and the route guards itself the same way: a link to
+ * it from an account that has no corporate signature lands on the account rather than on a tab that
+ * is not there.
+ */
+export const SignatureSection = () => {
+  const {me} = useAuth();
+
+  if (!me) return null;
+  if (!isCompanyEmail(me.user.email)) return <Navigate to={accountRoute.profile} replace/>;
+
+  return <SignaturePanel user={me.user}/>;
 };

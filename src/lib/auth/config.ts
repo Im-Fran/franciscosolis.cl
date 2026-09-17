@@ -58,6 +58,21 @@ export const ACCOUNT_ROUTE = `${AUTH_ROUTE}/account`;
 export const ADMIN_ROUTE = `${AUTH_ROUTE}/admin`;
 
 /**
+ * The account's sections, so a tab is written once and linked to by name.
+ *
+ * Each one is a route for the same reason the console's are: a section of your own account is
+ * something you land on, reload and link to, and `?tab=` gives none of that for free.
+ */
+export const accountRoute = {
+  profile: ACCOUNT_ROUTE,
+  signature: `${ACCOUNT_ROUTE}/signature`,
+  access: `${ACCOUNT_ROUTE}/access`,
+  identities: `${ACCOUNT_ROUTE}/identities`,
+  sessions: `${ACCOUNT_ROUTE}/sessions`,
+  details: `${ACCOUNT_ROUTE}/details`,
+} as const;
+
+/**
  * The administration console's own map, so a route is written once and linked to by name.
  *
  * The console used to be a single screen with its sections in `?tab=`, which made every section

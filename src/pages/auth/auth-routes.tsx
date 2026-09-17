@@ -6,6 +6,12 @@ import {RequireAuth} from "@/components/auth/require-auth.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {
   Account,
+  AccountAccess,
+  AccountDetails,
+  AccountIdentities,
+  AccountProfile,
+  AccountSessions,
+  AccountSignature,
   AdminLayout,
   AdminOverview,
   ApplicationEditor,
@@ -49,8 +55,21 @@ export const authRoutes: RouteObject = {
       ),
       children: [
         {
+          /*
+           * The account is a layout with a section under it, for the same reason the console is:
+           * a tab somebody lands on, reloads or sends to themselves needs an address of its own.
+           */
           path: "account",
           element: <Account/>,
+          children: [
+            {index: true, element: <AccountProfile/>},
+            {path: "signature", element: <AccountSignature/>},
+            {path: "access", element: <AccountAccess/>},
+            {path: "identities", element: <AccountIdentities/>},
+            {path: "sessions", element: <AccountSessions/>},
+            {path: "details", element: <AccountDetails/>},
+            {path: "*", element: <NotFound/>},
+          ],
         },
         {
           /*

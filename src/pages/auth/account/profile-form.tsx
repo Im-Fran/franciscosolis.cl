@@ -144,3 +144,16 @@ export const ProfileForm = ({user}: {user: User}) => {
     </Panel>
   );
 };
+
+/**
+ * The profile section as the router mounts it.
+ *
+ * The form keeps the fields being typed in its own state, seeded from the profile, so the profile
+ * is read here and handed down rather than subscribed to inside it — that way a reload of the
+ * account does not reach in and overwrite what is half-written.
+ */
+export const ProfileSection = () => {
+  const {me} = useAuth();
+
+  return me ? <ProfileForm user={me.user}/> : null;
+};
