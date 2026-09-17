@@ -76,7 +76,7 @@
     "title": "Paleta de comandos",
     "placeholder": "Escribe para buscar un ajuste…",
     "empty": "Sin resultados para «{{query}}»",
-    "results": "{{count}} comando disponible",
+    "results_one": "{{count}} comando disponible",
     "results_other": "{{count}} comandos disponibles",
     "open_panel": "Abrir el panel completo",
     "reset_command": "Restablecer todas las preferencias",
