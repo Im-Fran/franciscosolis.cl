@@ -16,7 +16,12 @@ export const COMPANY = {
   name: "FranciscoSolis E.I.R.L.",
   address: "Av. Irarrázaval 2401 Oficina 607, Ñuñoa",
   website: "https://franciscosolis.cl",
-  /** Absolute, because an email is read far away from this origin — a relative path is a broken image. */
+  /**
+   * Stands in for a picture the person has not set. It is not drawn beside the company's name —
+   * one circled mark at the top of a signature is enough — so this is the only place it appears.
+   *
+   * Absolute, because an email is read far away from this origin: a relative path is a broken image.
+   */
   logo: "https://franciscosolis.cl/brand/png/fs-avatar-circle.png",
   /**
    * The company's own profiles, which are the same wherever this signature is pasted.
@@ -173,8 +178,8 @@ const socialRow = (socials: SocialLink[], size: number) => {
 /**
  * The signature itself.
  *
- * Both avatars are circled with `border-radius`, which every webmail honours and Outlook's Word
- * renderer does not — there it falls back to a square, which is why the pictures are also sized and
+ * The one picture is circled with `border-radius`, which every webmail honours and Outlook's Word
+ * renderer does not — there it falls back to a square, which is why the picture is also sized and
  * cropped to a square to begin with, so the fallback still looks deliberate.
  */
 export const buildSignature = (data: SignatureData): string => {
@@ -196,10 +201,10 @@ export const buildSignature = (data: SignatureData): string => {
     `<tr>` +
 
     /*
-     * Left column: the person's picture, circled. Both avatars carry an empty `alt` on purpose —
-     * the name they stand for is in the cell beside them, so announcing it twice adds nothing, and
-     * a picture a recipient's client has not loaded yet stays a 72px box instead of a block of alt
-     * text that pushes the whole signature out of shape.
+     * Left column: the person's picture, circled. Its `alt` is empty on purpose — the name it
+     * stands for is in the cell beside it, so announcing it twice adds nothing, and a picture a
+     * recipient's client has not loaded yet stays a 72px box instead of a block of alt text that
+     * pushes the whole signature out of shape.
      */
     `<td width="72" style="width:72px;padding:0 18px 0 0;vertical-align:top;">` +
     `<img src="${escapeHtml(picture)}" width="72" height="72" alt="" ` +
@@ -217,20 +222,19 @@ export const buildSignature = (data: SignatureData): string => {
       : "") +
     (personRow ? `<tr><td style="padding:0 0 10px;">${personRow}</td></tr>` : "") +
 
-    `<tr><td style="border-top:1px solid ${RULE};padding-top:10px;">` +
-    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
-    `<tr>` +
-    `<td width="36" style="width:36px;padding:0 10px 0 0;vertical-align:top;">` +
-    `<img src="${COMPANY.logo}" width="36" height="36" alt="" ` +
-    `style="display:block;width:36px;height:36px;border:0;border-radius:50%;"/>` +
-    `</td>` +
-    `<td style="vertical-align:top;font-size:13px;color:${MUTED};">` +
+    /*
+     * The company block carries no mark of its own. The signature already opens with a circled
+     * picture, and a second circle a few lines under it read as a second avatar rather than as the
+     * company — with both marks loading over the network, an unloaded pair read as damage. The name
+     * set in ink above the address does the same work in one line, and the block now starts at the
+     * same left edge as everything above it.
+     */
+    `<tr><td style="border-top:1px solid ${RULE};padding-top:10px;font-size:13px;color:${MUTED};">` +
     `<div style="font-weight:600;color:${INK};">${escapeHtml(COMPANY.name)}</div>` +
     `<div>${escapeHtml(COMPANY.address)}</div>` +
     `<div>${link(COMPANY.website, COMPANY.website.replace(/^https?:\/\//, ""), IRIS)}</div>` +
     (companyRow ? `<div style="padding-top:6px;">${companyRow}</div>` : "") +
-    `</td>` +
-    `</tr></table></td></tr>` +
+    `</td></tr>` +
 
     `</table></td></tr></table>`
   );

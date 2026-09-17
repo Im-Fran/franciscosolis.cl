@@ -32,9 +32,11 @@ once as the person's own links and rewritten in the current shape.
 **Tables, not the design system.** `build-signature.ts` emits nested tables with every rule inline,
 because mail clients are not browsers: Gmail drops `<style>` blocks and Outlook renders through Word,
 which ignores flexbox, grid and most of `display`. The preview beside the form renders that same
-string, so what is previewed is what is pasted. Both avatars are circled with `border-radius`, which
-every webmail honours and Word does not — it falls back to a square, which is why the pictures are
-square to begin with.
+string, so what is previewed is what is pasted. The person's picture is circled with
+`border-radius`, which every webmail honours and Word does not — it falls back to a square, which is
+why the picture is square to begin with. It is the only image in the block that is not a favicon:
+the company's name set in ink above its address carries that half, where a second circled mark a few
+lines under the first one read as another avatar, and an unloaded pair read as damage.
 
 **Two rows of links, not one.** The person's go under their address and the company's under the
 website, because a recipient looking for the person and a recipient looking for the business read
