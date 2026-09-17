@@ -18,6 +18,10 @@ export type TagInputProps = {
  * Tags as chips. Enter and comma commit the draft, Backspace on an empty field takes the last one
  * back, and a blur commits too — a value left sitting in the box on submit is the classic way to
  * lose a tag without noticing.
+ *
+ * Removal is by position, not by value: the chips are committed through a `Set`, but the incoming
+ * `value` is whatever the API returns, and a repeated entry there would otherwise take all of its
+ * copies out on one click.
  */
 export const TagInput = ({id, value, onChange, placeholder, disabled, maxTagLength = 60}: TagInputProps) => {
   const {t} = useTranslation();
@@ -48,16 +52,16 @@ export const TagInput = ({id, value, onChange, placeholder, disabled, maxTagLeng
     <div className="flex flex-col gap-2">
       {value.length > 0 && (
         <ul className="flex flex-wrap gap-1.5">
-          {value.map((tag) => (
+          {value.map((tag, index) => (
             <li
-              key={tag}
+              key={`${index}-${tag}`}
               className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-800/50 py-1 pr-1 pl-2.5 text-xs text-neutral-300"
             >
               {tag}
               <button
                 type="button"
                 disabled={disabled}
-                onClick={() => onChange(value.filter((entry) => entry !== tag))}
+                onClick={() => onChange(value.filter((_, position) => position !== index))}
                 aria-label={t("cms:tags.remove", {tag})}
                 className="cursor-pointer rounded-[var(--radius-sm)] p-0.5 text-neutral-500 transition-colors hover:bg-neutral-700 hover:text-text disabled:cursor-not-allowed"
                 data-fs-hover

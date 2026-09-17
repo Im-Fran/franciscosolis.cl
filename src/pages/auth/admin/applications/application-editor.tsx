@@ -64,20 +64,34 @@ const toDraft = (application: Application): Draft => ({
   is_active: application.is_active ?? true,
 });
 
+/**
+ * Label, control and hint as one block.
+ *
+ * The label is a sibling pointing at `htmlFor`, never a wrapper around the control. An implicit
+ * label takes the first labelable descendant as its control, and activating the label re-fires the
+ * click on it — with a `TagInput` inside, that first descendant is the remove button of the first
+ * chip, so removing any one URI also removed the first one.
+ */
 const Field = ({
   label,
   hint,
+  htmlFor,
   children,
 }: {
   label: string;
   hint?: string;
+  htmlFor?: string;
   children: ReactNode;
 }) => (
-  <label className="flex flex-col gap-1.5">
-    <span className="text-[13px] text-neutral-400">{label}</span>
+  <div className="flex flex-col gap-1.5">
+    {htmlFor ? (
+      <label htmlFor={htmlFor} className="text-[13px] text-neutral-400">{label}</label>
+    ) : (
+      <span className="text-[13px] text-neutral-400">{label}</span>
+    )}
     {children}
     {hint && <span className="text-[12px] leading-relaxed text-neutral-600">{hint}</span>}
-  </label>
+  </div>
 );
 
 const Toggle = ({
@@ -236,9 +250,11 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
           <Field
             label={t("auth_admin:applications.client_id_label")}
             hint={mode === "create" ? t("auth_admin:applications.client_id_hint") : t("auth_admin:applications.client_id_fixed")}
+            htmlFor={mode === "create" ? "application-client-id" : undefined}
           >
             {mode === "create" ? (
               <Input
+                id="application-client-id"
                 value={draft.client_id}
                 onChange={(event) => set("client_id", event.target.value)}
                 placeholder="my-application"
@@ -251,8 +267,13 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
             )}
           </Field>
 
-          <Field label={t("auth_admin:applications.name_label")} hint={t("auth_admin:applications.name_hint")}>
+          <Field
+            label={t("auth_admin:applications.name_label")}
+            hint={t("auth_admin:applications.name_hint")}
+            htmlFor="application-name"
+          >
             <Input
+              id="application-name"
               value={draft.name}
               onChange={(event) => set("name", event.target.value)}
               disabled={!editable}
@@ -260,8 +281,9 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
             />
           </Field>
 
-          <Field label={t("auth_admin:applications.description_label")}>
+          <Field label={t("auth_admin:applications.description_label")} htmlFor="application-description">
             <Input
+              id="application-description"
               value={draft.description}
               onChange={(event) => set("description", event.target.value)}
               disabled={!editable}
@@ -282,7 +304,11 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
 
       <Panel title={t("auth_admin:applications.urls_title")} description={t("auth_admin:applications.urls_description")}>
         <div className="flex flex-col gap-5">
-          <Field label={t("auth_admin:applications.redirects_label")} hint={t("auth_admin:applications.redirects_hint")}>
+          <Field
+            label={t("auth_admin:applications.redirects_label")}
+            hint={t("auth_admin:applications.redirects_hint")}
+            htmlFor="redirect-uris"
+          >
             <TagInput
               id="redirect-uris"
               value={draft.redirect_uris}
@@ -296,6 +322,7 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
           <Field
             label={t("auth_admin:applications.post_logout_label")}
             hint={t("auth_admin:applications.post_logout_hint")}
+            htmlFor="post-logout-uris"
           >
             <TagInput
               id="post-logout-uris"
@@ -307,7 +334,11 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
             />
           </Field>
 
-          <Field label={t("auth_admin:applications.origins_label")} hint={t("auth_admin:applications.origins_hint")}>
+          <Field
+            label={t("auth_admin:applications.origins_label")}
+            hint={t("auth_admin:applications.origins_hint")}
+            htmlFor="allowed-origins"
+          >
             <TagInput
               id="allowed-origins"
               value={draft.allowed_origins}
@@ -322,8 +353,13 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
 
       <Panel title={t("auth_admin:applications.oauth_title")} description={t("auth_admin:applications.oauth_description")}>
         <div className="flex flex-col gap-5">
-          <Field label={t("auth_admin:applications.auth_method_label")} hint={t("auth_admin:applications.auth_method_hint")}>
+          <Field
+            label={t("auth_admin:applications.auth_method_label")}
+            hint={t("auth_admin:applications.auth_method_hint")}
+            htmlFor="application-auth-method"
+          >
             <select
+              id="application-auth-method"
               value={draft.token_endpoint_auth_method}
               onChange={(event) => setAuthMethod(event.target.value as ClientAuthMethod)}
               disabled={!editable}
