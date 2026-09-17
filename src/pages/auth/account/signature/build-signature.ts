@@ -53,6 +53,8 @@ export type SocialLink = {
 
 export type SignatureData = {
   name: string;
+  /** A role, a field or a short quote — one line under the name. Empty renders nothing. */
+  tagline: string;
   email: string;
   /** Absolute URL of the person's picture. Empty falls back to the company mark. */
   picture: string;
@@ -181,9 +183,17 @@ const socialRow = (socials: SocialLink[], size: number) => {
  * The one picture is circled with `border-radius`, which every webmail honours and Outlook's Word
  * renderer does not — there it falls back to a square, which is why the picture is also sized and
  * cropped to a square to begin with, so the fallback still looks deliberate.
+ *
+ * That circle only stays a circle while the box stays square, and a plain `width`/`height` pair is
+ * not enough: a stylesheet rule as ordinary as `img { max-width: 100% }` — Tailwind's own preflight
+ * ships it, and webmail clients have their own — shrinks the width inside a narrow column while the
+ * height stays put, and the mark reads as an oval. Pinning both axes with `min-`/`max-` leaves
+ * nothing for such a rule to squeeze, and `object-fit` then crops a non-square photo instead of
+ * stretching it wherever it is honoured.
  */
 export const buildSignature = (data: SignatureData): string => {
   const name = data.name.trim() || data.email.trim();
+  const tagline = data.tagline.trim();
   const email = data.email.trim();
   const picture = safeUrl(data.picture) ?? COMPANY.logo;
 
@@ -206,9 +216,10 @@ export const buildSignature = (data: SignatureData): string => {
      * recipient's client has not loaded yet stays a 72px box instead of a block of alt text that
      * pushes the whole signature out of shape.
      */
-    `<td width="72" style="width:72px;padding:0 18px 0 0;vertical-align:top;">` +
+    `<td width="72" style="width:72px;min-width:72px;padding:0 18px 0 0;vertical-align:top;">` +
     `<img src="${escapeHtml(picture)}" width="72" height="72" alt="" ` +
-    `style="display:block;width:72px;height:72px;border:0;border-radius:50%;object-fit:cover;"/>` +
+    `style="display:block;width:72px;min-width:72px;max-width:72px;height:72px;min-height:72px;max-height:72px;` +
+    `border:0;border-radius:50%;object-fit:cover;object-position:center;"/>` +
     `</td>` +
 
     /* Right column: who you are, then who we are. The iris rule is the only brand chrome. */
@@ -216,6 +227,17 @@ export const buildSignature = (data: SignatureData): string => {
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
 
     `<tr><td style="font-size:16px;font-weight:700;color:${INK};padding:0 0 2px;">${escapeHtml(name)}</td></tr>` +
+
+    /*
+     * The tagline, when there is one: a role, or a line the person wants read under their name. It
+     * is set in muted grey rather than ink so it reads as a caption to the name above it and not as
+     * a second name, and it sits above the address because that is the order a recipient reads —
+     * who you are, what you do, how to reach you.
+     */
+    (tagline
+      ? `<tr><td style="font-size:13px;color:${MUTED};padding:0 0 ${email ? "4" : personRow ? "8" : "10"}px;">` +
+        `${escapeHtml(tagline)}</td></tr>`
+      : "") +
     (email
       ? `<tr><td style="font-size:13px;padding:0 0 ${personRow ? "8" : "10"}px;">` +
         `${link(`mailto:${email}`, email, IRIS)}</td></tr>`
