@@ -35,7 +35,7 @@ export const AccountIdentities = lazy(() =>
   import("@/pages/auth/account/identities-panel.tsx").then((m) => ({default: m.IdentitiesPanel})),
 );
 export const AccountSessions = lazy(() =>
-  import("@/pages/auth/account/sessions-panel.tsx").then((m) => ({default: m.SessionsPanel})),
+  import("@/pages/auth/account/sessions-panel.tsx").then((m) => ({default: m.SessionsSection})),
 );
 export const AccountDetails = lazy(() =>
   import("@/pages/auth/account/details-panel.tsx").then((m) => ({default: m.DetailsPanel})),

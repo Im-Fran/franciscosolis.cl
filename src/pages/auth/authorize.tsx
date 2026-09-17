@@ -2,15 +2,16 @@ import {useCallback, useState} from "react";
 import type {FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {Link, useSearchParams} from "react-router-dom";
-import {ArrowLeft, ArrowSquareOut, EnvelopeSimple, PaperPlaneTilt} from "@phosphor-icons/react";
+import {ArrowLeft, ArrowSquareOut, EnvelopeSimple, PaperPlaneTilt, ShieldCheck, UserSwitch} from "@phosphor-icons/react";
 import {SiGoogle} from "@icons-pack/react-simple-icons";
 import {AuthCard} from "@/components/auth/auth-card.tsx";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input} from "@/components/ui/input.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {Avatar} from "@/components/ui/avatar.tsx";
 import {loadAuthorizationRequest, requestParkedMagicLink} from "@/lib/auth/authorize.ts";
-import {looksLikeEmail} from "@/lib/auth/format.ts";
+import {formatDateTime, looksLikeEmail} from "@/lib/auth/format.ts";
 import type {PendingAuthorizationProvider} from "@/lib/auth/types.ts";
 import {describeError, useResource} from "@/lib/auth/useResource.ts";
 
@@ -25,6 +26,13 @@ import {describeError, useResource} from "@/lib/auth/useResource.ts";
  *
  * It therefore hardcodes nothing about the providers. What the panel offers is what
  * `GET /oauth/authorize/:handle` lists, which is what the deployment actually has configured.
+ *
+ * A browser that already signed in to the issuer is not asked to do it again: the parked request
+ * comes back with `authenticated`, and the screen offers to *authorize* the application instead.
+ * The button behind that is a plain navigation to the `continue_url` the service handed over —
+ * never a `fetch` — because the cookie proving the session only rides a navigation, and the service
+ * re-checks it there. "Use another account" simply reveals the providers again: signing in through
+ * one replaces the session on this browser, which is what changing account means.
  */
 
 const providerIcon = (provider: PendingAuthorizationProvider, size = 16) =>
@@ -33,7 +41,7 @@ const providerIcon = (provider: PendingAuthorizationProvider, size = 16) =>
 type Phase = {kind: "form"} | {kind: "sent"; email: string; expiresIn: number};
 
 export const Authorize = () => {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const [params] = useSearchParams();
   const handle = params.get("request");
 
@@ -47,8 +55,10 @@ export const Authorize = () => {
 
   const [email, setEmail] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>({kind: "form"});
-  const [busy, setBusy] = useState<"magic_link" | "redirect" | null>(null);
+  const [busy, setBusy] = useState<"magic_link" | "redirect" | "continue" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /* Set by "use another account": the session is still live, the user just does not want it here. */
+  const [switching, setSwitching] = useState(false);
 
   /* The service's `login_hint` seeds the field, but only until the user types over it. */
   const address = email ?? request.data?.login_hint ?? "";
@@ -71,6 +81,13 @@ export const Authorize = () => {
     } finally {
       setBusy(null);
     }
+  };
+
+  /* Same shape as a redirect provider: the service resumes the parked request on the other side. */
+  const authorizeFromSession = (continueUrl: string) => {
+    setError(null);
+    setBusy("continue");
+    window.location.assign(continueUrl);
   };
 
   /* A redirect provider is a plain navigation away: the service resumes the parked request itself. */
@@ -121,8 +138,58 @@ export const Authorize = () => {
 
   const pending = request.data;
   const eyebrow = t("auth:authorize.eyebrow");
+  const account = pending.authenticated;
   const emailProviders = pending.providers.filter((provider) => provider.initiation === "email");
   const redirectProviders = pending.providers.filter((provider) => provider.initiation === "redirect");
+
+  /*
+   * Already signed in: authorize, do not authenticate. The account shown is the one the service
+   * itself resolved from its cookie, so this is a statement rather than a claim the screen makes.
+   */
+  if (account && !switching) {
+    return (
+      <AuthCard
+        title={t("auth:authorize.continue_title")}
+        subtitle={t("auth:authorize.continue_subtitle", {application: pending.client_name})}
+        eyebrow={eyebrow}
+        footer={backHome}
+      >
+        <div className="flex flex-col gap-5">
+          {error && <Alert tone="error">{t(`auth:errors.${error}`, {defaultValue: error})}</Alert>}
+
+          <div className="flex items-center gap-3 rounded-[var(--radius-md)] bg-neutral-900/60 px-4 py-3">
+            <Avatar name={account.name} email={account.email} picture={account.picture} size={40}/>
+            <div className="min-w-0">
+              <p className="truncate text-sm text-text">{account.name ?? account.email}</p>
+              {account.name && <p className="truncate text-[13px] text-neutral-400">{account.email}</p>}
+              <p className="mt-0.5 text-xs text-neutral-600">
+                {t("auth:authorize.signed_in_at", {value: formatDateTime(account.auth_time, i18n.language)})}
+              </p>
+            </div>
+          </div>
+
+          <Button onClick={() => authorizeFromSession(account.continue_url)} disabled={busy !== null} data-fs-hover>
+            {busy === "continue" ? <Spinner size={16}/> : <ShieldCheck size={16}/>}
+            {t("auth:authorize.authorize_cta", {application: pending.client_name})}
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setError(null);
+              setSwitching(true);
+            }}
+            disabled={busy !== null}
+            data-fs-hover
+          >
+            <UserSwitch size={16}/> {t("auth:authorize.use_another_account")}
+          </Button>
+
+          <p className="text-[13px] leading-relaxed text-neutral-500">{t("auth:authorize.continue_note")}</p>
+        </div>
+      </AuthCard>
+    );
+  }
 
   if (phase.kind === "sent") {
     return (
@@ -157,6 +224,13 @@ export const Authorize = () => {
     >
       <div className="flex flex-col gap-5">
         {error && <Alert tone="error">{t(`auth:errors.${error}`, {defaultValue: error})}</Alert>}
+
+        {/* Only reachable through "use another account": the session is still there to go back to. */}
+        {account && switching && (
+          <Button variant="ghost" size="sm" onClick={() => setSwitching(false)} data-fs-hover>
+            <ArrowLeft size={14}/> {t("auth:authorize.back_to_account", {account: account.name ?? account.email})}
+          </Button>
+        )}
 
         {emailProviders.length > 0 && (
           <form className="flex flex-col gap-4" onSubmit={submitMagicLink} noValidate>
