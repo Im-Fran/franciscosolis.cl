@@ -1,6 +1,6 @@
 import {useCallback, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {ArrowClockwise, Desktop, Trash} from "@phosphor-icons/react";
+import {ArrowClockwise, Broom, Desktop, Trash} from "@phosphor-icons/react";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {Badge} from "@/components/ui/badge/badge.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
@@ -11,6 +11,7 @@ import {useAuth} from "@/lib/auth/auth-context.ts";
 import {describeUserAgent, formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
 import type {Session} from "@/lib/auth/types.ts";
+import {PruneDialog} from "@/pages/auth/account/prune-dialog.tsx";
 import {Panel, PanelState} from "@/pages/auth/components/panel.tsx";
 
 /**
@@ -18,6 +19,9 @@ import {Panel, PanelState} from "@/pages/auth/components/panel.tsx";
  *
  * Revoking is confirmed rather than immediate, because one of these rows is the browser doing the
  * revoking: ending that one is a sign-out, and a misplaced click should not be the way it happens.
+ *
+ * `PruneDialog` is the bulk counterpart, offered only once there is something to close besides that
+ * browser. It closes by condition rather than by row, and it too never touches the current session.
  */
 export const SessionsPanel = () => {
   const {t, i18n} = useTranslation();
@@ -26,6 +30,7 @@ export const SessionsPanel = () => {
   const sessions = useResource(useCallback((signal: AbortSignal) => authApi.sessions(signal), []));
   const revoke = useMutation(useCallback((id: string) => authApi.revokeSession(id), []));
   const [revoking, setRevoking] = useState<Session | null>(null);
+  const [pruning, setPruning] = useState(false);
 
   const active = sessions.data?.filter((session) => !session.revoked_at) ?? [];
 
@@ -49,9 +54,17 @@ export const SessionsPanel = () => {
       title={t("auth:account.sessions_title")}
       description={t("auth:account.sessions_description")}
       action={
-        <Button variant="ghost" size="sm" onClick={sessions.reload} data-fs-hover>
-          <ArrowClockwise size={14}/> {t("auth:common.refresh")}
-        </Button>
+        <span className="flex flex-wrap gap-1">
+          <Button variant="ghost" size="sm" onClick={sessions.reload} data-fs-hover>
+            <ArrowClockwise size={14}/> {t("auth:common.refresh")}
+          </Button>
+          {/* Offered only once there is something to prune besides the session doing the pruning. */}
+          {active.length > 1 && (
+            <Button variant="ghost" size="sm" onClick={() => setPruning(true)} data-fs-hover>
+              <Broom size={14}/> {t("auth:account.prune.action")}
+            </Button>
+          )}
+        </span>
       }
     >
       <PanelState
@@ -76,6 +89,7 @@ export const SessionsPanel = () => {
                     session.application_id,
                     t(`auth:providers.${session.provider}`, {defaultValue: session.provider}),
                     session.ip,
+                    [session.city, session.country].filter(Boolean).join(", "),
                   ]
                     .filter(Boolean)
                     .join(" · ")}
@@ -112,6 +126,17 @@ export const SessionsPanel = () => {
           setRevoking(null);
         }}
         onConfirm={confirm}
+      />
+
+      <PruneDialog
+        open={pruning}
+        onClose={() => setPruning(false)}
+        sessions={active}
+        onPruned={(result) => {
+          setPruning(false);
+          notify(t("auth:account.prune.done", {count: result.revoked}));
+          sessions.reload();
+        }}
       />
     </Panel>
   );

@@ -192,7 +192,7 @@ tab is a route, so a section can be reloaded into, bookmarked and linked to.
 | `/account/signature` | The corporate email signature — company accounts only |
 | `/account/access` | The roles and permissions held in the application signed in to |
 | `/account/identities` | The providers linked to the account |
-| `/account/sessions` | Every device signed in, and the button that revokes one |
+| `/account/sessions` | Every device signed in, the button that revokes one, and the bulk prune |
 | `/account/details` | The read-only record: status, verification, dates, user id |
 
 It sits at the top level rather than under `/auth` because that is what it is to a visitor: the page
@@ -200,6 +200,22 @@ behind their own avatar, reachable from anywhere on this site. What is left unde
 issuer's plumbing — the sign-in hand-off, the callback and the console. `ACCOUNT_ROUTE` in
 `lib/auth/config.ts` is where the move is made; the screens themselves still live beside the console
 they share their furniture with, under `src/pages/auth/account/`.
+
+### Pruning sessions
+
+The sessions tab carries a **Prune** button beside its refresh, shown only once the account has more
+than the one session doing the looking. It opens a dialog of conditions — idle for N days, opened
+more than N days ago, from another country, from outside this network, from another device — joined
+with *any* or *all* and optionally narrowed to an application or a sign-in method.
+
+Nothing is decided in the browser. Every change re-asks `POST /me/sessions/prune` with `dry_run`, so
+the list under the conditions is the service's own answer to "which sessions would go", and the
+confirm button sends the identical body without `dry_run`. Two guarantees come from the service and
+are worth repeating here, because they are what make the button safe to press: the session doing the
+pruning is never among the ones closed — signing out here stays the button on its own row — and a
+session missing the field a condition reads (a location a session predating the column never had, an
+address the edge could not see) is never matched by that condition, which is why the preview can come
+back shorter than the conditions suggest.
 
 `ACCOUNT_SECTIONS` in `account-nav.ts` is the single list the tabs and the router are both built
 from, so a section cannot exist in one and be missing from the other. A section may carry an
@@ -282,7 +298,8 @@ src/components/auth/ the sign-in and callback panels, shared by every applicatio
 src/pages/auth/      the screens, split out of the main bundle and fetched on demand;
                      authorize.tsx is the hosted screen and belongs to no application here
   account/           the account: account-layout.tsx holds the shell and the tab column,
-                     account-nav.ts the sections, and each panel is one tab, one chunk
+                     account-nav.ts the sections, and each panel is one tab, one chunk;
+                     prune-dialog.tsx is the sessions tab's bulk close, previewed by dry run
     signature/       the corporate email signature: the HTML builder and the form that drives it
   admin/             the console: components/ holds its shell, navigation, gate and no-access
                      screen; overview.tsx, users/, sessions/, invitations/, applications/,
