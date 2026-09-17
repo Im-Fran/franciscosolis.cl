@@ -11,7 +11,7 @@ import {PageHeader} from "@/components/admin/page-header.tsx";
 import {ToastProvider} from "@/lib/admin/toast-provider.tsx";
 import {useAuth} from "@/lib/auth/auth-context.ts";
 import {AuthShell} from "@/pages/auth/components/auth-shell.tsx";
-import {ACCOUNT_SECTIONS, sectionFromPath} from "@/pages/auth/account/account-nav.ts";
+import {accountSections, sectionFromPath} from "@/pages/auth/account/account-nav.ts";
 
 /**
  * What the account holds: profile, granted access, linked providers and live sessions.
@@ -54,6 +54,7 @@ const AccountLayout = () => {
   }
 
   const section = sectionFromPath(pathname);
+  const sections = accountSections(me.user.email);
 
   return (
     <AuthShell title={t("auth:account.title")}>
@@ -66,7 +67,7 @@ const AccountLayout = () => {
       {/* The route is the selection, so the tabs are read-only: opening one is following its link. */}
       <Tabs value={section}>
         <TabsList aria-label={t("auth:account.tabs.label")}>
-          {ACCOUNT_SECTIONS.map(({value, to, label, icon: SectionIcon}) => (
+          {sections.map(({value, to, label, icon: SectionIcon}) => (
             <TabsTrigger key={value} value={value} to={to} icon={<SectionIcon size={16}/>}>
               {t(label)}
             </TabsTrigger>

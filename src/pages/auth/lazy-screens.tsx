@@ -25,6 +25,9 @@ export const Account = lazy(() =>
 export const AccountProfile = lazy(() =>
   import("@/pages/auth/account/profile-form.tsx").then((m) => ({default: m.ProfileSection})),
 );
+export const AccountSignature = lazy(() =>
+  import("@/pages/auth/account/signature/signature-panel.tsx").then((m) => ({default: m.SignatureSection})),
+);
 export const AccountAccess = lazy(() =>
   import("@/pages/auth/account/access-panel.tsx").then((m) => ({default: m.AccessPanel})),
 );

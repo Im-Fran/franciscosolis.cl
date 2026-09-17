@@ -65,6 +65,7 @@ export const ADMIN_ROUTE = `${AUTH_ROUTE}/admin`;
  */
 export const accountRoute = {
   profile: ACCOUNT_ROUTE,
+  signature: `${ACCOUNT_ROUTE}/signature`,
   access: `${ACCOUNT_ROUTE}/access`,
   identities: `${ACCOUNT_ROUTE}/identities`,
   sessions: `${ACCOUNT_ROUTE}/sessions`,

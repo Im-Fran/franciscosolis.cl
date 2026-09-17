@@ -11,6 +11,7 @@ import {
   AccountIdentities,
   AccountProfile,
   AccountSessions,
+  AccountSignature,
   AdminLayout,
   AdminOverview,
   ApplicationEditor,
@@ -62,6 +63,7 @@ export const authRoutes: RouteObject = {
           element: <Account/>,
           children: [
             {index: true, element: <AccountProfile/>},
+            {path: "signature", element: <AccountSignature/>},
             {path: "access", element: <AccountAccess/>},
             {path: "identities", element: <AccountIdentities/>},
             {path: "sessions", element: <AccountSessions/>},

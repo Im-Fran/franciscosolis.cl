@@ -16,6 +16,51 @@ so every page a user sees during a sign-in is one of these.
 `/auth/account` and `/auth/admin` need a session; anonymous visitors are sent to `/auth` with a
 `return_to` so the flow resumes where they were headed.
 
+## The email signature
+
+`/auth/account` grows one extra tab for accounts whose address is on `@franciscosolis.cl`: a
+generator for the corporate email signature, ready to paste into Gmail, Outlook or anything else.
+
+It is deliberately the *only* thing on these screens that talks to no API. A signature is not
+account state — it is a block of HTML a person pastes into their mail client once and then owns —
+so there is nothing for the service to store and nothing for an administrator to manage. The draft
+lives in this browser's `localStorage` under `fs.auth.signature.v2` so that returning to the screen
+does not mean retyping every link, keyed to the address that wrote it; the profile is the default it
+is restored from. A `v1` draft — one list of links, written before they were split in two — is read
+once as the person's own links and rewritten in the current shape.
+
+**Tables, not the design system.** `build-signature.ts` emits nested tables with every rule inline,
+because mail clients are not browsers: Gmail drops `<style>` blocks and Outlook renders through Word,
+which ignores flexbox, grid and most of `display`. The preview beside the form renders that same
+string, so what is previewed is what is pasted. The person's picture is circled with
+`border-radius`, which every webmail honours and Word does not — it falls back to a square, which is
+why the picture is square to begin with. It is the only image in the block that is not a favicon:
+the company's name set in ink above its address carries that half, where a second circled mark a few
+lines under the first one read as another avatar, and an unloaded pair read as damage.
+
+**Two rows of links, not one.** The person's go under their address and the company's under the
+website, because a recipient looking for the person and a recipient looking for the business read
+different halves of a signature, and one mixed row makes them guess which icon is which. Both are
+edited with the same list in the form. The company's row is seeded from `COMPANY.socials` rather
+than fixed by it: that keeps the official set canonical and restorable, while adding the company
+somewhere new stays one field on the screen instead of a release.
+
+**Icons come from the host, not from a list.** A social link is just a URL; the icon is
+`https://favicon.is/<host>` and the `alt` is read from the same host. A per-network mapping would be
+one more table to keep in step, and a link to whatever network exists next year would have no icon.
+
+**Only `http`, `https` and `mailto` are linked.** A signature is pasted into other people's
+mailboxes, so `safeUrl` is where a `javascript:` or `data:` href stops. A bare host is read as
+`https://`, because that is what people paste; a path is refused rather than prefixed, since
+`/foto.webp` is something only this origin can resolve and turning it into a host would put a
+permanently broken image in someone's signature. Every value the builder interpolates is escaped,
+and the preview is passed through DOMPurify on the way to `dangerouslySetInnerHTML`.
+
+Copying writes the clipboard twice, as `text/html` and as `text/plain`: the rich flavour is what a
+mail client pastes as a formatted signature, and the plain one is the source a "paste HTML" settings
+box expects. A browser without `ClipboardItem` — or one that refuses the rich write — gets the
+source, which still works everywhere.
+
 ## The hosted sign-in screen
 
 `api.franciscosolis.cl` is a backend end to end: it answers JSON and redirects and renders no
@@ -113,13 +158,16 @@ tab is a route, so a section can be reloaded into, bookmarked and linked to.
 | Route | What it is |
 | ----- | ---------- |
 | `/auth/account` | Profile: the name, picture and locale the account owns |
+| `/auth/account/signature` | The corporate email signature — company accounts only |
 | `/auth/account/access` | The roles and permissions held in the application signed in to |
 | `/auth/account/identities` | The providers linked to the account |
 | `/auth/account/sessions` | Every device signed in, and the button that revokes one |
 | `/auth/account/details` | The read-only record: status, verification, dates, user id |
 
 `ACCOUNT_SECTIONS` in `account-nav.ts` is the single list the tabs and the router are both built
-from, so a section cannot exist in one and be missing from the other.
+from, so a section cannot exist in one and be missing from the other. A section may carry an
+`offeredTo` test — the signature's is `isCompanyEmail` — and the route guards itself the same way,
+so a link to a tab an account is not offered lands on the account instead of on an empty screen.
 
 ## The administration console
 
@@ -198,6 +246,7 @@ src/pages/auth/      the screens, split out of the main bundle and fetched on de
                      authorize.tsx is the hosted screen and belongs to no application here
   account/           the account: account-layout.tsx holds the shell and the tab column,
                      account-nav.ts the sections, and each panel is one tab, one chunk
+    signature/       the corporate email signature: the HTML builder and the form that drives it
   admin/             the console: components/ holds its shell, navigation, gate and no-access
                      screen; overview.tsx, users/, sessions/, invitations/, applications/,
                      roles/, permissions/ and audit/ are one section each, one chunk each
