@@ -21,6 +21,10 @@ const tones: Record<string, string> = {
   queued: PENDING,
   failed: BAD,
   archived: INERT,
+  /* Auth: avatar uploads. `superseded` is inert — a picture a newer one replaced. */
+  approved: GOOD,
+  rejected: BAD,
+  superseded: INERT,
   /* Auth: accounts, invitations, client applications and their secrets. */
   active: GOOD,
   accepted: GOOD,

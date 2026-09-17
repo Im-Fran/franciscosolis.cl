@@ -26,6 +26,14 @@ export type RequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   /** JSON request body. */
   json?: unknown;
+  /**
+   * `multipart/form-data` body, for the one endpoint that takes a file.
+   *
+   * The `Content-Type` is deliberately left unset when this is used: the browser has to write it
+   * itself so it can append the boundary token, and a hand-written header would leave the service
+   * parsing a body it cannot find the parts of.
+   */
+  form?: FormData;
   /** Send an access token. Off for the handful of public endpoints. */
   auth?: boolean;
   signal?: AbortSignal;
@@ -119,7 +127,7 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
       return await fetch(`${baseUrl}${path}`, {
         method,
         headers,
-        body: options.json === undefined ? undefined : JSON.stringify(options.json),
+        body: options.form ?? (options.json === undefined ? undefined : JSON.stringify(options.json)),
         signal,
       });
     } catch (error) {

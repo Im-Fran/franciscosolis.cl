@@ -114,12 +114,67 @@ export type MeResponse = {
   permissions: string[];
 };
 
+/**
+ * The profile fields a person may edit.
+ *
+ * `picture` is deliberately absent: the service refuses it with a 400, because a picture is either
+ * one a sign-in provider vouches for or one an administrator approved. Uploading is `POST
+ * /me/avatar`; see `avatar-panel.tsx`.
+ */
 export type ProfileUpdate = {
   name?: string | null;
   given_name?: string | null;
   family_name?: string | null;
-  picture?: string | null;
   locale?: string | null;
+};
+
+/** Lifecycle of an uploaded avatar, as the service names it. */
+export type AvatarStatus = "pending" | "approved" | "rejected" | "superseded" | (string & {});
+
+/**
+ * One uploaded avatar.
+ *
+ * `url` is set only once a reviewer has approved it: an upload waiting for a decision has no
+ * address at all, which is what "pending" means here rather than merely "unlisted".
+ */
+export type AvatarUpload = {
+  id: string;
+  user_id: string;
+  status: AvatarStatus;
+  content_type: string;
+  size: number;
+  url: string | null;
+  review_note: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** `GET /me/avatar`: what is published, what is waiting, what was last refused, and the limits. */
+export type MyAvatar = {
+  current: AvatarUpload | null;
+  pending: AvatarUpload | null;
+  rejected: AvatarUpload | null;
+  limits: {max_bytes: number; content_types: string[]};
+};
+
+/**
+ * An upload as the review queue renders it: the account resolved server-side, and `preview` — a
+ * `data:` URL of the bytes, since a picture awaiting review has no address a reviewer could load.
+ */
+export type AdminAvatarUpload = AvatarUpload & {
+  user_email?: string | null;
+  user_name?: string | null;
+  user_picture?: string | null;
+  preview?: string | null;
+};
+
+export type AdminAvatarFilters = {
+  status?: AvatarStatus;
+  user_id?: string;
+  limit?: number;
+  offset?: number;
 };
 
 export type Identity = {

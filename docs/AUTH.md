@@ -188,7 +188,7 @@ tab is a route, so a section can be reloaded into, bookmarked and linked to.
 
 | Route | What it is |
 | ----- | ---------- |
-| `/account` | Profile: the name, picture and locale the account owns |
+| `/account` | Profile: the name and locale the account owns, and the avatar it uploads |
 | `/account/signature` | The corporate email signature — company accounts only |
 | `/account/access` | The roles and permissions held in the application signed in to |
 | `/account/identities` | The providers linked to the account |
@@ -206,6 +206,27 @@ from, so a section cannot exist in one and be missing from the other. A section 
 `offeredTo` test — the signature's is `isCompanyEmail` — and the route guards itself the same way,
 so a link to a tab an account is not offered lands on the account instead of on an empty screen.
 
+## The profile picture
+
+A picture is not a field on the profile form any more. It used to be a URL — anybody could point
+their avatar at any image anywhere, re-fetched at display time from a host nobody here controls —
+and that is what the upload replaces. `AvatarPanel` (`account/avatar-panel.tsx`) posts the file to
+`POST /me/avatar` as multipart, the service stores it in an R2 bucket with no public access, and
+**nothing changes on screen**: the account keeps the picture it had, the panel says the new one is
+waiting, and an administrator publishes it from
+[the review queue](#the-administration-console). `PATCH /me` refuses a `picture` field outright, so
+this is the only way in.
+
+Three consequences worth knowing. The upload answers `202`, not `200` — the request succeeded and
+the picture did not become anything yet, which is exactly what the panel says. A refusal comes back
+with the reviewer's reason on `GET /me/avatar`, so the person is told why rather than left to
+re-upload the same file. And removing works on both halves at once: a pending upload is cancelled
+and a published avatar is taken off the account, while a picture that came from a sign-in provider —
+a Google photo — is deliberately left alone, since it was never uploaded here.
+
+The preview before sending is an object URL of the local file, revoked as soon as it is replaced or
+sent; an unreleased one keeps the whole file alive in the tab for as long as the page is open.
+
 ## The administration console
 
 `/auth/admin` is a console with a section per resource, not one screen with tabs. Every section is a
@@ -215,6 +236,7 @@ route and every record has an address, so a filtered list or one account is a UR
 | ----- | ---------- |
 | `/auth/admin` | Overview: what needs attention, what you hold, what just happened |
 | `/auth/admin/users`, `/users/:id` | Accounts, and one account's status, roles, providers and sessions |
+| `/auth/admin/avatars` | Uploaded profile pictures waiting for a decision, and the ones already decided |
 | `/auth/admin/sessions` | Who is signed in right now, across every account and application |
 | `/auth/admin/invitations` | The allowlist sign-up is gated on |
 | `/auth/admin/applications`, `/applications/new`, `/applications/:id` | Client applications, their URLs, their OAuth configuration and their secrets |
@@ -224,6 +246,13 @@ route and every record has an address, so a filtered list or one account is a UR
 
 The `?tab=` links the previous single-screen console used are forwarded to the matching route, so a
 bookmark still lands where it meant to.
+
+The avatars section is the moderation step the account screen waits on, and it reads as one: a
+pending upload has no URL anywhere, so the API inlines the bytes as a `preview` data URL and the
+queue renders that. `avatars:read` opens the screen and `avatars:review` is what the two buttons
+need, so an account can be given the queue to look at without being given the decision. A user's
+page links into it filtered by `?user_id=`, rather than carrying a review panel of its own — one
+place to make the decision is one place to keep in step with the service.
 
 ### Signed in is not admitted
 
@@ -250,8 +279,9 @@ interface only once their token refreshes. The API itself is never out of date.
 Three things are deliberately absent, and all three are the API being the authority rather than an
 oversight:
 
-- **No profile editing.** An administrator decides access — status, roles, sessions. The name and
-  the picture belong to the person and are refreshed from whichever provider signed them in.
+- **No profile editing.** An administrator decides access — status, roles, sessions. The name
+  belongs to the person, and so does the picture: what the console decides about an avatar is
+  whether it may be published, never what it is.
 - **No deleting an application or an account.** An application is deactivated with `is_active` and
   an account with `status`; the destructive versions live in the auth repo's operator scripts.
 - **No totals.** Every list endpoint pages with `limit`/`offset` and reports no count, so a figure
@@ -286,7 +316,8 @@ src/pages/auth/      the screens, split out of the main bundle and fetched on de
     signature/       the corporate email signature: the HTML builder and the form that drives it
   admin/             the console: components/ holds its shell, navigation, gate and no-access
                      screen; overview.tsx, users/, sessions/, invitations/, applications/,
-                     roles/, permissions/ and audit/ are one section each, one chunk each
+                     roles/, permissions/, avatars/ and audit/ are one section each, one chunk
+                     each
 ```
 
 The console is built from `src/components/admin/` and `src/lib/admin/` — the data table, paging,

@@ -102,6 +102,9 @@ export const adminRoute = {
   users: `${ADMIN_ROUTE}/users`,
   user: (id: string) => `${ADMIN_ROUTE}/users/${encodeURIComponent(id)}`,
   sessions: `${ADMIN_ROUTE}/sessions`,
+  avatars: `${ADMIN_ROUTE}/avatars`,
+  /** The queue filtered to one account — the link a user's page offers. */
+  userAvatars: (id: string) => `${ADMIN_ROUTE}/avatars?user_id=${encodeURIComponent(id)}`,
   invitations: `${ADMIN_ROUTE}/invitations`,
   applications: `${ADMIN_ROUTE}/applications`,
   newApplication: `${ADMIN_ROUTE}/applications/new`,
