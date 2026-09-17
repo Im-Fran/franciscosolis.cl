@@ -7,6 +7,11 @@ import type {AuthClientConfig} from "@/lib/auth/config.ts";
  * The CMS is a client application of its own: it signs in at the same issuer as the rest of the
  * site but under `franciscosolis-cms`, so the access token it receives carries the roles and
  * permissions granted *for the CMS* — which is exactly what `/cms/admin/*` checks.
+ *
+ * It is a client in the full sense, single sign-on included: it collects no credentials itself but
+ * starts an authorization code request at `/auth`'s `GET /oauth/authorize` and lets the service's
+ * hosted screen authenticate the user. `CMS_SIGN_IN_ROUTE` below is only where that hand-off is
+ * kicked off from; the screen it renders is a spinner, not a form.
  */
 
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
@@ -19,6 +24,11 @@ export const CMS_CLIENT_ID = import.meta.env.VITE_CMS_CLIENT_ID ?? "franciscosol
 
 /** Base path of the CMS interface inside this site. */
 export const CMS_ROUTE = "/cms";
+
+/**
+ * Where the gate sends anonymous visitors, and where the callback's retry points. Not a sign-in
+ * screen any more — it starts the hosted flow and waits, keeping `?return_to=` across the trip.
+ */
 export const CMS_SIGN_IN_ROUTE = `${CMS_ROUTE}/sign-in`;
 export const CMS_CALLBACK_ROUTE = `${CMS_ROUTE}/callback`;
 

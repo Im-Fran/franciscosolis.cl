@@ -58,6 +58,33 @@ export const createAuthFlow = (
     }
   };
 
+  /**
+   * Hands the browser to the authorization server itself, the way any other relying party would.
+   *
+   * This is the single sign-on entry point: `GET /oauth/authorize` validates the request, parks it
+   * and redirects to the hosted sign-in screen, which offers whichever providers the deployment
+   * actually has configured and resumes the parked request. The application therefore ships no
+   * credential form of its own — it starts a standard authorization code request and waits at its
+   * callback route, exactly as it would against any other OpenID provider.
+   *
+   * The PKCE transaction is still minted here, so `completeAuthorization` verifies the `state` and
+   * spends the verifier just as it does for a flow this site started itself.
+   */
+  const startAuthorization = async (returnTo = config.defaultReturnTo, loginHint?: string) => {
+    const {transaction, codeChallenge} = await beginTransaction("sso", returnTo);
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: config.clientId,
+      redirect_uri: redirectUri(config),
+      state: transaction.state,
+      code_challenge: codeChallenge,
+      code_challenge_method: "S256",
+      scope: config.scope,
+    });
+    if (loginHint) params.set("login_hint", loginHint);
+    window.location.assign(`${config.baseUrl}/oauth/authorize?${params}`);
+  };
+
   /** Hands the browser over to Google; the flow resumes at the callback route. */
   const startGoogleSignIn = async (returnTo = config.defaultReturnTo, loginHint?: string) => {
     const {transaction, codeChallenge} = await beginTransaction("google", returnTo);
@@ -130,10 +157,10 @@ export const createAuthFlow = (
     storage.clearTransaction();
   };
 
-  return {startMagicLink, startGoogleSignIn, completeAuthorization, signOut};
+  return {startAuthorization, startMagicLink, startGoogleSignIn, completeAuthorization, signOut};
 };
 
 /** The site's own flow. */
 export const webFlow = createAuthFlow(WEB_AUTH_CONFIG, webSession, webHttp, authApi);
 
-export const {startMagicLink, startGoogleSignIn, completeAuthorization, signOut} = webFlow;
+export const {startAuthorization, startMagicLink, startGoogleSignIn, completeAuthorization, signOut} = webFlow;
