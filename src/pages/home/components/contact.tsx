@@ -4,6 +4,7 @@ import {GithubLogo, LinkedinLogo, XLogo, InstagramLogo, ThreadsLogo} from "@phos
 import {Button} from "@/components/ui/button/button.tsx";
 import {Badge} from "@/components/ui/badge/badge.tsx";
 import {useScrollReveal} from "@/pages/home/hooks/useScrollReveal.ts";
+import {ADDRESS_LINE, BUSINESS_ACTIVITY, CONTACT_EMAIL, LEGAL_NAME} from "@/lib/company.ts";
 
 const socials = [
   {label: "GitHub", href: "https://github.com/Im-Fran", Icon: GithubLogo},
@@ -13,6 +14,13 @@ const socials = [
   {label: "Threads", href: "https://threads.net/@fran.dev_", Icon: ThreadsLogo},
 ];
 
+/**
+ * Where a visitor decides to write, so it is also where they find out who they would be writing to.
+ *
+ * The rest of the page is a portfolio and speaks in the first person; this block is the one place
+ * in it that names the company behind the work. It is read from `@/lib/company.ts` for the same
+ * reason the footer is — one address, everywhere.
+ */
 export const Contact = () => {
   const {t} = useTranslation();
   const sectionRef = useRef<HTMLElement>(null);
@@ -34,12 +42,18 @@ export const Contact = () => {
         </h2>
 
         <a
-          href="mailto:fsolism@franciscosolis.cl"
+          href={`mailto:${CONTACT_EMAIL}`}
           data-fs-hover
           className="reveal inline-block border-b border-accent-500 text-2xl sm:text-3xl text-text pb-1 mb-10"
         >
-          fsolism@franciscosolis.cl
+          {CONTACT_EMAIL}
         </a>
+
+        <p className="reveal mb-10 max-w-xl text-sm text-neutral-500">
+          <span className="block text-neutral-400">{LEGAL_NAME}</span>
+          <span className="block">{BUSINESS_ACTIVITY}</span>
+          <span className="block">{ADDRESS_LINE}</span>
+        </p>
 
         <div className="reveal flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           {socials.map(({label, href, Icon}) => (

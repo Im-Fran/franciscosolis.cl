@@ -33,6 +33,8 @@ import type {
   RoleUpdate,
   ServiceStatus,
   Session,
+  SessionPruneRequest,
+  SessionPruneResult,
 } from "@/lib/auth/types.ts";
 
 export type AuthApi = ReturnType<typeof createAuthApi>;
@@ -80,6 +82,12 @@ export const createAuthApi = (request: RequestFn) => ({
   identities: (signal?: AbortSignal) => request<Identity[]>("/me/identities", {signal}),
   sessions: (signal?: AbortSignal) => request<Session[]>("/me/sessions", {signal}),
   revokeSession: (sessionId: string) => request<void>(`/me/sessions/${id(sessionId)}`, {method: "DELETE"}),
+  /**
+   * Bulk close. `dry_run` is what the interface previews with: same answer, nothing revoked. The
+   * service never closes the session this call is made from, whatever the rules say.
+   */
+  pruneSessions: (rules: SessionPruneRequest) =>
+    request<SessionPruneResult>("/me/sessions/prune", {method: "POST", json: rules}),
   logout: () => request<void>("/logout", {method: "POST"}),
 
   admin: {

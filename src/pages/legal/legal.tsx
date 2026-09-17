@@ -8,6 +8,14 @@ import {useLanguageToggle} from "@/hooks/useLanguageToggle.ts";
 import {useCmsLegalIndex, useCmsLegalPage} from "@/lib/cms/content.ts";
 import {PROSE_CLASS, renderMarkdown} from "@/lib/cms/markdown.ts";
 import {SectionError} from "@/pages/home/components/section-state.tsx";
+import {
+  ADDRESS_LINE,
+  BUSINESS_ACTIVITY,
+  CONTACT_EMAIL,
+  LEGAL_NAME,
+  RUT,
+  TRADE_NAME,
+} from "@/lib/company.ts";
 
 /**
  * The legal pages, read from the CMS.
@@ -21,6 +29,11 @@ import {SectionError} from "@/pages/home/components/section-state.tsx";
  * through the document's own `##` sections. That keeps the effect honest — it is revealing the
  * real structure of the text rather than a list written to look like one — and it degrades
  * gracefully: a document with no headings is one section that appears at once.
+ *
+ * What is *not* left to the CMS is who issues these documents. The identity block below the title
+ * is rendered from `@/lib/company.ts`, so the razón social, the RUT, the giro and the domicilio are
+ * on the page whatever the CMS happens to be serving — and are still on it when the CMS is
+ * unreachable, which is the one moment a visitor most needs to know who they were dealing with.
  */
 
 type TerminalPhase = "typing-clear" | "loading-clear" | "typing-command" | "loading-command" | "streaming" | "loaded";
@@ -161,6 +174,57 @@ export const Legal = () => {
         <h1 className="text-[clamp(32px,5.5vw,56px)] text-text mb-8">
           {t("legal:title")}
         </h1>
+
+        {/*
+          * The issuer of every document on this page. It sits above the tabs rather than inside the
+          * terminal because it is not part of any one document — it identifies the company behind
+          * all of them, and it is the same in both languages: only the labels translate, the
+          * registered values never do.
+          */}
+        <section
+          aria-labelledby="legal-entity"
+          className="mb-10 rounded-[var(--radius-md)] border border-neutral-800 bg-surface p-5 sm:p-6"
+        >
+          <h2 id="legal-entity" className="text-sm uppercase tracking-[0.08em] text-accent-300 mb-2">
+            {t("legal:entity.title")}
+          </h2>
+          <p className="text-sm text-neutral-400 mb-5">{t("legal:entity.lead")}</p>
+          <dl className="grid gap-x-8 gap-y-3 text-sm sm:grid-cols-[auto_1fr]">
+            <dt className="text-neutral-500">{t("legal:entity.legal_name")}</dt>
+            <dd className="text-neutral-300">{LEGAL_NAME}</dd>
+
+            <dt className="text-neutral-500">{t("legal:entity.trade_name")}</dt>
+            <dd className="text-neutral-300">{TRADE_NAME}</dd>
+
+            {/* Omitted rather than shown empty: a blank RUT on a legal page is worse than none. */}
+            {RUT && (
+              <>
+                <dt className="text-neutral-500">{t("legal:entity.rut")}</dt>
+                <dd className="text-neutral-300">{RUT}</dd>
+              </>
+            )}
+
+            <dt className="text-neutral-500">{t("legal:entity.activity")}</dt>
+            <dd className="text-neutral-300">{BUSINESS_ACTIVITY}</dd>
+
+            <dt className="text-neutral-500">{t("legal:entity.address")}</dt>
+            <dd className="text-neutral-300">{ADDRESS_LINE}</dd>
+
+            <dt className="text-neutral-500">{t("legal:entity.email")}</dt>
+            <dd>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-accent-300 hover:text-text transition-colors"
+                data-fs-hover
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </dd>
+
+            <dt className="text-neutral-500">{t("legal:entity.jurisdiction")}</dt>
+            <dd className="text-neutral-300">{t("legal:entity.jurisdiction_value")}</dd>
+          </dl>
+        </section>
 
         {index.error ? (
           <SectionError error={index.error} onRetry={index.reload}/>

@@ -191,11 +191,53 @@ export type Session = {
   provider: string;
   ip: string | null;
   user_agent: string | null;
+  /**
+   * Where Cloudflare placed the sign-in, stamped once when the session was opened. Null on a
+   * session older than the column and on one the edge could not place, which is why every rule
+   * that reads it treats null as "unknown" rather than as a mismatch.
+   */
+  country: string | null;
+  city: string | null;
   /** True for the session the access token in use belongs to. */
   current: boolean;
   revoked_at: string | null;
   last_seen_at: string;
   created_at: string;
+};
+
+/**
+ * The conditions `POST /me/sessions/prune` closes sessions by. Each is judged against the session
+ * the request is made from — the only one the account holder is demonstrably holding — so "other"
+ * always means "other than this device, right now".
+ */
+export type SessionPruneRules = {
+  /** Not seen for this many days (`last_seen_at`). */
+  inactive_for_days?: number;
+  /** Opened more than this many days ago (`created_at`). */
+  older_than_days?: number;
+  other_countries?: boolean;
+  /** Outside the current session's /24 (IPv4) or /48 (IPv6). */
+  other_networks?: boolean;
+  other_devices?: boolean;
+};
+
+export type SessionPruneRequest = {
+  rules: SessionPruneRules;
+  /** Narrows which sessions the rules are considered against at all. Always ANDed on top. */
+  scope?: {applications?: string[]; providers?: string[]};
+  /** `any`: one rule is enough. `all`: every selected rule has to hold at once. */
+  match?: "any" | "all";
+  /** Answers with the same list without revoking anything. */
+  dry_run?: boolean;
+};
+
+export type SessionPruneResult = {
+  dry_run: boolean;
+  match: "any" | "all";
+  matched: number;
+  revoked: number;
+  /** The sessions closed, or the ones that would be on a dry run. Never the current one. */
+  sessions: Session[];
 };
 
 /* ── Admin ────────────────────────────────────────────────────────────────── */

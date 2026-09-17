@@ -4,5 +4,17 @@
   "back": "Volver",
   "command": "./load-legal --type",
   "updated": "Última actualización: {{version}}",
-  "untranslated": "Este documento aún no está traducido; se muestra en inglés."
+  "untranslated": "Este documento aún no está traducido; se muestra en inglés.",
+  "entity": {
+    "title": "Titular del sitio y responsable del tratamiento",
+    "lead": "Los documentos de esta página son emitidos por la empresa individual que opera franciscosolis.cl y los servicios asociados a este dominio.",
+    "legal_name": "Razón social",
+    "trade_name": "Nombre de fantasía",
+    "rut": "RUT",
+    "activity": "Giro",
+    "address": "Domicilio",
+    "email": "Correo de contacto",
+    "jurisdiction": "Jurisdicción",
+    "jurisdiction_value": "Tribunales ordinarios de justicia de Santiago, Chile"
+  }
 }
