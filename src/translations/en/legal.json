@@ -4,5 +4,17 @@
   "back": "Back",
   "command": "./load-legal --type",
   "updated": "Last updated: {{version}}",
-  "untranslated": "This document has not been translated yet; it is shown in English."
+  "untranslated": "This document has not been translated yet; it is shown in English.",
+  "entity": {
+    "title": "Site owner and data controller",
+    "lead": "The documents on this page are issued by the sole proprietorship company that operates franciscosolis.cl and the services under this domain.",
+    "legal_name": "Registered name",
+    "trade_name": "Trading name",
+    "rut": "Chilean tax ID (RUT)",
+    "activity": "Line of business",
+    "address": "Registered address",
+    "email": "Contact email",
+    "jurisdiction": "Jurisdiction",
+    "jurisdiction_value": "Ordinary courts of justice of Santiago, Chile"
+  }
 }

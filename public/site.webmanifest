@@ -1,7 +1,8 @@
 {
   "name": "FranciscoSolis",
   "short_name": "FranciscoSolis",
-  "description": "Francisco Solís — Full Stack & Mobile Developer",
+  "lang": "es-CL",
+  "description": "FranciscoSolis E.I.R.L. — desarrollo y mantención de servicios informáticos.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e1e1e",

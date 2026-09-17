@@ -1,5 +1,5 @@
 {
-  "all_rights_reserved": "© FranciscoSolis {{year}}. All Rights Reserved.",
+  "all_rights_reserved": "© FranciscoSolis E.I.R.L. {{year}}. All rights reserved.",
   "toggle_lang": "Change Language ({{lang}})",
   "view_github_profile": "View GitHub Profile",
   "cookie_consent": "We use cookies to improve your experience on our site. By using our site, you consent to cookies.",
@@ -9,13 +9,14 @@
   "text_size_small": "Small",
   "text_size_normal": "Normal",
   "text_size_large": "Large",
-  "copyright": "© {{year}} Francisco Solís",
-  "footer_credit": "Made with ☕ by Francisco Solis Maturana",
+  "copyright": "© {{year}} FranciscoSolis E.I.R.L.",
+  "footer_credit": "Made with ☕ by FranciscoSolis E.I.R.L.",
   "legal_link": "Terms & Privacy",
   "brand_link": "Brand",
   "loading": "Loading…",
   "content_unreachable": "This section could not be loaded — the content service is unreachable right now.",
   "content_failed": "This section could not be loaded.",
   "retry": "Try again",
-  "empty": "Nothing published here yet."
+  "empty": "Nothing published here yet.",
+  "company_rut": "Chilean tax ID (RUT) {{rut}}"
 }

@@ -11,18 +11,38 @@
  * renders this very same string, so what is previewed is what is pasted.
  */
 
-/** The company block, which is the same for everyone who can see this section. */
+import {
+  ADDRESS_LINE,
+  EMAIL_DOMAIN,
+  LEGAL_NAME,
+  LOGO_URL,
+  RUT,
+  SHORT_LEGAL_NAME,
+  SOCIALS,
+  WEBSITE,
+} from "@/lib/company.ts";
+
+/**
+ * The company block, which is the same for everyone who can see this section.
+ *
+ * Every value is read from `@/lib/company.ts` rather than written here: the signature goes out to
+ * people outside the company, so the address and the legal name in it have to be the same ones the
+ * footer and the legal pages show. `name` is the short legal name — the full one inscribed in the
+ * register is far too long for a signature — and `rut` renders only once it is filled in.
+ */
 export const COMPANY = {
-  name: "FranciscoSolis E.I.R.L.",
-  address: "Av. Irarrázaval 2401 Oficina 607, Ñuñoa",
-  website: "https://franciscosolis.cl",
+  name: SHORT_LEGAL_NAME,
+  legalName: LEGAL_NAME,
+  rut: RUT,
+  address: ADDRESS_LINE,
+  website: WEBSITE,
   /**
    * Stands in for a picture the person has not set. It is not drawn beside the company's name —
    * one circled mark at the top of a signature is enough — so this is the only place it appears.
    *
    * Absolute, because an email is read far away from this origin: a relative path is a broken image.
    */
-  logo: "https://franciscosolis.cl/brand/png/fs-avatar-circle.png",
+  logo: LOGO_URL,
   /**
    * The company's own profiles, which are the same wherever this signature is pasted.
    *
@@ -30,11 +50,11 @@ export const COMPANY = {
    * signature, so adding the company somewhere new is one field on the screen and not a release,
    * and "use my profile" puts this canonical set back.
    */
-  socials: ["https://www.linkedin.com/company/franciscosolis"],
+  socials: SOCIALS,
 } as const;
 
 /** Only accounts on the company domain have a corporate signature to generate. */
-export const COMPANY_DOMAIN = "franciscosolis.cl";
+export const COMPANY_DOMAIN = EMAIL_DOMAIN;
 
 /** Brand ink, iris and muted grey, taken from the palette in `docs/BRAND.md`. */
 const INK = "#1e1e1e";
@@ -253,6 +273,8 @@ export const buildSignature = (data: SignatureData): string => {
      */
     `<tr><td style="border-top:1px solid ${RULE};padding-top:10px;font-size:13px;color:${MUTED};">` +
     `<div style="font-weight:600;color:${INK};">${escapeHtml(COMPANY.name)}</div>` +
+    /* The RUT identifies the company to anyone who has to invoice it; omitted while it is unset. */
+    (COMPANY.rut ? `<div>RUT ${escapeHtml(COMPANY.rut)}</div>` : "") +
     `<div>${escapeHtml(COMPANY.address)}</div>` +
     `<div>${link(COMPANY.website, COMPANY.website.replace(/^https?:\/\//, ""), IRIS)}</div>` +
     (companyRow ? `<div style="padding-top:6px;">${companyRow}</div>` : "") +
