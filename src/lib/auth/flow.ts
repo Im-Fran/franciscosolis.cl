@@ -9,7 +9,15 @@ import {webSession} from "@/lib/auth/session.ts";
 import type {SessionStore} from "@/lib/auth/session.ts";
 import type {TokenResponse} from "@/lib/auth/types.ts";
 
-/** The authorization code flow with PKCE, from either provider, end to end. */
+/**
+ * The authorization code flow with PKCE, end to end.
+ *
+ * There is one way in and it is the same for every application on this origin: hand the browser to
+ * the issuer's `GET /oauth/authorize`, which parks the request and takes it to the hosted sign-in
+ * screen at `/apps/auth`. That screen owns the providers — the magic link and Google alike — so no
+ * client here starts one itself, and gaining a provider is a change to the deployment rather than
+ * to every front-end that signs in against it.
+ */
 
 export type AuthFlow = ReturnType<typeof createAuthFlow>;
 
@@ -34,30 +42,6 @@ export const createAuthFlow = (
     return {transaction, codeChallenge: await challengeFor(codeVerifier)};
   };
 
-  /** Sends the magic link. Answers 202 whether or not the address has an account, by design. */
-  const startMagicLink = async (email: string, returnTo = config.defaultReturnTo) => {
-    const {transaction, codeChallenge} = await beginTransaction("magic_link", returnTo);
-    try {
-      return await http.request<{message: string; expires_in: number}>("/magic-link", {
-        auth: false,
-        method: "POST",
-        json: {
-          email,
-          client_id: config.clientId,
-          redirect_uri: redirectUri(config),
-          state: transaction.state,
-          code_challenge: codeChallenge,
-          code_challenge_method: "S256",
-          scope: config.scope,
-        },
-      });
-    } catch (cause) {
-      /* No link went out, so nothing will ever redeem this verifier — do not leave it lying about. */
-      storage.clearTransaction(transaction.state);
-      throw cause;
-    }
-  };
-
   /**
    * Hands the browser to the authorization server itself, the way any other relying party would.
    *
@@ -68,7 +52,7 @@ export const createAuthFlow = (
    * callback route, exactly as it would against any other OpenID provider.
    *
    * The PKCE transaction is still minted here, so `completeAuthorization` verifies the `state` and
-   * spends the verifier just as it does for a flow this site started itself.
+   * spends the verifier, and the code still lands on this client's own registered redirect URI.
    */
   const startAuthorization = async (returnTo = config.defaultReturnTo, loginHint?: string) => {
     const {transaction, codeChallenge} = await beginTransaction("sso", returnTo);
@@ -83,21 +67,6 @@ export const createAuthFlow = (
     });
     if (loginHint) params.set("login_hint", loginHint);
     window.location.assign(`${config.baseUrl}/oauth/authorize?${params}`);
-  };
-
-  /** Hands the browser over to Google; the flow resumes at the callback route. */
-  const startGoogleSignIn = async (returnTo = config.defaultReturnTo, loginHint?: string) => {
-    const {transaction, codeChallenge} = await beginTransaction("google", returnTo);
-    const params = new URLSearchParams({
-      client_id: config.clientId,
-      redirect_uri: redirectUri(config),
-      state: transaction.state,
-      code_challenge: codeChallenge,
-      code_challenge_method: "S256",
-      scope: config.scope,
-    });
-    if (loginHint) params.set("login_hint", loginHint);
-    window.location.assign(`${config.baseUrl}/oauth/google/authorize?${params}`);
   };
 
   /**
@@ -157,10 +126,10 @@ export const createAuthFlow = (
     storage.clearTransaction();
   };
 
-  return {startAuthorization, startMagicLink, startGoogleSignIn, completeAuthorization, signOut};
+  return {startAuthorization, completeAuthorization, signOut};
 };
 
 /** The site's own flow. */
 export const webFlow = createAuthFlow(WEB_AUTH_CONFIG, webSession, webHttp, authApi);
 
-export const {startAuthorization, startMagicLink, startGoogleSignIn, completeAuthorization, signOut} = webFlow;
+export const {startAuthorization, completeAuthorization, signOut} = webFlow;

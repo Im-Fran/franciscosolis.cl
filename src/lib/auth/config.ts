@@ -7,6 +7,10 @@
  * one keeps its own session. An `AuthClientConfig` describes one of them; `createAuthClient` in
  * `auth-client.ts` turns it into a working client.
  *
+ * None of them collects credentials any more: every one of them starts a plain authorization code
+ * request and lets the service's hosted screen at `/apps/auth` authenticate the user. The site's
+ * own `signInRoute` below is where that hand-off is kicked off from, not a form.
+ *
  * The issuer and the site's own client id are build-time env vars so a preview deployment can point
  * at another issuer or register under its own client id without a code change. See `.env.example`.
  */
@@ -51,11 +55,25 @@ export type AuthClientConfig = {
   returnToPrefix?: string;
 };
 
-/** Base path of the auth interface inside this site. */
+/**
+ * Base path of the auth interface inside this site: the sign-in hand-off, the callback the service
+ * redirects back to, and the administration console.
+ */
 export const AUTH_ROUTE = "/auth";
 export const CALLBACK_ROUTE = `${AUTH_ROUTE}/callback`;
-export const ACCOUNT_ROUTE = `${AUTH_ROUTE}/account`;
 export const ADMIN_ROUTE = `${AUTH_ROUTE}/admin`;
+
+/**
+ * Your account, at the top level rather than under `/auth`.
+ *
+ * `/auth` is the plumbing of one identity provider — a hand-off to the hosted screen, the callback
+ * that redeems a code, the console that administers the service. An account is not plumbing: it is
+ * the page a signed-in person opens from anywhere on this site, so it answers under its own name.
+ */
+export const ACCOUNT_ROUTE = "/account";
+
+/** Where the account answered before it moved off `/auth`; `router.tsx` still forwards it. */
+export const LEGACY_ACCOUNT_ROUTE = `${AUTH_ROUTE}/account`;
 
 /**
  * The account's sections, so a tab is written once and linked to by name.
@@ -121,7 +139,12 @@ export const AUTH_CLIENT_ID = import.meta.env.VITE_AUTH_CLIENT_ID ?? "franciscos
  */
 export const AUTH_REDIRECT_PATH = import.meta.env.VITE_AUTH_REDIRECT_PATH ?? CALLBACK_ROUTE;
 
-/** The site's own client — the one `/auth` signs in with. */
+/**
+ * The site's own client — the one `/auth` signs in with.
+ *
+ * `signInRoute` is not a credential form: it starts an authorization code request at the issuer's
+ * own `GET /oauth/authorize` and waits, exactly as the CMS does. See `pages/auth/sign-in.tsx`.
+ */
 export const WEB_AUTH_CONFIG: AuthClientConfig = {
   storageNamespace: "fs.auth",
   clientId: AUTH_CLIENT_ID,

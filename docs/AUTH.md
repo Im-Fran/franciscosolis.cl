@@ -1,24 +1,31 @@
 # Auth interface
 
-The screens under `/auth`, plus the hosted sign-in screen at `/apps/auth`, are the front-end of
+The screens under `/auth`, your account at `/account` and the hosted sign-in screen at `/apps/auth`
+are the front-end of
 [`franciscosolis-auth`](https://api.franciscosolis.cl/auth/openapi.json), the centralized auth
 service for franciscosolis.cl and its services. That service is a pure API — it renders no HTML —
 so every page a user sees during a sign-in is one of these.
 
 | Route            | What it is                                                              |
 | ---------------- | ----------------------------------------------------------------------- |
-| `/auth`          | Sign-in: magic link or Google                                            |
-| `/auth/callback` | Where both providers return; redeems the authorization code             |
-| `/auth/account/*` | Your account, one tab per section — see below                          |
+| `/auth`          | Hands the browser to the hosted sign-in screen and waits — collects nothing |
+| `/auth/callback` | Where every provider returns; redeems the authorization code            |
 | `/auth/admin/*`  | The administration console — see below                                   |
+| `/account/*`     | Your account, one tab per section — see below                            |
 | `/apps/auth`     | The service's **hosted** sign-in screen — see below                      |
 
-`/auth/account` and `/auth/admin` need a session; anonymous visitors are sent to `/auth` with a
+`/account` and `/auth/admin` need a session; anonymous visitors are sent to `/auth` with a
 `return_to` so the flow resumes where they were headed.
+
+Two things moved, and both old shapes still resolve. The account used to answer under
+`/auth/account`; `/auth/account/*` is forwarded to `/account/*`, sub-path and query string intact,
+so a bookmarked tab still lands on that tab. And `/auth` used to be a credential form of its own —
+the only screen on this origin that was — which is covered under
+[the hosted sign-in screen](#the-hosted-sign-in-screen) below.
 
 ## The email signature
 
-`/auth/account` grows one extra tab for accounts whose address is on `@franciscosolis.cl`: a
+`/account` grows one extra tab for accounts whose address is on `@franciscosolis.cl`: a
 generator for the corporate email signature, ready to paste into Gmail, Outlook or anything else.
 
 It is deliberately the *only* thing on these screens that talks to no API. A signature is not
@@ -78,38 +85,50 @@ The service's `GET /oauth/authorize` validates a request, parks it, and redirect
 
 This is what sets it apart from `/auth`, and why it is a separate screen rather than a mode of the
 same one. `/auth` signs **this site** in: it mints its own PKCE verifier and `state` and drives the
-flow as a client. `/apps/auth` signs in whichever application parked the request — which need not
-be one of this site's — so it holds no session, no client id and no transaction of its own. The
-handle in the query string is its entire context, and holding it grants nothing: a provider still
-has to authenticate someone, and the code still goes to the client's registered redirect URI.
+flow as a client, under this site's client id. `/apps/auth` signs in whichever application parked
+the request — which need not be one of this site's — so it holds no session, no client id and no
+transaction of its own. The handle in the query string is its entire context, and holding it grants
+nothing: a provider still has to authenticate someone, and the code still goes to the client's
+registered redirect URI.
 
 Its two `fetch` endpoints are cross-origin by construction; the auth service allows them from any
 origin an active client registered (`CORS_PARKED_REQUEST` in its `middleware/cors.ts`).
 
-Every other application on this origin goes through it. `flow.startAuthorization(returnTo)` mints a
-PKCE transaction and navigates to `GET /oauth/authorize`, which is all an application needs to do to
-sign a user in — the CMS is the one using it today (see [CMS.md](./CMS.md)). `/auth` itself is the
-exception, and deliberately: it is the front-end of this issuer, so sending it through the issuer's
-hosted screen would be a redirect to itself.
+**Every** application on this origin goes through it, this site included.
+`flow.startAuthorization(returnTo)` mints a PKCE transaction and navigates to
+`GET /oauth/authorize`, which is all an application needs to do to sign a user in — the CMS
+(see [CMS.md](./CMS.md)) and `/auth` both do exactly that and nothing else.
+
+`/auth` used to be the exception, on the grounds that it is the front-end of this issuer and so
+would be redirecting to itself. It is not: `/apps/auth` and `/auth` are two screens with two jobs,
+one authenticating whoever parked a request and the other asking for a session of its own. What the
+exception actually bought was a second credential form to keep in step — every provider the
+deployment gained had to be taught twice, the two screens could drift apart in copy and in
+behaviour, and a person signing in to this site answered a form served by the application asking for
+the access rather than by the issuer granting it. So `/auth` collects nothing now: it starts the
+request, shows a spinner, and offers the attempt again if the navigation never left the browser.
+Nothing else about the flow changed — the code still lands on `/auth/callback`, the path this client
+is registered under, and the PKCE transaction is still minted on this side.
 
 ## How sign-in works
 
 This SPA is a **public OAuth 2.0 client**: it holds no secret and authenticates with PKCE alone.
 
 1. A verifier, its S256 challenge and a `state` are generated and stored as a pending *transaction*.
-2. **Hosted** — the browser is sent to `GET /oauth/authorize`, which parks the request and takes it
-   to the hosted screen; that is `startAuthorization`, and it is how an application signs in without
-   asking for credentials itself.
-   **Magic link** — `POST /magic-link` with the challenge; the service emails a one-time link.
-   **Google** — the browser is sent to `GET /oauth/google/authorize` with the same parameters.
-3. Every path lands back on the client's registered redirect URI with `?code=…&state=…`.
+2. The browser is sent to `GET /oauth/authorize`, which parks the request and takes it to the hosted
+   screen; that is `startAuthorization`, and it is the only entry point `flow.ts` still has.
+3. The hosted screen authenticates the user — a magic link, or a provider's `start_url` — and the
+   browser lands back on the client's registered redirect URI with `?code=…&state=…`.
 4. The callback checks `state`, then exchanges the code and the verifier at `POST /oauth/token`.
 
-Steps 1, 3 and 4 are identical either way, which is why the hosted flow needed no new callback and
-no new session handling: only how step 2 reaches a provider differs.
+Which provider ran in step 3 is invisible from here, which is the point: a deployment that gains one
+is a change to the service and its hosted screen, not to every front-end that signs in against it.
+`flow.ts` used to carry a `startMagicLink` and a `startGoogleSignIn` beside `startAuthorization`;
+they are gone with the form that called them.
 
-The service answers `POST /magic-link` with `202` whether or not the address exists, so the sign-in
-screen cannot be used to discover which addresses have an account. Sign-up is invitation-only.
+The service answers the hosted screen's magic-link endpoint with `202` whether or not the address
+exists, so it cannot be used to discover which addresses have an account. Sign-up is
+invitation-only.
 
 ## One stack, several applications
 
@@ -163,18 +182,24 @@ cannot keep a secret).
 
 ## Your account
 
-`/auth/account` is one account read through vertical tabs rather than a single column of panels: the
+`/account` is one account read through vertical tabs rather than a single column of panels: the
 sessions list no longer pushes the rest of the screen out of sight, and — as in the console — each
 tab is a route, so a section can be reloaded into, bookmarked and linked to.
 
 | Route | What it is |
 | ----- | ---------- |
-| `/auth/account` | Profile: the name, picture and locale the account owns |
-| `/auth/account/signature` | The corporate email signature — company accounts only |
-| `/auth/account/access` | The roles and permissions held in the application signed in to |
-| `/auth/account/identities` | The providers linked to the account |
-| `/auth/account/sessions` | Every device signed in, and the button that revokes one |
-| `/auth/account/details` | The read-only record: status, verification, dates, user id |
+| `/account` | Profile: the name, picture and locale the account owns |
+| `/account/signature` | The corporate email signature — company accounts only |
+| `/account/access` | The roles and permissions held in the application signed in to |
+| `/account/identities` | The providers linked to the account |
+| `/account/sessions` | Every device signed in, and the button that revokes one |
+| `/account/details` | The read-only record: status, verification, dates, user id |
+
+It sits at the top level rather than under `/auth` because that is what it is to a visitor: the page
+behind their own avatar, reachable from anywhere on this site. What is left under `/auth` is the
+issuer's plumbing — the sign-in hand-off, the callback and the console. `ACCOUNT_ROUTE` in
+`lib/auth/config.ts` is where the move is made; the screens themselves still live beside the console
+they share their furniture with, under `src/pages/auth/account/`.
 
 `ACCOUNT_SECTIONS` in `account-nav.ts` is the single list the tabs and the router are both built
 from, so a section cannot exist in one and be missing from the other. A section may carry an
