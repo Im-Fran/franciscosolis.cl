@@ -2,6 +2,8 @@
   "all_rights_reserved": "© FranciscoSolis E.I.R.L. {{year}}. All rights reserved.",
   "toggle_lang": "Change Language ({{lang}})",
   "view_github_profile": "View GitHub Profile",
+  "carousel_previous": "Previous",
+  "carousel_next": "Next",
   "cookie_consent": "We use cookies to improve your experience on our site. By using our site, you consent to cookies.",
   "accept": "Accept",
   "verify": "Verify",

@@ -133,7 +133,7 @@ export const Authorize = () => {
       >
         <div className="flex flex-col gap-5">
           <Alert tone="success" title={t("auth:sign_in.sent_alert_title")}>
-            {t("auth:sign_in.sent_expiry", {minutes: Math.max(1, Math.round(phase.expiresIn / 60))})}
+            {t("auth:sign_in.sent_expiry", {count: Math.max(1, Math.round(phase.expiresIn / 60))})}
           </Alert>
           <p className="text-[13px] leading-relaxed text-neutral-400">{t("auth:authorize.sent_note")}</p>
           <Button variant="secondary" onClick={() => setPhase({kind: "form"})} data-fs-hover>

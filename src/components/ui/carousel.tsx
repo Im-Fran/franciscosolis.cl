@@ -1,5 +1,6 @@
 import type {ReactNode} from "react";
 import {CaretLeft, CaretRight} from "@phosphor-icons/react";
+import {useTranslation} from "react-i18next";
 import {cn} from "@/lib/utils";
 import {useAppCarousel} from "@/hooks/useAppCarousel.ts";
 
@@ -9,6 +10,7 @@ type CarouselProps = {
 };
 
 export const Carousel = ({children, slideClassName}: CarouselProps) => {
+  const {t} = useTranslation("common");
   const {emblaRef, scrollPrev, scrollNext, canScrollPrev, canScrollNext} = useAppCarousel();
   const hasOverflow = canScrollPrev || canScrollNext;
 
@@ -33,7 +35,7 @@ export const Carousel = ({children, slideClassName}: CarouselProps) => {
             data-fs-hover
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            aria-label="Previous"
+            aria-label={t("common:carousel_previous")}
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 rounded-full bg-surface p-2 shadow-[var(--shadow-md)] text-text disabled:opacity-0 disabled:pointer-events-none transition-opacity"
           >
             <CaretLeft size={18}/>
@@ -43,7 +45,7 @@ export const Carousel = ({children, slideClassName}: CarouselProps) => {
             data-fs-hover
             onClick={scrollNext}
             disabled={!canScrollNext}
-            aria-label="Next"
+            aria-label={t("common:carousel_next")}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 rounded-full bg-surface p-2 shadow-[var(--shadow-md)] text-text disabled:opacity-0 disabled:pointer-events-none transition-opacity"
           >
             <CaretRight size={18}/>

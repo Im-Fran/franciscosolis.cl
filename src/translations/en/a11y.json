@@ -76,7 +76,7 @@
     "title": "Command palette",
     "placeholder": "Type to search a setting…",
     "empty": "No results for “{{query}}”",
-    "results": "{{count}} command available",
+    "results_one": "{{count}} command available",
     "results_other": "{{count}} commands available",
     "open_panel": "Open the full panel",
     "reset_command": "Reset every preference",
