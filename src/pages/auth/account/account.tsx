@@ -14,6 +14,8 @@ import {Panel} from "@/pages/auth/components/panel.tsx";
 import {IdentitiesPanel} from "@/pages/auth/account/identities-panel.tsx";
 import {ProfileForm} from "@/pages/auth/account/profile-form.tsx";
 import {SessionsPanel} from "@/pages/auth/account/sessions-panel.tsx";
+import {SignaturePanel} from "@/pages/auth/account/signature/signature-panel.tsx";
+import {isCompanyEmail} from "@/pages/auth/account/signature/build-signature.ts";
 
 /**
  * What the account holds: profile, granted access, linked providers and live sessions.
@@ -61,6 +63,8 @@ const AccountScreen = () => {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
         <div className="flex flex-col gap-6">
           <ProfileForm user={user}/>
+          {/* The signature is company stationery, so it is only offered to the company's own accounts. */}
+          {isCompanyEmail(user.email) && <SignaturePanel user={user}/>}
           <SessionsPanel/>
         </div>
 

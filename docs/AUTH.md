@@ -9,12 +9,47 @@ so every page a user sees during a sign-in is one of these.
 | ---------------- | ----------------------------------------------------------------------- |
 | `/auth`          | Sign-in: magic link or Google                                            |
 | `/auth/callback` | Where both providers return; redeems the authorization code             |
-| `/auth/account`  | Profile, granted access, linked providers, active sessions              |
+| `/auth/account`  | Profile, granted access, linked providers, active sessions, signature   |
 | `/auth/admin/*`  | The administration console — see below                                   |
 | `/apps/auth`     | The service's **hosted** sign-in screen — see below                      |
 
 `/auth/account` and `/auth/admin` need a session; anonymous visitors are sent to `/auth` with a
 `return_to` so the flow resumes where they were headed.
+
+## The email signature
+
+`/auth/account` grows one extra panel for accounts whose address is on `@franciscosolis.cl`: a
+generator for the corporate email signature, ready to paste into Gmail, Outlook or anything else.
+
+It is deliberately the *only* thing on these screens that talks to no API. A signature is not
+account state — it is a block of HTML a person pastes into their mail client once and then owns —
+so there is nothing for the service to store and nothing for an administrator to manage. The draft
+lives in this browser's `localStorage` under `fs.auth.signature.v1` so that returning to the screen
+does not mean retyping every link, keyed to the address that wrote it; the profile is the default it
+is restored from.
+
+**Tables, not the design system.** `build-signature.ts` emits nested tables with every rule inline,
+because mail clients are not browsers: Gmail drops `<style>` blocks and Outlook renders through Word,
+which ignores flexbox, grid and most of `display`. The preview beside the form renders that same
+string, so what is previewed is what is pasted. Both avatars are circled with `border-radius`, which
+every webmail honours and Word does not — it falls back to a square, which is why the pictures are
+square to begin with.
+
+**Icons come from the host, not from a list.** A social link is just a URL; the icon is
+`https://favicon.is/<host>` and the `alt` is read from the same host. A per-network mapping would be
+one more table to keep in step, and a link to whatever network exists next year would have no icon.
+
+**Only `http`, `https` and `mailto` are linked.** A signature is pasted into other people's
+mailboxes, so `safeUrl` is where a `javascript:` or `data:` href stops. A bare host is read as
+`https://`, because that is what people paste; a path is refused rather than prefixed, since
+`/foto.webp` is something only this origin can resolve and turning it into a host would put a
+permanently broken image in someone's signature. Every value the builder interpolates is escaped,
+and the preview is passed through DOMPurify on the way to `dangerouslySetInnerHTML`.
+
+Copying writes the clipboard twice, as `text/html` and as `text/plain`: the rich flavour is what a
+mail client pastes as a formatted signature, and the plain one is the source a "paste HTML" settings
+box expects. A browser without `ClipboardItem` — or one that refuses the rich write — gets the
+source, which still works everywhere.
 
 ## The hosted sign-in screen
 
@@ -180,6 +215,7 @@ src/components/auth/ the sign-in and callback panels, shared by every applicatio
 src/pages/auth/      the screens, split out of the main bundle and fetched on demand;
                      authorize.tsx is the hosted screen and belongs to no application here
   account/           profile, granted access, linked providers and live sessions
+    signature/       the corporate email signature: the HTML builder and the form that drives it
   admin/             the console: components/ holds its shell, navigation, gate and no-access
                      screen; overview.tsx, users/, sessions/, invitations/, applications/,
                      roles/, permissions/ and audit/ are one section each, one chunk each
