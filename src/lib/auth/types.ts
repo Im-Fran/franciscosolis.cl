@@ -59,6 +59,26 @@ export type PendingAuthorizationProvider = {
  * It carries only what the browser holding the handle already sent — the client's `state` and
  * `nonce` are deliberately not here.
  */
+/**
+ * Who the browser that started this request is already signed in as, when it is.
+ *
+ * The service reads its own session cookie on `GET /oauth/authorize`, which the browser navigates
+ * to, and stamps it on the parked request — this endpoint is read with `fetch` from another origin,
+ * where no cookie is sent, so the answer is the only way this screen can know. It is enough to name
+ * the account on the button and no more: `continue_url` is a navigation the service re-checks the
+ * cookie on, so holding this tells the screen nothing it could act on by itself.
+ */
+export type PendingAuthorizationAccount = {
+  sub: string;
+  email: string;
+  name: string | null;
+  picture: string | null;
+  /** When the user actually authenticated, which a reuse never moves forward. */
+  auth_time: string;
+  /** Absolute URL to navigate to in order to authorize from that session. Never fetched. */
+  continue_url: string;
+};
+
 export type PendingAuthorizationRequest = {
   request: string;
   client_id: string;
@@ -67,6 +87,8 @@ export type PendingAuthorizationRequest = {
   login_hint: string | null;
   expires_at: string;
   providers: PendingAuthorizationProvider[];
+  /** Null when the browser holds no session, or when the request asked for a fresh sign-in. */
+  authenticated: PendingAuthorizationAccount | null;
 };
 
 /** What both magic-link endpoints answer with, whether or not an email actually went out. */
@@ -241,6 +263,29 @@ export type SessionPruneResult = {
 };
 
 /* ── Admin ────────────────────────────────────────────────────────────────── */
+
+/**
+ * A browser the account is signed in to the *issuer* from, as opposed to `Session`, which is one
+ * application's. This is what lets a second application be authorized without signing in again.
+ *
+ * `current` is always false here: this list is read with a bearer token, which says nothing about
+ * which browser is asking — the service decides that from a cookie no `fetch` carries.
+ */
+export type SsoSession = {
+  id: string;
+  provider: string;
+  ip: string | null;
+  user_agent: string | null;
+  country: string | null;
+  city: string | null;
+  current: boolean;
+  /** The sign-in itself. Authorizing another application does not move it. */
+  authenticated_at: string;
+  last_seen_at: string;
+  /** Absolute: using the session does not extend it. */
+  expires_at: string;
+  created_at: string;
+};
 
 /**
  * `GET /admin/me`: whether this account belongs in the console at all, asked once above the

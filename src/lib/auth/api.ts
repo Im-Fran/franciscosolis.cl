@@ -35,6 +35,7 @@ import type {
   Session,
   SessionPruneRequest,
   SessionPruneResult,
+  SsoSession,
 } from "@/lib/auth/types.ts";
 
 export type AuthApi = ReturnType<typeof createAuthApi>;
@@ -82,6 +83,11 @@ export const createAuthApi = (request: RequestFn) => ({
   identities: (signal?: AbortSignal) => request<Identity[]>("/me/identities", {signal}),
   sessions: (signal?: AbortSignal) => request<Session[]>("/me/sessions", {signal}),
   revokeSession: (sessionId: string) => request<void>(`/me/sessions/${id(sessionId)}`, {method: "DELETE"}),
+
+  /** The browsers signed in to the issuer itself — see `SsoSession`. */
+  ssoSessions: (signal?: AbortSignal) => request<SsoSession[]>("/me/sso-sessions", {signal}),
+  revokeSsoSession: (sessionId: string) =>
+    request<void>(`/me/sso-sessions/${id(sessionId)}`, {method: "DELETE"}),
   /**
    * Bulk close. `dry_run` is what the interface previews with: same answer, nothing revoked. The
    * service never closes the session this call is made from, whatever the rules say.

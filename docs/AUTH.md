@@ -79,7 +79,8 @@ The service's `GET /oauth/authorize` validates a request, parks it, and redirect
 1. reads `GET /oauth/authorize/<handle>` for the client's name and the providers this deployment
    actually has configured — it hardcodes none of them;
 2. posts an address to `POST /oauth/authorize/<handle>/magic-link`, or navigates to a provider's
-   `start_url`;
+   `start_url` — unless the read came back already naming an account, in which case it offers to
+   [authorize instead](#already-signed-in-authorize-rather-than-authenticate);
 3. leaves the rest to the service, which redirects back to the *client's* registered redirect URI
    with a single-use code.
 
@@ -93,6 +94,33 @@ registered redirect URI.
 
 Its two `fetch` endpoints are cross-origin by construction; the auth service allows them from any
 origin an active client registered (`CORS_PARKED_REQUEST` in its `middleware/cors.ts`).
+
+### Already signed in: authorize rather than authenticate
+
+The auth service keeps a session of its own for the browser — a cookie on `api.franciscosolis.cl`,
+scoped to `/auth` — opened by whichever provider last authenticated here. A second application
+therefore does not need a second sign-in, and this screen is where that shows.
+
+The parked request comes back with `authenticated` when the browser holds one: the account's `sub`,
+address, name, picture, the `auth_time` of the sign-in itself, and a `continue_url`. The screen then
+names the account and offers a single button, and **that button is a navigation**, never a `fetch`.
+It has to be: the cookie proving the session only rides a navigation, which is the same reason this
+screen cannot read the session itself — `GET /oauth/authorize/<handle>` is cross-origin, where no
+cookie is sent, so the service resolving it server-side and putting the answer on the parked request
+is the only way the screen learns anything. The service re-checks the cookie at `continue_url` and
+refuses a handle presented by a different browser, so what arrives here is a statement to render and
+never a credential to act on.
+
+*Use another account* reveals the providers again — it changes nothing server-side, because signing
+in through a provider replaces the session on this browser, which is exactly what changing account
+means. The way back is offered while the form is up, since the session is still there. A client that
+wants to force the form regardless asks the service for it with `prompt=login` and never this screen;
+one that wants no screen at all sends `prompt=none` and is answered with a code or `login_required`
+before the browser ever gets here.
+
+A picture is rendered from the account's `picture`, which is either a provider's photo or an avatar an
+administrator published — the `Avatar` component falls back to initials for an account with neither,
+and for one whose picture fails to load.
 
 **Every** application on this origin goes through it, this site included.
 `flow.startAuthorization(returnTo)` mints a PKCE transaction and navigates to
@@ -192,7 +220,7 @@ tab is a route, so a section can be reloaded into, bookmarked and linked to.
 | `/account/signature` | The corporate email signature — company accounts only |
 | `/account/access` | The roles and permissions held in the application signed in to |
 | `/account/identities` | The providers linked to the account |
-| `/account/sessions` | Every device signed in, the button that revokes one, and the bulk prune |
+| `/account/sessions` | Every device signed in, the browsers holding a sign-in, and the bulk prune |
 | `/account/details` | The read-only record: status, verification, dates, user id |
 
 It sits at the top level rather than under `/auth` because that is what it is to a visitor: the page
@@ -216,6 +244,20 @@ pruning is never among the ones closed — signing out here stays the button on 
 session missing the field a condition reads (a location a session predating the column never had, an
 address the edge could not see) is never matched by that condition, which is why the preview can come
 back shorter than the conditions suggest.
+
+### Sessions and browsers are two lists
+
+The tab carries two panels, because the service keeps two things and closing a row in either does
+something different. A **session** is one application's: closing it signs that application out and
+kills its refresh chain. A **browser** (`GET /me/sso-sessions`) is a sign-in held with the issuer
+itself: closing it makes that browser authenticate again before it can authorize anything, and leaves
+every application it already opened signed in. One list would have to explain that per row.
+
+Nothing in the browsers list is flagged as the browser doing the looking, and `current` always comes
+back false: the service decides that from its cookie, and this list is read with a bearer token,
+which no cookie rides along with. `expires_at` is worth showing because it is absolute — using a
+browser's sign-in moves `last_seen_at` and never the expiry, so a fortnight after signing in that
+browser is asked for a password-less sign-in again whatever it did in between.
 
 `ACCOUNT_SECTIONS` in `account-nav.ts` is the single list the tabs and the router are both built
 from, so a section cannot exist in one and be missing from the other. A section may carry an
@@ -329,7 +371,8 @@ src/pages/auth/      the screens, split out of the main bundle and fetched on de
                      authorize.tsx is the hosted screen and belongs to no application here
   account/           the account: account-layout.tsx holds the shell and the tab column,
                      account-nav.ts the sections, and each panel is one tab, one chunk;
-                     prune-dialog.tsx is the sessions tab's bulk close, previewed by dry run
+                     prune-dialog.tsx is the sessions tab's bulk close, previewed by dry run,
+                     and sso-sessions-panel.tsx is the browsers list beside it
     signature/       the corporate email signature: the HTML builder and the form that drives it
   admin/             the console: components/ holds its shell, navigation, gate and no-access
                      screen; overview.tsx, users/, sessions/, invitations/, applications/,

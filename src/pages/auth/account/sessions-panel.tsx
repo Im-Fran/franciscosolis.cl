@@ -12,6 +12,7 @@ import {describeUserAgent, formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
 import type {Session} from "@/lib/auth/types.ts";
 import {PruneDialog} from "@/pages/auth/account/prune-dialog.tsx";
+import {SsoSessionsPanel} from "@/pages/auth/account/sso-sessions-panel.tsx";
 import {Panel, PanelState} from "@/pages/auth/components/panel.tsx";
 
 /**
@@ -141,3 +142,17 @@ export const SessionsPanel = () => {
     </Panel>
   );
 };
+
+/**
+ * The tab: an application's sessions, then the browsers the issuer itself knows.
+ *
+ * Two lists rather than one, because closing a row in either does something different — one signs an
+ * application out, the other makes a browser authenticate again before it can authorize anything —
+ * and a single list would have to explain that per row.
+ */
+export const SessionsSection = () => (
+  <div className="flex flex-col gap-6">
+    <SessionsPanel/>
+    <SsoSessionsPanel/>
+  </div>
+);
