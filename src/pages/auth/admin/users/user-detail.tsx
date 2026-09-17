@@ -1,10 +1,11 @@
 import {useCallback, useMemo, useState} from "react";
 import type {ReactNode} from "react";
 import {useTranslation} from "react-i18next";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {
   ArrowClockwise,
   CheckCircle,
+  ImageSquare,
   Prohibit,
   SignOut,
   Trash,
@@ -101,9 +102,23 @@ export const UserDetail = () => {
         description={user?.name ? user.email : undefined}
         back={{to: adminRoute.users, label: t("auth_admin:users.back")}}
         actions={
-          <Button variant="ghost" size="sm" onClick={refresh} data-fs-hover>
-            <ArrowClockwise size={14}/> {t("admin:common.refresh")}
-          </Button>
+          <>
+            {/*
+             * The queue filtered to this account, rather than a review panel of its own: the
+             * decision and everything it needs already live on one screen, and two places to make
+             * it is two places to keep in step.
+             */}
+            {can("avatars:read") && id && (
+              <Button variant="ghost" size="sm" asChild data-fs-hover>
+                <Link to={adminRoute.userAvatars(id)}>
+                  <ImageSquare size={14}/> {t("auth_admin:users.review_avatars")}
+                </Link>
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" onClick={refresh} data-fs-hover>
+              <ArrowClockwise size={14}/> {t("admin:common.refresh")}
+            </Button>
+          </>
         }
       />
 

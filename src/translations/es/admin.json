@@ -48,7 +48,10 @@
     "archived": "Archivado",
     "queued": "En cola",
     "sent": "Enviado",
-    "failed": "Fallido"
+    "failed": "Fallido",
+    "approved": "Publicada",
+    "rejected": "Rechazada",
+    "superseded": "Reemplazada"
   },
   "errors": {
     "network": "No se pudo contactar al servicio. Revisa tu conexión e inténtalo de nuevo.",

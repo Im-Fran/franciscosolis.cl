@@ -1,6 +1,8 @@
 import {request as webRequest} from "@/lib/auth/client.ts";
 import type {RequestFn} from "@/lib/auth/client.ts";
 import type {
+  AdminAvatarFilters,
+  AdminAvatarUpload,
   AdminMe,
   AdminSession,
   AdminSessionFilters,
@@ -11,11 +13,13 @@ import type {
   ApplicationUpdate,
   AuditEntry,
   AuditFilters,
+  AvatarUpload,
   CreatedApplication,
   Identity,
   Invitation,
   IssuedSecret,
   MeResponse,
+  MyAvatar,
   NewApplication,
   NewInvitation,
   NewPermission,
@@ -61,6 +65,20 @@ export const createAuthApi = (request: RequestFn) => ({
 
   me: (signal?: AbortSignal) => request<MeResponse>("/me", {signal}),
   updateMe: (changes: ProfileUpdate) => request<MeResponse>("/me", {method: "PATCH", json: changes}),
+  /** The account's own avatar: published, pending, last refused, and what an upload may be. */
+  avatar: (signal?: AbortSignal) => request<MyAvatar>("/me/avatar", {signal}),
+  /**
+   * Uploads a picture for review. Answers 202 with the parked upload — nothing is published here.
+   * The file travels as multipart so the browser writes the boundary itself.
+   */
+  uploadAvatar: (file: File) => {
+    const body = new FormData();
+    body.set("file", file);
+    return request<AvatarUpload>("/me/avatar", {method: "POST", form: body});
+  },
+  /** Cancels a pending upload and takes a published avatar off the account. */
+  deleteAvatar: () => request<void>("/me/avatar", {method: "DELETE"}),
+
   identities: (signal?: AbortSignal) => request<Identity[]>("/me/identities", {signal}),
   sessions: (signal?: AbortSignal) => request<Session[]>("/me/sessions", {signal}),
   revokeSession: (sessionId: string) => request<void>(`/me/sessions/${id(sessionId)}`, {method: "DELETE"}),
@@ -87,6 +105,20 @@ export const createAuthApi = (request: RequestFn) => ({
       request<void>(`/admin/users/${id(userId)}/roles`, {method: "POST", json: {role_id: roleId}}),
     revokeRole: (userId: string, roleId: string) =>
       request<void>(`/admin/users/${id(userId)}/roles/${id(roleId)}`, {method: "DELETE"}),
+
+    /**
+     * The avatar review queue. `status` defaults to `pending` on the service, and each row carries
+     * a `preview` data URL because an upload waiting for a decision has no address of its own.
+     */
+    avatars: (filters: AdminAvatarFilters = {}, signal?: AbortSignal) =>
+      request<AdminAvatarUpload[]>(`/admin/avatars${query(filters)}`, {signal}),
+    approveAvatar: (avatarId: string) =>
+      request<AdminAvatarUpload>(`/admin/avatars/${id(avatarId)}/approve`, {method: "POST"}),
+    rejectAvatar: (avatarId: string, reason?: string | null) =>
+      request<AdminAvatarUpload>(`/admin/avatars/${id(avatarId)}/reject`, {
+        method: "POST",
+        json: {reason: reason?.trim() || null},
+      }),
 
     /** Sessions across every account, or one account's, depending on `user_id`. */
     sessions: (filters: AdminSessionFilters = {}, signal?: AbortSignal) =>

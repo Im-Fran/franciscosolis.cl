@@ -57,6 +57,9 @@ export const UsersList = lazy(() =>
 export const UserDetail = lazy(() =>
   import("@/pages/auth/admin/users/user-detail.tsx").then((m) => ({default: m.UserDetail})),
 );
+export const AvatarsReview = lazy(() =>
+  import("@/pages/auth/admin/avatars/avatars-review.tsx").then((m) => ({default: m.AvatarsReview})),
+);
 export const SessionsList = lazy(() =>
   import("@/pages/auth/admin/sessions/sessions-list.tsx").then((m) => ({default: m.SessionsList})),
 );

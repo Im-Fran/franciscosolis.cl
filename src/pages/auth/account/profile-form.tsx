@@ -10,22 +10,27 @@ import {useToast} from "@/lib/admin/toast-context.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {authApi} from "@/lib/auth/api.ts";
 import {useAuth} from "@/lib/auth/auth-context.ts";
+import {AvatarPanel} from "@/pages/auth/account/avatar-panel.tsx";
 import {Panel} from "@/pages/auth/components/panel.tsx";
-import {Avatar} from "@/components/ui/avatar.tsx";
 import type {ProfileUpdate, User} from "@/lib/auth/types.ts";
 
-const EDITABLE = ["name", "given_name", "family_name", "picture", "locale"] as const;
+const EDITABLE = ["name", "given_name", "family_name", "locale"] as const;
 type EditableField = (typeof EDITABLE)[number];
 
 const toForm = (user: User): Record<EditableField, string> => ({
   name: user.name ?? "",
   given_name: user.given_name ?? "",
   family_name: user.family_name ?? "",
-  picture: user.picture ?? "",
   locale: user.locale ?? "",
 });
 
-/** Edits the profile fields the account owns. The email is the identity key and is not editable. */
+/**
+ * Edits the profile fields the account owns.
+ *
+ * Two are not among them. The email is the identity key providers are matched on, and the picture
+ * is uploaded rather than typed: it goes through review before it is published, which a free-form
+ * URL field would have made optional. `AvatarPanel` owns that half.
+ */
 export const ProfileForm = ({user}: {user: User}) => {
   const {t} = useTranslation();
   const {reload} = useAuth();
@@ -60,13 +65,7 @@ export const ProfileForm = ({user}: {user: User}) => {
   return (
     <Panel title={t("auth:account.profile_title")} description={t("auth:account.profile_description")}>
       <form className="flex flex-col gap-5" onSubmit={submit}>
-        <div className="flex items-center gap-4">
-          <Avatar name={form.name || user.name} email={user.email} picture={form.picture || user.picture} size={56}/>
-          <div className="min-w-0">
-            <p className="truncate text-sm text-text">{user.name || user.email}</p>
-            <p className="truncate text-[13px] text-neutral-500">{user.email}</p>
-          </div>
-        </div>
+        <AvatarPanel user={user}/>
 
         <Field label={t("auth:account.email_label")} htmlFor="profile-email" hint={t("auth:account.email_hint")}>
           <Input id="profile-email" value={user.email} readOnly disabled autoComplete="email"/>
@@ -103,17 +102,6 @@ export const ProfileForm = ({user}: {user: User}) => {
             />
           </Field>
         </div>
-
-        <Field label={t("auth:account.picture_label")} htmlFor="profile-picture" hint={t("auth:account.picture_hint")}>
-          <Input
-            id="profile-picture"
-            type="url"
-            inputMode="url"
-            value={form.picture}
-            onChange={set("picture")}
-            placeholder="https://"
-          />
-        </Field>
 
         <Field label={t("auth:account.locale_label")} htmlFor="profile-locale" hint={t("auth:account.locale_hint")}>
           <Input id="profile-locale" value={form.locale} onChange={set("locale")} maxLength={20} placeholder="es-CL"/>
