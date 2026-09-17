@@ -14,16 +14,16 @@ import {describeError} from "@/lib/auth/useResource.ts";
  * Entry point of the CMS — and nothing more than a hand-off.
  *
  * The CMS used to ask for the credentials itself: the same provider picker and magic-link form the
- * site's own `/auth` renders, pointed at the CMS's client id. That made it a second sign-in screen
- * for one identity provider, which is the thing single sign-on exists to avoid — every provider the
- * deployment gained had to be taught here too, and a user signing in to the CMS was answering a
- * credential form served by the application asking for the access.
+ * site's own `/auth` rendered at the time, pointed at the CMS's client id. That made it a second
+ * sign-in screen for one identity provider, which is the thing single sign-on exists to avoid —
+ * every provider the deployment gained had to be taught here too, and a user signing in to the CMS
+ * was answering a credential form served by the application asking for the access.
  *
  * So this screen no longer collects anything. It starts a plain authorization code request against
  * `/auth`'s `GET /oauth/authorize` and lets the service's own hosted screen take it from there,
- * exactly as an unrelated relying party would. What comes back is unchanged — the code lands on the
- * registered redirect URI and `/cms/callback` redeems it — because the PKCE transaction is still
- * minted on this side.
+ * exactly as an unrelated relying party would — which is what `/auth` itself does now too. What
+ * comes back is unchanged — the code lands on the registered redirect URI and `/cms/callback`
+ * redeems it — because the PKCE transaction is still minted on this side.
  *
  * The route stays: it is the CMS client's `signInRoute`, so it is where the gate sends anonymous
  * visitors and where the callback's retry points, and it carries the `return_to` through the flow.

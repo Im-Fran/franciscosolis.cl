@@ -40,10 +40,10 @@ path the service returns the browser to. The forward carries the `code` and `sta
 ## Single sign-on, not a second sign-in
 
 The CMS used to ask for the credentials itself: the same provider picker and magic-link form
-`/auth` renders, pointed at the CMS's client id. It worked, and it was the wrong shape — a second
-sign-in screen for one identity provider is the thing single sign-on exists to avoid. Every
-provider the deployment gained had to be taught to it as well, and the application asking for the
-access was also the one serving the credential form.
+`/auth` rendered at the time, pointed at the CMS's client id. It worked, and it was the wrong
+shape — a second sign-in screen for one identity provider is the thing single sign-on exists to
+avoid. Every provider the deployment gained had to be taught to it as well, and the application
+asking for the access was also the one serving the credential form.
 
 It is now an ordinary relying party. `/cms/sign-in` mints the PKCE transaction and navigates to
 `GET /oauth/authorize` with `response_type=code`, its client id, its registered redirect URI, the
@@ -60,9 +60,9 @@ Two consequences worth keeping in mind:
   somebody and the code goes to the client that parked the request. Signing in to the CMS still
   does not sign you in to the site, and vice versa.
 
-`startAuthorization` in `src/lib/auth/flow.ts` is the shared machinery, so the site's own `/auth`
-could be moved onto it the same way. It has not been: `/auth` *is* the front-end of this issuer, and
-bouncing it through the issuer's hosted screen would be a redirect to itself.
+`startAuthorization` in `src/lib/auth/flow.ts` is the shared machinery, and the site's own `/auth`
+has since been moved onto it the same way — it is now the only entry point that module has. See
+[AUTH.md](./AUTH.md).
 
 ## A client application of its own
 
