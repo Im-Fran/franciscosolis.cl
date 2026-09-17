@@ -33,6 +33,7 @@ const toLinks = (urls: readonly string[]): SocialLink[] => urls.map((url) => ({i
 
 const fromProfile = (user: User): SignatureData => ({
   name: user.name ?? "",
+  tagline: "",
   email: user.email,
   picture: user.picture ?? "",
   personSocials: [],
@@ -70,6 +71,8 @@ const readDraft = (): SignatureData | null => {
     const companySocials = readLinks(draft.companySocials);
     return {
       name: typeof draft.name === "string" ? draft.name : "",
+      /* Added after v2 was already being written, so a draft without one is simply one with none. */
+      tagline: typeof draft.tagline === "string" ? draft.tagline : "",
       email: draft.email,
       picture: typeof draft.picture === "string" ? draft.picture : "",
       personSocials: readLinks(draft.personSocials ?? draft.socials),
@@ -110,7 +113,7 @@ export const SignaturePanel = ({user}: {user: User}) => {
   const html = useMemo(() => buildSignature(data), [data]);
   const preview = useMemo(() => DOMPurify.sanitize(html, {ADD_ATTR: ["target", "role"]}), [html]);
 
-  const set = (key: "name" | "email" | "picture") => (event: {target: {value: string}}) =>
+  const set = (key: "name" | "tagline" | "email" | "picture") => (event: {target: {value: string}}) =>
     setData((current) => ({...current, [key]: event.target.value}));
 
   const setList = (list: ListKey, socials: SocialLink[]) =>
@@ -170,6 +173,20 @@ export const SignaturePanel = ({user}: {user: User}) => {
             />
           </Field>
         </div>
+
+        <Field
+          label={t("auth:account.signature.tagline_label")}
+          htmlFor="signature-tagline"
+          hint={t("auth:account.signature.tagline_hint")}
+        >
+          <Input
+            id="signature-tagline"
+            value={data.tagline}
+            onChange={set("tagline")}
+            maxLength={120}
+            placeholder={t("auth:account.signature.tagline_placeholder")}
+          />
+        </Field>
 
         <Field
           label={t("auth:account.signature.picture_label")}
