@@ -14,14 +14,16 @@
     <title>Francisco Solís - Full Stack & Mobile Developer</title>
 
     <!-- HTML Meta Tags -->
-    <title>Francisco Solís - Full Stack & Mobile Developer</title>
-    <meta name="description" content="I'm passionate about creating elegant solutions to complex problems. I have experience with many frontend, backend and mobile tools.">
+    <meta name="description" content="FranciscoSolis E.I.R.L. — development and maintenance of IT services from Santiago, Chile. Web, mobile, APIs and microservices, built by Francisco Solís Maturana.">
+    <meta name="author" content="DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.">
+    <link rel="canonical" href="https://franciscosolis.cl/">
 
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content="https://franciscosolis.cl">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Francisco Solís - Full Stack & Mobile Developer">
-    <meta property="og:description" content="I'm passionate about creating elegant solutions to complex problems. I have experience with many frontend, backend and mobile tools.">
+    <meta property="og:description" content="FranciscoSolis E.I.R.L. — development and maintenance of IT services from Santiago, Chile. Web, mobile, APIs and microservices.">
+    <meta property="og:site_name" content="FranciscoSolis">
     <meta property="og:image" content="https://franciscosolis.cl/profile-picture-full.webp">
     <meta property="og:logo" content="https://franciscosolis.cl/brand/png/fs-mark.png">
 
@@ -30,8 +32,47 @@
     <meta property="twitter:domain" content="franciscosolis.cl">
     <meta property="twitter:url" content="https://franciscosolis.cl">
     <meta name="twitter:title" content="Francisco Solís - Full Stack & Mobile Developer">
-    <meta name="twitter:description" content="I'm passionate about creating elegant solutions to complex problems. I have experience with many frontend, backend and mobile tools.">
+    <meta name="twitter:description" content="FranciscoSolis E.I.R.L. — development and maintenance of IT services from Santiago, Chile. Web, mobile, APIs and microservices.">
     <meta name="twitter:image" content="https://franciscosolis.cl/profile-picture-full.webp">
+
+    <!--
+      Who operates this site, in the form a crawler reads.
+
+      It mirrors src/lib/company.ts, and it is static markup rather than something a script injects
+      because it is read before any script runs — a rich result built from an empty <head> is the
+      one case where rendering it in React would be too late. The two have to be kept in step by
+      hand; `taxID` is the field to add once the RUT is confirmed (see docs/LEGAL.md).
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": "https://franciscosolis.cl/#organization",
+        "name": "FranciscoSolis",
+        "legalName": "DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.",
+        "url": "https://franciscosolis.cl",
+        "logo": "https://franciscosolis.cl/brand/png/fs-mark.png",
+        "image": "https://franciscosolis.cl/brand/png/fs-avatar-circle.png",
+        "email": "fsolism@franciscosolis.cl",
+        "description": "Development and maintenance of IT services: web, mobile, APIs and microservices.",
+        "foundingLocation": "Santiago, Chile",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. Irarr\u00e1zaval 2401, Oficina 607",
+          "addressLocality": "\u00d1u\u00f1oa",
+          "addressRegion": "Regi\u00f3n Metropolitana",
+          "addressCountry": "CL"
+        },
+        "founder": {
+          "@type": "Person",
+          "name": "Francisco Sol\u00eds Maturana"
+        },
+        "sameAs": [
+          "https://www.linkedin.com/company/franciscosolis",
+          "https://github.com/Im-Fran"
+        ]
+      }
+    </script>
 
     <link rel="preload" as="image" href="/profile-picture.webp">
 

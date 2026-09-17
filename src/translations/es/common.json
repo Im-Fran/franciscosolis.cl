@@ -1,5 +1,5 @@
 {
-  "all_rights_reserved": "© FranciscoSolis {{year}}. Todos los derechos reservados.",
+  "all_rights_reserved": "© FranciscoSolis E.I.R.L. {{year}}. Todos los derechos reservados.",
   "toggle_lang": "Cambiar Idioma ({{lang}})",
   "view_github_profile": "Ver perfil de GitHub",
   "cookie_consent": "Usamos cookies para mejorar tu experiencia en nuestro sitio. Al usar nuestro sitio, consientes el uso de cookies.",
@@ -9,13 +9,14 @@
   "text_size_small": "Pequeño",
   "text_size_normal": "Normal",
   "text_size_large": "Grande",
-  "copyright": "© {{year}} Francisco Solís",
-  "footer_credit": "Hecho con ☕ por Francisco Solis Maturana",
+  "copyright": "© {{year}} FranciscoSolis E.I.R.L.",
+  "footer_credit": "Hecho con ☕ por FranciscoSolis E.I.R.L.",
   "legal_link": "Términos y Privacidad",
   "brand_link": "Marca",
   "loading": "Cargando…",
   "content_unreachable": "No se pudo cargar esta sección — el servicio de contenido no está disponible ahora mismo.",
   "content_failed": "No se pudo cargar esta sección.",
   "retry": "Reintentar",
-  "empty": "Todavía no hay nada publicado aquí."
+  "empty": "Todavía no hay nada publicado aquí.",
+  "company_rut": "RUT {{rut}}"
 }
