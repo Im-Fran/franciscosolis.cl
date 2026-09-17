@@ -58,6 +58,42 @@ export const ACCOUNT_ROUTE = `${AUTH_ROUTE}/account`;
 export const ADMIN_ROUTE = `${AUTH_ROUTE}/admin`;
 
 /**
+ * The administration console's own map, so a route is written once and linked to by name.
+ *
+ * The console used to be a single screen with its sections in `?tab=`, which made every section
+ * unlinkable and every record unaddressable. These are real routes: `adminRoute.user(id)` is a URL
+ * an operator can send to somebody else.
+ */
+export const adminRoute = {
+  overview: ADMIN_ROUTE,
+  users: `${ADMIN_ROUTE}/users`,
+  user: (id: string) => `${ADMIN_ROUTE}/users/${encodeURIComponent(id)}`,
+  sessions: `${ADMIN_ROUTE}/sessions`,
+  invitations: `${ADMIN_ROUTE}/invitations`,
+  applications: `${ADMIN_ROUTE}/applications`,
+  newApplication: `${ADMIN_ROUTE}/applications/new`,
+  application: (clientId: string) => `${ADMIN_ROUTE}/applications/${encodeURIComponent(clientId)}`,
+  roles: `${ADMIN_ROUTE}/roles`,
+  newRole: `${ADMIN_ROUTE}/roles/new`,
+  role: (id: string) => `${ADMIN_ROUTE}/roles/${encodeURIComponent(id)}`,
+  permissions: `${ADMIN_ROUTE}/permissions`,
+  audit: `${ADMIN_ROUTE}/audit`,
+} as const;
+
+/**
+ * Where a `?tab=` link from the old single-screen console should land.
+ *
+ * Those URLs were shared and bookmarked, and the roles tab is quoted in this repo's own docs, so
+ * they are forwarded rather than dropped. An unknown tab falls through to the overview.
+ */
+export const legacyAdminTab = (tab: string | null): string | null =>
+  tab === "users" ? adminRoute.users
+  : tab === "invitations" ? adminRoute.invitations
+  : tab === "applications" ? adminRoute.applications
+  : tab === "roles" ? adminRoute.roles
+  : null;
+
+/**
  * This SPA is a *public* OAuth client: it holds no secret and authenticates with PKCE alone. The
  * application must be registered on the auth service with the callback below as a redirect URI.
  */

@@ -10,14 +10,14 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
 import type {LegalDocument} from "@/lib/cms/types.ts";
-import {useMutation} from "@/lib/cms/useMutation.ts";
-import {useToast} from "@/lib/cms/toast-context.ts";
-import {ConfirmDialog} from "@/pages/cms/components/confirm-dialog.tsx";
-import {DataTable} from "@/pages/cms/components/data-table.tsx";
-import type {Column} from "@/pages/cms/components/data-table.tsx";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
-import {StatusBadge} from "@/pages/cms/components/status-badge.tsx";
+import {useMutation} from "@/lib/admin/useMutation.ts";
+import {useToast} from "@/lib/admin/toast-context.ts";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
+import {DataTable} from "@/components/admin/data-table.tsx";
+import type {Column} from "@/components/admin/data-table.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
+import {StatusBadge} from "@/components/admin/status-badge.tsx";
 
 /**
  * Every legal document the site serves, drafts included.
@@ -79,21 +79,21 @@ export const LegalList = () => {
           row.version ? (
             <span className="font-mono text-[12px] text-neutral-400">{row.version}</span>
           ) : (
-            <span className="text-neutral-600">{t("cms:common.none")}</span>
+            <span className="text-neutral-600">{t("admin:common.none")}</span>
           ),
       },
       {
         key: "effective_at",
         header: t("cms_legal:list.columns.effective"),
         className: "w-36",
-        cell: (row) => formatDate(row.effective_at, i18n.language) ?? <span className="text-neutral-600">{t("cms:common.none")}</span>,
+        cell: (row) => formatDate(row.effective_at, i18n.language) ?? <span className="text-neutral-600">{t("admin:common.none")}</span>,
       },
       {
         key: "updated_at",
         header: t("cms_legal:list.columns.updated"),
         className: "w-36",
         hideBelowLg: true,
-        cell: (row) => formatDate(row.updated_at, i18n.language) ?? <span className="text-neutral-600">{t("cms:common.none")}</span>,
+        cell: (row) => formatDate(row.updated_at, i18n.language) ?? <span className="text-neutral-600">{t("admin:common.none")}</span>,
       },
       {
         key: "actions",
@@ -139,7 +139,7 @@ export const LegalList = () => {
     if (!pendingDelete) return;
     const outcome = await remove.run(pendingDelete.id);
     if (!outcome.ok) return;
-    notify(t("cms:common.deleted"));
+    notify(t("admin:common.deleted"));
     setPendingDelete(null);
     documents.reload();
   };
@@ -165,7 +165,7 @@ export const LegalList = () => {
         description={total > 0 ? t("cms_legal:list.count", {count: total}) : undefined}
         action={
           <Button variant="ghost" size="sm" onClick={documents.reload} data-fs-hover>
-            <ArrowClockwise size={14}/> {t("cms:common.refresh")}
+            <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
       >
@@ -221,7 +221,7 @@ export const LegalList = () => {
         open={pendingDelete !== null}
         title={t("cms_legal:list.delete_title")}
         body={t("cms_legal:list.delete_body", {title: pendingDelete?.title ?? ""})}
-        confirmLabel={remove.pending ? t("cms:common.deleting") : t("cms_legal:list.delete_confirm")}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_legal:list.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setPendingDelete(null)}
         pending={remove.pending}

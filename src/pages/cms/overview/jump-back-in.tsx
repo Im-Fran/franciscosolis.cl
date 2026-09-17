@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button/button.tsx";
 import {Panel} from "@/components/ui/panel.tsx";
 import {cmsRoute} from "@/lib/cms/config.ts";
 import type {CmsCollection} from "@/lib/cms/types.ts";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
 
 export type JumpBackInProps = {collections: CmsCollection[]; className?: string};
 

@@ -25,11 +25,11 @@ export const Pagination = ({offset, limit, count, onChange, disabled}: Paginatio
   if (!hasPrevious && !hasNext) return null;
 
   return (
-    <nav className="mt-5 flex items-center justify-between gap-3 border-t border-neutral-800 pt-4" aria-label={t("cms:common.pagination")}>
+    <nav className="mt-5 flex items-center justify-between gap-3 border-t border-neutral-800 pt-4" aria-label={t("admin:common.pagination")}>
       <p className="text-[13px] text-neutral-500">
         {count === 0
-          ? t("cms:common.page_empty")
-          : t("cms:common.page_range", {from: offset + 1, to: offset + count})}
+          ? t("admin:common.page_empty")
+          : t("admin:common.page_range", {from: offset + 1, to: offset + count})}
       </p>
       <div className="flex items-center gap-2">
         <Button
@@ -39,7 +39,7 @@ export const Pagination = ({offset, limit, count, onChange, disabled}: Paginatio
           onClick={() => onChange(Math.max(0, offset - limit))}
           data-fs-hover
         >
-          <CaretLeft size={14}/> {t("cms:common.previous")}
+          <CaretLeft size={14}/> {t("admin:common.previous")}
         </Button>
         <Button
           variant="ghost"
@@ -48,7 +48,7 @@ export const Pagination = ({offset, limit, count, onChange, disabled}: Paginatio
           onClick={() => onChange(offset + limit)}
           data-fs-hover
         >
-          {t("cms:common.next")} <CaretRight size={14}/>
+          {t("admin:common.next")} <CaretRight size={14}/>
         </Button>
       </div>
     </nav>

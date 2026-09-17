@@ -1,39 +1,47 @@
 import {useCallback, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {ArrowClockwise, Desktop, Trash} from "@phosphor-icons/react";
-import {Alert} from "@/components/ui/alert.tsx";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {Badge} from "@/components/ui/badge/badge.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
-import {Spinner} from "@/components/ui/spinner.tsx";
+import {useToast} from "@/lib/admin/toast-context.ts";
+import {useMutation} from "@/lib/admin/useMutation.ts";
 import {authApi} from "@/lib/auth/api.ts";
 import {useAuth} from "@/lib/auth/auth-context.ts";
 import {describeUserAgent, formatDateTime} from "@/lib/auth/format.ts";
-import {describeError, useResource} from "@/lib/auth/useResource.ts";
+import {useResource} from "@/lib/auth/useResource.ts";
+import type {Session} from "@/lib/auth/types.ts";
 import {Panel, PanelState} from "@/pages/auth/components/panel.tsx";
 
-/** Every live session of the account, with the one in use flagged and each revocable on its own. */
+/**
+ * Every live session of the account, with the one in use flagged and each revocable on its own.
+ *
+ * Revoking is confirmed rather than immediate, because one of these rows is the browser doing the
+ * revoking: ending that one is a sign-out, and a misplaced click should not be the way it happens.
+ */
 export const SessionsPanel = () => {
   const {t, i18n} = useTranslation();
   const {signOut} = useAuth();
+  const {notify} = useToast();
   const sessions = useResource(useCallback((signal: AbortSignal) => authApi.sessions(signal), []));
-  const [revoking, setRevoking] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const revoke = useMutation(useCallback((id: string) => authApi.revokeSession(id), []));
+  const [revoking, setRevoking] = useState<Session | null>(null);
 
   const active = sessions.data?.filter((session) => !session.revoked_at) ?? [];
 
-  const revoke = async (id: string, current: boolean) => {
-    setError(null);
-    setRevoking(id);
-    try {
-      await authApi.revokeSession(id);
-      /* Revoking the session in use is a sign-out — the tokens on this device are dead either way. */
-      if (current) await signOut();
-      else sessions.reload();
-    } catch (cause) {
-      setError(describeError(cause).message);
-    } finally {
-      setRevoking(null);
+  const confirm = async () => {
+    if (!revoking) return;
+    const result = await revoke.run(revoking.id);
+    if (!result.ok) return;
+
+    setRevoking(null);
+    /* Revoking the session in use is a sign-out — the tokens on this device are dead either way. */
+    if (revoking.current) {
+      await signOut();
+      return;
     }
+    notify(t("auth:account.revoked"));
+    sessions.reload();
   };
 
   return (
@@ -46,8 +54,6 @@ export const SessionsPanel = () => {
         </Button>
       }
     >
-      {error && <Alert tone="error" className="mb-4">{t(`auth:errors.${error}`, {defaultValue: error})}</Alert>}
-
       <PanelState
         loading={sessions.loading}
         error={sessions.error}
@@ -79,20 +85,34 @@ export const SessionsPanel = () => {
                 </p>
               </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={revoking !== null}
-                onClick={() => void revoke(session.id, session.current)}
-                data-fs-hover
-              >
-                {revoking === session.id ? <Spinner size={14}/> : <Trash size={14}/>}
+              <Button variant="ghost" size="sm" onClick={() => setRevoking(session)} data-fs-hover>
+                <Trash size={14}/>
                 {session.current ? t("auth:account.sign_out_here") : t("auth:account.revoke")}
               </Button>
             </li>
           ))}
         </ul>
       </PanelState>
+
+      <ConfirmDialog
+        open={revoking !== null}
+        title={revoking?.current ? t("auth:account.sign_out_here") : t("auth:account.revoke")}
+        body={
+          revoking?.current
+            ? t("auth:account.revoke_current_body")
+            : t("auth:account.revoke_body", {
+                device: describeUserAgent(revoking?.user_agent) ?? t("auth:account.unknown_device"),
+              })
+        }
+        confirmLabel={revoking?.current ? t("auth:account.sign_out_here") : t("auth:account.revoke")}
+        pending={revoke.pending}
+        error={revoke.error}
+        onClose={() => {
+          revoke.reset();
+          setRevoking(null);
+        }}
+        onConfirm={confirm}
+      />
     </Panel>
   );
 };

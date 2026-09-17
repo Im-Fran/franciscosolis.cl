@@ -4,7 +4,24 @@ import type {RouteObject} from "react-router-dom";
 import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {RequireAuth} from "@/components/auth/require-auth.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
-import {Account, Admin, Authorize, Callback, SignIn} from "@/pages/auth/lazy-screens.tsx";
+import {
+  Account,
+  AdminLayout,
+  AdminOverview,
+  ApplicationEditor,
+  ApplicationsList,
+  AuditLog,
+  Authorize,
+  Callback,
+  InvitationsList,
+  PermissionsList,
+  RoleEditor,
+  RolesList,
+  SessionsList,
+  SignIn,
+  UserDetail,
+  UsersList,
+} from "@/pages/auth/lazy-screens.tsx";
 
 /** Everything under /auth: sign-in, the OAuth callback and the areas that need a session. */
 export const authRoutes: RouteObject = {
@@ -36,8 +53,28 @@ export const authRoutes: RouteObject = {
           element: <Account/>,
         },
         {
+          /*
+           * The console is a layout with a section under it, not a screen with tabs: every record
+           * has an address, and `AdminLayout` asks `/admin/me` once for the whole subtree.
+           */
           path: "admin",
-          element: <Admin/>,
+          element: <AdminLayout/>,
+          children: [
+            {index: true, element: <AdminOverview/>},
+            {path: "users", element: <UsersList/>},
+            {path: "users/:id", element: <UserDetail/>},
+            {path: "sessions", element: <SessionsList/>},
+            {path: "invitations", element: <InvitationsList/>},
+            {path: "applications", element: <ApplicationsList/>},
+            {path: "applications/new", element: <ApplicationEditor mode="create"/>},
+            {path: "applications/:id", element: <ApplicationEditor mode="edit"/>},
+            {path: "roles", element: <RolesList/>},
+            {path: "roles/new", element: <RoleEditor mode="create"/>},
+            {path: "roles/:id", element: <RoleEditor mode="edit"/>},
+            {path: "permissions", element: <PermissionsList/>},
+            {path: "audit", element: <AuditLog/>},
+            {path: "*", element: <NotFound/>},
+          ],
         },
       ],
     },

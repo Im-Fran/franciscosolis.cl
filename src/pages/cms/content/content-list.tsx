@@ -21,18 +21,18 @@ import {formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {useToast} from "@/lib/cms/toast-context.ts";
+import {useToast} from "@/lib/admin/toast-context.ts";
 import {CONTENT_STATUSES} from "@/lib/cms/types.ts";
 import type {ContentItem, ContentStatus} from "@/lib/cms/types.ts";
-import {useMutation} from "@/lib/cms/useMutation.ts";
-import type {Column} from "@/pages/cms/components/data-table.tsx";
-import {ConfirmDialog} from "@/pages/cms/components/confirm-dialog.tsx";
-import {DataTable} from "@/pages/cms/components/data-table.tsx";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
-import {Pagination} from "@/pages/cms/components/pagination.tsx";
-import {SortableList} from "@/pages/cms/components/sortable-list.tsx";
-import {StatusBadge} from "@/pages/cms/components/status-badge.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
+import {useMutation} from "@/lib/admin/useMutation.ts";
+import type {Column} from "@/components/admin/data-table.tsx";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
+import {DataTable} from "@/components/admin/data-table.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
+import {Pagination} from "@/components/admin/pagination.tsx";
+import {SortableList} from "@/components/admin/sortable-list.tsx";
+import {StatusBadge} from "@/components/admin/status-badge.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
 import {useCollectionMeta} from "@/pages/cms/content/use-collection.ts";
 
 const PAGE_SIZE = 25;
@@ -141,7 +141,7 @@ export const ContentList = () => {
     if (!pendingDelete) return;
     const outcome = await remove.run(pendingDelete.id);
     if (!outcome.ok) return;
-    notify(t("cms:common.deleted"));
+    notify(t("admin:common.deleted"));
     setPendingDelete(null);
     remove.reset();
     list.reload();
@@ -192,7 +192,7 @@ export const ContentList = () => {
             )}
           </span>
         ) : (
-          <span className="text-neutral-600">{t("cms:common.none")}</span>
+          <span className="text-neutral-600">{t("admin:common.none")}</span>
         ),
     },
     {
@@ -202,7 +202,7 @@ export const ContentList = () => {
       className: "w-48",
       cell: (row) => (
         <span className="text-neutral-500">
-          {formatDateTime(row.updated_at, i18n.language) ?? t("cms:common.none")}
+          {formatDateTime(row.updated_at, i18n.language) ?? t("admin:common.none")}
         </span>
       ),
     },
@@ -248,7 +248,7 @@ export const ContentList = () => {
         actions={
           <>
             <Button variant="ghost" size="sm" onClick={list.reload} data-fs-hover>
-              <ArrowClockwise size={14}/> {t("cms:common.refresh")}
+              <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
             <Button variant="primary" size="sm" asChild data-fs-hover>
               <Link to={cmsRoute.contentNew(collection)}>
@@ -266,13 +266,13 @@ export const ContentList = () => {
           action={
             filtered && (
               <Button variant="ghost" size="sm" onClick={clearFilters} data-fs-hover>
-                <Broom size={14}/> {t("cms:common.clear_filters")}
+                <Broom size={14}/> {t("admin:common.clear_filters")}
               </Button>
             )
           }
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
-            <Field label={t("cms:common.search")} htmlFor="content-search">
+            <Field label={t("admin:common.search")} htmlFor="content-search">
               <div className="relative">
                 <MagnifyingGlass
                   size={16}
@@ -299,9 +299,9 @@ export const ContentList = () => {
                   setOffset(0);
                 }}
               >
-                <option value="">{t("cms:common.filter_all")}</option>
+                <option value="">{t("admin:common.filter_all")}</option>
                 {CONTENT_STATUSES.map((entry) => (
-                  <option key={entry} value={entry}>{t(`cms:status.${entry}`)}</option>
+                  <option key={entry} value={entry}>{t(`admin:status.${entry}`)}</option>
                 ))}
               </Select>
             </Field>
@@ -342,7 +342,7 @@ export const ContentList = () => {
                     }}
                     data-fs-hover
                   >
-                    {t("cms:common.cancel")}
+                    {t("admin:common.cancel")}
                   </Button>
                   <Button variant="primary" size="sm" disabled={reorder.pending} onClick={saveOrder} data-fs-hover>
                     {reorder.pending ? <Spinner size={14}/> : <FloppyDisk size={15}/>}
@@ -383,7 +383,7 @@ export const ContentList = () => {
                   description={t("cms_content:list.no_matches_description")}
                   action={
                     <Button variant="secondary" size="sm" onClick={clearFilters} data-fs-hover>
-                      <Broom size={14}/> {t("cms:common.clear_filters")}
+                      <Broom size={14}/> {t("admin:common.clear_filters")}
                     </Button>
                   }
                 />
@@ -403,7 +403,7 @@ export const ContentList = () => {
               <>
                 {reorder.error && (
                   <p className="mb-3 text-xs text-red-400">
-                    {t(`cms:errors.${reorder.error}`, {defaultValue: reorder.error})}
+                    {t(`admin:errors.${reorder.error}`, {defaultValue: reorder.error})}
                   </p>
                 )}
                 <SortableList
@@ -449,7 +449,7 @@ export const ContentList = () => {
         open={pendingDelete !== null}
         title={t("cms_content:list.delete_title", {name: meta.singular})}
         body={t("cms_content:list.delete_body", {title: pendingDelete?.title ?? ""})}
-        confirmLabel={remove.pending ? t("cms:common.deleting") : t("cms:common.delete")}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("admin:common.delete")}
         pending={remove.pending}
         error={remove.error}
         onConfirm={() => void confirmDelete()}

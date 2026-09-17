@@ -23,7 +23,7 @@ i18next
     /* The visitor's stored choice, or their browser's language the first time around. */
     lng: readPreferences().language,
     fallbackLng: 'en',
-    ns: ['common', 'personal_info', 'projects', 'experience', 'hero', 'nav', 'stack', 'contact', 'legal', 'brand', 'not_found', 'auth', 'cms', 'a11y'],
+    ns: ['common', 'personal_info', 'projects', 'experience', 'hero', 'nav', 'stack', 'contact', 'legal', 'brand', 'not_found', 'auth', 'admin', 'cms', 'a11y'],
     /*
      * React escapes every string it renders as a text node, so i18next escaping the value first
      * only double-encodes it: a title with an apostrophe reaches the screen as `O&#39;Brien`, and a

@@ -10,8 +10,8 @@ import {formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
-import {StatusBadge} from "@/pages/cms/components/status-badge.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
+import {StatusBadge} from "@/components/admin/status-badge.tsx";
 import {recipientsOf} from "@/pages/cms/email/email-shared.ts";
 
 /** One row of the delivery facts; a fact the service did not send is not rendered at all. */
@@ -71,7 +71,7 @@ export const EmailDetail = () => {
             {/* Same reasoning as the log: `queued` becomes `sent` or `failed` server-side and this
                 tab is never told, so the way to find out is a button rather than a poll. */}
             <Button variant="ghost" size="sm" onClick={message.reload} disabled={message.loading} data-fs-hover>
-              <ArrowClockwise size={14}/> {t("cms:common.refresh")}
+              <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
             <Button asChild variant="secondary" size="sm" data-fs-hover>
               <Link to={composeTo} state={{prefill: data}}>
@@ -170,7 +170,7 @@ export const EmailDetail = () => {
                     <dl className="flex flex-col rounded-[var(--radius-md)] border border-neutral-800 px-4">
                       {variables.map(([name, value]) => (
                         <Fact key={name} label={name}>
-                          {value || <span className="text-neutral-600">{t("cms:common.none")}</span>}
+                          {value || <span className="text-neutral-600">{t("admin:common.none")}</span>}
                         </Fact>
                       ))}
                     </dl>

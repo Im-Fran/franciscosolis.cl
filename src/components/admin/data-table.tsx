@@ -25,7 +25,7 @@ export type DataTableProps<T> = {
 };
 
 /**
- * The list shape every CMS section uses. A real `<table>` rather than a grid of `<div>`s, so the
+ * The list shape every administration screen uses. A real `<table>` rather than a grid of `<div>`s, so the
  * header stays associated with its cells for a screen reader, and it scrolls sideways on a narrow
  * screen instead of squeezing the columns into unreadable slivers.
  */

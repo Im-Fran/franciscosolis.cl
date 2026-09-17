@@ -10,7 +10,7 @@ so every page a user sees during a sign-in is one of these.
 | `/auth`          | Sign-in: magic link or Google                                            |
 | `/auth/callback` | Where both providers return; redeems the authorization code             |
 | `/auth/account`  | Profile, granted access, linked providers, active sessions              |
-| `/auth/admin`    | Users, invitations, client applications, roles and permissions          |
+| `/auth/admin/*`  | The administration console — see below                                   |
 | `/apps/auth`     | The service's **hosted** sign-in screen — see below                      |
 
 `/auth/account` and `/auth/admin` need a session; anonymous visitors are sent to `/auth` with a
@@ -104,12 +104,56 @@ The application has to exist on the auth service with this site's callback among
 local work. Register it from **Admin → Applications** (leave *Confidential* off; a browser client
 cannot keep a secret).
 
-## Admin access
+## The administration console
 
-Permission slugs are seeded server-side, so the front-end cannot enumerate them ahead of time. The
-`Admin` entry is offered when a role or permission looks administrative (`hasAdminAccess`), but that
-only decides what is *shown*: every admin endpoint re-checks the caller, and each panel renders an
-explicit no-access state when the API answers `403`.
+`/auth/admin` is a console with a section per resource, not one screen with tabs. Every section is a
+route and every record has an address, so a filtered list or one account is a URL somebody can send:
+
+| Route | What it is |
+| ----- | ---------- |
+| `/auth/admin` | Overview: what needs attention, what you hold, what just happened |
+| `/auth/admin/users`, `/users/:id` | Accounts, and one account's status, roles, providers and sessions |
+| `/auth/admin/sessions` | Who is signed in right now, across every account and application |
+| `/auth/admin/invitations` | The allowlist sign-up is gated on |
+| `/auth/admin/applications`, `/applications/new`, `/applications/:id` | Client applications, their URLs, their OAuth configuration and their secrets |
+| `/auth/admin/roles`, `/roles/new`, `/roles/:id` | Roles, global and per application |
+| `/auth/admin/permissions` | The permission catalog |
+| `/auth/admin/audit` | The authentication audit trail |
+
+The `?tab=` links the previous single-screen console used are forwarded to the matching route, so a
+bookmark still lands where it meant to.
+
+### Signed in is not admitted
+
+Two questions are asked, and both are answered by the API:
+
+- **Is there a live session?** `RequireAuth`, above the whole subtree.
+- **Does this account belong in the console?** `GET /auth/admin/me`, asked **once** by
+  `AdminProvider`. It answers `403` for an account holding no administration permission, and that
+  is the one no-access screen the console shows — instead of eight sections each failing on their
+  own. It also drives the navigation: a section whose list endpoint needs a permission the account
+  does not hold is not offered, because a menu of dead ends is worse than a shorter menu.
+
+Nothing is *enforced* client-side. Every endpoint re-checks the caller, and because permissions are
+re-read from the database on each request rather than taken from the token, the API can refuse
+something the navigation offered a moment ago. A *per-endpoint* `403` is therefore still possible —
+an account that may read users but not the audit trail — and each section renders its own no-access
+state where it happens.
+
+Since roles are minted into the access token, a grant or a revocation reaches the holder's own
+interface only once their token refreshes. The API itself is never out of date.
+
+### What the console will not do
+
+Three things are deliberately absent, and all three are the API being the authority rather than an
+oversight:
+
+- **No profile editing.** An administrator decides access — status, roles, sessions. The name and
+  the picture belong to the person and are refreshed from whichever provider signed them in.
+- **No deleting an application or an account.** An application is deactivated with `is_active` and
+  an account with `status`; the destructive versions live in the auth repo's operator scripts.
+- **No totals.** Every list endpoint pages with `limit`/`offset` and reports no count, so a figure
+  on the overview could only be the size of one page dressed up as a total.
 
 ## Layout of the code
 
@@ -130,7 +174,25 @@ src/lib/auth/
   auth-provider.tsx restores the session and keeps context in step with the token store
   useResource.ts    load-one-resource hook with abort, retry and 403 reporting
   authorize.ts      the parked-request endpoints behind /apps/auth — no client, no session
+  admin-context.ts / admin-provider.tsx   the one /admin/me answer the console is gated on,
+                    plus the `can(permission)` the navigation is built from
 src/components/auth/ the sign-in and callback panels, shared by every application on this site
 src/pages/auth/      the screens, split out of the main bundle and fetched on demand;
                      authorize.tsx is the hosted screen and belongs to no application here
+  account/           profile, granted access, linked providers and live sessions
+  admin/             the console: components/ holds its shell, navigation, gate and no-access
+                     screen; overview.tsx, users/, sessions/, invitations/, applications/,
+                     roles/, permissions/ and audit/ are one section each, one chunk each
 ```
+
+The console is built from `src/components/admin/` and `src/lib/admin/` — the data table, paging,
+confirmation dialog, toasts, page header, tag input and the rest — which the CMS renders too. They
+were written for the CMS and were lifted out of it rather than copied, so the two consoles cannot
+drift apart.
+
+### Translations
+
+The console's copy lives in the `auth_admin` namespace, which is deliberately **not** preloaded in
+`main.tsx`: a visitor reading the portfolio should never fetch it. A screen loads it by naming it,
+`useTranslation(["auth_admin", "admin"])`, which also brings in `admin` — the namespace holding the
+strings the shared components render, shared with the CMS for the same reason the components are.

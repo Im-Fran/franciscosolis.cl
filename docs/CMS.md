@@ -164,9 +164,7 @@ src/lib/cms/
   client.ts        the CMS auth client and one function per endpoint
   cms-context.ts   the editor and the collections, shared by every screen
   cms-provider.tsx loads them once and answers the "admitted?" question above the subtree
-  useMutation.ts   the write-side counterpart of useResource
-  toast-context.ts / toast-provider.tsx   write confirmations, announced once for the whole console
-  format.ts        slugs, datetime-local round-tripping, list splitting
+  format.ts        the reading-time estimate the markdown editor's footer shows
   json.ts          reading and writing the free-form `data` object
   markdown.ts      the sanitized markdown renderer and the prose styles for a preview
   content.ts       the *public* half of the same API — no auth, no session — which is what the
@@ -177,9 +175,11 @@ src/lib/cms/
 src/pages/cms/
   cms-routes.tsx   the subtree, its own AuthProvider, and the one gate every screen shares
   lazy-screens.tsx every screen, split out of the main bundle and fetched on demand
-  components/      the shell and its navigation, plus the primitives the sections are built from:
-                   data table, paging, confirm dialog, markdown and JSON editors, tag input,
-                   sortable list, status badge, empty state, page header
+  components/      the shell, its navigation, the gate and the markdown editor — what is specific
+                   to the CMS. The primitives the sections are built from live in
+                   `src/components/admin/` and `src/lib/admin/`, shared with the auth console:
+                   data table, paging, confirm dialog, JSON editor, tag input, sortable list,
+                   status badge, empty state, page header, toasts, useMutation and the form helpers
   overview.tsx     the landing
   content/         the collections
   legal/           the legal documents
@@ -189,7 +189,9 @@ src/pages/cms/
 
 ### Translations
 
-The shell's own copy lives in the `cms` namespace, which the site preloads. Each section keeps its
+The strings the shared components render live in the `admin` namespace — shared with the auth
+console, for the same reason the components are — and the shell's own copy in `cms`. The site
+preloads both. Each section keeps its
 own — `cms_overview`, `cms_content`, `cms_legal`, `cms_templates`, `cms_emails`, `cms_audit` — and
 those are deliberately **not** in the preload list in `main.tsx`: a visitor reading the portfolio
 should never fetch the CMS's copy. A screen loads its namespace by naming it,

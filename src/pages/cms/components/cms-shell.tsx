@@ -14,7 +14,7 @@ import {useCms} from "@/lib/cms/cms-context.ts";
 import {CMS_ROUTE} from "@/lib/cms/config.ts";
 import {cn} from "@/lib/utils.ts";
 import {buildNav} from "@/pages/cms/components/cms-nav.ts";
-import {ToastViewport} from "@/pages/cms/components/toast-viewport.tsx";
+import {ToastViewport} from "@/components/admin/toast-viewport.tsx";
 
 const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
   const {t} = useTranslation();

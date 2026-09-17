@@ -12,7 +12,7 @@ export const SkeletonRows = ({rows = 3}: {rows?: number}) => {
 
   return (
     <div role="status" aria-busy="true" className="flex flex-col gap-2">
-      <span className="sr-only">{t("cms:common.loading")}</span>
+      <span className="sr-only">{t("admin:common.loading")}</span>
       {Array.from({length: rows}, (_, index) => (
         <span
           key={index}

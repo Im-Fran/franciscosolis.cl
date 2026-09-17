@@ -1,11 +1,11 @@
 import {useTranslation} from "react-i18next";
 import {X} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
-import {useToast} from "@/lib/cms/toast-context.ts";
+import {useToast} from "@/lib/admin/toast-context.ts";
 
 /**
- * Where the CMS's write confirmations land. One live region for the whole interface, so a save that
- * happens while the screen is scrolled elsewhere is still announced exactly once.
+ * Where an administration panel's write confirmations land. One live region per panel, so a save
+ * that happens while the screen is scrolled elsewhere is still announced exactly once.
  */
 export const ToastViewport = () => {
   const {t} = useTranslation();
@@ -17,7 +17,7 @@ export const ToastViewport = () => {
     <div
       className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-end gap-2 sm:inset-x-auto sm:right-6 sm:bottom-6"
       role="region"
-      aria-label={t("cms:common.notifications")}
+      aria-label={t("admin:common.notifications")}
     >
       {toasts.map((toast) => (
         <Alert

@@ -8,14 +8,14 @@ import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {formatDateTime} from "@/lib/auth/format.ts";
 import {cmsApi} from "@/lib/cms/client.ts";
 import {cmsRoute} from "@/lib/cms/config.ts";
-import {useMutation} from "@/lib/cms/useMutation.ts";
-import {useToast} from "@/lib/cms/toast-context.ts";
+import {useMutation} from "@/lib/admin/useMutation.ts";
+import {useToast} from "@/lib/admin/toast-context.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
-import type {Column} from "@/pages/cms/components/data-table.tsx";
-import {DataTable} from "@/pages/cms/components/data-table.tsx";
-import {ConfirmDialog} from "@/pages/cms/components/confirm-dialog.tsx";
-import {EmptyState} from "@/pages/cms/components/empty-state.tsx";
-import {PageHeader} from "@/pages/cms/components/page-header.tsx";
+import type {Column} from "@/components/admin/data-table.tsx";
+import {DataTable} from "@/components/admin/data-table.tsx";
+import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
+import {EmptyState} from "@/components/admin/empty-state.tsx";
+import {PageHeader} from "@/components/admin/page-header.tsx";
 import type {EmailTemplate} from "@/lib/cms/types.ts";
 
 /** A row only guarantees `id`, `slug` and `subject`, so the name falls back to the slug it is filed under. */
@@ -52,7 +52,7 @@ export const TemplateList = () => {
   const copySlug = async (slug: string) => {
     try {
       await navigator.clipboard.writeText(slug);
-      notify(t("cms:common.copied"));
+      notify(t("admin:common.copied"));
     } catch {
       /* Clipboard access is denied outside a secure context; say so instead of failing silently. */
       notify(t("cms_templates:list.copy_failed"), "error");
@@ -63,7 +63,7 @@ export const TemplateList = () => {
     if (!pendingDelete) return;
     const outcome = await remove.run(pendingDelete.id);
     if (!outcome.ok) return;
-    notify(t("cms:common.deleted"));
+    notify(t("admin:common.deleted"));
     setPendingDelete(null);
     templates.reload();
   };
@@ -84,7 +84,7 @@ export const TemplateList = () => {
                 void copySlug(template.slug);
               }}
               aria-label={t("cms_templates:list.copy_slug", {slug: template.slug})}
-              title={t("cms:common.copy")}
+              title={t("admin:common.copy")}
               className="cursor-pointer rounded-[var(--radius-sm)] p-1 text-neutral-600 transition-colors hover:bg-neutral-800 hover:text-text"
               data-fs-hover
             >
@@ -107,7 +107,7 @@ export const TemplateList = () => {
         template.description ? (
           <span className="line-clamp-2 text-neutral-400">{template.description}</span>
         ) : (
-          <span className="text-neutral-600">{t("cms:common.none")}</span>
+          <span className="text-neutral-600">{t("admin:common.none")}</span>
         ),
     },
     {
@@ -117,7 +117,7 @@ export const TemplateList = () => {
       className: "whitespace-nowrap",
       cell: (template) => (
         <span className="text-neutral-500">
-          {formatDateTime(template.updated_at ?? template.created_at, i18n.language) ?? t("cms:common.none")}
+          {formatDateTime(template.updated_at ?? template.created_at, i18n.language) ?? t("admin:common.none")}
         </span>
       ),
     },
@@ -169,7 +169,7 @@ export const TemplateList = () => {
         actions={
           <>
             <Button variant="ghost" size="sm" onClick={templates.reload} data-fs-hover>
-              <ArrowClockwise size={14}/> {t("cms:common.refresh")}
+              <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
             <Button size="sm" asChild data-fs-hover>
               <Link to={cmsRoute.templateNew}>
@@ -233,7 +233,7 @@ export const TemplateList = () => {
           name: pendingDelete ? displayName(pendingDelete) : "",
           slug: pendingDelete?.slug ?? "",
         })}
-        confirmLabel={remove.pending ? t("cms:common.deleting") : t("cms_templates:list.delete_confirm")}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_templates:list.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setPendingDelete(null)}
         pending={remove.pending}
