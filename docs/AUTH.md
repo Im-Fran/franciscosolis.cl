@@ -9,7 +9,7 @@ so every page a user sees during a sign-in is one of these.
 | ---------------- | ----------------------------------------------------------------------- |
 | `/auth`          | Sign-in: magic link or Google                                            |
 | `/auth/callback` | Where both providers return; redeems the authorization code             |
-| `/auth/account`  | Profile, granted access, linked providers, active sessions              |
+| `/auth/account/*` | Your account, one tab per section — see below                          |
 | `/auth/admin/*`  | The administration console — see below                                   |
 | `/apps/auth`     | The service's **hosted** sign-in screen — see below                      |
 
@@ -104,6 +104,23 @@ The application has to exist on the auth service with this site's callback among
 local work. Register it from **Admin → Applications** (leave *Confidential* off; a browser client
 cannot keep a secret).
 
+## Your account
+
+`/auth/account` is one account read through vertical tabs rather than a single column of panels: the
+sessions list no longer pushes the rest of the screen out of sight, and — as in the console — each
+tab is a route, so a section can be reloaded into, bookmarked and linked to.
+
+| Route | What it is |
+| ----- | ---------- |
+| `/auth/account` | Profile: the name, picture and locale the account owns |
+| `/auth/account/access` | The roles and permissions held in the application signed in to |
+| `/auth/account/identities` | The providers linked to the account |
+| `/auth/account/sessions` | Every device signed in, and the button that revokes one |
+| `/auth/account/details` | The read-only record: status, verification, dates, user id |
+
+`ACCOUNT_SECTIONS` in `account-nav.ts` is the single list the tabs and the router are both built
+from, so a section cannot exist in one and be missing from the other.
+
 ## The administration console
 
 `/auth/admin` is a console with a section per resource, not one screen with tabs. Every section is a
@@ -179,7 +196,8 @@ src/lib/auth/
 src/components/auth/ the sign-in and callback panels, shared by every application on this site
 src/pages/auth/      the screens, split out of the main bundle and fetched on demand;
                      authorize.tsx is the hosted screen and belongs to no application here
-  account/           profile, granted access, linked providers and live sessions
+  account/           the account: account-layout.tsx holds the shell and the tab column,
+                     account-nav.ts the sections, and each panel is one tab, one chunk
   admin/             the console: components/ holds its shell, navigation, gate and no-access
                      screen; overview.tsx, users/, sessions/, invitations/, applications/,
                      roles/, permissions/ and audit/ are one section each, one chunk each
