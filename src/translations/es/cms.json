@@ -16,24 +16,14 @@
     "sign_out": "Cerrar sesión"
   },
   "sign_in": {
-    "title": "Entra al CMS",
-    "subtitle": "El contenido detrás de franciscosolis.cl. Entra con la cuenta que tenga acceso: sin contraseñas de por medio.",
-    "email_label": "Correo electrónico",
-    "email_placeholder": "tu@ejemplo.com",
-    "email_hint": "Te enviamos un enlace de un solo uso que inicia la sesión.",
-    "magic_link_cta": "Enviar enlace mágico",
-    "divider": "o",
-    "google_cta": "Continuar con Google",
-    "provider_unavailable": "Este método no está configurado en este despliegue.",
-    "no_password": "No hay contraseña que olvidar: cada inicio de sesión es un permiso nuevo y de un solo uso.",
+    "title": "Te llevamos al inicio de sesión",
+    "subtitle": "El CMS no te pide credenciales. Te estamos enviando al servicio de inicio de sesión que protege todas las aplicaciones de este sitio.",
+    "working": "Entregando la solicitud al servicio de inicio de sesión…",
     "staff_only": "El CMS solo está abierto a cuentas con un rol de edición.",
     "back_home": "Volver al sitio",
-    "sent_title": "Revisa tu correo",
-    "sent_subtitle": "Si {{email}} puede entrar al CMS, el enlace ya va en camino.",
-    "sent_alert_title": "Enlace enviado",
-    "sent_expiry": "Caduca en unos {{minutes}} minutos y funciona una sola vez.",
-    "sent_note": "Abre el enlace en este mismo navegador para que el inicio de sesión termine donde empezó. Después puedes cerrar esta pestaña.",
-    "use_another": "Usar otra dirección"
+    "error_title": "No se pudo contactar al servicio de inicio de sesión",
+    "error_subtitle": "La solicitud de autorización nunca salió de este navegador, así que no se inició sesión en nada.",
+    "retry": "Reintentar"
   },
   "callback": {
     "title": "Iniciando tu sesión",

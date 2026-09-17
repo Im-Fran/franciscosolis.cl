@@ -8,7 +8,7 @@ trail — behind a sign-in of its own.
 | Route                          | What it is                                                       |
 | ------------------------------ | ---------------------------------------------------------------- |
 | `/cms`                         | Overview: what needs attention, where to jump back in, who you are |
-| `/cms/sign-in`                 | Sign-in: magic link or Google                                     |
+| `/cms/sign-in`                 | Hands the visitor to the SSO service; collects nothing itself      |
 | `/cms/callback`                | Where both providers return; redeems the authorization code       |
 | `/cms/content/:collection`     | One collection's entries — filter, reorder, create                |
 | `/cms/content/:collection/new` | A new entry                                                       |
@@ -26,11 +26,43 @@ Everything except `sign-in` and `callback` needs a session; anonymous visitors a
 `/cms/sign-in` with a `return_to` so the flow resumes where they were headed. A `return_to` pointing
 outside `/cms` is dropped.
 
+`/cms/sign-in` is not a sign-in screen. It starts an authorization code request at the auth
+service's `GET /oauth/authorize` and hands the browser over; the credentials are collected by the
+hosted screen at `/apps/auth`, which is the one page in the whole flow that faces a human. See
+*Single sign-on, not a second sign-in* below.
+
 The interface used to live at `/apps/cms`. That path still resolves — `router.tsx` forwards the whole
 sub-path, query string included — and the sign-in flow depends on it: the application is still
 registered under `<origin>/apps/cms/callback`, so that is the redirect URI the CMS asks for and the
 path the service returns the browser to. The forward carries the `code` and `state` on to
 `/cms/callback`, which redeems them. See *A client application of its own* below.
+
+## Single sign-on, not a second sign-in
+
+The CMS used to ask for the credentials itself: the same provider picker and magic-link form
+`/auth` renders, pointed at the CMS's client id. It worked, and it was the wrong shape — a second
+sign-in screen for one identity provider is the thing single sign-on exists to avoid. Every
+provider the deployment gained had to be taught to it as well, and the application asking for the
+access was also the one serving the credential form.
+
+It is now an ordinary relying party. `/cms/sign-in` mints the PKCE transaction and navigates to
+`GET /oauth/authorize` with `response_type=code`, its client id, its registered redirect URI, the
+challenge and the `state`; the service parks the request and takes the browser to its hosted screen,
+which offers whichever providers the deployment actually has configured. What comes back is
+unchanged — the code lands on the registered redirect URI and `/cms/callback` redeems it against the
+verifier stored on this side — so nothing downstream of the callback knows the difference.
+
+Two consequences worth keeping in mind:
+
+- **A provider added on the service appears in the CMS for free.** The picker is the service's, not
+  this application's.
+- **The CMS's session is still its own.** The hosted screen holds no session; it authenticates
+  somebody and the code goes to the client that parked the request. Signing in to the CMS still
+  does not sign you in to the site, and vice versa.
+
+`startAuthorization` in `src/lib/auth/flow.ts` is the shared machinery, so the site's own `/auth`
+could be moved onto it the same way. It has not been: `/auth` *is* the front-end of this issuer, and
+bouncing it through the issuer's hosted screen would be a redirect to itself.
 
 ## A client application of its own
 

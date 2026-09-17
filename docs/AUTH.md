@@ -86,15 +86,27 @@ has to authenticate someone, and the code still goes to the client's registered 
 Its two `fetch` endpoints are cross-origin by construction; the auth service allows them from any
 origin an active client registered (`CORS_PARKED_REQUEST` in its `middleware/cors.ts`).
 
+Every other application on this origin goes through it. `flow.startAuthorization(returnTo)` mints a
+PKCE transaction and navigates to `GET /oauth/authorize`, which is all an application needs to do to
+sign a user in — the CMS is the one using it today (see [CMS.md](./CMS.md)). `/auth` itself is the
+exception, and deliberately: it is the front-end of this issuer, so sending it through the issuer's
+hosted screen would be a redirect to itself.
+
 ## How sign-in works
 
 This SPA is a **public OAuth 2.0 client**: it holds no secret and authenticates with PKCE alone.
 
 1. A verifier, its S256 challenge and a `state` are generated and stored as a pending *transaction*.
-2. **Magic link** — `POST /magic-link` with the challenge; the service emails a one-time link.
+2. **Hosted** — the browser is sent to `GET /oauth/authorize`, which parks the request and takes it
+   to the hosted screen; that is `startAuthorization`, and it is how an application signs in without
+   asking for credentials itself.
+   **Magic link** — `POST /magic-link` with the challenge; the service emails a one-time link.
    **Google** — the browser is sent to `GET /oauth/google/authorize` with the same parameters.
-3. Either path lands back on `/auth/callback?code=…&state=…`.
+3. Every path lands back on the client's registered redirect URI with `?code=…&state=…`.
 4. The callback checks `state`, then exchanges the code and the verifier at `POST /oauth/token`.
+
+Steps 1, 3 and 4 are identical either way, which is why the hosted flow needed no new callback and
+no new session handling: only how step 2 reaches a provider differs.
 
 The service answers `POST /magic-link` with `202` whether or not the address exists, so the sign-in
 screen cannot be used to discover which addresses have an account. Sign-up is invitation-only.
