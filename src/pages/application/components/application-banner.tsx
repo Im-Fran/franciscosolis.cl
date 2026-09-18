@@ -70,7 +70,7 @@ export const ApplicationBanner = ({application}: {application: Application}) => 
         </p>
       )}
 
-      {links.length > 0 && <ApplicationLinks links={links} className="mt-6 justify-center px-4"/>}
+      {links.length > 0 && <ApplicationLinks links={links} className="mt-6 px-4"/>}
 
       <nav
         aria-label={t("application:tabs.label")}
