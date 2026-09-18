@@ -1,0 +1,24 @@
+{
+  "markdown": {
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "heading": "Título",
+    "list": "Lista con viñetas",
+    "link": "Enlace",
+    "code": "Código en línea",
+    "write": "Escribir",
+    "preview": "Vista previa",
+    "split": "Dividido",
+    "preview_empty": "Todavía no hay nada que previsualizar.",
+    "hint": "Markdown — **negrita**, _cursiva_, [enlaces](https://) y listas.",
+    "count_one": "{{count}} carácter",
+    "count_other": "{{count}} caracteres",
+    "count_max_one": "{{count}} / {{max}} carácter",
+    "count_max_other": "{{count}} / {{max}} caracteres",
+    "reading": "unos {{minutes}} min de lectura"
+  },
+  "locales": {
+    "en": "Inglés",
+    "es": "Español"
+  }
+}

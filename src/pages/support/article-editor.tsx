@@ -13,12 +13,11 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
-import type {Translations} from "@/lib/cms/types.ts";
 import {supportApi} from "@/lib/support/client.ts";
 import {supportRoute} from "@/lib/support/config.ts";
 import type {AdminArticle} from "@/lib/support/types.ts";
-import {MarkdownEditor} from "@/pages/cms/components/markdown-editor.tsx";
-import {TranslationsPanel} from "@/pages/cms/components/translations-panel.tsx";
+import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
+import {TranslationsPanel} from "@/pages/support/components/translations-panel.tsx";
 
 /** The three prose fields a help article has. Slug, section and ordering are structure, not prose. */
 const TRANSLATABLE = ["title", "summary", "body"] as const;
@@ -27,12 +26,14 @@ const LIMITS = {title: 200, summary: 600, body: 200_000};
 /**
  * Writing a help article.
  *
- * The same markdown editor and translations panel the CMS uses, deliberately: this is the same job
- * — prose in two languages with the English in the row and the Spanish as overrides — and a second
- * implementation of it would drift within a release.
+ * The markdown editor and the translations panel are shared components (`@/components/prose`),
+ * deliberately: this is the same job the CMS does — prose in two languages with the English in the
+ * row and the Spanish as overrides — and a second implementation of it would drift within a
+ * release. Shared is not the same as borrowed, though: it used to import the CMS's own copies, and
+ * that made this screen throw on a context no support route ever mounts.
  */
 export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
-  const {t} = useTranslation(["support_agent", "cms"]);
+  const {t} = useTranslation(["support_agent", "prose"]);
   const {id = ""} = useParams();
   const navigate = useNavigate();
   const {notify} = useToast();
@@ -209,12 +210,9 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
         <TranslationsPanel
           fields={TRANSLATABLE}
           source={{title: form.title ?? "", summary: form.summary ?? "", body: form.body ?? ""}}
-          value={(form.translations ?? {}) as Translations}
-          onChange={(translations) =>
-            setForm((current) => ({...current, translations: translations as AdminArticle["translations"]}))
-          }
+          value={form.translations ?? {}}
+          onChange={(translations) => setForm((current) => ({...current, translations}))}
           limits={LIMITS}
-          ns="support_agent"
         />
 
         {save.error ? <Alert tone="error">{save.error}</Alert> : null}

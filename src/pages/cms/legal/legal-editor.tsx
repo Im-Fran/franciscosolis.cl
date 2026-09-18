@@ -18,7 +18,7 @@ import {CONTENT_STATUSES} from "@/lib/cms/types.ts";
 import type {ContentStatus, LegalDocument, LegalPayload, Translations} from "@/lib/cms/types.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
-import {MarkdownEditor} from "@/pages/cms/components/markdown-editor.tsx";
+import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {TranslationsPanel} from "@/pages/cms/components/translations-panel.tsx";
 

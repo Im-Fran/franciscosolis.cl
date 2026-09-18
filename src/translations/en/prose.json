@@ -1,0 +1,24 @@
+{
+  "markdown": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "heading": "Heading",
+    "list": "Bulleted list",
+    "link": "Link",
+    "code": "Inline code",
+    "write": "Write",
+    "preview": "Preview",
+    "split": "Split",
+    "preview_empty": "Nothing to preview yet.",
+    "hint": "Markdown — **bold**, _italic_, [links](https://) and lists.",
+    "count_one": "{{count}} character",
+    "count_other": "{{count}} characters",
+    "count_max_one": "{{count}} / {{max}} character",
+    "count_max_other": "{{count}} / {{max}} characters",
+    "reading": "about {{minutes}} min read"
+  },
+  "locales": {
+    "en": "English",
+    "es": "Spanish"
+  }
+}

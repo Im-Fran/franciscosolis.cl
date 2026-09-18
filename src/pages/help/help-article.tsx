@@ -5,7 +5,7 @@ import {ArrowLeft, ThumbsDown, ThumbsUp} from "@phosphor-icons/react";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
-import {PROSE_CLASS, renderMarkdown} from "@/lib/cms/markdown.ts";
+import {PROSE_CLASS, renderMarkdown} from "@/lib/prose/markdown.ts";
 import {helpRoute} from "@/lib/support/config.ts";
 import {supportContent} from "@/lib/support/content.ts";
 

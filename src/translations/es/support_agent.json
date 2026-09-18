@@ -162,6 +162,11 @@
     "translations_source": "Inglés",
     "translations_source_empty": "Todavía no hay nada escrito en inglés.",
     "translations_none": "Todavía no hay traducciones.",
-    "translations_clear": "Vaciar este idioma"
+    "translations_clear": "Vaciar este idioma",
+    "fields": {
+      "title": "Título",
+      "summary": "Resumen",
+      "body": "Cuerpo"
+    }
   }
 }

@@ -22,6 +22,13 @@ lock out the hardest cases. When a session does happen to exist, `src/lib/suppor
 its token anyway — it is built over the *site's* `webAuth` session — which is what links a ticket to
 an account on the way in.
 
+`/help` carries a header of its own (`src/pages/help/components/help-header.tsx`), mounted on the
+layout route rather than on each screen: the lockup and the section's name on the left, the reader's
+own tickets and their account on the right. It is the same "say which place this is" the account and
+the console already do, and the right-hand half follows the gate rule above — the two links are
+offered when there is a session and replaced by a single sign-in link when there is not. That link
+points at `/account/tickets`, whose own gate carries the visitor through the hand-off and back.
+
 ### The secret in the link
 
 A support email links to `…/tickets/FS-1042#k=<secret>`. The secret rides in the **fragment**, which
@@ -104,12 +111,26 @@ src/components/support/
   ticket-timeline.tsx  shared by the public thread and the console
   help-snippet.tsx     the sanitised <mark>
   ticket-status-badge.tsx
-src/pages/help/        the public screens
+src/pages/help/        the public screens, and the header they share
 src/pages/support/     the console
 ```
 
+The help centre's editors are the support console's own. `article-editor.tsx` writes prose in two
+languages, which is the job the CMS does as well, so the markdown editor and the translations panel
+are **shared components** in `src/components/prose/` (with `src/lib/prose/` behind them) and each
+section wires them to its own service: `src/pages/support/components/translations-panel.tsx` hands
+the panel the locales `SupportProvider` read from `/support/status`, exactly as the CMS's wrapper
+hands it the CMS's.
+
+Sharing them is not the same as borrowing them, and the difference was a crash: the article editor
+used to import the CMS's copies directly, which made `/support/help/new` throw
+`useCms must be used inside <CmsProvider>` — no CMS provider is mounted anywhere under `/support`,
+and none ever should be. A component that reads one section's context belongs to that section;
+anything two sections need takes what it needs as a parameter and moves somewhere neither owns.
+
 Translations live in `src/translations/{en,es}/support.json` (public) and `support_agent.json`
-(console). The first is preloaded in `main.tsx` because the help centre is linked from the site; the
+(console), plus `prose.json` for the shared editors' own chrome — the markdown toolbar and the
+language names — which the console loads alongside its own namespace. The first is preloaded in `main.tsx` because the help centre is linked from the site; the
 second lazy-loads with the console.
 
 ## Configuration

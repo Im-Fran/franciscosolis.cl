@@ -17,7 +17,13 @@
     "thanks": "Thanks — that helps us know what to write next.",
     "still_stuck": "Still stuck?",
     "open_ticket": "Open a ticket",
-    "back_to_help": "Back to the help centre"
+    "back_to_help": "Back to the help centre",
+    "app_name": "Help",
+    "app_label": "FranciscoSolis Help",
+    "nav_label": "Help centre",
+    "nav_tickets": "Your tickets",
+    "nav_account": "Your account",
+    "nav_sign_in": "Sign in"
   },
   "ticket": {
     "new_title": "Tell us what is going on",
@@ -88,7 +94,9 @@
       "inbound_rejected": "refused an incoming message"
     },
     "attachments_one": "1 attachment",
-    "attachments_other": "{{count}} attachments"
+    "attachments_other": "{{count}} attachments",
+    "resent_title": "Check your inbox",
+    "resending": "Sending…"
   },
   "errors": {
     "generic": "Something went wrong. Try again in a moment.",

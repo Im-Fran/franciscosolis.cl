@@ -17,7 +17,13 @@
     "thanks": "Gracias — así sabemos qué escribir después.",
     "still_stuck": "¿Sigues atascado?",
     "open_ticket": "Abrir un ticket",
-    "back_to_help": "Volver al centro de ayuda"
+    "back_to_help": "Volver al centro de ayuda",
+    "app_name": "Ayuda",
+    "app_label": "FranciscoSolis Ayuda",
+    "nav_label": "Centro de ayuda",
+    "nav_tickets": "Tus tickets",
+    "nav_account": "Tu cuenta",
+    "nav_sign_in": "Iniciar sesión"
   },
   "ticket": {
     "new_title": "Cuéntanos qué está pasando",
@@ -88,7 +94,9 @@
       "inbound_rejected": "rechazó un mensaje entrante"
     },
     "attachments_one": "1 adjunto",
-    "attachments_other": "{{count}} adjuntos"
+    "attachments_other": "{{count}} adjuntos",
+    "resent_title": "Revisa tu correo",
+    "resending": "Enviando…"
   },
   "errors": {
     "generic": "Algo salió mal. Inténtalo de nuevo en un momento.",

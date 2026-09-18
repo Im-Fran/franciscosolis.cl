@@ -3,6 +3,7 @@ import {Outlet} from "react-router-dom";
 import type {RouteObject} from "react-router-dom";
 import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
+import {HelpHeader} from "@/pages/help/components/help-header.tsx";
 import {HelpArticle, HelpCategory, HelpHome, HelpSearch, TicketNew, TicketThread} from "@/pages/help/lazy-screens.tsx";
 
 /**
@@ -16,13 +17,19 @@ import {HelpArticle, HelpCategory, HelpHome, HelpSearch, TicketNew, TicketThread
  * `c/` and `a/` are literal segments rather than `/help/:slug` for a reason that bites later
  * otherwise: without them, `/help/new` and an article slugged `new` are the same address, and React
  * Router's static-beats-dynamic ranking papers over it right up until somebody publishes one.
+ *
+ * The header belongs to the layout rather than to each screen, so a section that gets added later
+ * cannot be the one page of the help centre that does not say where the reader is.
  */
 export const helpRoutes: RouteObject = {
   path: "help",
   element: (
-    <Suspense fallback={<AuthLoading />}>
-      <Outlet />
-    </Suspense>
+    <>
+      <HelpHeader />
+      <Suspense fallback={<AuthLoading />}>
+        <Outlet />
+      </Suspense>
+    </>
   ),
   children: [
     {index: true, element: <HelpHome />},

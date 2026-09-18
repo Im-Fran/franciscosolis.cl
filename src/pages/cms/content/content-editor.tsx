@@ -19,7 +19,7 @@ import type {ContentItem, ContentPayload, ContentStatus, NewContent, Translation
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {JsonEditor} from "@/components/admin/json-editor.tsx";
-import {MarkdownEditor} from "@/pages/cms/components/markdown-editor.tsx";
+import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {TagInput} from "@/components/admin/tag-input.tsx";
 import {TranslationsPanel} from "@/pages/cms/components/translations-panel.tsx";
