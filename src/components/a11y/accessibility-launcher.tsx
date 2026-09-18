@@ -14,7 +14,6 @@ export const AccessibilityLauncher = ({className}: {className?: string}) => {
       type="button"
       onClick={openPanel}
       title={t("a11y:open_hint")}
-      data-fs-hover
       className={cn(
         "inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-md)] border border-neutral-800",
         "px-3 py-1.5 text-neutral-400 transition-colors hover:border-neutral-700 hover:text-text",

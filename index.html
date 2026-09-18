@@ -113,7 +113,6 @@
           ? (media('(prefers-reduced-motion: reduce)') ? 'reduced' : 'full')
           : motion;
         root.dataset.fsFontScale = scale;
-        root.dataset.fsCursor = pick(stored.cursor, ['drop', 'system'], 'drop');
         root.dataset.fsContrast = stored.highContrast === true ? 'high' : 'normal';
         root.dataset.fsLinks = stored.underlineLinks === true ? 'underlined' : 'default';
         root.dataset.fsSpacing = stored.readableSpacing === true ? 'readable' : 'default';

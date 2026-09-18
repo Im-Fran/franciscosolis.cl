@@ -1,7 +1,6 @@
 import type {Icon} from "@phosphor-icons/react";
 import {
   CircleHalfTilt,
-  Cursor,
   Eye,
   FilmSlate,
   LinkSimple,
@@ -13,7 +12,7 @@ import {
   TextAlignJustify,
   Translate,
 } from "@phosphor-icons/react";
-import {CURSORS, FONT_SCALES, LANGUAGES, MOTIONS, THEMES, type A11yPreferences} from "@/lib/a11y";
+import {FONT_SCALES, LANGUAGES, MOTIONS, THEMES, type A11yPreferences} from "@/lib/a11y";
 
 /**
  * The panel and the command palette are two views of this one table. Adding a preference here
@@ -23,7 +22,7 @@ import {CURSORS, FONT_SCALES, LANGUAGES, MOTIONS, THEMES, type A11yPreferences} 
  * Translation keys are relative to the `a11y` namespace.
  */
 
-export type ChoiceKey = "theme" | "fontScale" | "motion" | "cursor" | "language";
+export type ChoiceKey = "theme" | "fontScale" | "motion" | "language";
 export type ToggleKey = "highContrast" | "underlineLinks" | "readableSpacing";
 
 export type ChoiceSetting<K extends ChoiceKey = ChoiceKey> = {
@@ -46,7 +45,6 @@ export type A11ySetting =
   | ChoiceSetting<"theme">
   | ChoiceSetting<"fontScale">
   | ChoiceSetting<"motion">
-  | ChoiceSetting<"cursor">
   | ChoiceSetting<"language">
   | ToggleSetting;
 
@@ -54,7 +52,6 @@ export const A11Y_SETTINGS: readonly A11ySetting[] = [
   {kind: "choice", key: "theme", icon: Palette, keywords: "tema theme color colour dark light claro oscuro daltonismo colorblind contraste", options: THEMES},
   {kind: "choice", key: "fontScale", icon: TextAa, keywords: "texto text size tamano tamaño font letra zoom fuente", options: FONT_SCALES},
   {kind: "choice", key: "motion", icon: FilmSlate, keywords: "animacion animación animation movimiento motion reducir reduce", options: MOTIONS},
-  {kind: "choice", key: "cursor", icon: Cursor, keywords: "cursor puntero pointer gota drop mouse raton ratón", options: CURSORS},
   {kind: "choice", key: "language", icon: Translate, keywords: "idioma language lenguaje espanol español ingles inglés spanish english", options: LANGUAGES},
   {kind: "toggle", key: "highContrast", icon: CircleHalfTilt, keywords: "contraste contrast alto high legibilidad"},
   {kind: "toggle", key: "underlineLinks", icon: LinkSimple, keywords: "enlaces links subrayar underline subrayado"},

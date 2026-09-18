@@ -51,7 +51,7 @@ const ChoiceRow = ({setting}: {setting: ChoiceSetting}) => {
           const OptionIcon = setting.key === "theme" ? THEME_OPTION_ICON[option as A11yPreferences["theme"]] : null;
 
           return (
-            <label key={option} className={cn(chip, active ? chipActive : chipIdle)} data-fs-hover>
+            <label key={option} className={cn(chip, active ? chipActive : chipIdle)}>
               <input
                 type="radio"
                 name={`fs-a11y-${setting.key}`}
@@ -100,7 +100,6 @@ const ToggleRow = ({setting}: {setting: ToggleSetting}) => {
         role="switch"
         aria-checked={checked}
         aria-label={label}
-        data-fs-hover
         onClick={() => {
           setPreference(setting.key, !checked);
           announce(t("a11y:changed", {setting: label, value: t(checked ? "a11y:disabled" : "a11y:enabled")}));
@@ -148,7 +147,6 @@ export const AccessibilityPanel = ({open, onClose, onOpenPalette}: Accessibility
         <button
           type="button"
           onClick={onOpenPalette}
-          data-fs-hover
           className="inline-flex items-center gap-2 text-xs text-neutral-500 transition-colors hover:text-text"
         >
           <Command size={14}/>
@@ -158,7 +156,6 @@ export const AccessibilityPanel = ({open, onClose, onOpenPalette}: Accessibility
         <Button
           variant="secondary"
           size="sm"
-          data-fs-hover
           onClick={() => {
             reset();
             announce(t("a11y:reset_done"));

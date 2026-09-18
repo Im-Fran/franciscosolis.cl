@@ -43,14 +43,6 @@
         "reduced": "Reduced"
       }
     },
-    "cursor": {
-      "label": "Cursor",
-      "hint": "The water drop only shows up with a mouse or trackpad.",
-      "options": {
-        "drop": "Liquid drop",
-        "system": "System cursor"
-      }
-    },
     "language": {
       "label": "Language",
       "hint": "Also updates the page's lang attribute for screen readers.",
