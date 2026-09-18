@@ -1,7 +1,23 @@
 import {useTranslation} from "react-i18next";
 import {Paperclip} from "@phosphor-icons/react";
 import {formatDateTime} from "@/lib/auth/format.ts";
+import {splitMentions} from "@/lib/support/mentions.ts";
 import type {TimelineEntry} from "@/lib/support/types.ts";
+
+/** A message body with any `@mention` turned into a `mailto:` link. */
+const MessageBody = ({body}: {body: string}) => (
+  <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-200">
+    {splitMentions(body).map((part, index) =>
+      part.kind === "mention" ? (
+        <a key={index} href={`mailto:${part.email}`} className="text-accent-300 hover:underline" data-fs-hover>
+          @{part.email}
+        </a>
+      ) : (
+        <span key={index}>{part.value}</span>
+      ),
+    )}
+  </p>
+);
 
 /**
  * The conversation, in the shape a GitHub issue shows it: messages as cards, everything else as a
@@ -46,7 +62,7 @@ export const TicketTimeline = ({entries, locale}: {entries: TimelineEntry[]; loc
 
             {/* `whitespace-pre-wrap` because the body is plain text and its line breaks are meaning:
                 a pasted stack trace collapsed into one paragraph is unreadable. */}
-            <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-200">{entry.body}</p>
+            <MessageBody body={entry.body} />
 
             {entry.attachments.length > 0 ? (
               <p className="mt-3 flex items-center gap-1.5 text-xs text-neutral-400">

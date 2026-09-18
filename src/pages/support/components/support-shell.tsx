@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import type {ReactNode} from "react";
 import {useTranslation} from "react-i18next";
-import {Link, NavLink, useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {ArrowSquareOut, GlobeSimple, List, SignOut, X} from "@phosphor-icons/react";
 import {BrandLockup} from "@/components/brand";
 import {ToastViewport} from "@/components/admin/toast-viewport.tsx";
@@ -15,10 +15,67 @@ import {useSupport} from "@/lib/support/support-context.ts";
 import {cn} from "@/lib/utils.ts";
 import {buildNav} from "@/pages/support/components/support-nav.ts";
 
+const NAV_BASE = "https://support.internal";
+
+/**
+ * The query-string keys that tell two nav entries on the same path apart — today just
+ * `unassigned`, which is the whole difference between the inbox and its unassigned filter.
+ *
+ * Collected from the menu itself rather than hard-coded, and compared *only* on these keys.
+ * Comparing the whole search string instead looks right and is not: the inbox's other filters
+ * (`status`, `label`, the search box) also live in the URL, so `?unassigned=true&q=dns` matched
+ * neither entry and the menu went blank the moment somebody typed.
+ */
+const discriminatingKeys = (items: {to: string}[], pathname: string): string[] => {
+  const keys = new Set<string>();
+  for (const {to} of items) {
+    const url = new URL(to, NAV_BASE);
+    if (url.pathname !== pathname) continue;
+    for (const key of url.searchParams.keys()) keys.add(key);
+  }
+  return [...keys];
+};
+
+/**
+ * Whether `to` counts as the current screen.
+ *
+ * `NavLink`'s own `isActive` matches on pathname alone and ignores the query string entirely,
+ * which is a problem exactly once here: the inbox and its unassigned filter are the same route
+ * (`supportRoute.inbox`), so both lit up together regardless of which was actually selected.
+ */
+const isNavItemActive = (
+  to: string,
+  nested: boolean | undefined,
+  location: {pathname: string; search: string},
+  siblings: {to: string}[],
+) => {
+  const url = new URL(to, NAV_BASE);
+
+  if (nested) {
+    if (location.pathname === url.pathname) return true;
+    if (!location.pathname.startsWith(`${url.pathname}/`)) return false;
+    /*
+     * A nested item covers its own deeper routes — `help/new`, `help/<id>` — but not a screen that
+     * has a menu entry of its own. Without this, "Articles" and "Sections" both lit up on
+     * `/support/help/categories`, which is the same double highlight the inbox pair had.
+     */
+    return !siblings.some(({to: sibling}) => new URL(sibling, NAV_BASE).pathname === location.pathname);
+  }
+
+  if (location.pathname !== url.pathname) return false;
+
+  const current = new URLSearchParams(location.search);
+  return discriminatingKeys(siblings, url.pathname).every(
+    (key) => current.get(key) === url.searchParams.get(key),
+  );
+};
+
 const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
   const {t} = useTranslation("support_agent");
   const {canAdminister} = useSupport();
+  const location = useLocation();
   const sections = buildNav(canAdminister);
+  const allItems = sections.flatMap((section) => section.items);
 
   return (
     <nav className="flex flex-col gap-6" aria-label={t("nav.label")}>
@@ -32,24 +89,21 @@ const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
               </p>
             ) : null}
             {section.items.map(({to, label, icon: Icon, nested}) => (
-              <NavLink
+              <Link
                 key={to}
                 to={to}
-                end={!nested}
                 onClick={onNavigate}
-                className={({isActive}) =>
-                  cn(
-                    "flex items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-[13px] transition-colors",
-                    isActive
-                      ? "bg-accent-900/50 text-accent-200"
-                      : "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
-                  )
-                }
+                className={cn(
+                  "flex items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-[13px] transition-colors",
+                  isNavItemActive(to, nested, location, allItems)
+                    ? "bg-accent-900/50 text-accent-200"
+                    : "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
+                )}
                 data-fs-hover
               >
                 <Icon size={16} className="shrink-0" />
                 <span className="truncate">{t(label)}</span>
-              </NavLink>
+              </Link>
             ))}
           </div>
         );

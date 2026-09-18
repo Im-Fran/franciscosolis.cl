@@ -6,7 +6,7 @@ import {DataTable} from "@/components/admin/data-table.tsx";
 import type {Column} from "@/components/admin/data-table.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
-import {Input} from "@/components/ui/input.tsx";
+import {Input, Select} from "@/components/ui/input.tsx";
 import {TicketPriorityBadge, TicketStatusBadge} from "@/components/support/ticket-status-badge.tsx";
 import {formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
@@ -106,10 +106,10 @@ export const Inbox = () => {
           />
         </div>
 
-        <select
+        <Select
           value={filters.status ?? ""}
           onChange={(event) => setFilter("status", event.target.value)}
-          className="rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-900/60 px-3 py-2 text-sm text-text"
+          className="w-auto"
           aria-label={t("inbox.filter_status")}
         >
           <option value="">{t("inbox.all")}</option>
@@ -118,12 +118,12 @@ export const Inbox = () => {
               {t(`support:ticket.statuses.${value}`)}
             </option>
           ))}
-        </select>
+        </Select>
 
-        <select
+        <Select
           value={filters.label ?? ""}
           onChange={(event) => setFilter("label", event.target.value)}
-          className="rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-900/60 px-3 py-2 text-sm text-text"
+          className="w-auto"
           aria-label={t("inbox.filter_label")}
         >
           <option value="">{t("inbox.all")}</option>
@@ -132,13 +132,14 @@ export const Inbox = () => {
               {label.name}
             </option>
           ))}
-        </select>
+        </Select>
 
         <label className="flex items-center gap-2 text-sm text-neutral-400">
           <input
             type="checkbox"
             checked={filters.unassigned}
             onChange={(event) => setFilter("unassigned", event.target.checked ? "true" : "")}
+            className="size-4 accent-[var(--color-accent)]"
           />
           {t("inbox.unassigned_only")}
         </label>

@@ -43,12 +43,14 @@ const seg = (value: string) => encodeURIComponent(value);
 /**
  * The header the ticket secret travels in.
  *
- * A custom `Ticket` scheme rather than `Bearer`, so the service can tell the two apart instead of
- * trying to verify a random string as a JWT and answering with a confusing 401.
+ * A header of its own rather than `Authorization`, because the two credentials are not exclusive:
+ * a visitor can be signed in to this website *and* be holding the secret out of an emailed link,
+ * and `Authorization` fits exactly one of them. The service reads both and takes whichever
+ * resolves, so a valid link keeps working no matter who happens to be signed in.
  */
 const ticketHeaders = (reference: string): Record<string, string> => {
   const token = readTicketToken(reference);
-  return token ? {Authorization: `Ticket ${token}`} : {};
+  return token ? {"X-Support-Ticket-Token": token} : {};
 };
 
 export const supportContent = {
@@ -95,14 +97,30 @@ export const supportContent = {
   resendLink: (reference: string, email: string) =>
     http.request<{message: string}>("/tickets/resend-link", {auth: false, method: "POST", json: {reference, email}}),
 
+  /*
+   * `auth: "optional"` on the three below: a visitor following the emailed link has no site
+   * session at all, and requiring one made this client throw before the request ever left the
+   * browser. The service accepts either a signed-in requester's Bearer token (sent when one
+   * exists) or the per-ticket secret in `ticketHeaders`, in that order — neither is guaranteed,
+   * so this client must not insist on the first, and both are sent when both are to hand.
+   */
   ticket: (reference: string, signal?: AbortSignal) =>
-    http.request<RequesterTicket>(`/tickets/${seg(reference)}`, {headers: ticketHeaders(reference), signal}),
+    http.request<RequesterTicket>(`/tickets/${seg(reference)}`, {
+      auth: "optional",
+      headers: ticketHeaders(reference),
+      signal,
+    }),
 
   timeline: (reference: string, signal?: AbortSignal) =>
-    http.request<TimelineEntry[]>(`/tickets/${seg(reference)}/timeline`, {headers: ticketHeaders(reference), signal}),
+    http.request<TimelineEntry[]>(`/tickets/${seg(reference)}/timeline`, {
+      auth: "optional",
+      headers: ticketHeaders(reference),
+      signal,
+    }),
 
   reply: (reference: string, body: string) =>
     http.request<{seq: number}>(`/tickets/${seg(reference)}/messages`, {
+      auth: "optional",
       method: "POST",
       headers: ticketHeaders(reference),
       json: {body},

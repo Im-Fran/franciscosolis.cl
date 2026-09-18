@@ -36,8 +36,14 @@ export type RequestOptions = {
    * parsing a body it cannot find the parts of.
    */
   form?: FormData;
-  /** Send an access token. Off for the handful of public endpoints. */
-  auth?: boolean;
+  /**
+   * Send an access token. `true` (the default) requires one and fails fast without it; `false`
+   * is for the handful of fully public endpoints. `"optional"` attaches one when the caller
+   * happens to have a live session but does not require it — for the support ticket endpoints,
+   * reachable either by a signed-in visitor's session or by the per-ticket secret carried in
+   * `headers`, and entitled to neither is a question for the service to answer, not this client.
+   */
+  auth?: boolean | "optional";
   /**
    * Extra request headers.
    *
@@ -160,20 +166,25 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
    * the session on every request, so a token can stop being accepted before its own expiry.
    */
   const request = async <T>(path: string, options: RequestOptions = {}): Promise<T> => {
-    const authenticated = options.auth !== false;
-    const token = authenticated ? await session.getAccessToken() : null;
+    const wantsToken = options.auth !== false;
+    const required = options.auth !== false && options.auth !== "optional";
+    const token = wantsToken ? await session.getAccessToken() : null;
 
     /*
      * No token in hand — the store has none, or its refresh came back revoked. Sending the request
      * anyway is what put unauthenticated calls in front of the API: the service answered "A Bearer
      * access token is required" on every screen while the interface still believed it was signed
      * in, so the failure read as a broken client instead of as a session that had ended.
+     *
+     * `"optional"` skips this: a visitor with no session is the expected case there, not a stale
+     * one, and the request still goes out — carrying whatever `options.headers` supplied instead
+     * (the support ticket screens use it for the per-ticket secret).
      */
-    if (authenticated && !token) throw new AuthApiError(401, "session-expired");
+    if (required && !token) throw new AuthApiError(401, "session-expired");
 
     let response = await send(path, options, token);
 
-    if (response.status === 401 && authenticated) {
+    if (response.status === 401 && required) {
       const outcome = await session.refreshSession();
 
       /* A refresh that never reached the service says nothing about the session; keep it and report. */
