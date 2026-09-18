@@ -4,10 +4,12 @@ import {
   Gauge,
   PaperPlaneTilt,
   Scales,
+  SquaresFour,
   Stack,
 } from "@phosphor-icons/react";
 import type {Icon} from "@phosphor-icons/react";
 import {cmsRoute} from "@/lib/cms/config.ts";
+import {pagesRoute} from "@/lib/pages/config.ts";
 import type {CmsCollection} from "@/lib/cms/types.ts";
 
 export type NavItem = {
@@ -46,7 +48,11 @@ export const buildNav = (collections: CmsCollection[]): NavSection[] => [
   },
   {
     title: "nav.site",
-    items: [{to: cmsRoute.legal, label: "nav.legal", icon: Scales, nested: true}],
+    items: [
+      {to: cmsRoute.legal, label: "nav.legal", icon: Scales, nested: true},
+      /* A different service behind the same session — see `pages/cms/cms-routes.tsx`. */
+      {to: pagesRoute.list, label: "nav.pages", icon: SquaresFour, nested: true},
+    ],
   },
   {
     title: "nav.email",
