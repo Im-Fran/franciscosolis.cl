@@ -35,11 +35,15 @@ export type Label = {
   position?: number;
 };
 
+export type ParticipantTag = "guest" | "interest";
+
 export type Participant = {
   id: string;
   email: string;
   name: string | null;
   role: "requester" | "agent" | "cc";
+  /** Internal-only, agent-set classification. Absent from the requester's own view of the ticket. */
+  tag?: ParticipantTag | null;
   notify_email: boolean;
   created_at: string | null;
 };

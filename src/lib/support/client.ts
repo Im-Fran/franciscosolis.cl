@@ -6,6 +6,7 @@ import type {
   AdminCategory,
   AssistAnswer,
   Label,
+  ParticipantTag,
   SupportAgent,
   SupportStatus,
   Ticket,
@@ -85,11 +86,17 @@ export const supportApi = {
         json: {email},
       }),
 
-    addParticipant: (id: string, email: string, name?: string) =>
-      http.request<{id: string}>(`/admin/tickets/${seg(id)}/participants`, {method: "POST", json: {email, name}}),
+    addParticipant: (id: string, email: string, name?: string, tag?: ParticipantTag | null) =>
+      http.request<{id: string}>(`/admin/tickets/${seg(id)}/participants`, {method: "POST", json: {email, name, tag}}),
 
     removeParticipant: (id: string, participantId: string) =>
       http.request<void>(`/admin/tickets/${seg(id)}/participants/${seg(participantId)}`, {method: "DELETE"}),
+
+    setParticipantTag: (id: string, participantId: string, tag: ParticipantTag | null) =>
+      http.request<{id: string; tag: ParticipantTag | null}>(
+        `/admin/tickets/${seg(id)}/participants/${seg(participantId)}`,
+        {method: "PATCH", json: {tag}},
+      ),
 
     addLabel: (id: string, labelId: string) =>
       http.request<void>(`/admin/tickets/${seg(id)}/labels/${seg(labelId)}`, {method: "POST"}),

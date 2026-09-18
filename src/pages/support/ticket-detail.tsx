@@ -1,5 +1,5 @@
-import {useCallback, useState} from "react";
-import type {FormEvent} from "react";
+import {useCallback, useRef, useState} from "react";
+import type {ChangeEvent, FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate, useParams} from "react-router-dom";
 import {Check, Trash, UserCircle, X} from "@phosphor-icons/react";
@@ -9,7 +9,7 @@ import {TicketPriorityBadge, TicketStatusBadge} from "@/components/support/ticke
 import {TicketTimeline} from "@/components/support/ticket-timeline.tsx";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
-import {Input} from "@/components/ui/input.tsx";
+import {Input, Select} from "@/components/ui/input.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
@@ -18,8 +18,26 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {supportApi} from "@/lib/support/client.ts";
 import {supportRoute} from "@/lib/support/config.ts";
 import {useSupport} from "@/lib/support/support-context.ts";
-import type {MessageKind, TicketPriority, TicketStatus} from "@/lib/support/types.ts";
+import type {MessageKind, ParticipantTag, TicketPriority, TicketStatus} from "@/lib/support/types.ts";
 import {AssistPanel} from "@/pages/support/components/assist-panel.tsx";
+
+/**
+ * Whether the cursor sits right after an in-progress `@mention`, and what has been typed of it.
+ *
+ * Only a mention that starts a "word" counts — `foo@bar` is an email a support agent might well be
+ * pasting, not a mention of `bar` — and the query itself must be whitespace-free, since a mention
+ * is one token.
+ */
+const detectMention = (value: string, cursor: number): {start: number; query: string} | null => {
+  const upToCursor = value.slice(0, cursor);
+  const at = upToCursor.lastIndexOf("@");
+  if (at === -1) return null;
+  const before = upToCursor[at - 1];
+  if (before !== undefined && /\S/.test(before)) return null;
+  const query = upToCursor.slice(at + 1);
+  if (/\s/.test(query)) return null;
+  return {start: at, query};
+};
 
 /**
  * One ticket, as the team works it: the whole thread including internal notes, the composer, and
@@ -42,6 +60,8 @@ export const TicketDetail = () => {
   const [renaming, setRenaming] = useState<string | null>(null);
   const [participantEmail, setParticipantEmail] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [mention, setMention] = useState<{start: number; query: string} | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const ticket = useResource(useCallback((signal: AbortSignal) => supportApi.tickets.get(id, signal), [id]));
   const timeline = useResource(useCallback((signal: AbortSignal) => supportApi.tickets.timeline(id, signal), [id]));
@@ -75,6 +95,12 @@ export const TicketDetail = () => {
   const removeParticipant = useMutation(
     useCallback((participantId: string) => supportApi.tickets.removeParticipant(id, participantId), [id]),
   );
+  const setParticipantTag = useMutation(
+    useCallback(
+      (participantId: string, tag: ParticipantTag | null) => supportApi.tickets.setParticipantTag(id, participantId, tag),
+      [id],
+    ),
+  );
   const remove = useMutation(useCallback(() => supportApi.tickets.remove(id), [id]));
 
   const send = async (event: FormEvent) => {
@@ -90,7 +116,14 @@ export const TicketDetail = () => {
 
   const applied = new Set((ticket.data?.labels ?? []).map((label) => label.id));
 
-  if (ticket.loading) {
+  /*
+   * Only the very first load — no data on screen yet — earns the full-panel spinner. Every action
+   * here (assign, status, priority, a label, a reply) calls `reloadAll()`, which flips `loading`
+   * back to `true`; gating on that alone replaced the whole panel with a spinner on every click,
+   * which read as the page reloading rather than as one field updating. Once there is data, a
+   * background reload keeps it on screen and swaps it in when the fetch resolves.
+   */
+  if (ticket.loading && !ticket.data) {
     return (
       <div className="flex justify-center py-12">
         <Spinner />
@@ -103,6 +136,36 @@ export const TicketDetail = () => {
   }
 
   const data = ticket.data;
+
+  const mentionCandidates =
+    mention === null
+      ? []
+      : data.participants
+          .filter(
+            (participant) =>
+              participant.email.toLowerCase().includes(mention.query.toLowerCase()) ||
+              (participant.name ?? "").toLowerCase().includes(mention.query.toLowerCase()),
+          )
+          .slice(0, 6);
+
+  const handleDraftChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setDraft(event.target.value);
+    setMention(detectMention(event.target.value, event.target.selectionStart ?? event.target.value.length));
+  };
+
+  const insertMention = (email: string) => {
+    if (mention === null) return;
+    const before = draft.slice(0, mention.start);
+    const after = draft.slice(mention.start + 1 + mention.query.length);
+    const next = `${before}@${email} ${after}`;
+    setDraft(next);
+    setMention(null);
+    requestAnimationFrame(() => {
+      const cursor = before.length + email.length + 2;
+      textareaRef.current?.focus();
+      textareaRef.current?.setSelectionRange(cursor, cursor);
+    });
+  };
 
   return (
     <section className="flex flex-col gap-6">
@@ -181,15 +244,42 @@ export const TicketDetail = () => {
 
             <p className="text-xs text-neutral-500">{kind === "note" ? t("ticket.note_hint") : t("ticket.reply_hint")}</p>
 
-            <textarea
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              rows={6}
-              className={[
-                "w-full rounded-[var(--radius-sm)] border bg-neutral-900/60 px-3 py-2 text-sm text-text focus:outline-none",
-                kind === "note" ? "border-amber-500/40 focus:border-amber-400" : "border-neutral-700 focus:border-accent-500",
-              ].join(" ")}
-            />
+            <div className="relative">
+              <textarea
+                ref={textareaRef}
+                value={draft}
+                onChange={handleDraftChange}
+                onBlur={() => setMention(null)}
+                rows={6}
+                className={[
+                  "w-full rounded-[var(--radius-sm)] border bg-neutral-900/60 px-3 py-2 text-sm text-text focus:outline-none",
+                  kind === "note"
+                    ? "border-amber-500/40 focus:border-amber-400"
+                    : "border-neutral-700 focus:border-accent-500",
+                ].join(" ")}
+              />
+
+              {mention !== null && mentionCandidates.length > 0 ? (
+                <ul className="absolute z-10 mt-1 w-64 max-w-full overflow-hidden rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-900 shadow-lg">
+                  {mentionCandidates.map((participant) => (
+                    <li key={participant.id}>
+                      {/* `onMouseDown` rather than `onClick`: a click fires after the textarea's own
+                          `blur`, which would already have cleared `mention` and hidden this list. */}
+                      <button
+                        type="button"
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          insertMention(participant.email);
+                        }}
+                        className="block w-full truncate px-3 py-1.5 text-left text-xs text-neutral-300 hover:bg-neutral-800"
+                      >
+                        {participant.name ? `${participant.name} · ${participant.email}` : participant.email}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
 
             {post.error ? <Alert tone="error">{post.error}</Alert> : null}
 
@@ -211,38 +301,36 @@ export const TicketDetail = () => {
         <aside className="flex flex-col gap-5 text-sm">
           <div className="flex flex-col gap-1.5">
             <span className="text-xs tracking-wide text-neutral-500 uppercase">{t("ticket.status")}</span>
-            <select
+            <Select
               value={data.status}
               onChange={async (event) => {
                 const outcome = await patch.run({status: event.target.value as TicketStatus});
                 if (outcome.ok) reloadAll();
               }}
-              className="rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-900/60 px-3 py-2 text-text"
             >
               {(service?.ticket_statuses ?? []).map((value) => (
                 <option key={value} value={value}>
                   {t(`support:ticket.statuses.${value}`)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="flex flex-col gap-1.5">
             <span className="text-xs tracking-wide text-neutral-500 uppercase">{t("ticket.priority")}</span>
-            <select
+            <Select
               value={data.priority}
               onChange={async (event) => {
                 const outcome = await patch.run({priority: event.target.value as TicketPriority});
                 if (outcome.ok) reloadAll();
               }}
-              className="rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-900/60 px-3 py-2 text-text"
             >
               {(service?.ticket_priorities ?? []).map((value) => (
                 <option key={value} value={value}>
                   {t(`support:ticket.priorities.${value}`)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -258,7 +346,7 @@ export const TicketDetail = () => {
                 }}
                 data-fs-hover
               >
-                <X size={14} /> {t("ticket.unassigned")}
+                <X size={14} /> {t("ticket.unassign")}
               </Button>
             ) : (
               <Button
@@ -311,18 +399,34 @@ export const TicketDetail = () => {
                   {participant.role === "requester" ? (
                     <span className="text-neutral-600">{t("ticket.requester")}</span>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        const outcome = await removeParticipant.run(participant.id);
-                        if (outcome.ok) reloadAll();
-                      }}
-                      className="text-neutral-600 hover:text-red-300"
-                      aria-label={t("ticket.remove")}
-                      data-fs-hover
-                    >
-                      <X size={13} />
-                    </button>
+                    <>
+                      <Select
+                        value={participant.tag ?? ""}
+                        onChange={async (event) => {
+                          const value = event.target.value as ParticipantTag | "";
+                          const outcome = await setParticipantTag.run(participant.id, value === "" ? null : value);
+                          if (outcome.ok) reloadAll();
+                        }}
+                        className="h-7 w-auto px-2 py-0 text-[11px]"
+                        aria-label={t("ticket.participants")}
+                      >
+                        <option value="">{t("ticket.participant_tag_none")}</option>
+                        <option value="guest">{t("ticket.participant_tag_guest")}</option>
+                        <option value="interest">{t("ticket.participant_tag_interest")}</option>
+                      </Select>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const outcome = await removeParticipant.run(participant.id);
+                          if (outcome.ok) reloadAll();
+                        }}
+                        className="text-neutral-600 hover:text-red-300"
+                        aria-label={t("ticket.remove")}
+                        data-fs-hover
+                      >
+                        <X size={13} />
+                      </button>
+                    </>
                   )}
                 </li>
               ))}
