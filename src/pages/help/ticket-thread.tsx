@@ -128,10 +128,25 @@ export const TicketThread = () => {
         {t("help.back_to_help")}
       </Link>
 
-      {ticket.loading ? (
+      {ticket.loading && !ticket.data ? (
         <div className="flex justify-center py-8">
           <Spinner />
         </div>
+      ) : null}
+
+      {/* Anything that is not a 404 — the service unreachable, a 500, a truncated body — used to
+          render as an empty page under the back link, because the only branches here were
+          "loading" and "have a ticket". This is the screen somebody lands on from a support
+          email, and one that says nothing at all is indistinguishable from a broken one. */}
+      {!ticket.loading && !ticket.data && ticket.error ? (
+        <Alert tone="error" title={t("ticket.unavailable_title")} className="mt-2">
+          <div className="flex flex-col items-start gap-3">
+            <span>{t("ticket.unavailable_lead")}</span>
+            <Button variant="secondary" size="sm" onClick={ticket.reload}>
+              {t("ticket.retry")}
+            </Button>
+          </div>
+        </Alert>
       ) : null}
 
       {ticket.data ? (

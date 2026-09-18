@@ -1,6 +1,8 @@
 import {useCallback, useEffect} from "react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
+import {Alert} from "@/components/ui/alert.tsx";
+import {Button} from "@/components/ui/button/button.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {TicketStatusBadge} from "@/components/support/ticket-status-badge.tsx";
 import {formatDateTime} from "@/lib/auth/format.ts";
@@ -42,13 +44,27 @@ export const MyTickets = () => {
     <section className="flex flex-col gap-6">
       <h1 className="font-display text-xl text-text">{t("ticket.mine_title")}</h1>
 
-      {tickets.loading ? (
+      {tickets.loading && !tickets.data ? (
         <div className="flex justify-center py-8">
           <Spinner />
         </div>
       ) : null}
 
-      {!tickets.loading && (tickets.data?.length ?? 0) === 0 ? (
+      {/* A failed read is not an empty list. Without this branch a service that was simply
+          unreachable told a signed-in visitor they had never opened a ticket — wrong, and with
+          nothing on the screen to retry with. */}
+      {!tickets.loading && !tickets.data && tickets.error ? (
+        <Alert tone="error" title={t("ticket.unavailable_title")}>
+          <div className="flex flex-col items-start gap-3">
+            <span>{t("ticket.unavailable_lead")}</span>
+            <Button variant="secondary" size="sm" onClick={tickets.reload}>
+              {t("ticket.retry")}
+            </Button>
+          </div>
+        </Alert>
+      ) : null}
+
+      {!tickets.loading && !tickets.error && (tickets.data?.length ?? 0) === 0 ? (
         <div className="rounded-[var(--radius-md)] border border-neutral-800 bg-neutral-900/40 p-6 text-center">
           <p className="text-sm text-neutral-400">{t("ticket.mine_empty")}</p>
           <Link
