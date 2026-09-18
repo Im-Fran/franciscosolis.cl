@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import type {ReactNode} from "react";
 import {useTranslation} from "react-i18next";
-import {Link, NavLink, useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {ArrowSquareOut, GlobeSimple, List, SignOut, X} from "@phosphor-icons/react";
 import {BrandLockup} from "@/components/brand";
 import {ToastViewport} from "@/components/admin/toast-viewport.tsx";
@@ -15,9 +15,25 @@ import {useSupport} from "@/lib/support/support-context.ts";
 import {cn} from "@/lib/utils.ts";
 import {buildNav} from "@/pages/support/components/support-nav.ts";
 
+/**
+ * Whether `to` counts as the current screen.
+ *
+ * `NavLink`'s own `isActive` matches on pathname alone and ignores the query string, which is a
+ * problem exactly once here: the inbox and its unassigned filter are the same route
+ * (`supportRoute.inbox`) distinguished only by `?unassigned=true`, so both items lit up together
+ * regardless of which was actually selected. Matching search too — exactly, since a nested item's
+ * `to` never carries one — fixes that without changing how every other, query-less item matches.
+ */
+const isNavItemActive = (to: string, nested: boolean | undefined, location: {pathname: string; search: string}) => {
+  const url = new URL(to, "https://support.internal");
+  if (nested) return location.pathname === url.pathname || location.pathname.startsWith(`${url.pathname}/`);
+  return location.pathname === url.pathname && location.search === url.search;
+};
+
 const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
   const {t} = useTranslation("support_agent");
   const {canAdminister} = useSupport();
+  const location = useLocation();
   const sections = buildNav(canAdminister);
 
   return (
@@ -32,24 +48,21 @@ const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
               </p>
             ) : null}
             {section.items.map(({to, label, icon: Icon, nested}) => (
-              <NavLink
+              <Link
                 key={to}
                 to={to}
-                end={!nested}
                 onClick={onNavigate}
-                className={({isActive}) =>
-                  cn(
-                    "flex items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-[13px] transition-colors",
-                    isActive
-                      ? "bg-accent-900/50 text-accent-200"
-                      : "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
-                  )
-                }
+                className={cn(
+                  "flex items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-[13px] transition-colors",
+                  isNavItemActive(to, nested, location)
+                    ? "bg-accent-900/50 text-accent-200"
+                    : "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
+                )}
                 data-fs-hover
               >
                 <Icon size={16} className="shrink-0" />
                 <span className="truncate">{t(label)}</span>
-              </NavLink>
+              </Link>
             ))}
           </div>
         );
