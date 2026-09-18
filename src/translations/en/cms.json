@@ -64,6 +64,12 @@
     "handle": "Reorder — item {{position}} of {{total}}. Press space, then the arrow keys."
   },
   "common": {
+    "loading": "Loading…",
+    "failed": "Something went wrong",
+    "retry": "Retry",
+    "empty": "Nothing to show.",
+    "forbidden_title": "Not available to your account",
+    "forbidden_body": "This section needs a permission your account does not hold.",
     "no_collections": "This CMS manages no collections yet."
   }
 }
