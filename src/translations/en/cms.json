@@ -51,24 +51,6 @@
     "invalid_email": "Enter a valid email address.",
     "invalid_json": "Fix the JSON before saving."
   },
-  "markdown": {
-    "bold": "Bold",
-    "italic": "Italic",
-    "heading": "Heading",
-    "list": "Bulleted list",
-    "link": "Link",
-    "code": "Inline code",
-    "write": "Write",
-    "preview": "Preview",
-    "split": "Split",
-    "preview_empty": "Nothing to preview yet.",
-    "hint": "Markdown — **bold**, _italic_, [links](https://) and lists.",
-    "count_one": "{{count}} character",
-    "count_other": "{{count}} characters",
-    "count_max_one": "{{count}} / {{max}} character",
-    "count_max_other": "{{count}} / {{max}} characters",
-    "reading": "about {{minutes}} min read"
-  },
   "json": {
     "format": "Format",
     "invalid": "Invalid JSON: {{message}}",
@@ -80,10 +62,6 @@
   },
   "reorder": {
     "handle": "Reorder — item {{position}} of {{total}}. Press space, then the arrow keys."
-  },
-  "locales": {
-    "en": "English",
-    "es": "Spanish"
   },
   "common": {
     "no_collections": "This CMS manages no collections yet."

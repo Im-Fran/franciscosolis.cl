@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button/button.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useLanguageToggle} from "@/hooks/useLanguageToggle.ts";
 import {useCmsLegalIndex, useCmsLegalPage} from "@/lib/cms/content.ts";
-import {PROSE_CLASS, renderMarkdown} from "@/lib/cms/markdown.ts";
+import {PROSE_CLASS, renderMarkdown} from "@/lib/prose/markdown.ts";
 import {SectionError} from "@/pages/home/components/section-state.tsx";
 import {
   ADDRESS_LINE,

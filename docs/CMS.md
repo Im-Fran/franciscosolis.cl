@@ -202,19 +202,31 @@ src/lib/cms/
   client.ts        the CMS auth client and one function per endpoint
   cms-context.ts   the editor and the collections, shared by every screen
   cms-provider.tsx loads them once and answers the "admitted?" question above the subtree
-  format.ts        the reading-time estimate the markdown editor's footer shows
   json.ts          reading and writing the free-form `data` object
-  markdown.ts      the sanitized markdown renderer and the prose styles for a preview
   content.ts       the *public* half of the same API — no auth, no session — which is what the
                    landing page and /legal render themselves from
   landing.ts       what the landing page knows about the CMS's shape: the toolbox categories it
                    can label, and how a timeline entry's period is derived from its dates
 
+src/lib/prose/
+  markdown.ts      the sanitized markdown renderer and the prose styles for a preview
+  format.ts        the reading-time estimate the markdown editor's footer shows
+  types.ts         the envelope every service stores a translation in
+
+src/components/prose/
+  markdown-editor.tsx   the write/preview editor behind every long-form field on this site
+  translations-panel.tsx the per-locale override editor, taking its locales as a parameter
+
 src/pages/cms/
   cms-routes.tsx   the subtree, its own AuthProvider, and the one gate every screen shares
   lazy-screens.tsx every screen, split out of the main bundle and fetched on demand
-  components/      the shell, its navigation, the gate and the markdown editor — what is specific
-                   to the CMS. The primitives the sections are built from live in
+  components/      the shell, its navigation, the gate and the CMS's wiring of the shared
+                   translations panel — what is specific to the CMS. The prose editors themselves
+                   are in `src/components/prose/`, shared with the standalone app pages and the
+                   support console: a component that reaches into one section's context is that
+                   section's component, and the help article editor throwing
+                   `useCms must be used inside <CmsProvider>` is what that costs. The primitives
+                   the sections are built from live in
                    `src/components/admin/` and `src/lib/admin/`, shared with the auth console:
                    data table, paging, confirm dialog, JSON editor, tag input, sortable list,
                    status badge, empty state, page header, toasts, useMutation and the form helpers
@@ -228,7 +240,9 @@ src/pages/cms/
 ### Translations
 
 The strings the shared components render live in the `admin` namespace — shared with the auth
-console, for the same reason the components are — and the shell's own copy in `cms`. The site
+console, for the same reason the components are — the prose editors' own copy (the markdown
+toolbar, the language names) in `prose`, shared with every section that edits prose, and the
+shell's copy in `cms`. The site
 preloads both. Each section keeps its
 own — `cms_overview`, `cms_content`, `cms_legal`, `cms_templates`, `cms_emails`, `cms_audit` — and
 those are deliberately **not** in the preload list in `main.tsx`: a visitor reading the portfolio

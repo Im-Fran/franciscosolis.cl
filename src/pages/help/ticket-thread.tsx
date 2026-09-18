@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useLayoutEffect, useState} from "react";
+import {useCallback, useLayoutEffect, useState} from "react";
 import type {FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {Link, useParams} from "react-router-dom";
@@ -29,6 +29,14 @@ export const TicketThread = () => {
   const locale = i18n.resolvedLanguage ?? "en";
   const [ready, setReady] = useState(false);
   const [resendEmail, setResendEmail] = useState("");
+  /*
+   * Whether the "we have emailed you a fresh link" state is showing.
+   *
+   * It used to be derived from `resend.status`, which is the *failure* status of the mutation and
+   * stays null on success — so the one path that had to announce itself was the one path that never
+   * did: the form simply sat there after a successful request, with nothing on the screen to say
+   * the email had been sent. It is set from the outcome of the call now.
+   */
   const [resent, setResent] = useState(false);
   const [draft, setDraft] = useState("");
 
@@ -72,10 +80,6 @@ export const TicketThread = () => {
     }
   };
 
-  useEffect(() => {
-    if (resend.status !== null) setResent(true);
-  }, [resend.status]);
-
   if (!ready) return null;
 
   /*
@@ -91,14 +95,15 @@ export const TicketThread = () => {
         <p className="mt-3 text-sm text-neutral-400">{t("ticket.no_access_lead")}</p>
 
         {resent ? (
-          <Alert tone="info" className="mt-6">
+          <Alert tone="info" title={t("ticket.resent_title")} className="mt-6">
             {t("ticket.resent")}
           </Alert>
         ) : (
           <form
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault();
-              void resend.run(resendEmail.trim());
+              const outcome = await resend.run(resendEmail.trim());
+              if (outcome.ok) setResent(true);
             }}
             className="mt-6 flex flex-col gap-3"
             noValidate
@@ -107,8 +112,13 @@ export const TicketThread = () => {
               <span className="text-sm text-neutral-300">{t("ticket.resend_email")}</span>
               <Input type="email" value={resendEmail} onChange={(event) => setResendEmail(event.target.value)} required />
             </label>
+            {/* The service answers the same way whether or not the ticket exists, so a failure here
+                is a real one — rate limiting, or the service being unreachable — and saying so is
+                the difference between "try again in a minute" and staring at a button. */}
+            {resend.error ? <Alert tone="error">{resend.error}</Alert> : null}
             <Button type="submit" disabled={resend.pending}>
-              {t("ticket.resend")}
+              {resend.pending ? <Spinner size={14} /> : null}
+              {resend.pending ? t("ticket.resending") : t("ticket.resend")}
             </Button>
           </form>
         )}

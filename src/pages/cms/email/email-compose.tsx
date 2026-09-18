@@ -39,7 +39,7 @@ type Layout = "branded" | "raw";
  * — and sends only the keys of the mode that is on screen.
  */
 export const EmailCompose = () => {
-  const {t} = useTranslation(["cms_emails", "cms"]);
+  const {t} = useTranslation(["cms_emails", "cms", "prose"]);
   const navigate = useNavigate();
   const location = useLocation();
   const [params] = useSearchParams();
@@ -524,8 +524,8 @@ export const EmailCompose = () => {
                     value={htmlView}
                     onChange={setHtmlView}
                     options={[
-                      {value: "write" as const, label: t("cms:markdown.write")},
-                      {value: "preview" as const, label: t("cms:markdown.preview")},
+                      {value: "write" as const, label: t("prose:markdown.write")},
+                      {value: "preview" as const, label: t("prose:markdown.preview")},
                     ]}
                   />
                 </div>
@@ -556,7 +556,7 @@ export const EmailCompose = () => {
                   />
                 ) : (
                   <p className="rounded-[var(--radius-md)] border border-dashed border-neutral-800 px-4 py-10 text-center text-[13px] text-neutral-500">
-                    {t("cms:markdown.preview_empty")}
+                    {t("prose:markdown.preview_empty")}
                   </p>
                 )}
 
@@ -565,7 +565,7 @@ export const EmailCompose = () => {
                     {errors.html ?? t("cms_emails:compose.html_hint")}
                   </span>
                   <span className="text-neutral-600">
-                    {t("cms:markdown.count_max", {count: html.length, max: SEND_LIMITS.body})}
+                    {t("prose:markdown.count_max", {count: html.length, max: SEND_LIMITS.body})}
                   </span>
                 </p>
               </div>
@@ -588,7 +588,7 @@ export const EmailCompose = () => {
                     {errors.text ?? t("cms_emails:compose.text_hint")}
                   </span>
                   <span className="text-neutral-600">
-                    {t("cms:markdown.count_max", {count: text.length, max: SEND_LIMITS.body})}
+                    {t("prose:markdown.count_max", {count: text.length, max: SEND_LIMITS.body})}
                   </span>
                 </p>
               </div>

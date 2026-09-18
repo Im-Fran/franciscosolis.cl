@@ -18,7 +18,7 @@ import {CONTENT_STATUSES} from "@/lib/pages/types.ts";
 import type {ContentStatus, Translations, WikiPage, WikiPayload} from "@/lib/pages/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
-import {MarkdownEditor} from "@/pages/cms/components/markdown-editor.tsx";
+import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {TranslationsPanel} from "@/pages/cms/pages/components/translations-panel.tsx";
 
 const TITLE_MAX = 200;

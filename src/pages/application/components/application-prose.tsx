@@ -1,5 +1,5 @@
 import {useMemo} from "react";
-import {renderMarkdown} from "@/lib/cms/markdown.ts";
+import {renderMarkdown} from "@/lib/prose/markdown.ts";
 import {cn} from "@/lib/utils.ts";
 
 /**

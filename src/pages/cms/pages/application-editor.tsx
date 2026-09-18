@@ -26,7 +26,7 @@ import type {
 } from "@/lib/pages/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
-import {MarkdownEditor} from "@/pages/cms/components/markdown-editor.tsx";
+import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {ApplicationNav} from "@/pages/cms/pages/components/application-nav.tsx";
 import {LinksField} from "@/pages/cms/pages/components/links-field.tsx";
 import {TabsField} from "@/pages/cms/pages/components/tabs-field.tsx";

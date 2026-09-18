@@ -2,8 +2,8 @@ import {useCallback, useId, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Code, Eye, ListBullets, Link as LinkIcon, TextAa, TextB, TextItalic} from "@phosphor-icons/react";
 import {Textarea} from "@/components/ui/input.tsx";
-import {readingMinutes} from "@/lib/cms/format.ts";
-import {PROSE_CLASS, renderMarkdown} from "@/lib/cms/markdown.ts";
+import {readingMinutes} from "@/lib/prose/format.ts";
+import {PROSE_CLASS, renderMarkdown} from "@/lib/prose/markdown.ts";
 import {cn} from "@/lib/utils.ts";
 
 type Mode = "write" | "preview" | "split";
@@ -35,8 +35,13 @@ export type MarkdownEditorProps = {
 };
 
 /**
- * The editor behind every long-form field in the CMS — a content body, a legal document, the text
- * of an email template.
+ * The editor behind every long-form field on this site — a content body, a legal document, the text
+ * of an email template, the body of a help article.
+ *
+ * It is shared rather than owned by the section that wrote it first. The support console needed the
+ * same editor, and importing the CMS's copy of it is what made a help article's editor throw inside
+ * `<CmsProvider>`'s hook: a component that reaches for another section's context is that section's
+ * component, wherever the file happens to sit.
  *
  * The source stays plain markdown at all times: the preview renders it, but never round-trips
  * through HTML, so what the API stores is exactly what was typed. Formatting is applied to the
@@ -52,7 +57,7 @@ export const MarkdownEditor = ({
   disabled,
   ...rest
 }: MarkdownEditorProps) => {
-  const {t} = useTranslation();
+  const {t} = useTranslation("prose");
   const [mode, setMode] = useState<Mode>("write");
   const area = useRef<HTMLTextAreaElement>(null);
   const previewId = useId();
@@ -124,8 +129,8 @@ export const MarkdownEditor = ({
             type="button"
             onClick={() => apply(action)}
             disabled={disabled || mode === "preview"}
-            title={t(`cms:markdown.${actionId}`)}
-            aria-label={t(`cms:markdown.${actionId}`)}
+            title={t(`prose:markdown.${actionId}`)}
+            aria-label={t(`prose:markdown.${actionId}`)}
             className="cursor-pointer rounded-[var(--radius-sm)] p-1.5 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
             data-fs-hover
           >
@@ -134,9 +139,9 @@ export const MarkdownEditor = ({
         ))}
 
         <div className="ml-auto flex items-center gap-0.5">
-          {tab("write", t("cms:markdown.write"))}
-          {tab("preview", t("cms:markdown.preview"))}
-          {tab("split", t("cms:markdown.split"), true)}
+          {tab("write", t("prose:markdown.write"))}
+          {tab("preview", t("prose:markdown.preview"))}
+          {tab("split", t("prose:markdown.split"), true)}
         </div>
       </div>
 
@@ -164,7 +169,7 @@ export const MarkdownEditor = ({
               <div dangerouslySetInnerHTML={{__html: html}}/>
             ) : (
               <p className="flex items-center gap-2 text-[13px] text-neutral-600">
-                <Eye size={15}/> {t("cms:markdown.preview_empty")}
+                <Eye size={15}/> {t("prose:markdown.preview_empty")}
               </p>
             )}
           </div>
@@ -172,12 +177,12 @@ export const MarkdownEditor = ({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-neutral-800 px-3 py-1.5 text-[11px] text-neutral-600">
-        <span>{t("cms:markdown.hint")}</span>
+        <span>{t("prose:markdown.hint")}</span>
         <span>
           {maxLength
-            ? t("cms:markdown.count_max", {count: value.length, max: maxLength})
-            : t("cms:markdown.count", {count: value.length})}
-          {value.trim() && ` · ${t("cms:markdown.reading", {minutes: readingMinutes(value)})}`}
+            ? t("prose:markdown.count_max", {count: value.length, max: maxLength})
+            : t("prose:markdown.count", {count: value.length})}
+          {value.trim() && ` · ${t("prose:markdown.reading", {minutes: readingMinutes(value)})}`}
         </span>
       </div>
     </div>

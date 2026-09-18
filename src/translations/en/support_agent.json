@@ -162,6 +162,11 @@
     "translations_source": "English",
     "translations_source_empty": "Nothing written in English yet.",
     "translations_none": "No translations yet.",
-    "translations_clear": "Clear this language"
+    "translations_clear": "Clear this language",
+    "fields": {
+      "title": "Title",
+      "summary": "Summary",
+      "body": "Body"
+    }
   }
 }
