@@ -17,7 +17,6 @@ export const PageHeader = ({title, description, back, actions}: PageHeaderProps)
       <Link
         to={back.to}
         className="mb-3 inline-flex items-center gap-1.5 text-[13px] text-neutral-500 transition-colors hover:text-text"
-        data-fs-hover
       >
         <ArrowLeft size={14}/> {back.label}
       </Link>

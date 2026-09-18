@@ -46,7 +46,7 @@ const AccountLayout = () => {
         <Alert tone="error" title={t("auth:common.failed")} className="mb-5">
           {t(`auth:errors.${error ?? "unexpected"}`, {defaultValue: t("auth:errors.unexpected")})}
         </Alert>
-        <Button variant="secondary" onClick={() => void reload()} data-fs-hover>
+        <Button variant="secondary" onClick={() => void reload()}>
           <ArrowClockwise size={16}/> {t("auth:common.retry")}
         </Button>
       </AuthShell>

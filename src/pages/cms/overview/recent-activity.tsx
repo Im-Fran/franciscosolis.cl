@@ -26,7 +26,7 @@ export const RecentActivity = ({activity, className}: RecentActivityProps) => {
       title={t("cms_overview:activity.title")}
       description={t("cms_overview:activity.description")}
       action={
-        <Button variant="ghost" size="sm" asChild data-fs-hover>
+        <Button variant="ghost" size="sm" asChild>
           <Link to={cmsRoute.audit}>
             {t("cms_overview:activity.see_all")} <ArrowRight size={14}/>
           </Link>

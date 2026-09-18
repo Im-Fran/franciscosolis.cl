@@ -32,7 +32,6 @@ export const ToastViewport = () => {
               onClick={() => dismiss(toast.id)}
               aria-label={t("a11y:close")}
               className="shrink-0 cursor-pointer opacity-70 transition-opacity hover:opacity-100"
-              data-fs-hover
             >
               <X size={14}/>
             </button>

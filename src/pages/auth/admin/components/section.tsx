@@ -45,7 +45,7 @@ export const SectionState = ({resource, empty, isEmpty, children}: SectionStateP
       <Alert tone="error" title={t("admin:common.failed")}>
         <div className="flex flex-wrap items-center gap-3">
           <span>{t(`admin:errors.${resource.error}`, {defaultValue: resource.error})}</span>
-          <Button variant="ghost" size="sm" onClick={resource.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={resource.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.retry")}
           </Button>
         </div>

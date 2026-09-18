@@ -89,7 +89,6 @@ export const SessionsList = () => {
                   to={adminRoute.user(session.user_id)}
                   onClick={(event) => event.stopPropagation()}
                   className="block truncate text-text underline-offset-2 hover:underline"
-                  data-fs-hover
                 >
                   {session.user_name || session.user_email}
                 </Link>
@@ -142,9 +141,8 @@ export const SessionsList = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-red-300 hover:bg-red-500/10"
+              className="text-red-300 fs-ripple-danger"
               onClick={() => setRevoking(session)}
-              data-fs-hover
             >
               <SignOut size={14}/> {t("auth_admin:sessions.revoke")}
             </Button>
@@ -160,7 +158,7 @@ export const SessionsList = () => {
         title={t("auth_admin:sessions.title")}
         description={t("auth_admin:sessions.description")}
         actions={
-          <Button variant="ghost" size="sm" onClick={sessions.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={sessions.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }

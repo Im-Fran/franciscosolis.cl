@@ -64,7 +64,6 @@ export const TagInput = ({id, value, onChange, placeholder, disabled, maxTagLeng
                 onClick={() => onChange(value.filter((_, position) => position !== index))}
                 aria-label={t("cms:tags.remove", {tag})}
                 className="cursor-pointer rounded-[var(--radius-sm)] p-0.5 text-neutral-500 transition-colors hover:bg-neutral-700 hover:text-text disabled:cursor-not-allowed"
-                data-fs-hover
               >
                 <X size={12}/>
               </button>

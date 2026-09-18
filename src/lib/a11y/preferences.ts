@@ -14,7 +14,6 @@ export const LOCALE_STORAGE_KEY = "locale";
 export const THEMES = ["light", "dark", "system", "daltonism"] as const;
 export const FONT_SCALES = ["sm", "md", "lg", "xl"] as const;
 export const MOTIONS = ["system", "full", "reduced"] as const;
-export const CURSORS = ["drop", "system"] as const;
 export const LANGUAGES = ["es", "en"] as const;
 
 export type Theme = (typeof THEMES)[number];
@@ -22,7 +21,6 @@ export type ResolvedTheme = Exclude<Theme, "system">;
 export type FontScale = (typeof FONT_SCALES)[number];
 export type Motion = (typeof MOTIONS)[number];
 export type ResolvedMotion = Exclude<Motion, "system">;
-export type Cursor = (typeof CURSORS)[number];
 export type Language = (typeof LANGUAGES)[number];
 
 export type A11yPreferences = {
@@ -30,8 +28,6 @@ export type A11yPreferences = {
   theme: Theme;
   fontScale: FontScale;
   motion: Motion;
-  /** `system` hands the pointer back to the OS and switches the liquid drop off. */
-  cursor: Cursor;
   language: Language;
   /** Pushes text and borders towards the strongest contrast the palette allows. */
   highContrast: boolean;
@@ -53,7 +49,6 @@ export const DEFAULT_PREFERENCES: A11yPreferences = {
   theme: "system",
   fontScale: "md",
   motion: "system",
-  cursor: "drop",
   language: "en",
   highContrast: false,
   underlineLinks: false,
@@ -88,7 +83,6 @@ export const parsePreferences = (raw: unknown): A11yPreferences => {
     theme: isOneOf(THEMES, value.theme) ? value.theme : DEFAULT_PREFERENCES.theme,
     fontScale: isOneOf(FONT_SCALES, value.fontScale) ? value.fontScale : DEFAULT_PREFERENCES.fontScale,
     motion: isOneOf(MOTIONS, value.motion) ? value.motion : DEFAULT_PREFERENCES.motion,
-    cursor: isOneOf(CURSORS, value.cursor) ? value.cursor : DEFAULT_PREFERENCES.cursor,
     language: isOneOf(LANGUAGES, value.language) ? value.language : DEFAULT_PREFERENCES.language,
     highContrast: value.highContrast === true,
     underlineLinks: value.underlineLinks === true,
@@ -158,7 +152,6 @@ export const applyPreferences = (
   root.dataset.fsTheme = theme;
   root.dataset.fsFontScale = preferences.fontScale;
   root.dataset.fsMotion = motion;
-  root.dataset.fsCursor = preferences.cursor;
   root.dataset.fsContrast = preferences.highContrast ? "high" : "normal";
   root.dataset.fsLinks = preferences.underlineLinks ? "underlined" : "default";
   root.dataset.fsSpacing = preferences.readableSpacing ? "readable" : "default";

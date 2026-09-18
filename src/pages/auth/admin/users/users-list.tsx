@@ -114,7 +114,7 @@ export const UsersList = () => {
         title={t("auth_admin:users.title")}
         description={t("auth_admin:users.description")}
         actions={
-          <Button variant="ghost" size="sm" onClick={users.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={users.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }

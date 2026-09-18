@@ -92,7 +92,6 @@ export const AuditLog = () => {
             onClick={entries.reload}
             disabled={entries.loading}
             title={t("cms_audit:refresh_hint")}
-            data-fs-hover
           >
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
@@ -117,7 +116,6 @@ export const AuditLog = () => {
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder={t("cms_audit:search.placeholder")}
                 className="pl-9"
-                data-fs-hover
               />
             </div>
           </div>
@@ -137,7 +135,6 @@ export const AuditLog = () => {
               onChange={(event) => changeSize(Number(event.target.value))}
               aria-label={t("cms_audit:page_size.aria")}
               className="w-[5.5rem]"
-              data-fs-hover
             >
               {PAGE_SIZES.map((size) => (
                 <option key={size} value={size}>
@@ -171,7 +168,7 @@ export const AuditLog = () => {
               <p className="max-w-md text-[13px] leading-relaxed text-neutral-500">
                 {t("cms_audit:search.none_body")}
               </p>
-              <Button variant="ghost" size="sm" onClick={() => setSearch("")} data-fs-hover>
+              <Button variant="ghost" size="sm" onClick={() => setSearch("")}>
                 {t("admin:common.clear_filters")}
               </Button>
             </div>

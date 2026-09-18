@@ -178,7 +178,6 @@ export const TicketDetail = () => {
             variant="ghost"
             size="sm"
             onClick={() => setRenaming(data.subject)}
-            data-fs-hover
           >
             {t("ticket.rename")}
           </Button>
@@ -235,7 +234,6 @@ export const TicketDetail = () => {
                         : "bg-accent-900/50 text-accent-200 ring-1 ring-accent-500/30 ring-inset"
                       : "text-neutral-400 hover:text-text",
                   ].join(" ")}
-                  data-fs-hover
                 >
                   {t(`ticket.${value}`)}
                 </button>
@@ -344,7 +342,6 @@ export const TicketDetail = () => {
                   const outcome = await assign.run(null);
                   if (outcome.ok) reloadAll();
                 }}
-                data-fs-hover
               >
                 <X size={14} /> {t("ticket.unassign")}
               </Button>
@@ -356,7 +353,6 @@ export const TicketDetail = () => {
                   const outcome = await assign.run(agent?.email ?? null);
                   if (outcome.ok) reloadAll();
                 }}
-                data-fs-hover
               >
                 <UserCircle size={14} /> {t("ticket.assign_me")}
               </Button>
@@ -380,7 +376,6 @@ export const TicketDetail = () => {
                         "rounded-full px-2.5 py-0.5 text-xs ring-1 ring-inset transition-colors",
                         on ? "bg-accent-500/15 text-accent-200 ring-accent-500/30" : "text-neutral-500 ring-neutral-700",
                       ].join(" ")}
-                      data-fs-hover
                     >
                       {label.name}
                     </button>
@@ -422,7 +417,6 @@ export const TicketDetail = () => {
                         }}
                         className="text-neutral-600 hover:text-red-300"
                         aria-label={t("ticket.remove")}
-                        data-fs-hover
                       >
                         <X size={13} />
                       </button>
@@ -468,7 +462,7 @@ export const TicketDetail = () => {
           </div>
 
           {canAdminister ? (
-            <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(true)} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(true)}>
               <Trash size={14} /> {t("ticket.delete")}
             </Button>
           ) : null}

@@ -99,7 +99,6 @@ const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
                     ? "bg-accent-900/50 text-accent-200"
                     : "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
                 )}
-                data-fs-hover
               >
                 <Icon size={16} className="shrink-0" />
                 <span className="truncate">{t(label)}</span>
@@ -142,23 +141,22 @@ export const SupportShell = ({children}: {children: ReactNode}) => {
             aria-expanded={drawer}
             aria-label={t("nav.label")}
             onClick={() => setDrawer((open) => !open)}
-            data-fs-hover
           >
             {drawer ? <X size={18} /> : <List size={18} />}
           </Button>
 
-          <Link to={SUPPORT_ROUTE} className="flex items-center gap-2" data-fs-hover>
+          <Link to={SUPPORT_ROUTE} className="flex items-center gap-2">
             <BrandLockup className="h-6 w-auto" />
             <span className="text-sm text-neutral-500">{t("app_name")}</span>
           </Link>
 
           <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={toggleLanguage} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={toggleLanguage}>
               <GlobeSimple size={16} />
               <span className="uppercase">{language}</span>
             </Button>
 
-            <Button variant="ghost" size="sm" asChild data-fs-hover>
+            <Button variant="ghost" size="sm" asChild>
               <Link to="/help" target="_blank" rel="noreferrer">
                 <ArrowSquareOut size={16} />
                 <span className="max-sm:sr-only">{t("nav.knowledge")}</span>
@@ -175,7 +173,6 @@ export const SupportShell = ({children}: {children: ReactNode}) => {
                 setSigningOut(true);
                 void signOut().finally(() => setSigningOut(false));
               }}
-              data-fs-hover
             >
               {signingOut ? <Spinner size={16} /> : <SignOut size={16} />}
             </Button>

@@ -98,7 +98,6 @@ export const EmailRecipients = ({id, value, onChange, disabled, error}: EmailRec
                 onClick={() => remove(address)}
                 aria-label={t("cms_emails:recipients.remove", {address})}
                 className="cursor-pointer rounded-[var(--radius-sm)] p-0.5 text-neutral-500 transition-colors hover:bg-neutral-700 hover:text-text disabled:cursor-not-allowed"
-                data-fs-hover
               >
                 <X size={12}/>
               </button>

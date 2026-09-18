@@ -52,7 +52,7 @@ export const Overview = () => {
         title={t(name ? `cms_overview:greeting.${greeting}` : `cms_overview:greeting.${greeting}_anon`, {name})}
         description={t("cms_overview:subtitle")}
         actions={
-          <Button variant="ghost" size="sm" onClick={refresh} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={refresh}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }

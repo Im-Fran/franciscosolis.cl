@@ -46,7 +46,6 @@ export const Segmented = <T extends string>({
           option.value === value ? "bg-neutral-800 text-text" : "text-neutral-400 hover:text-text",
           disabled && "cursor-not-allowed opacity-50",
         )}
-        data-fs-hover
       >
         <input
           type="radio"

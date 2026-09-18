@@ -76,7 +76,7 @@ export const Projects = () => {
 
               /* An entry with no link is still worth showing — it just is not a link. */
               return href ? (
-                <a key={entry.id} href={href} target="_blank" rel="noreferrer" data-fs-hover className="flex flex-col h-full">
+                <a key={entry.id} href={href} target="_blank" rel="noreferrer" className="flex flex-col h-full">
                   {body}
                 </a>
               ) : (
@@ -84,7 +84,7 @@ export const Projects = () => {
               );
             })}
 
-            <a href="https://github.com/Im-Fran" target="_blank" rel="noreferrer" data-fs-hover className="flex flex-col h-full">
+            <a href="https://github.com/Im-Fran" target="_blank" rel="noreferrer" className="flex flex-col h-full">
               <Card elevation="sm" className="reveal-item fs-hoverable w-full h-full border border-accent-700">
                 <CardBody className="flex h-full flex-col items-center justify-center text-center">
                   <span className="text-sm text-accent-300 inline-flex items-center gap-1">

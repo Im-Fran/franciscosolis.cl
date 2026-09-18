@@ -78,7 +78,6 @@ export const EmailList = () => {
           to={cmsRoute.emailItem(row.id)}
           onClick={(event) => event.stopPropagation()}
           className="block truncate transition-colors hover:text-accent-200"
-          data-fs-hover
         >
           {row.subject}
         </Link>
@@ -105,7 +104,6 @@ export const EmailList = () => {
             to={cmsRoute.templates}
             onClick={(event) => event.stopPropagation()}
             className="text-accent-300 transition-colors hover:text-accent-200"
-            data-fs-hover
           >
             {row.template}
           </Link>
@@ -128,7 +126,7 @@ export const EmailList = () => {
         title={t("cms_emails:list.title")}
         description={t("cms_emails:list.description")}
         actions={
-          <Button asChild data-fs-hover>
+          <Button asChild>
             <Link to={cmsRoute.emailNew}>
               <PaperPlaneTilt size={16}/> {t("cms_emails:list.compose")}
             </Link>
@@ -143,7 +141,7 @@ export const EmailList = () => {
           /* A queued message turns into `sent` or `failed` on the server, and nothing pushes that
              change to this tab. Polling in the background would spend requests on a screen nobody
              is watching most of the time, so the refresh is deliberate, obvious and cheap instead. */
-          <Button variant="ghost" size="sm" onClick={emails.reload} disabled={emails.loading} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={emails.reload} disabled={emails.loading}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
@@ -180,7 +178,7 @@ export const EmailList = () => {
               title={t("cms_emails:list.empty_title")}
               description={t("cms_emails:list.empty_description")}
               action={
-                <Button asChild variant="secondary" data-fs-hover>
+                <Button asChild variant="secondary">
                   <Link to={cmsRoute.emailNew}>
                     <PaperPlaneTilt size={16}/> {t("cms_emails:list.empty_cta")}
                   </Link>

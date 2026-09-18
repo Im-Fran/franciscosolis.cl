@@ -69,7 +69,7 @@ export const TabsTrigger = ({className, to, icon, children, ...props}: TabsTrigg
     )}
     {...props}
   >
-    <Link to={to} data-fs-hover>
+    <Link to={to}>
       {icon && <span className="shrink-0">{icon}</span>}
       <span className="truncate">{children}</span>
     </Link>

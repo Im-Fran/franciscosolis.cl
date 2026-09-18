@@ -190,13 +190,13 @@ export const Legal = () => {
     <section className="relative w-full overflow-hidden">
       <div className="container relative z-10 mx-auto px-4 pt-32 pb-24 max-w-3xl">
         <div className="flex items-center justify-between mb-10">
-          <Button asChild variant="ghost" size="sm" data-fs-hover>
+          <Button asChild variant="ghost" size="sm">
             <Link to="/">
               <ArrowLeft size={16}/>
               {t("legal:back")}
             </Link>
           </Button>
-          <Button variant="ghost" size="sm" onClick={toggleLanguage} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={toggleLanguage}>
             <GlobeSimple size={16}/>
             {language === "es" ? "EN" : "ES"}
           </Button>
@@ -249,7 +249,6 @@ export const Legal = () => {
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
                 className="text-accent-300 hover:text-text transition-colors"
-                data-fs-hover
               >
                 {CONTACT_EMAIL}
               </a>
@@ -271,7 +270,6 @@ export const Legal = () => {
                   variant={selectedSlug === tab.slug ? "primary" : "secondary"}
                   size="sm"
                   onClick={() => selectSlug(tab.slug)}
-                  data-fs-hover
                 >
                   {tab.title}
                 </Button>

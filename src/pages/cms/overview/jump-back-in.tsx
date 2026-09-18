@@ -41,7 +41,6 @@ export const JumpBackIn = ({collections, className}: JumpBackInProps) => {
                 <Link
                   to={cmsRoute.content(collection.slug)}
                   className="text-sm text-text after:absolute after:inset-0 after:content-['']"
-                  data-fs-hover
                 >
                   {collection.name}
                 </Link>
@@ -50,7 +49,7 @@ export const JumpBackIn = ({collections, className}: JumpBackInProps) => {
 
               <p className="text-[13px] leading-relaxed text-neutral-500">{collection.description}</p>
 
-              <Button variant="ghost" size="sm" asChild className="relative mt-2 -ml-2 self-start" data-fs-hover>
+              <Button variant="ghost" size="sm" asChild className="relative mt-2 -ml-2 self-start">
                 <Link to={cmsRoute.contentNew(collection.slug)}>
                   <Plus size={14}/> {t("cms_overview:collections.new_entry")}
                 </Link>

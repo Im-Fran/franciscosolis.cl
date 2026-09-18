@@ -29,7 +29,7 @@ export const NotFound = () => {
         <pre className="mt-8 max-w-xl w-full overflow-x-auto rounded-[var(--radius-md)] border border-neutral-800 bg-surface p-4 text-left text-xs leading-relaxed text-neutral-400">
           {t("not_found:stack_trace")}
         </pre>
-        <Button asChild variant="primary" className="mt-8" data-fs-hover>
+        <Button asChild variant="primary" className="mt-8">
           <Link to="/">{t("not_found:cta")}</Link>
         </Button>
       </div>

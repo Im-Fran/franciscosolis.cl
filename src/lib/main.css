@@ -306,162 +306,6 @@ h1, h2, h3, h4, h5, h6 {
   outline-offset: 2px;
 }
 
-body.fs-cursor-active,
-body.fs-cursor-active * {
-  cursor: none;
-}
-
-/*
- * The cursor layers ride in the top layer (via popover) so a native <dialog> modal cannot cover
- * them. These undo the parts of the UA popover box the cursor styles do not already replace, and
- * must stay above .fs-lens so its own border still wins.
- */
-.fs-cursor-layer {
-  right: auto;
-  bottom: auto;
-  margin: 0;
-  padding: 0;
-  border-width: 0;
-  overflow: visible;
-  color: inherit;
-}
-
-/* Animated cursor: a liquid glass water drop that swells into a magnifier over interactive elements. */
-.fs-lens {
-  /* Driven per frame from the drop's own velocity: tail sharpness, glass strength, rim shine. */
-  --fs-drop-tail: 50%;
-  --fs-glass: 0;
-  --fs-shine: 0;
-  /* The trailing edge (left, in the drop's own rotated frame) pulls into a tail as it travels. */
-  border-radius: var(--fs-drop-tail) 50% 50% var(--fs-drop-tail) / 50% 50% 50% 50%;
-  border: 1px solid rgba(216, 200, 238, calc(.45 + var(--fs-glass) * .2));
-  background: radial-gradient(circle at 50% 50%,
-    transparent 45%,
-    rgba(255, 255, 255, calc(.03 + var(--fs-glass) * .02)) 80%,
-    rgba(178, 152, 214, calc(.10 + var(--fs-glass) * .04)) 100%);
-  -webkit-backdrop-filter:
-    blur(calc(1px + var(--fs-glass) * 5px))
-    saturate(calc(140% + var(--fs-glass) * 25%))
-    brightness(calc(1.12 - var(--fs-glass) * .26));
-  backdrop-filter:
-    blur(calc(1px + var(--fs-glass) * 5px))
-    saturate(calc(140% + var(--fs-glass) * 25%))
-    brightness(calc(1.12 - var(--fs-glass) * .26));
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, .45),
-    inset 0 0 0 1px rgba(30, 30, 30, calc(var(--fs-glass) * .5)),
-    inset 0 0 10px rgba(178, 152, 214, calc(.08 + var(--fs-glass) * .08)),
-    0 6px 16px rgba(0, 0, 0, calc(.22 + var(--fs-glass) * .28));
-  will-change: transform;
-}
-
-/* Holds the magnified copy of the hovered element, clipped to the drop's current shape. */
-.fs-lens-content {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: inherit;
-  isolation: isolate;
-}
-
-/*
- * Counter-rotated against the drop, so the magnified content and the specular stay world-upright
- * while the drop itself leans into the movement. What is left over is a directional stretch.
- */
-.fs-lens-upright,
-.fs-lens-glare {
-  position: absolute;
-  inset: 0;
-}
-
-.fs-lens-clone,
-.fs-lens-clone * {
-  animation: none !important;
-  transition: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-.fs-lens-refraction,
-.fs-lens-sheen {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  opacity: var(--fs-shine);
-}
-
-/* Light bending at the rim, where a drop of water distorts the most. */
-.fs-lens-refraction {
-  background:
-    radial-gradient(circle at 50% 50%, transparent 58%, rgba(255, 255, 255, .06) 74%, rgba(216, 200, 238, .22) 88%, rgba(255, 255, 255, .42) 96%, transparent 100%),
-    radial-gradient(circle at 50% 50%, transparent 76%, rgba(178, 152, 214, .30) 93%, transparent 100%);
-  mix-blend-mode: screen;
-}
-
-/* Highlight travelling around the rim, which keeps the glass alive while the drop rests. */
-.fs-lens-sheen {
-  border-radius: 50%;
-  background: conic-gradient(from 0deg,
-    transparent 0deg,
-    rgba(255, 255, 255, .34) 26deg,
-    transparent 62deg,
-    transparent 180deg,
-    rgba(216, 200, 238, .24) 214deg,
-    transparent 250deg);
-  -webkit-mask: radial-gradient(circle, transparent 58%, #000 78%, #000 100%);
-  mask: radial-gradient(circle, transparent 58%, #000 78%, #000 100%);
-  animation: fs-lens-spin 7s linear infinite;
-}
-
-/* Specular arcs: small and close to the rim, the way light catches water. */
-.fs-lens-glare {
-  background:
-    radial-gradient(22% 16% at 28% 17%, rgba(255, 255, 255, calc(.35 + var(--fs-glass) * .2)), transparent 100%),
-    radial-gradient(14% 10% at 72% 84%, rgba(216, 200, 238, calc(.18 + var(--fs-glass) * .12)), transparent 100%);
-}
-
-@keyframes fs-lens-spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Resolved by the provider, so an explicit "keep animations" choice still wins over the OS. */
-html[data-fs-motion="reduced"] .fs-lens-sheen {
-  animation: none;
-}
-
-/*
- * On paper the drop reads as a smudge unless the rim and the shadow carry it, so the highlights
- * that make it glass on ink are swapped for a darker edge. The geometry is unchanged.
- */
-html[data-fs-theme="light"] .fs-lens {
-  border-color: rgba(117, 84, 156, calc(.35 + var(--fs-glass) * .25));
-  background: radial-gradient(circle at 50% 50%,
-    transparent 45%,
-    rgba(38, 35, 44, calc(.03 + var(--fs-glass) * .02)) 80%,
-    rgba(117, 84, 156, calc(.10 + var(--fs-glass) * .05)) 100%);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, .8),
-    inset 0 0 0 1px rgba(117, 84, 156, calc(var(--fs-glass) * .35)),
-    inset 0 0 10px rgba(117, 84, 156, calc(.06 + var(--fs-glass) * .08)),
-    0 6px 16px rgba(38, 35, 44, calc(.14 + var(--fs-glass) * .18));
-}
-
-html[data-fs-theme="light"] .fs-lens-refraction {
-  mix-blend-mode: multiply;
-  background:
-    radial-gradient(circle at 50% 50%, transparent 58%, rgba(117, 84, 156, .10) 74%, rgba(117, 84, 156, .26) 88%, rgba(90, 104, 196, .34) 96%, transparent 100%),
-    radial-gradient(circle at 50% 50%, transparent 76%, rgba(117, 84, 156, .24) 93%, transparent 100%);
-}
-
-html[data-fs-theme="daltonism"] .fs-lens {
-  border-color: rgba(143, 207, 242, calc(.5 + var(--fs-glass) * .25));
-}
-
-/* Belt and braces: the hook already skips mounting, but a stale layer must never steal the pointer. */
-html[data-fs-cursor="system"] .fs-cursor-layer {
-  display: none !important;
-}
-
 @keyframes fs-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -470,4 +314,65 @@ html[data-fs-cursor="system"] .fs-cursor-layer {
 .fs-hoverable:hover {
   transition: transform 0.35s cubic-bezier(.16, 1, .3, 1);
   transform: translateY(-4px);
+}
+
+/*
+ * ---------------------------------------------------------------------------------------------
+ * Button ripple
+ *
+ * The outline buttons fill in from wherever the pointer crossed the edge: a circle centred on
+ * that point grows until it covers the button, and retracts toward wherever the pointer left.
+ * The origin and the diameter that reaches the furthest corner are written as inline custom
+ * properties by src/components/ui/button/button.tsx; the progress rides in `--fs-ripple-scale` next
+ * to them, so the whole state of the fill is one set of custom properties on the button itself.
+ * Keyboard focus fills from the centre, which is what the untouched defaults below resolve to.
+ * ---------------------------------------------------------------------------------------------
+ */
+.fs-ripple {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* The label flips once the fill is most of the way across, never while it is half painted. */
+  transition:
+    color .2s cubic-bezier(.4, 0, .2, 1) .09s,
+    border-color .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.fs-ripple::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  /* Percentages on both the size and the centring margins resolve against the button's width. */
+  top: var(--fs-ripple-y, 50%);
+  left: var(--fs-ripple-x, 50%);
+  width: var(--fs-ripple-d, 150%);
+  aspect-ratio: 1;
+  margin-top: calc(var(--fs-ripple-d, 150%) / -2);
+  margin-left: calc(var(--fs-ripple-d, 150%) / -2);
+  border-radius: 9999px;
+  background-color: var(--fs-ripple-fill, currentColor);
+  transform: scale(var(--fs-ripple-scale, 0));
+  transition: transform .5s cubic-bezier(.32, .85, .38, 1);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* No pointer means no origin to grow from, so focus fills the whole button from its centre. */
+.fs-ripple:focus-visible::before {
+  transform: scale(1);
+}
+
+/*
+ * Destructive buttons. They keep the outline shape of whatever variant they are built on and only
+ * swap what the ripple fills with, so "delete" still reads as red once the fill lands. Declared
+ * here rather than as utilities so it wins over the variant's own hover colours.
+ */
+.fs-ripple-danger {
+  --fs-ripple-fill: color-mix(in oklab, var(--color-red-500) 16%, transparent);
+}
+
+.fs-ripple-danger:hover,
+.fs-ripple-danger:focus-visible {
+  border-color: color-mix(in oklab, var(--color-red-500) 45%, transparent);
+  color: var(--color-red-200);
 }

@@ -115,7 +115,6 @@ export const AuditLog = () => {
               to={adminRoute.user(entry.user_id)}
               onClick={(clickEvent) => clickEvent.stopPropagation()}
               className="underline-offset-2 hover:underline"
-              data-fs-hover
             >
               {entry.user_email ?? entry.user_id}
             </Link>
@@ -160,7 +159,7 @@ export const AuditLog = () => {
         title={t("auth_admin:audit.title")}
         description={t("auth_admin:audit.description")}
         actions={
-          <Button variant="ghost" size="sm" onClick={entries.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={entries.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
@@ -213,7 +212,7 @@ export const AuditLog = () => {
           </label>
 
           {filtered && (
-            <Button variant="ghost" size="sm" onClick={() => setParams({})} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={() => setParams({})}>
               {t("admin:common.clear_filters")}
             </Button>
           )}
@@ -222,7 +221,7 @@ export const AuditLog = () => {
         {user && (
           <p className="mb-4 text-[13px] text-neutral-500">
             {t("auth_admin:audit.scoped_to_user")}{" "}
-            <Link to={adminRoute.user(user)} className="underline underline-offset-2" data-fs-hover>
+            <Link to={adminRoute.user(user)} className="underline underline-offset-2">
               {rows[0]?.user_email ?? user}
             </Link>
           </p>

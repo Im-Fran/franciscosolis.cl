@@ -37,7 +37,7 @@ export const ProjectCard = ({entry}: {entry: CmsEntry}) => {
   return (
     <>
       <Card elevation="md" className="reveal-item fs-hoverable w-full flex-1 flex flex-col overflow-hidden p-0">
-        <button type="button" data-fs-hover onClick={() => setOpen(true)} className="flex flex-1 flex-col w-full h-full text-left">
+        <button type="button" onClick={() => setOpen(true)} className="flex flex-1 flex-col w-full h-full text-left">
           {cover}
           <div className="flex flex-1 flex-col justify-between p-6">
             <div>
@@ -87,7 +87,6 @@ export const ProjectCard = ({entry}: {entry: CmsEntry}) => {
             href={href}
             target="_blank"
             rel="noreferrer"
-            data-fs-hover
             className="mt-6 inline-flex items-center gap-1 text-sm text-accent-300"
           >
             {t("projects:view_project")} <ArrowUpRight size={14}/>

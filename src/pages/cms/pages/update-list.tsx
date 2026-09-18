@@ -87,7 +87,6 @@ export const UpdateList = () => {
               asChild
               aria-label={t("cms_pages:updates.edit_aria", {version: row.version})}
               className="size-9"
-              data-fs-hover
             >
               <Link to={pagesRoute.updateItem(id, row.id)} onClick={(event) => event.stopPropagation()}>
                 <PencilSimple size={16}/>
@@ -103,7 +102,6 @@ export const UpdateList = () => {
               }}
               aria-label={t("cms_pages:updates.delete_aria", {version: row.version})}
               className="size-9 text-neutral-400 hover:text-red-300"
-              data-fs-hover
             >
               <Trash size={16}/>
             </Button>
@@ -132,7 +130,7 @@ export const UpdateList = () => {
         description={t("cms_pages:updates.description", {name: application.data?.name ?? ""})}
         back={{to: pagesRoute.list, label: t("cms_pages:editor.back")}}
         actions={
-          <Button asChild data-fs-hover>
+          <Button asChild>
             <Link to={pagesRoute.updateNew(id)}>
               <Plus size={16}/> {t("cms_pages:updates.new")}
             </Link>
@@ -146,7 +144,7 @@ export const UpdateList = () => {
         title={t("cms_pages:updates.panel_title")}
         description={total > 0 ? t("cms_pages:updates.count", {count: total}) : undefined}
         action={
-          <Button variant="ghost" size="sm" onClick={updates.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={updates.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
@@ -164,7 +162,7 @@ export const UpdateList = () => {
               title={t("cms_pages:updates.empty_title")}
               description={t("cms_pages:updates.empty_description")}
               action={
-                <Button asChild data-fs-hover>
+                <Button asChild>
                   <Link to={pagesRoute.updateNew(id)}>
                     <Plus size={16}/> {t("cms_pages:updates.empty_action")}
                   </Link>

@@ -76,7 +76,7 @@ export const PanelState = ({
         <div className="flex flex-wrap items-center gap-3">
           <span>{t(`${ns}:errors.${error}`, {defaultValue: error})}</span>
           {onRetry && (
-            <Button variant="ghost" size="sm" onClick={onRetry} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={onRetry}>
               <ArrowClockwise size={14}/> {t(`${ns}:common.retry`)}
             </Button>
           )}

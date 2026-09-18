@@ -117,11 +117,10 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
                     notify(t("articles.reindexed", {rows: outcome.data.search_rows, vectors: outcome.data.vectors}));
                   }
                 }}
-                data-fs-hover
               >
                 <ArrowsClockwise size={14} /> {t("articles.reindex")}
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(true)} data-fs-hover>
+              <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(true)}>
                 <Trash size={14} />
               </Button>
             </div>

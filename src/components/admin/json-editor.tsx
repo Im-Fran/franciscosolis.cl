@@ -32,7 +32,6 @@ export const JsonEditor = ({id, value, onChange, rows = 10, disabled, placeholde
               if (parsed.ok && parsed.value) onChange(JSON.stringify(parsed.value, null, 2));
             }}
             className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] px-2 py-1 text-[11px] text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
-            data-fs-hover
           >
             <Broom size={13}/> {t("cms:json.format")}
           </button>

@@ -86,7 +86,6 @@ export const TemplateList = () => {
               aria-label={t("cms_templates:list.copy_slug", {slug: template.slug})}
               title={t("admin:common.copy")}
               className="cursor-pointer rounded-[var(--radius-sm)] p-1 text-neutral-600 transition-colors hover:bg-neutral-800 hover:text-text"
-              data-fs-hover
             >
               <Copy size={13}/>
             </button>
@@ -132,7 +131,6 @@ export const TemplateList = () => {
             size="sm"
             className="px-2"
             asChild
-            data-fs-hover
             onClick={(event) => event.stopPropagation()}
           >
             <Link
@@ -152,7 +150,6 @@ export const TemplateList = () => {
               remove.reset();
               setPendingDelete(template);
             }}
-            data-fs-hover
           >
             <Trash size={15}/>
           </Button>
@@ -168,10 +165,10 @@ export const TemplateList = () => {
         description={t("cms_templates:list.description")}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={templates.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={templates.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
-            <Button size="sm" asChild data-fs-hover>
+            <Button size="sm" asChild>
               <Link to={cmsRoute.templateNew}>
                 <Plus size={14}/> {t("cms_templates:list.new")}
               </Link>
@@ -206,7 +203,7 @@ export const TemplateList = () => {
               title={t("cms_templates:list.empty_title")}
               description={t("cms_templates:list.empty_description")}
               action={
-                <Button size="sm" asChild data-fs-hover>
+                <Button size="sm" asChild>
                   <Link to={cmsRoute.templateNew}>
                     <Plus size={14}/> {t("cms_templates:list.empty_action")}
                   </Link>

@@ -37,7 +37,6 @@ export const Pagination = ({offset, limit, count, onChange, disabled}: Paginatio
           size="sm"
           disabled={disabled || !hasPrevious}
           onClick={() => onChange(Math.max(0, offset - limit))}
-          data-fs-hover
         >
           <CaretLeft size={14}/> {t("admin:common.previous")}
         </Button>
@@ -46,7 +45,6 @@ export const Pagination = ({offset, limit, count, onChange, disabled}: Paginatio
           size="sm"
           disabled={disabled || !hasNext}
           onClick={() => onChange(offset + limit)}
-          data-fs-hover
         >
           {t("admin:common.next")} <CaretRight size={14}/>
         </Button>
