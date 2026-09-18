@@ -1,0 +1,43 @@
+{
+  "loading": "Cargando…",
+  "back_home": "Volver a franciscosolis.cl",
+  "banner_alt": "Banner de {{name}}",
+  "untranslated": "Esta página aún no está traducida, así que estás leyendo el original.",
+  "tabs": {
+    "label": "Secciones de esta aplicación",
+    "overview": "Resumen",
+    "updates": "Novedades",
+    "wiki": "Wiki",
+    "contact": "Contacto"
+  },
+  "links": {
+    "website": "Sitio web",
+    "github": "GitHub",
+    "gitlab": "GitLab",
+    "app_store": "App Store",
+    "play_store": "Google Play",
+    "download": "Descargar",
+    "documentation": "Documentación",
+    "discord": "Discord",
+    "support": "Soporte",
+    "sponsor": "Apoyar",
+    "other": "Abrir enlace"
+  },
+  "overview": {
+    "empty": "Todavía no se ha escrito nada sobre esta aplicación."
+  },
+  "updates": {
+    "empty": "Todavía no se ha publicado ninguna versión."
+  },
+  "wiki": {
+    "nav_label": "Páginas de la wiki",
+    "nav_title": "Navegación",
+    "empty": "Esta wiki aún no tiene páginas publicadas.",
+    "page_empty": "Esta página todavía no tiene contenido.",
+    "updated": "Actualizada el {{date}}"
+  },
+  "contact": {
+    "empty": "Todavía no se han publicado datos de contacto.",
+    "links_title": "Dónde encontrarnos"
+  }
+}

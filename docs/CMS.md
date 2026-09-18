@@ -22,6 +22,12 @@ trail — behind a sign-in of its own.
 | `/cms/email/messages/:id`      | One message: what was sent, and what happened to it               |
 | `/cms/audit`                   | The record of the writes the CMS made                             |
 
+One more section lives under `/cms` without belonging to the CMS module: `/cms/pages`, which edits
+the standalone application pages served by a different Worker. It is here because that service
+accepts the CMS's own client id as its audience, so it reuses this session and this shell rather
+than asking an editor to sign in a second time for a second console. See
+[APPLICATIONS.md](./APPLICATIONS.md).
+
 Everything except `sign-in` and `callback` needs a session; anonymous visitors are sent to
 `/cms/sign-in` with a `return_to` so the flow resumes where they were headed. A `return_to` pointing
 outside `/cms` is dropped.

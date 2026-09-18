@@ -11,6 +11,8 @@ import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {CmsLayout} from "@/pages/cms/components/cms-layout.tsx";
 import {ContentRedirect} from "@/pages/cms/components/content-redirect.tsx";
 import {
+  ApplicationEditor,
+  ApplicationList,
   AuditLog,
   Callback,
   ContentEditor,
@@ -24,6 +26,10 @@ import {
   SignIn,
   TemplateEditor,
   TemplateList,
+  UpdateEditor,
+  UpdateList,
+  WikiEditor,
+  WikiList,
 } from "@/pages/cms/lazy-screens.tsx";
 
 /**
@@ -64,6 +70,22 @@ export const cmsRoutes: RouteObject = {
         {path: "content/:collection", element: <ContentList/>},
         {path: "content/:collection/new", element: <ContentEditor/>},
         {path: "content/:collection/:id", element: <ContentEditor/>},
+
+        /*
+         * Standalone app pages. They are a different service — `apps/pages` rather than `apps/cms`
+         * — but not a different application: it accepts the CMS's audience precisely so these
+         * screens can live inside this gate and this session instead of asking an editor to sign in
+         * a second time for a second console.
+         */
+        {path: "pages", element: <ApplicationList/>},
+        {path: "pages/new", element: <ApplicationEditor/>},
+        {path: "pages/:id", element: <ApplicationEditor/>},
+        {path: "pages/:id/updates", element: <UpdateList/>},
+        {path: "pages/:id/updates/new", element: <UpdateEditor/>},
+        {path: "pages/:id/updates/:updateId", element: <UpdateEditor/>},
+        {path: "pages/:id/wiki", element: <WikiList/>},
+        {path: "pages/:id/wiki/new", element: <WikiEditor/>},
+        {path: "pages/:id/wiki/:pageId", element: <WikiEditor/>},
 
         {path: "legal", element: <LegalList/>},
         {path: "legal/new", element: <LegalEditor/>},

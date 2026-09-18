@@ -7,6 +7,7 @@ import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {accountRoutes, authRoutes, authorizeRoutes} from "@/pages/auth/auth-routes.tsx";
 import {cmsRoutes} from "@/pages/cms/cms-routes.tsx";
+import {applicationRoutes} from "@/pages/application/application-routes.tsx";
 import {CmsLegacyRedirect} from "@/pages/cms/components/legacy-redirect.tsx";
 import {Legal} from "@/pages/legal/lazy-screens.tsx";
 
@@ -42,6 +43,13 @@ const routes = [
       authorizeRoutes,
       /* CMS — its own application, signed in under its own client id */
       cmsRoutes,
+      /*
+       * Standalone app pages. Registered after the console routes deliberately: React Router ranks
+       * a static segment above a dynamic one, so `/cms` and `/auth` win over `application/:slug`
+       * whatever the order here — but reading the list top to bottom should still put the site's
+       * own sections before the pages it hosts.
+       */
+      applicationRoutes,
       /* The CMS moved from /apps/cms to /cms; old links and bookmarks still resolve */
       {
         path: "apps/cms/*",
