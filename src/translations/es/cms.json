@@ -64,6 +64,12 @@
     "handle": "Reordenar — elemento {{position}} de {{total}}. Pulsa espacio y usa las flechas."
   },
   "common": {
+    "loading": "Cargando…",
+    "failed": "Algo salió mal",
+    "retry": "Reintentar",
+    "empty": "No hay nada que mostrar.",
+    "forbidden_title": "No disponible para tu cuenta",
+    "forbidden_body": "Esta sección necesita un permiso que tu cuenta no tiene.",
     "no_collections": "Este CMS todavía no administra colecciones."
   }
 }
