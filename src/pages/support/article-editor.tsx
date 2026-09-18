@@ -8,7 +8,7 @@ import {PageHeader} from "@/components/admin/page-header.tsx";
 import {TagInput} from "@/components/admin/tag-input.tsx";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
-import {Input} from "@/components/ui/input.tsx";
+import {Input, Select} from "@/components/ui/input.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
@@ -149,10 +149,9 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
         <div className="flex flex-wrap gap-4">
           <label className="flex flex-col gap-1.5">
             <span className="text-xs tracking-wide text-neutral-500 uppercase">{t("articles.category")}</span>
-            <select
+            <Select
               value={form.category_id ?? ""}
               onChange={(event) => setForm((current) => ({...current, category_id: event.target.value || null}))}
-              className="rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-900/60 px-3 py-2 text-sm text-text"
             >
               <option value="">—</option>
               {(categories.data ?? []).map((category) => (
@@ -160,22 +159,21 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
                   {category.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs tracking-wide text-neutral-500 uppercase">{t("articles.status")}</span>
-            <select
+            <Select
               value={form.status ?? "draft"}
               onChange={(event) =>
                 setForm((current) => ({...current, status: event.target.value as AdminArticle["status"]}))
               }
-              className="rounded-[var(--radius-sm)] border border-neutral-700 bg-neutral-900/60 px-3 py-2 text-sm text-text"
             >
               <option value="draft">draft</option>
               <option value="published">published</option>
               <option value="archived">archived</option>
-            </select>
+            </Select>
           </label>
 
           <label className="flex items-center gap-2 self-end pb-2 text-sm text-neutral-300">
@@ -183,6 +181,7 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
               type="checkbox"
               checked={form.featured ?? false}
               onChange={(event) => setForm((current) => ({...current, featured: event.target.checked}))}
+              className="size-4 accent-[var(--color-accent)]"
             />
             {t("articles.featured")}
           </label>
