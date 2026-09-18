@@ -1,0 +1,163 @@
+{
+  "app_name": "Support",
+  "nav": {
+    "label": "Support sections",
+    "inbox": "Inbox",
+    "unassigned": "Unassigned",
+    "tickets": "Tickets",
+    "knowledge": "Help centre",
+    "articles": "Articles",
+    "categories": "Sections",
+    "labels": "Labels",
+    "operations": "Operations",
+    "emails": "Sent mail",
+    "audit": "Audit"
+  },
+  "sign_in": {
+    "title": "Support console",
+    "subtitle": "Signing you in…",
+    "working": "Taking you to the sign-in screen.",
+    "staff_only": "For the support team.",
+    "back_home": "Back to the site",
+    "retry": "Try again",
+    "error_title": "We could not start the sign-in",
+    "error_subtitle": "Nothing was handed over, so it is safe to try again."
+  },
+  "no_access": {
+    "title": "Not a support agent",
+    "subtitle": "This account is signed in, but it does not answer tickets.",
+    "subtitle_email": "{{email}} is signed in, but it does not answer tickets.",
+    "alert_title": "What is missing",
+    "alert_body": "An administrator has to grant the support:agent permission. Sign in again afterwards so a fresh token carries it.",
+    "sign_out": "Sign out",
+    "back_home": "Back to the site"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "empty": "Nothing here.",
+    "search": "Search subject or requester",
+    "filter_status": "Status",
+    "filter_priority": "Priority",
+    "filter_label": "Label",
+    "unassigned_only": "Unassigned only",
+    "all": "All",
+    "reference": "Ref",
+    "subject": "Subject",
+    "requester": "Requester",
+    "assignee": "Assignee",
+    "updated": "Updated"
+  },
+  "ticket": {
+    "reply": "Reply",
+    "note": "Internal note",
+    "note_hint": "Only the support team sees this. It sends nothing.",
+    "reply_hint": "Goes to everybody on the ticket. If nobody comes back within 30 minutes, they get an email.",
+    "send": "Send",
+    "sending": "Sending…",
+    "status": "Status",
+    "priority": "Priority",
+    "assignee": "Assigned to",
+    "unassigned": "Nobody",
+    "assign_me": "Assign to me",
+    "labels": "Labels",
+    "participants": "People on this ticket",
+    "add_participant": "Add somebody",
+    "participant_email": "Their email",
+    "remove": "Remove",
+    "requester": "Requester",
+    "opened": "Opened",
+    "summary": "Triage summary",
+    "summary_hint": "Written by the model that read the incoming email. Not shown to the requester.",
+    "rename": "Rename",
+    "delete": "Delete ticket",
+    "delete_confirm": "Delete this ticket and its whole conversation? This cannot be undone.",
+    "deleted": "Ticket deleted.",
+    "saved": "Saved.",
+    "assist": "Draft with AI"
+  },
+  "assist": {
+    "title": "Draft an answer",
+    "hint": "Searches the help centre and drafts a reply from what it finds. Read it before you send it — it is a draft, not an answer.",
+    "placeholder": "What did they ask?",
+    "run": "Draft it",
+    "running": "Reading the help centre…",
+    "insufficient": "Nothing in the help centre covers that. Worth writing an article once you have answered.",
+    "sources": "Based on",
+    "insert": "Put it in the composer",
+    "confidence": "Confidence"
+  },
+  "labels": {
+    "title": "Labels",
+    "new": "New label",
+    "name": "Name",
+    "description": "Description",
+    "color": "Colour",
+    "position": "Order",
+    "empty": "No labels yet.",
+    "delete_confirm": "Delete this label? It comes off every ticket carrying it.",
+    "saved": "Label saved.",
+    "deleted": "Label deleted."
+  },
+  "articles": {
+    "title": "Help articles",
+    "new": "New article",
+    "article_title": "Title",
+    "slug": "Slug",
+    "summary": "Summary",
+    "body": "Body",
+    "category": "Section",
+    "status": "Status",
+    "featured": "Pinned",
+    "tags": "Tags",
+    "translations": "Translations",
+    "empty": "Nothing written yet.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Article saved.",
+    "deleted": "Article deleted.",
+    "delete_confirm": "Delete this article? It comes out of both search indexes.",
+    "reindex": "Rebuild search index",
+    "reindexed": "Reindexed: {{rows}} search rows, {{vectors}} vectors.",
+    "reindex_hint": "For repairing drift after an outage or a model change."
+  },
+  "categories": {
+    "title": "Help centre sections",
+    "new": "New section",
+    "name": "Name",
+    "description": "Description",
+    "icon": "Icon",
+    "status": "Status",
+    "position": "Order",
+    "empty": "No sections yet.",
+    "delete_confirm": "Delete this section? Its articles stay, without a section.",
+    "saved": "Section saved.",
+    "deleted": "Section deleted."
+  },
+  "emails": {
+    "title": "Sent mail",
+    "empty": "Nothing sent yet."
+  },
+  "audit": {
+    "title": "Audit",
+    "empty": "Nothing recorded yet."
+  },
+  "errors": {
+    "generic": "Something went wrong."
+  },
+  "callback": {
+    "title": "Finishing sign-in",
+    "subtitle": "One moment.",
+    "working": "Checking the code the service sent back.",
+    "error_title": "We could not finish the sign-in",
+    "error_subtitle": "The link may have been used already, or it expired.",
+    "retry": "Start again"
+  },
+  "editor": {
+    "translations_title": "Translations",
+    "translations_description": "The article's own fields are English. Anything left blank here falls back to them.",
+    "translations_source": "English",
+    "translations_source_empty": "Nothing written in English yet.",
+    "translations_none": "No translations yet.",
+    "translations_clear": "Clear this language"
+  }
+}

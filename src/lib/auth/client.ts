@@ -23,7 +23,9 @@ export class AuthNetworkError extends Error {
 }
 
 export type RequestOptions = {
-  method?: "GET" | "POST" | "PATCH" | "DELETE";
+  /* PUT is here for the support console, whose assignee endpoint replaces a value rather
+     than merging into one. */
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   /** JSON request body. */
   json?: unknown;
   /**
@@ -36,6 +38,16 @@ export type RequestOptions = {
   form?: FormData;
   /** Send an access token. Off for the handful of public endpoints. */
   auth?: boolean;
+  /**
+   * Extra request headers.
+   *
+   * Added for the support section, which carries a per-ticket access secret. That secret has to
+   * travel in a header rather than in the query string: a query string lands in browser history, in
+   * `Referer` on every outbound link the page renders, and in every access log along the way.
+   *
+   * Merged *before* the headers below, so a caller cannot overwrite the bearer token by accident.
+   */
+  headers?: Record<string, string>;
   signal?: AbortSignal;
 };
 
@@ -106,7 +118,7 @@ export type HttpClient = ReturnType<typeof createHttpClient>;
  */
 export const createHttpClient = (baseUrl: string, session: SessionStore) => {
   const send = async (path: string, options: RequestOptions, token: string | null) => {
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = {...options.headers};
     if (options.json !== undefined) headers["Content-Type"] = "application/json";
     if (token) headers.Authorization = `Bearer ${token}`;
 

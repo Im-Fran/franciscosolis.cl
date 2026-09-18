@@ -1,0 +1,163 @@
+{
+  "app_name": "Soporte",
+  "nav": {
+    "label": "Secciones de soporte",
+    "inbox": "Bandeja",
+    "unassigned": "Sin asignar",
+    "tickets": "Tickets",
+    "knowledge": "Centro de ayuda",
+    "articles": "Artículos",
+    "categories": "Secciones",
+    "labels": "Etiquetas",
+    "operations": "Operación",
+    "emails": "Correo enviado",
+    "audit": "Auditoría"
+  },
+  "sign_in": {
+    "title": "Consola de soporte",
+    "subtitle": "Iniciando tu sesión…",
+    "working": "Te llevamos a la pantalla de acceso.",
+    "staff_only": "Para el equipo de soporte.",
+    "back_home": "Volver al sitio",
+    "retry": "Reintentar",
+    "error_title": "No pudimos iniciar el acceso",
+    "error_subtitle": "No se entregó nada, así que puedes reintentar sin riesgo."
+  },
+  "no_access": {
+    "title": "No eres agente de soporte",
+    "subtitle": "Esta cuenta tiene sesión iniciada, pero no responde tickets.",
+    "subtitle_email": "{{email}} tiene sesión iniciada, pero no responde tickets.",
+    "alert_title": "Qué falta",
+    "alert_body": "Un administrador tiene que otorgar el permiso support:agent. Después vuelve a iniciar sesión para que el token nuevo lo lleve.",
+    "sign_out": "Cerrar sesión",
+    "back_home": "Volver al sitio"
+  },
+  "inbox": {
+    "title": "Bandeja",
+    "empty": "Aquí no hay nada.",
+    "search": "Buscar asunto o solicitante",
+    "filter_status": "Estado",
+    "filter_priority": "Prioridad",
+    "filter_label": "Etiqueta",
+    "unassigned_only": "Sólo sin asignar",
+    "all": "Todos",
+    "reference": "Ref",
+    "subject": "Asunto",
+    "requester": "Solicitante",
+    "assignee": "Asignado",
+    "updated": "Actualizado"
+  },
+  "ticket": {
+    "reply": "Responder",
+    "note": "Nota interna",
+    "note_hint": "Sólo la ve el equipo de soporte. No envía nada.",
+    "reply_hint": "Llega a todos en el ticket. Si nadie vuelve en 30 minutos, se les avisa por correo.",
+    "send": "Enviar",
+    "sending": "Enviando…",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "assignee": "Asignado a",
+    "unassigned": "Nadie",
+    "assign_me": "Asignármelo",
+    "labels": "Etiquetas",
+    "participants": "Personas en este ticket",
+    "add_participant": "Sumar a alguien",
+    "participant_email": "Su correo",
+    "remove": "Quitar",
+    "requester": "Solicitante",
+    "opened": "Abierto",
+    "summary": "Resumen de triage",
+    "summary_hint": "Lo escribió el modelo que leyó el correo entrante. No lo ve quien escribió.",
+    "rename": "Renombrar",
+    "delete": "Eliminar ticket",
+    "delete_confirm": "¿Eliminar este ticket y toda su conversación? No se puede deshacer.",
+    "deleted": "Ticket eliminado.",
+    "saved": "Guardado.",
+    "assist": "Redactar con IA"
+  },
+  "assist": {
+    "title": "Redactar una respuesta",
+    "hint": "Busca en el centro de ayuda y redacta una respuesta con lo que encuentra. Léela antes de enviarla — es un borrador, no una respuesta.",
+    "placeholder": "¿Qué preguntaron?",
+    "run": "Redactar",
+    "running": "Leyendo el centro de ayuda…",
+    "insufficient": "No hay nada en el centro de ayuda que cubra eso. Vale la pena escribir un artículo cuando respondas.",
+    "sources": "Basado en",
+    "insert": "Ponerlo en el editor",
+    "confidence": "Confianza"
+  },
+  "labels": {
+    "title": "Etiquetas",
+    "new": "Nueva etiqueta",
+    "name": "Nombre",
+    "description": "Descripción",
+    "color": "Color",
+    "position": "Orden",
+    "empty": "Todavía no hay etiquetas.",
+    "delete_confirm": "¿Eliminar esta etiqueta? Se quita de todos los tickets que la tengan.",
+    "saved": "Etiqueta guardada.",
+    "deleted": "Etiqueta eliminada."
+  },
+  "articles": {
+    "title": "Artículos de ayuda",
+    "new": "Nuevo artículo",
+    "article_title": "Título",
+    "slug": "Slug",
+    "summary": "Resumen",
+    "body": "Contenido",
+    "category": "Sección",
+    "status": "Estado",
+    "featured": "Destacado",
+    "tags": "Etiquetas",
+    "translations": "Traducciones",
+    "empty": "Todavía no hay nada escrito.",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Artículo guardado.",
+    "deleted": "Artículo eliminado.",
+    "delete_confirm": "¿Eliminar este artículo? Sale de los dos índices de búsqueda.",
+    "reindex": "Reconstruir índice de búsqueda",
+    "reindexed": "Reindexado: {{rows}} filas de búsqueda, {{vectors}} vectores.",
+    "reindex_hint": "Para reparar desajustes tras una caída o un cambio de modelo."
+  },
+  "categories": {
+    "title": "Secciones del centro de ayuda",
+    "new": "Nueva sección",
+    "name": "Nombre",
+    "description": "Descripción",
+    "icon": "Icono",
+    "status": "Estado",
+    "position": "Orden",
+    "empty": "Todavía no hay secciones.",
+    "delete_confirm": "¿Eliminar esta sección? Sus artículos quedan, sin sección.",
+    "saved": "Sección guardada.",
+    "deleted": "Sección eliminada."
+  },
+  "emails": {
+    "title": "Correo enviado",
+    "empty": "Todavía no se ha enviado nada."
+  },
+  "audit": {
+    "title": "Auditoría",
+    "empty": "Todavía no hay registros."
+  },
+  "errors": {
+    "generic": "Algo salió mal."
+  },
+  "callback": {
+    "title": "Terminando el acceso",
+    "subtitle": "Un momento.",
+    "working": "Verificando el código que devolvió el servicio.",
+    "error_title": "No pudimos terminar el acceso",
+    "error_subtitle": "Puede que el enlace ya se haya usado, o que haya caducado.",
+    "retry": "Empezar de nuevo"
+  },
+  "editor": {
+    "translations_title": "Traducciones",
+    "translations_description": "Los campos propios del artículo están en inglés. Lo que dejes en blanco aquí vuelve a ellos.",
+    "translations_source": "Inglés",
+    "translations_source_empty": "Todavía no hay nada escrito en inglés.",
+    "translations_none": "Todavía no hay traducciones.",
+    "translations_clear": "Vaciar este idioma"
+  }
+}
