@@ -256,7 +256,7 @@ export const TemplateEditor = () => {
                   type="button"
                   variant="secondary"
                   size="sm"
-                  className="border-red-500/50 text-red-300 hover:bg-red-500/10"
+                  className="border-red-500/50 text-red-300 fs-ripple-danger"
                   onClick={() => {
                     remove.reset();
                     setConfirming(true);

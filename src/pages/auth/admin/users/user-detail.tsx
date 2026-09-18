@@ -169,7 +169,7 @@ export const UserDetail = () => {
                       size="sm"
                       disabled={setStatus.pending}
                       className={
-                        user.status === "disabled" ? undefined : "border-red-500/50 text-red-300 hover:bg-red-500/10"
+                        user.status === "disabled" ? undefined : "border-red-500/50 text-red-300 fs-ripple-danger"
                       }
                       onClick={async () => {
                         const next = user.status === "disabled" ? "active" : "disabled";
@@ -327,7 +327,7 @@ export const UserDetail = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-300 hover:bg-red-500/10"
+                      className="text-red-300 fs-ripple-danger"
                       onClick={() => setConfirmSignOut(true)}
                       data-fs-hover
                     >
@@ -361,7 +361,7 @@ export const UserDetail = () => {
                             variant="ghost"
                             size="sm"
                             disabled={revokeSession.pending}
-                            className="text-red-300 hover:bg-red-500/10"
+                            className="text-red-300 fs-ripple-danger"
                             onClick={async () => {
                               const result = await revokeSession.run(session.id);
                               if (result.ok) {

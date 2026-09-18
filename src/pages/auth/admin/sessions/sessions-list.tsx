@@ -142,7 +142,7 @@ export const SessionsList = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-red-300 hover:bg-red-500/10"
+              className="text-red-300 fs-ripple-danger"
               onClick={() => setRevoking(session)}
               data-fs-hover
             >

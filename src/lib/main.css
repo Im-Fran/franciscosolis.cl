@@ -471,3 +471,65 @@ html[data-fs-cursor="system"] .fs-cursor-layer {
   transition: transform 0.35s cubic-bezier(.16, 1, .3, 1);
   transform: translateY(-4px);
 }
+
+/*
+ * ---------------------------------------------------------------------------------------------
+ * Button ripple
+ *
+ * The outline buttons fill in from wherever the pointer crossed the edge: a circle centred on
+ * that point grows until it covers the button, and retracts toward wherever the pointer left.
+ * The origin and the diameter that reaches the furthest corner are written as inline custom
+ * properties by src/components/ui/button/button.tsx; keeping the progress in `--fs-ripple-scale`
+ * rather than in a `:hover` rule means the magnifier's cloned copy (which is not itself hovered)
+ * still shows the button in the state the real one is in. Keyboard focus fills from the centre,
+ * which is what the untouched defaults below resolve to.
+ * ---------------------------------------------------------------------------------------------
+ */
+.fs-ripple {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* The label flips once the fill is most of the way across, never while it is half painted. */
+  transition:
+    color .2s cubic-bezier(.4, 0, .2, 1) .09s,
+    border-color .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.fs-ripple::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  /* Percentages on both the size and the centring margins resolve against the button's width. */
+  top: var(--fs-ripple-y, 50%);
+  left: var(--fs-ripple-x, 50%);
+  width: var(--fs-ripple-d, 150%);
+  aspect-ratio: 1;
+  margin-top: calc(var(--fs-ripple-d, 150%) / -2);
+  margin-left: calc(var(--fs-ripple-d, 150%) / -2);
+  border-radius: 9999px;
+  background-color: var(--fs-ripple-fill, currentColor);
+  transform: scale(var(--fs-ripple-scale, 0));
+  transition: transform .5s cubic-bezier(.32, .85, .38, 1);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* No pointer means no origin to grow from, so focus fills the whole button from its centre. */
+.fs-ripple:focus-visible::before {
+  transform: scale(1);
+}
+
+/*
+ * Destructive buttons. They keep the outline shape of whatever variant they are built on and only
+ * swap what the ripple fills with, so "delete" still reads as red once the fill lands. Declared
+ * here rather than as utilities so it wins over the variant's own hover colours.
+ */
+.fs-ripple-danger {
+  --fs-ripple-fill: color-mix(in oklab, var(--color-red-500) 16%, transparent);
+}
+
+.fs-ripple-danger:hover,
+.fs-ripple-danger:focus-visible {
+  border-color: color-mix(in oklab, var(--color-red-500) 45%, transparent);
+  color: var(--color-red-200);
+}

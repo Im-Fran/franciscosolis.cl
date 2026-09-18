@@ -296,7 +296,7 @@ export const RoleEditor = ({mode}: {mode: "create" | "edit"}) => {
           {mode === "edit" && (
             <Button
               variant="ghost"
-              className="mr-auto text-red-300 hover:bg-red-500/10"
+              className="mr-auto text-red-300 fs-ripple-danger"
               onClick={() => setDeleting(true)}
               data-fs-hover
             >

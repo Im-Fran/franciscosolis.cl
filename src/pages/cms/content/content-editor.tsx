@@ -362,7 +362,7 @@ export const ContentEditor = () => {
               <Button
                 variant="secondary"
                 size="sm"
-                className="border-red-500/40 text-red-300 hover:bg-red-500/10"
+                className="border-red-500/40 text-red-300 fs-ripple-danger"
                 onClick={() => {
                   remove.reset();
                   setConfirmingDelete(true);

@@ -119,7 +119,7 @@ export const InvitationsList = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-red-300 hover:bg-red-500/10"
+                className="text-red-300 fs-ripple-danger"
                 onClick={() => setRevoking(invitation)}
                 aria-label={t("auth_admin:invitations.revoke")}
                 data-fs-hover

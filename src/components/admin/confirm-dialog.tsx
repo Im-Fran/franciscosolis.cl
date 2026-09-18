@@ -50,7 +50,7 @@ export const ConfirmDialog = ({
             variant="secondary"
             onClick={onConfirm}
             disabled={pending}
-            className="border-red-500/50 text-red-300 hover:bg-red-500/10"
+            className="border-red-500/50 text-red-300 fs-ripple-danger"
             data-fs-hover
           >
             {pending ? <Spinner size={16}/> : <Warning size={16}/>}

@@ -371,7 +371,7 @@ export const PruneDialog = ({open, onClose, sessions, onPruned}: PruneDialogProp
             variant="secondary"
             onClick={confirm}
             disabled={prune.pending || previewing || matched === 0}
-            className="border-red-500/50 text-red-300 hover:bg-red-500/10"
+            className="border-red-500/50 text-red-300 fs-ripple-danger"
             data-fs-hover
           >
             {prune.pending ? <Spinner size={16}/> : matched === 0 ? <Broom size={16}/> : <Warning size={16}/>}

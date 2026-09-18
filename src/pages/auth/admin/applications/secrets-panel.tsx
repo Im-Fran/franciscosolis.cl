@@ -131,7 +131,7 @@ export const SecretsPanel = ({clientId, confidential}: {clientId: string; confid
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-red-300 hover:bg-red-500/10"
+                    className="text-red-300 fs-ripple-danger"
                     onClick={() => setRevoking(secret)}
                     aria-label={t("auth_admin:secrets.revoke")}
                     data-fs-hover

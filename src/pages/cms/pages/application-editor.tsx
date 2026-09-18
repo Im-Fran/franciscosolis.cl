@@ -316,7 +316,7 @@ export const ApplicationEditor = () => {
               type="button"
               variant="secondary"
               onClick={() => setAskDelete(true)}
-              className="border-red-500/50 text-red-300 hover:bg-red-500/10"
+              className="border-red-500/50 text-red-300 fs-ripple-danger"
               data-fs-hover
             >
               <Trash size={16}/> {t("admin:common.delete")}
