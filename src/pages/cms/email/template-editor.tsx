@@ -245,7 +245,7 @@ export const TemplateEditor = () => {
                  * reading the parameter, this still lands on a blank compose form, which is where
                  * someone wanting to send a test was heading anyway.
                  */
-                <Button variant="secondary" size="sm" asChild data-fs-hover>
+                <Button variant="secondary" size="sm" asChild>
                   <Link to={`${cmsRoute.emailNew}?template=${encodeURIComponent(slug)}`}>
                     <PaperPlaneTilt size={14}/> {t("cms_templates:editor.send_test")}
                   </Link>
@@ -261,12 +261,11 @@ export const TemplateEditor = () => {
                     remove.reset();
                     setConfirming(true);
                   }}
-                  data-fs-hover
                 >
                   <Trash size={14}/> {t("admin:common.delete")}
                 </Button>
               )}
-              <Button type="submit" form={formId} size="sm" disabled={pending} data-fs-hover>
+              <Button type="submit" form={formId} size="sm" disabled={pending}>
                 {pending && <Spinner size={14}/>}
                 {id ?
                   pending ? t("admin:common.saving") : t("admin:common.save")
@@ -394,7 +393,6 @@ export const TemplateEditor = () => {
                 size="sm"
                 onClick={() => setPreview((current) => !current)}
                 aria-pressed={preview}
-                data-fs-hover
               >
                 {preview ? <Code size={14}/> : <Eye size={14}/>}
                 {preview ? t("cms_templates:editor.edit_html") : t("cms_templates:editor.preview")}
@@ -479,10 +477,10 @@ export const TemplateEditor = () => {
 
           <div className="flex flex-wrap items-center justify-end gap-3">
             {dirty && <span className="mr-auto text-[13px] text-neutral-500">{t("admin:common.unsaved")}</span>}
-            <Button variant="ghost" size="sm" asChild data-fs-hover>
+            <Button variant="ghost" size="sm" asChild>
               <Link to={cmsRoute.templates}>{t("admin:common.cancel")}</Link>
             </Button>
-            <Button type="submit" size="sm" disabled={pending} data-fs-hover>
+            <Button type="submit" size="sm" disabled={pending}>
               {pending && <Spinner size={14}/>}
               {id ?
                 pending ? t("admin:common.saving") : t("admin:common.save")

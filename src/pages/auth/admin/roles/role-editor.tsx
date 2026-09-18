@@ -298,13 +298,12 @@ export const RoleEditor = ({mode}: {mode: "create" | "edit"}) => {
               variant="ghost"
               className="mr-auto text-red-300 fs-ripple-danger"
               onClick={() => setDeleting(true)}
-              data-fs-hover
             >
               <Trash size={16}/> {t("auth_admin:roles.delete")}
             </Button>
           )}
           {touched && <span className="text-[13px] text-neutral-500">{t("admin:common.unsaved")}</span>}
-          <Button onClick={submit} disabled={!valid || pending} data-fs-hover>
+          <Button onClick={submit} disabled={!valid || pending}>
             {pending ? <Spinner size={16}/> : mode === "create" ? <Plus size={16}/> : <FloppyDisk size={16}/>}
             {mode === "create" ? t("auth_admin:roles.create") : t("admin:common.save")}
           </Button>
@@ -321,7 +320,7 @@ export const RoleEditor = ({mode}: {mode: "create" | "edit"}) => {
         back={{to: adminRoute.roles, label: t("auth_admin:roles.back")}}
         actions={
           mode === "edit" ? (
-            <Button variant="ghost" size="sm" onClick={roles.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={roles.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
           ) : undefined

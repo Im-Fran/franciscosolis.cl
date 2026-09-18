@@ -136,7 +136,6 @@ export const PermissionsList = () => {
                     description: permission.description ?? "",
                   });
                 }}
-                data-fs-hover
               >
                 <PencilSimple size={14}/>
               </Button>
@@ -146,7 +145,6 @@ export const PermissionsList = () => {
                 className="text-red-300 fs-ripple-danger"
                 aria-label={t("auth_admin:permissions.delete")}
                 onClick={() => setDeleting(permission)}
-                data-fs-hover
               >
                 <Trash size={14}/>
               </Button>
@@ -175,7 +173,7 @@ export const PermissionsList = () => {
         description={t("auth_admin:permissions.description")}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={permissions.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={permissions.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
             {editable && (
@@ -186,7 +184,6 @@ export const PermissionsList = () => {
                   setDraft(EMPTY);
                   setCreating(true);
                 }}
-                data-fs-hover
               >
                 <Plus size={14}/> {t("auth_admin:permissions.create")}
               </Button>
@@ -277,10 +274,10 @@ export const PermissionsList = () => {
           )}
 
           <div className="flex flex-wrap justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={close} disabled={mutation.pending} data-fs-hover>
+            <Button type="button" variant="ghost" onClick={close} disabled={mutation.pending}>
               {t("admin:common.cancel")}
             </Button>
-            <Button type="submit" disabled={!valid || mutation.pending} data-fs-hover>
+            <Button type="submit" disabled={!valid || mutation.pending}>
               {mutation.pending ? <Spinner size={16}/> : null}
               {creating ? t("admin:common.create") : t("admin:common.save")}
             </Button>

@@ -238,7 +238,6 @@ export const EmailCompose = () => {
                 aria-expanded={advanced}
                 aria-controls="compose-advanced"
                 className="inline-flex cursor-pointer items-center gap-1.5 text-[13px] text-neutral-400 transition-colors hover:text-text"
-                data-fs-hover
               >
                 {advanced ? <CaretDown size={14}/> : <CaretRight size={14}/>}
                 {t("cms_emails:compose.advanced")}
@@ -349,7 +348,7 @@ export const EmailCompose = () => {
               {!templates.loading && (templates.data ?? []).length === 0 && !templates.error && (
                 <Alert tone="info" title={t("cms_emails:compose.no_templates_title")}>
                   {t("cms_emails:compose.no_templates_body")}{" "}
-                  <Link to={cmsRoute.templates} className="underline" data-fs-hover>
+                  <Link to={cmsRoute.templates} className="underline">
                     {t("cms_emails:compose.no_templates_link")}
                   </Link>
                 </Alert>
@@ -409,7 +408,6 @@ export const EmailCompose = () => {
                                   disabled={send.pending}
                                   aria-label={t("cms_emails:compose.variable_remove", {name})}
                                   onClick={() => setExtra((current) => current.filter((entry) => entry !== name))}
-                                  data-fs-hover
                                 >
                                   <X size={14}/>
                                 </Button>
@@ -442,7 +440,6 @@ export const EmailCompose = () => {
                         disabled={send.pending || !newVariable.trim()}
                         onClick={addVariable}
                         className="mb-6"
-                        data-fs-hover
                       >
                         <Plus size={16}/> {t("cms_emails:compose.add_variable")}
                       </Button>
@@ -597,11 +594,11 @@ export const EmailCompose = () => {
         </Panel>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" disabled={send.pending} data-fs-hover>
+          <Button type="submit" disabled={send.pending}>
             {send.pending ? <Spinner size={16}/> : <PaperPlaneTilt size={16}/>}
             {send.pending ? t("cms_emails:compose.sending") : t("cms_emails:compose.send")}
           </Button>
-          <Button asChild variant="ghost" data-fs-hover>
+          <Button asChild variant="ghost">
             <Link to={cmsRoute.emails}>{t("admin:common.cancel")}</Link>
           </Button>
         </div>

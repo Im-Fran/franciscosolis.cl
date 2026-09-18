@@ -70,10 +70,10 @@ export const EmailDetail = () => {
           <>
             {/* Same reasoning as the log: `queued` becomes `sent` or `failed` server-side and this
                 tab is never told, so the way to find out is a button rather than a poll. */}
-            <Button variant="ghost" size="sm" onClick={message.reload} disabled={message.loading} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={message.reload} disabled={message.loading}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
-            <Button asChild variant="secondary" size="sm" data-fs-hover>
+            <Button asChild variant="secondary" size="sm">
               <Link to={composeTo} state={{prefill: data}}>
                 <PaperPlaneTilt size={14}/> {t("cms_emails:detail.send_again")}
               </Link>
@@ -121,7 +121,6 @@ export const EmailDetail = () => {
                       <Link
                         to={cmsRoute.templates}
                         className="text-accent-300 transition-colors hover:text-accent-200"
-                        data-fs-hover
                       >
                         {data.template}
                       </Link>

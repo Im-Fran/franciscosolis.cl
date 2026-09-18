@@ -110,7 +110,7 @@ export const ProfileForm = ({user}: {user: User}) => {
         {save.error && <Alert tone="error">{t(`auth:errors.${save.error}`, {defaultValue: save.error})}</Alert>}
 
         <div className="flex items-center gap-3">
-          <Button type="submit" disabled={!dirty || save.pending} data-fs-hover>
+          <Button type="submit" disabled={!dirty || save.pending}>
             {save.pending ? <Spinner size={16}/> : <FloppyDisk size={16}/>}
             {t("auth:account.save")}
           </Button>
@@ -122,7 +122,6 @@ export const ProfileForm = ({user}: {user: User}) => {
                 setForm(toForm(user));
                 save.reset();
               }}
-              data-fs-hover
             >
               {t("auth:common.cancel")}
             </Button>

@@ -305,7 +305,7 @@ export const ApplicationEditor = () => {
         <>
           {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
           {loaded?.status === "published" && (
-            <Button variant="ghost" asChild data-fs-hover>
+            <Button variant="ghost" asChild>
               <a href={applicationRoute.overview(loaded.slug)} target="_blank" rel="noopener">
                 <ArrowSquareOut size={16}/> {t("cms_pages:editor.view")}
               </a>
@@ -317,12 +317,11 @@ export const ApplicationEditor = () => {
               variant="secondary"
               onClick={() => setAskDelete(true)}
               className="border-red-500/50 text-red-300 fs-ripple-danger"
-              data-fs-hover
             >
               <Trash size={16}/> {t("admin:common.delete")}
             </Button>
           )}
-          <Button type="submit" form={formId} disabled={save.pending} data-fs-hover>
+          <Button type="submit" form={formId} disabled={save.pending}>
             {save.pending ? <Spinner size={16}/> : <FloppyDisk size={16}/>}
             {save.pending
               ? id

@@ -100,7 +100,6 @@ const Chip = ({active, onClick, children}: {active: boolean; onClick: () => void
         ? "border-accent bg-accent-900/40 text-accent-200"
         : "border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-text"
     }`}
-    data-fs-hover
   >
     {children}
   </button>
@@ -364,7 +363,7 @@ export const PruneDialog = ({open, onClose, sessions, onPruned}: PruneDialogProp
         )}
 
         <div className="flex flex-wrap justify-end gap-2">
-          <Button variant="ghost" onClick={onClose} disabled={prune.pending} data-fs-hover>
+          <Button variant="ghost" onClick={onClose} disabled={prune.pending}>
             {t("auth:common.cancel")}
           </Button>
           <Button
@@ -372,7 +371,6 @@ export const PruneDialog = ({open, onClose, sessions, onPruned}: PruneDialogProp
             onClick={confirm}
             disabled={prune.pending || previewing || matched === 0}
             className="border-red-500/50 text-red-300 fs-ripple-danger"
-            data-fs-hover
           >
             {prune.pending ? <Spinner size={16}/> : matched === 0 ? <Broom size={16}/> : <Warning size={16}/>}
             {t("auth:account.prune.confirm", {count: matched})}

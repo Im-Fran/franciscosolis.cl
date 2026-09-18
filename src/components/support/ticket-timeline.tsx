@@ -9,7 +9,7 @@ const MessageBody = ({body}: {body: string}) => (
   <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-200">
     {splitMentions(body).map((part, index) =>
       part.kind === "mention" ? (
-        <a key={index} href={`mailto:${part.email}`} className="text-accent-300 hover:underline" data-fs-hover>
+        <a key={index} href={`mailto:${part.email}`} className="text-accent-300 hover:underline">
           @{part.email}
         </a>
       ) : (

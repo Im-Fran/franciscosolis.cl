@@ -37,7 +37,6 @@ export const WikiSidebar = ({
             : "text-neutral-400 hover:bg-neutral-800/60 hover:text-text",
         )
       }
-      data-fs-hover
     >
       {!nested && <BookOpen size={15} className="shrink-0"/>}
       {nested && <CaretRight size={12} className="shrink-0 opacity-60"/>}

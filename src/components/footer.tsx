@@ -21,7 +21,7 @@ const Footer = () => {
   return (
     <footer className="border-t border-neutral-800 py-6 text-sm text-neutral-500">
       <div className="container mx-auto px-4 pb-6 mb-6 border-b border-neutral-800 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-        <Link to="/" aria-label="FranciscoSolis" data-fs-hover>
+        <Link to="/" aria-label="FranciscoSolis">
           <BrandLockup size={30} tone="auto"/>
         </Link>
         <AccessibilityLauncher/>
@@ -40,7 +40,6 @@ const Footer = () => {
         <a
           href={`mailto:${CONTACT_EMAIL}`}
           className="hover:text-text transition-colors sm:self-start"
-          data-fs-hover
         >
           {CONTACT_EMAIL}
         </a>
@@ -52,10 +51,10 @@ const Footer = () => {
         </span>
         <span className="flex flex-col items-center gap-1 sm:flex-row sm:gap-4">
           <span>{t("common:footer_credit")}</span>
-          <Link to="/brand" className="text-neutral-500 hover:text-text transition-colors" data-fs-hover>
+          <Link to="/brand" className="text-neutral-500 hover:text-text transition-colors">
             {t("common:brand_link")}
           </Link>
-          <Link to="/legal" className="text-neutral-500 hover:text-text transition-colors" data-fs-hover>
+          <Link to="/legal" className="text-neutral-500 hover:text-text transition-colors">
             {t("common:legal_link")}
           </Link>
         </span>

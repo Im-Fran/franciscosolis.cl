@@ -108,7 +108,6 @@ export const LegalList = () => {
               asChild
               aria-label={t("cms_legal:list.edit_aria", {title: row.title})}
               className="size-9"
-              data-fs-hover
             >
               <Link to={cmsRoute.legalItem(row.id)} onClick={(event) => event.stopPropagation()}>
                 <PencilSimple size={16}/>
@@ -124,7 +123,6 @@ export const LegalList = () => {
               }}
               aria-label={t("cms_legal:list.delete_aria", {title: row.title})}
               className="size-9 text-neutral-400 hover:text-red-300"
-              data-fs-hover
             >
               <Trash size={16}/>
             </Button>
@@ -152,7 +150,7 @@ export const LegalList = () => {
         title={t("cms_legal:list.title")}
         description={t("cms_legal:list.description")}
         actions={
-          <Button asChild data-fs-hover>
+          <Button asChild>
             <Link to={cmsRoute.legalNew}>
               <Plus size={16}/> {t("cms_legal:list.new")}
             </Link>
@@ -164,7 +162,7 @@ export const LegalList = () => {
         title={t("cms_legal:list.panel_title")}
         description={total > 0 ? t("cms_legal:list.count", {count: total}) : undefined}
         action={
-          <Button variant="ghost" size="sm" onClick={documents.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={documents.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
@@ -196,7 +194,7 @@ export const LegalList = () => {
               title={t("cms_legal:list.empty_title")}
               description={t("cms_legal:list.empty_description")}
               action={
-                <Button asChild data-fs-hover>
+                <Button asChild>
                   <Link to={cmsRoute.legalNew}>
                     <Plus size={16}/> {t("cms_legal:list.empty_action")}
                   </Link>

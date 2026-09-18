@@ -92,7 +92,6 @@ export const ApplicationBanner = ({application}: {application: Application}) => 
                     : "text-neutral-400 hover:bg-neutral-800/60 hover:text-text",
                 )
               }
-              data-fs-hover
             >
               <TabIcon size={16} weight={key === "overview" ? "fill" : "regular"}/>
               {t(labelKey)}

@@ -46,7 +46,6 @@ const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
                       : "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
                   )
                 }
-                data-fs-hover
               >
                 <Icon size={16} className="shrink-0"/>
                 <span className="truncate">{literal ? label : t(`cms:${label}`)}</span>
@@ -90,25 +89,24 @@ export const CmsShell = ({children}: {children: ReactNode}) => {
             aria-expanded={drawer}
             aria-label={t("cms:nav.menu")}
             onClick={() => setDrawer((open) => !open)}
-            data-fs-hover
           >
             {drawer ? <X size={18}/> : <List size={18}/>}
           </Button>
 
-          <Link to={CMS_ROUTE} className="flex items-center gap-2.5" data-fs-hover>
+          <Link to={CMS_ROUTE} className="flex items-center gap-2.5">
             <BrandLockup size={26} tone="auto"/>
             <Badge variant="accent" size="sm">{t("cms:app_name")}</Badge>
           </Link>
 
           <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild data-fs-hover>
+            <Button variant="ghost" size="sm" asChild>
               <Link to="/">
                 <ArrowSquareOut size={16}/>
                 <span className="hidden sm:inline">{t("cms:nav.site_link")}</span>
               </Link>
             </Button>
 
-            <Button variant="ghost" size="sm" onClick={toggleLanguage} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={toggleLanguage}>
               <GlobeSimple size={16}/> {language === "es" ? "EN" : "ES"}
             </Button>
 
@@ -127,7 +125,6 @@ export const CmsShell = ({children}: {children: ReactNode}) => {
                 setSigningOut(true);
                 void signOut().finally(() => setSigningOut(false));
               }}
-              data-fs-hover
             >
               {signingOut ? <Spinner size={14}/> : <SignOut size={16}/>}
               <span className="hidden sm:inline">{t("cms:nav.sign_out")}</span>

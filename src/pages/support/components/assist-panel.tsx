@@ -63,7 +63,7 @@ export const AssistPanel = ({
           placeholder={t("assist.placeholder")}
           className="flex-1"
         />
-        <Button onClick={run} disabled={ask.pending || question.trim().length < 3} data-fs-hover>
+        <Button onClick={run} disabled={ask.pending || question.trim().length < 3}>
           {ask.pending ? <Spinner size={16} /> : null}
           {ask.pending ? t("assist.running") : t("assist.run")}
         </Button>
@@ -99,7 +99,6 @@ export const AssistPanel = ({
                           target="_blank"
                           rel="noreferrer"
                           className="text-xs text-accent-300 underline underline-offset-4"
-                          data-fs-hover
                         >
                           {source.title}
                         </Link>
@@ -114,7 +113,6 @@ export const AssistPanel = ({
                 size="sm"
                 className="mt-3"
                 onClick={() => onInsert(answer.answer ?? "")}
-                data-fs-hover
               >
                 {t("assist.insert")}
               </Button>

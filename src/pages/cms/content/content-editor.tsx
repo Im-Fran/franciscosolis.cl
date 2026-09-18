@@ -367,7 +367,6 @@ export const ContentEditor = () => {
                   remove.reset();
                   setConfirmingDelete(true);
                 }}
-                data-fs-hover
               >
                 <Trash size={15}/> {t("admin:common.delete")}
               </Button>
@@ -378,7 +377,6 @@ export const ContentEditor = () => {
               variant="primary"
               size="sm"
               disabled={submitting || !json.ok || (!creating && !dirty)}
-              data-fs-hover
             >
               {submitting ? <Spinner size={14}/> : <FloppyDisk size={15}/>}
               {creating ?
@@ -402,7 +400,7 @@ export const ContentEditor = () => {
           <Alert tone="info" title={t("admin:common.unsaved")}>
             <div className="flex flex-wrap items-center gap-3">
               <span>{t("cms_content:editor.unsaved_body")}</span>
-              <Button variant="ghost" size="sm" type="button" onClick={discard} data-fs-hover>
+              <Button variant="ghost" size="sm" type="button" onClick={discard}>
                 <ArrowCounterClockwise size={14}/> {t("admin:common.discard")}
               </Button>
             </div>
@@ -510,7 +508,6 @@ export const ContentEditor = () => {
             <label
               className="flex cursor-pointer items-start gap-2 text-sm text-neutral-300"
               htmlFor={FIELD_ID.featured}
-              data-fs-hover
             >
               <input
                 id={FIELD_ID.featured}

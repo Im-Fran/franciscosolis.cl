@@ -56,7 +56,7 @@ export const CallbackPanel = ({ns, eyebrow}: {ns: string; eyebrow?: ReactNode}) 
       <AuthCard title={t(`${ns}:callback.error_title`)} subtitle={t(`${ns}:callback.error_subtitle`)} eyebrow={eyebrow}>
         <div className="flex flex-col gap-5">
           <Alert tone="error">{t(`${ns}:errors.${error}`, {defaultValue: error})}</Alert>
-          <Button asChild data-fs-hover>
+          <Button asChild>
             <Link to={client.config.signInRoute} replace>{t(`${ns}:callback.retry`)}</Link>
           </Button>
         </div>

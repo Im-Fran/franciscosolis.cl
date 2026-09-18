@@ -136,17 +136,17 @@ export const AvatarPanel = ({user}: {user: User}) => {
           accept={limits.content_types.join(",")}
           onChange={chooseFile}
         />
-        <Button type="button" variant="ghost" onClick={() => input.current?.click()} data-fs-hover>
+        <Button type="button" variant="ghost" onClick={() => input.current?.click()}>
           <UploadSimple size={16}/> {t("auth:account.avatar.choose")}
         </Button>
 
         {choice && (
           <>
-            <Button type="button" onClick={send} disabled={upload.pending} data-fs-hover>
+            <Button type="button" onClick={send} disabled={upload.pending}>
               {upload.pending ? <Spinner size={16}/> : <UploadSimple size={16}/>}
               {t("auth:account.avatar.send")}
             </Button>
-            <Button type="button" variant="ghost" onClick={clearChoice} data-fs-hover>
+            <Button type="button" variant="ghost" onClick={clearChoice}>
               {t("auth:common.cancel")}
             </Button>
             <span className="text-[13px] text-neutral-500">
@@ -156,7 +156,7 @@ export const AvatarPanel = ({user}: {user: User}) => {
         )}
 
         {!choice && (published || pending) && (
-          <Button type="button" variant="ghost" onClick={remove} disabled={withdraw.pending} data-fs-hover>
+          <Button type="button" variant="ghost" onClick={remove} disabled={withdraw.pending}>
             {withdraw.pending ? <Spinner size={16}/> : <Trash size={16}/>}
             {t(pending && !published ? "auth:account.avatar.withdraw" : "auth:account.avatar.remove")}
           </Button>

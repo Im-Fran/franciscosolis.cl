@@ -43,7 +43,6 @@ export const Contact = () => {
 
         <a
           href={`mailto:${CONTACT_EMAIL}`}
-          data-fs-hover
           className="reveal inline-block border-b border-accent-500 text-2xl sm:text-3xl text-text pb-1 mb-10"
         >
           {CONTACT_EMAIL}
@@ -57,7 +56,7 @@ export const Contact = () => {
 
         <div className="reveal flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           {socials.map(({label, href, Icon}) => (
-            <Button key={label} asChild variant="ghost" data-fs-hover>
+            <Button key={label} asChild variant="ghost">
               <a href={href} target="_blank" rel="noreferrer">
                 <Icon size={18}/>
                 {label}

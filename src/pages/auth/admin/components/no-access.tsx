@@ -31,7 +31,7 @@ export const NoAccess = ({email}: {email?: string}) => {
         </Alert>
 
         <div className="flex flex-col gap-2">
-          <Button variant="secondary" asChild data-fs-hover>
+          <Button variant="secondary" asChild>
             <Link to={ACCOUNT_ROUTE}>
               <UserCircle size={16}/> {t("auth_admin:no_access.account")}
             </Link>
@@ -44,13 +44,12 @@ export const NoAccess = ({email}: {email?: string}) => {
               setSigningOut(true);
               void signOut().finally(() => setSigningOut(false));
             }}
-            data-fs-hover
           >
             {signingOut ? <Spinner size={16}/> : <SignOut size={16}/>}
             {t("auth_admin:no_access.sign_out")}
           </Button>
 
-          <Button variant="ghost" asChild data-fs-hover>
+          <Button variant="ghost" asChild>
             <Link to="/">
               <ArrowLeft size={16}/> {t("auth_admin:no_access.back_home")}
             </Link>

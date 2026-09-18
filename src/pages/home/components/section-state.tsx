@@ -61,7 +61,6 @@ export const SectionError = ({error, onRetry}: SectionErrorProps) => {
         <button
           type="button"
           onClick={onRetry}
-          data-fs-hover
           className="text-accent-300 underline underline-offset-4"
         >
           {t("common:retry")}

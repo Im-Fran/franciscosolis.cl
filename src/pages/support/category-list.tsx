@@ -61,7 +61,6 @@ export const CategoryList = () => {
             });
             if (outcome.ok) categories.reload();
           }}
-          data-fs-hover
         >
           <StatusBadge status={row.status} />
         </button>
@@ -71,7 +70,7 @@ export const CategoryList = () => {
       key: "actions",
       header: "",
       cell: (row) => (
-        <Button variant="ghost" size="sm" onClick={() => setPendingDelete(row)} data-fs-hover>
+        <Button variant="ghost" size="sm" onClick={() => setPendingDelete(row)}>
           <Trash size={14} />
         </Button>
       ),

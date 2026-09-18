@@ -161,7 +161,6 @@ const Swatch = ({token, value, swatch, copyValue}: {
       onClick={copy}
       aria-label={t("brand:color.copy", {hex: copyValue})}
       className="group flex w-full items-center gap-3 text-left cursor-pointer"
-      data-fs-hover
     >
       <span
         className="size-9 shrink-0 rounded-[var(--radius-sm)] border border-neutral-700"
@@ -192,13 +191,13 @@ export const Brand = () => {
     <section className="relative w-full overflow-hidden">
       <div className="container relative z-10 mx-auto max-w-3xl px-4 pt-32 pb-24">
         <div className="mb-10 flex items-center justify-between">
-          <Button asChild variant="ghost" size="sm" data-fs-hover>
+          <Button asChild variant="ghost" size="sm">
             <Link to="/">
               <ArrowLeft size={16}/>
               {t("brand:back")}
             </Link>
           </Button>
-          <Button variant="ghost" size="sm" onClick={toggleLanguage} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={toggleLanguage}>
             <GlobeSimple size={16}/>
             {language === "es" ? "EN" : "ES"}
           </Button>
@@ -408,13 +407,13 @@ export const Brand = () => {
               </span>
             </span>
             <span className="flex shrink-0 flex-wrap gap-2">
-              <Button asChild data-fs-hover>
+              <Button asChild>
                 <a href={KIT_URL} download>
                   <DownloadSimple size={16}/>
                   {t("brand:assets.kit.download")}
                 </a>
               </Button>
-              <Button asChild variant="secondary" data-fs-hover>
+              <Button asChild variant="secondary">
                 <a href={KIT_GUIDE_URL} target="_blank" rel="noreferrer">
                   <FileMd size={16}/>
                   {t("brand:assets.kit.guide")}
@@ -432,7 +431,7 @@ export const Brand = () => {
                 </span>
                 <span className="flex shrink-0 flex-wrap gap-2">
                   {downloads.map(({label, href}) => (
-                    <Button key={href} asChild variant="secondary" size="sm" data-fs-hover>
+                    <Button key={href} asChild variant="secondary" size="sm">
                       <a href={href} download>{label}</a>
                     </Button>
                   ))}

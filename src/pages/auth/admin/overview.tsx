@@ -86,7 +86,6 @@ export const Overview = () => {
                       <Link
                         to={item.kind.startsWith("invitations") ? adminRoute.invitations : adminRoute.applications}
                         className="ml-auto inline-flex items-center gap-1 text-[13px] underline underline-offset-2"
-                        data-fs-hover
                       >
                         {t("auth_admin:overview.review")} <ArrowRight size={12}/>
                       </Link>
@@ -145,7 +144,7 @@ export const Overview = () => {
             <ul className="grid gap-2 sm:grid-cols-2">
               {QUICK_LINKS.filter((link) => can(link.permission)).map(({to, label, icon: Icon}) => (
                 <li key={to}>
-                  <Button variant="ghost" className="w-full justify-start" asChild data-fs-hover>
+                  <Button variant="ghost" className="w-full justify-start" asChild>
                     <Link to={to}>
                       <Icon size={16}/> {t(`auth_admin:${label}`)}
                     </Link>
@@ -161,7 +160,7 @@ export const Overview = () => {
             title={t("auth_admin:overview.activity_title")}
             description={t("auth_admin:overview.activity_description")}
             action={
-              <Button variant="ghost" size="sm" asChild data-fs-hover>
+              <Button variant="ghost" size="sm" asChild>
                 <Link to={adminRoute.audit}>
                   {t("auth_admin:overview.activity_all")} <ArrowRight size={14}/>
                 </Link>

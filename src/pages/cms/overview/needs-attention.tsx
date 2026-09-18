@@ -15,7 +15,6 @@ const AttentionRow = ({to, icon, label, value}: Row) => (
     <Link
       to={to}
       className="flex items-center gap-3 rounded-[var(--radius-md)] border border-neutral-800 px-4 py-3 transition-colors hover:border-neutral-700 hover:bg-neutral-800/30"
-      data-fs-hover
     >
       <span className="shrink-0 text-amber-300" aria-hidden="true">{icon}</span>
       <span className="min-w-0 flex-1 truncate text-sm text-text">{label}</span>

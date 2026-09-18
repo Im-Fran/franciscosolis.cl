@@ -112,7 +112,6 @@ export const InvitationsList = () => {
                   if (result.ok) notify(t("auth_admin:invitations.resent", {email: invitation.email}));
                   else notify(t(`admin:errors.${result.error}`, {defaultValue: result.error}), "error");
                 }}
-                data-fs-hover
               >
                 <PaperPlaneTilt size={14}/> {t("auth_admin:invitations.resend")}
               </Button>
@@ -122,7 +121,6 @@ export const InvitationsList = () => {
                 className="text-red-300 fs-ripple-danger"
                 onClick={() => setRevoking(invitation)}
                 aria-label={t("auth_admin:invitations.revoke")}
-                data-fs-hover
               >
                 <Trash size={14}/>
               </Button>
@@ -170,11 +168,11 @@ export const InvitationsList = () => {
         description={t("auth_admin:invitations.description")}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={invitations.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={invitations.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
             {can("invitations:write") && (
-              <Button size="sm" onClick={() => setComposing(true)} data-fs-hover>
+              <Button size="sm" onClick={() => setComposing(true)}>
                 <Plus size={14}/> {t("auth_admin:invitations.invite")}
               </Button>
             )}
@@ -195,7 +193,6 @@ export const InvitationsList = () => {
                   ? "border-accent bg-accent-900/40 text-accent-200"
                   : "border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-text"
               }`}
-              data-fs-hover
             >
               {name === "all" ? t("admin:common.filter_all") : t(`admin:status.${name}`, {defaultValue: name})}
             </button>
@@ -212,7 +209,7 @@ export const InvitationsList = () => {
               description={t("auth_admin:invitations.empty_hint")}
               action={
                 can("invitations:write") && filter === "all" ? (
-                  <Button size="sm" onClick={() => setComposing(true)} data-fs-hover>
+                  <Button size="sm" onClick={() => setComposing(true)}>
                     <Plus size={14}/> {t("auth_admin:invitations.invite")}
                   </Button>
                 ) : undefined
@@ -308,10 +305,10 @@ export const InvitationsList = () => {
           )}
 
           <div className="flex flex-wrap justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => setComposing(false)} disabled={create.pending} data-fs-hover>
+            <Button type="button" variant="ghost" onClick={() => setComposing(false)} disabled={create.pending}>
               {t("admin:common.cancel")}
             </Button>
-            <Button type="submit" disabled={!emailValid || create.pending} data-fs-hover>
+            <Button type="submit" disabled={!emailValid || create.pending}>
               {create.pending ? <Spinner size={16}/> : <EnvelopeSimple size={16}/>}
               {t("auth_admin:invitations.send")}
             </Button>

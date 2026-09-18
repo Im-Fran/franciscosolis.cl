@@ -269,12 +269,11 @@ export const LegalEditor = () => {
               variant="secondary"
               onClick={() => setAskDelete(true)}
               className="border-red-500/50 text-red-300 fs-ripple-danger"
-              data-fs-hover
             >
               <Trash size={16}/> {t("admin:common.delete")}
             </Button>
           )}
-          <Button type="submit" form={formId} disabled={save.pending} data-fs-hover>
+          <Button type="submit" form={formId} disabled={save.pending}>
             {save.pending ? <Spinner size={16}/> : <FloppyDisk size={16}/>}
             {save.pending
               ? id

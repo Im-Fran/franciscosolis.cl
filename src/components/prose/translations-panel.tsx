@@ -137,7 +137,6 @@ export const TranslationsPanel = ({
                   variant={code === locale ? "primary" : "secondary"}
                   size="sm"
                   onClick={() => setActiveLocale(code)}
-                  data-fs-hover
                 >
                   {localeName(code)}
                   <Badge variant={filled > 0 ? "accent" : "neutral"}>{`${filled}/${fields.length}`}</Badge>
@@ -152,7 +151,6 @@ export const TranslationsPanel = ({
                 onClick={clearLocale}
                 disabled={disabled}
                 className="ml-auto"
-                data-fs-hover
               >
                 {t(`${ns}:editor.translations_clear`, {locale: localeName(locale)})}
               </Button>

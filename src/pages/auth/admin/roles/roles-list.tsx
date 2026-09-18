@@ -110,11 +110,11 @@ export const RolesList = () => {
         description={t("auth_admin:roles.description")}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={roles.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={roles.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
             {can("roles:write") && (
-              <Button size="sm" onClick={() => navigate(adminRoute.newRole)} data-fs-hover>
+              <Button size="sm" onClick={() => navigate(adminRoute.newRole)}>
                 <Plus size={14}/> {t("auth_admin:roles.create")}
               </Button>
             )}

@@ -49,7 +49,7 @@ export const SsoSessionsPanel = () => {
       title={t("auth:account.browsers.title")}
       description={t("auth:account.browsers.description")}
       action={
-        <Button variant="ghost" size="sm" onClick={browsers.reload} data-fs-hover>
+        <Button variant="ghost" size="sm" onClick={browsers.reload}>
           <ArrowClockwise size={14}/> {t("auth:common.refresh")}
         </Button>
       }
@@ -92,7 +92,7 @@ export const SsoSessionsPanel = () => {
                 </p>
               </div>
 
-              <Button variant="ghost" size="sm" onClick={() => setRevoking(browser)} data-fs-hover>
+              <Button variant="ghost" size="sm" onClick={() => setRevoking(browser)}>
                 <Trash size={14}/> {t("auth:account.browsers.revoke")}
               </Button>
             </li>

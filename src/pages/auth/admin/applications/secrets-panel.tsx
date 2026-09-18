@@ -96,7 +96,6 @@ export const SecretsPanel = ({clientId, confidential}: {clientId: string; confid
               issue.reset();
               setIssuing(true);
             }}
-            data-fs-hover
           >
             <Plus size={14}/> {t("auth_admin:secrets.issue")}
           </Button>
@@ -134,7 +133,6 @@ export const SecretsPanel = ({clientId, confidential}: {clientId: string; confid
                     className="text-red-300 fs-ripple-danger"
                     onClick={() => setRevoking(secret)}
                     aria-label={t("auth_admin:secrets.revoke")}
-                    data-fs-hover
                   >
                     <Trash size={14}/>
                   </Button>
@@ -220,10 +218,10 @@ export const SecretsPanel = ({clientId, confidential}: {clientId: string; confid
           )}
 
           <div className="flex flex-wrap justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => setIssuing(false)} disabled={issue.pending} data-fs-hover>
+            <Button type="button" variant="ghost" onClick={() => setIssuing(false)} disabled={issue.pending}>
               {t("admin:common.cancel")}
             </Button>
-            <Button type="submit" disabled={issue.pending} data-fs-hover>
+            <Button type="submit" disabled={issue.pending}>
               {issue.pending ? <Spinner size={16}/> : draft.rotate ? <ArrowsClockwise size={16}/> : <Key size={16}/>}
               {t("auth_admin:secrets.issue")}
             </Button>
@@ -261,11 +259,10 @@ export const SecretsPanel = ({clientId, confidential}: {clientId: string; confid
                   notify(t("auth_admin:secrets.copy_failed"), "info");
                 }
               }}
-              data-fs-hover
             >
               <Copy size={16}/> {copied ? t("admin:common.copied") : t("admin:common.copy")}
             </Button>
-            <Button onClick={() => setIssued(null)} data-fs-hover>
+            <Button onClick={() => setIssued(null)}>
               {t("auth_admin:secrets.issued_done")}
             </Button>
           </div>
