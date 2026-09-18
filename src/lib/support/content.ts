@@ -95,14 +95,30 @@ export const supportContent = {
   resendLink: (reference: string, email: string) =>
     http.request<{message: string}>("/tickets/resend-link", {auth: false, method: "POST", json: {reference, email}}),
 
+  /*
+   * `auth: "optional"` on the three below: a visitor following the emailed link has no site
+   * session at all, and requiring one made this client throw before the request ever left the
+   * browser. The service accepts either a signed-in requester's Bearer token (sent when one
+   * exists) or the per-ticket secret in `ticketHeaders` — never both are needed, and neither is
+   * guaranteed, so this client must not insist on the first.
+   */
   ticket: (reference: string, signal?: AbortSignal) =>
-    http.request<RequesterTicket>(`/tickets/${seg(reference)}`, {headers: ticketHeaders(reference), signal}),
+    http.request<RequesterTicket>(`/tickets/${seg(reference)}`, {
+      auth: "optional",
+      headers: ticketHeaders(reference),
+      signal,
+    }),
 
   timeline: (reference: string, signal?: AbortSignal) =>
-    http.request<TimelineEntry[]>(`/tickets/${seg(reference)}/timeline`, {headers: ticketHeaders(reference), signal}),
+    http.request<TimelineEntry[]>(`/tickets/${seg(reference)}/timeline`, {
+      auth: "optional",
+      headers: ticketHeaders(reference),
+      signal,
+    }),
 
   reply: (reference: string, body: string) =>
     http.request<{seq: number}>(`/tickets/${seg(reference)}/messages`, {
+      auth: "optional",
       method: "POST",
       headers: ticketHeaders(reference),
       json: {body},
