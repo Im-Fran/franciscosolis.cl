@@ -58,6 +58,20 @@ const splitSections = (body: string): string[] =>
     .map((section) => section.trim())
     .filter(Boolean);
 
+/**
+ * The slug in the address bar's fragment, if there is one.
+ *
+ * Every legal document is served from this one route, so `#privacy-policy` is the only way an
+ * outside link can ask for a particular one — and outside links exist: the footer of every email
+ * the API sends points at `/legal#terms-of-service` and `/legal#privacy-policy`. Reading it here
+ * costs nothing when the fragment is absent, and a slug the CMS does not publish falls through to
+ * the first tab like any other unknown value.
+ */
+const slugFromHash = (hash: string): string | null => {
+  const slug = decodeURIComponent(hash.replace(/^#/, "")).trim();
+  return slug || null;
+};
+
 const toPreviousBlock = ({lines}: CommittedRun): PreviousBlock => {
   const firstLines = lines.slice(0, 4);
   const truncatedChars = lines.slice(4).reduce((sum, line) => sum + line.length, 0);
@@ -67,7 +81,9 @@ const toPreviousBlock = ({lines}: CommittedRun): PreviousBlock => {
 export const Legal = () => {
   const {t} = useTranslation();
   const {language, toggleLanguage} = useLanguageToggle();
-  const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [activeSlug, setActiveSlug] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : slugFromHash(window.location.hash),
+  );
   const [phase, setPhase] = useState<TerminalPhase>("loaded");
   const [clearChars, setClearChars] = useState(CLEAR_CMD.length);
   const [commandChars, setCommandChars] = useState(0);
@@ -91,6 +107,24 @@ export const Legal = () => {
 
   /* The API says which language it actually served; a document with no translation says so. */
   const untranslated = Boolean(page.data && page.data.locale !== language);
+
+  /*
+   * The fragment is the tab, in both directions: a link that carries one opens that document, and
+   * picking a tab rewrites it so the address in the bar is the address to share. `replaceState`
+   * rather than a navigation — a tab is not a page, and it should not cost a back button press.
+   */
+  const selectSlug = (slug: string) => {
+    setActiveSlug(slug);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `#${slug}`);
+    }
+  };
+
+  useEffect(() => {
+    const onHashChange = () => setActiveSlug(slugFromHash(window.location.hash));
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   useEffect(() => {
     const el = terminalRef.current;
@@ -236,7 +270,7 @@ export const Legal = () => {
                   key={tab.slug}
                   variant={selectedSlug === tab.slug ? "primary" : "secondary"}
                   size="sm"
-                  onClick={() => setActiveSlug(tab.slug)}
+                  onClick={() => selectSlug(tab.slug)}
                   data-fs-hover
                 >
                   {tab.title}
