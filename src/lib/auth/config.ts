@@ -88,6 +88,7 @@ export const accountRoute = {
   identities: `${ACCOUNT_ROUTE}/identities`,
   sessions: `${ACCOUNT_ROUTE}/sessions`,
   details: `${ACCOUNT_ROUTE}/details`,
+  purchases: `${ACCOUNT_ROUTE}/purchases`,
 } as const;
 
 /**

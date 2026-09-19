@@ -39,5 +39,35 @@
   },
   "contact": {
     "empty": "No contact details have been published yet."
+  },
+  "payment": {
+    "buy_cta": "Get it",
+    "support_cta": "Support this app",
+    "buy_title": "Get {{name}}",
+    "support_title": "Support {{name}}",
+    "buy_body": "One payment, and every build of this application is yours to download — the new releases and the older versions alike.",
+    "support_body": "This application is free to download. If it is worth something to you, you can pay what you like for it — and if not, that is genuinely fine.",
+    "amount_label": "Amount in {{currency}}",
+    "minimum": "The smallest amount accepted is {{amount}}.",
+    "pay": "Pay",
+    "sign_in_and_pay": "Sign in and pay",
+    "skip": "Download without paying",
+    "skip_hint": "No strings attached: the download is the same either way.",
+    "paid_hint": "Your account keeps the licence, so you can download it again whenever you need to.",
+    "provider": "Payments are handled by MercadoPago. We never see your card.",
+    "confirming": "Confirming your payment…",
+    "confirmed": "Payment confirmed. Everything is yours to download.",
+    "owned": "You already own this application.",
+    "thanks": "Thank you for supporting this application."
+  },
+  "downloads": {
+    "title": "Downloads",
+    "requires_payment": "· needs a purchase",
+    "loading": "Loading the downloads…",
+    "get": "Download",
+    "cooldown_one": "Starting in {{count}} second…",
+    "cooldown_other": "Starting in {{count}} seconds…",
+    "starting": "Starting…",
+    "manual": "Download not starting?"
   }
 }

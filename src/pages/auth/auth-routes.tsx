@@ -12,6 +12,7 @@ import {
   AccountDetails,
   AccountIdentities,
   AccountProfile,
+  AccountPurchases,
   AccountSessions,
   AccountSignature,
   AdminLayout,
@@ -127,6 +128,8 @@ export const accountRoutes: RouteObject = {
         {path: "identities", element: <AccountIdentities/>},
         {path: "sessions", element: <AccountSessions/>},
         {path: "details", element: <AccountDetails/>},
+        /* Payments and downloads, which the standalone app pages service owns. */
+        {path: "purchases", element: <AccountPurchases/>},
         /*
          * Support tickets belonging to this account. A section of the account rather than of the
          * help centre, because that is what it is to a visitor: the page behind their own avatar,

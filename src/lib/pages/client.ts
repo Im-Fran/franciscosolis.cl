@@ -6,10 +6,15 @@ import type {
   ApplicationPayload,
   ApplicationUpdate,
   ContentStatus,
+  DownloadRecord,
   NewApplication,
+  NewReleaseFile,
   NewUpdate,
   NewWikiPage,
   PagesStatus,
+  Purchase,
+  ReleaseFile,
+  ReleaseFilePayload,
   ReorderItem,
   UpdatePayload,
   WikiNode,
@@ -107,6 +112,78 @@ export const pagesApi = {
 
     remove: (applicationId: string, id: string) =>
       http.request<void>(`/admin/applications/${seg(applicationId)}/updates/${seg(id)}`, {method: "DELETE"}),
+  },
+
+  /* ── Release files ──────────────────────────────────────────────────────── */
+
+  /**
+   * The downloadable builds of a release.
+   *
+   * Registering a build and uploading its bytes are two calls, because the service takes them as
+   * two: a multipart form would mean holding a 90 MB installer in memory to describe it, and
+   * replacing the bytes of a build a published release already links to would otherwise mean
+   * deleting the row somebody is linking to.
+   */
+  files: {
+    list: (applicationId: string, updateId: string, signal?: AbortSignal) =>
+      http.request<ReleaseFile[]>(
+        `/admin/applications/${seg(applicationId)}/updates/${seg(updateId)}/files`,
+        {signal},
+      ),
+
+    create: (applicationId: string, updateId: string, body: NewReleaseFile) =>
+      http.request<ReleaseFile>(`/admin/applications/${seg(applicationId)}/updates/${seg(updateId)}/files`, {
+        method: "POST",
+        json: body,
+      }),
+
+    /**
+     * Sends the bytes themselves as the request body.
+     *
+     * The `File` goes up as it is rather than through a `FormData`, so the browser streams it
+     * instead of copying it. The declared type travels as a header because the body is the file and
+     * has nowhere else to carry it.
+     */
+    upload: (applicationId: string, updateId: string, id: string, file: File) =>
+      http.request<ReleaseFile>(
+        `/admin/applications/${seg(applicationId)}/updates/${seg(updateId)}/files/${seg(id)}/content`,
+        {
+          method: "PUT",
+          body: file,
+          headers: {"Content-Type": file.type || "application/octet-stream"},
+        },
+      ),
+
+    update: (applicationId: string, updateId: string, id: string, body: ReleaseFilePayload) =>
+      http.request<ReleaseFile>(
+        `/admin/applications/${seg(applicationId)}/updates/${seg(updateId)}/files/${seg(id)}`,
+        {method: "PATCH", json: body},
+      ),
+
+    remove: (applicationId: string, updateId: string, id: string) =>
+      http.request<void>(
+        `/admin/applications/${seg(applicationId)}/updates/${seg(updateId)}/files/${seg(id)}`,
+        {method: "DELETE"},
+      ),
+  },
+
+  /* ── Payments ───────────────────────────────────────────────────────────── */
+
+  /**
+   * What came in, and what went out with it. Read-only, as the service is: a payment's status is
+   * the provider's to change and arrives over its webhook, so there is nothing here to write.
+   */
+  store: {
+    purchases: (
+      params: {application_id?: string; status?: string; email?: string; limit?: number; offset?: number} = {},
+      signal?: AbortSignal,
+    ) => http.request<Purchase[]>(`/admin/purchases${query({...params})}`, {signal}),
+
+    downloads: (applicationId: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      http.request<DownloadRecord[]>(
+        `/admin/applications/${seg(applicationId)}/downloads${query({...params})}`,
+        {signal},
+      ),
   },
 
   /* ── Wiki ───────────────────────────────────────────────────────────────── */

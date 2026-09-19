@@ -7,8 +7,15 @@ import type {Language} from "@/lib/a11y";
 import {PAGES_BASE_URL} from "@/lib/pages/config.ts";
 import type {
   Application,
+  ApplicationAccess,
   ApplicationUpdate,
+  Checkout,
+  DownloadRecord,
+  DownloadTicket,
   PagesStatus,
+  Pricing,
+  Purchase,
+  ReleaseFiles,
   TabDefinition,
   WikiNode,
   WikiPage,
@@ -68,6 +75,55 @@ export const pagesContent = {
       auth: false,
       signal,
     }),
+
+  /* ── The paid half ──────────────────────────────────────────────────────── */
+
+  /** What the application costs. The same answer for everybody, so the service caches it. */
+  pricing: (slug: string, signal?: AbortSignal) =>
+    http.request<Pricing>(`/applications/${seg(slug)}/pricing`, {auth: false, signal}),
+
+  /**
+   * Whether *this* visitor may download, and what to show them first.
+   *
+   * `auth: "optional"` rather than `false`: a signed-in visitor is recognised and gets their own
+   * answer, and a signed-out one still gets the anonymous answer instead of a 401. Asking for a
+   * session before telling somebody the price would put a sign-in wall in front of a free build.
+   */
+  access: (slug: string, signal?: AbortSignal) =>
+    http.request<ApplicationAccess>(`/applications/${seg(slug)}/access`, {auth: "optional", signal}),
+
+  /** The builds attached to one published release, and whether taking one needs a payment first. */
+  releaseFiles: (slug: string, version: string, signal?: AbortSignal) =>
+    http.request<ReleaseFiles>(`/applications/${seg(slug)}/updates/${seg(version)}/files`, {
+      auth: false,
+      signal,
+    }),
+
+  /**
+   * Mints a download link for one build.
+   *
+   * The link carries who asked and whether they paid, which is why it is a POST and why nothing
+   * here caches it. A non-payer's link is not valid yet — see `available_at`.
+   */
+  downloadTicket: (slug: string, fileId: string) =>
+    http.request<DownloadTicket>(`/applications/${seg(slug)}/files/${seg(fileId)}/download`, {
+      method: "POST",
+      auth: "optional",
+    }),
+
+  /** Opens a payment and answers where to send the browser. Requires a session; checkout is per account. */
+  checkout: (slug: string, body: {amount?: number; return_path?: string} = {}) =>
+    http.request<Checkout>(`/applications/${seg(slug)}/checkout`, {method: "POST", json: body}),
+
+  /** Everything this account has paid for, newest first. */
+  purchases: (signal?: AbortSignal) => http.request<Purchase[]>("/me/purchases", {signal}),
+
+  /** One of them, by id. What the page polls after coming back from the payment provider. */
+  purchase: (id: string, signal?: AbortSignal) =>
+    http.request<Purchase>(`/me/purchases/${seg(id)}`, {signal}),
+
+  /** What this account has downloaded, newest first. */
+  downloads: (signal?: AbortSignal) => http.request<DownloadRecord[]>("/me/downloads", {signal}),
 };
 
 /**

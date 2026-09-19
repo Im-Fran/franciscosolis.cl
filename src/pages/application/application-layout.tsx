@@ -10,7 +10,9 @@ import {useApplication} from "@/lib/pages/content.ts";
 import {SectionError} from "@/pages/home/components/section-state.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {ApplicationBanner} from "@/pages/application/components/application-banner.tsx";
+import {PurchaseBanner} from "@/pages/application/components/purchase-banner.tsx";
 import {ApplicationContext} from "@/pages/application/application-context.ts";
+import {PurchaseProvider} from "@/pages/application/purchase-provider.tsx";
 
 /**
  * The frame every tab of a product page sits in.
@@ -23,6 +25,10 @@ import {ApplicationContext} from "@/pages/application/application-context.ts";
  * A slug the service does not publish is the site's own 404 rather than an error panel. From a
  * visitor's side there is no difference between an application that was never created and one that
  * is still a draft, and the service is deliberately unable to tell them apart either.
+ *
+ * `PurchaseProvider` wraps the whole page rather than the tab that happens to have download buttons
+ * on it: the price belongs under the banner, the offer is one dialog, and "has this person paid" is
+ * one question that must not be asked once per button.
  */
 export const ApplicationLayout = () => {
   const {t} = useTranslation(["application"]);
@@ -58,7 +64,8 @@ export const ApplicationLayout = () => {
 
   return (
     <ApplicationContext value={value}>
-      <div className="flex flex-1 flex-col pb-24">
+      <PurchaseProvider application={value.application}>
+        <div className="flex flex-1 flex-col pb-24">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-5">
           <Link to="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-text">
             <BrandLockup size={24} tone="auto"/>
@@ -85,6 +92,8 @@ export const ApplicationLayout = () => {
 
         <ApplicationBanner application={value.application}/>
 
+        <PurchaseBanner/>
+
         {untranslated && (
           <p className="mx-auto mt-6 max-w-3xl px-4 text-center text-[13px] text-neutral-500">
             {t("application:untranslated")}
@@ -94,7 +103,8 @@ export const ApplicationLayout = () => {
         <main className="mx-auto mt-10 w-full max-w-6xl px-4">
           <Outlet/>
         </main>
-      </div>
+        </div>
+      </PurchaseProvider>
     </ApplicationContext>
   );
 };

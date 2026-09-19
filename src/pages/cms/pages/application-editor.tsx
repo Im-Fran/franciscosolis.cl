@@ -16,12 +16,13 @@ import {useToast} from "@/lib/admin/toast-context.ts";
 import {pagesApi} from "@/lib/pages/client.ts";
 import {applicationRoute, pagesRoute} from "@/lib/pages/config.ts";
 import {usePagesTabs} from "@/lib/pages/content.ts";
-import {CONTENT_STATUSES} from "@/lib/pages/types.ts";
+import {CONTENT_STATUSES, PRICING_MODES} from "@/lib/pages/types.ts";
 import type {
   Application,
   ApplicationLink,
   ApplicationPayload,
   ContentStatus,
+  PricingMode,
   Translations,
 } from "@/lib/pages/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
@@ -44,6 +45,15 @@ const TRANSLATABLE = ["name", "tagline", "summary", "overview_body", "contact_bo
 /** `#rgb` or `#rrggbb`; the service refuses any other CSS colour, and the page interpolates it. */
 const HEX_PATTERN = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
+/**
+ * The service's own floor on any amount it will charge, in whole pesos.
+ *
+ * Mirrored here so the form can say no before the redirect does. It is not a policy this screen
+ * owns — the service rejects anything under it whatever this field accepts.
+ */
+const AMOUNT_MIN = 500;
+const AMOUNT_MAX = 5_000_000;
+
 type Form = {
   name: string;
   slug: string;
@@ -58,6 +68,10 @@ type Form = {
   links: ApplicationLink[];
   overviewBody: string;
   contactBody: string;
+  pricingMode: PricingMode;
+  /** Kept as text so the field can be emptied; the payload turns it into a number or a null. */
+  priceAmount: string;
+  suggestedAmount: string;
   translations: Translations;
 };
 
@@ -77,12 +91,22 @@ const EMPTY: Form = {
   links: [],
   overviewBody: "",
   contactBody: "",
+  pricingMode: "free",
+  priceAmount: "",
+  suggestedAmount: "",
   translations: {},
 };
 
 /** The API types `status` as a plain string, so an unexpected value falls back to a safe draft. */
 const asStatus = (value: string): ContentStatus =>
   (CONTENT_STATUSES as string[]).includes(value) ? (value as ContentStatus) : "draft";
+
+/** Same defensiveness for the pricing mode: an unknown one reads as the mode that charges nobody. */
+const asPricingMode = (value: string | undefined): PricingMode =>
+  (PRICING_MODES as readonly string[]).includes(value ?? "") ? (value as PricingMode) : "free";
+
+const amountText = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? String(value) : "";
 
 const toForm = (source: Application): Form => ({
   name: source.name,
@@ -98,6 +122,14 @@ const toForm = (source: Application): Form => ({
   links: source.links ?? [],
   overviewBody: source.overview_body ?? "",
   contactBody: source.contact_body ?? "",
+  pricingMode: asPricingMode(source.pricing?.mode),
+  /*
+   * Read from the *derived* `pricing`, which nulls the figure belonging to another mode — so an
+   * application switched to `donation` shows no price until it is switched back, exactly as the
+   * public page sees it. The row keeps the old number; the service is what remembers it.
+   */
+  priceAmount: amountText(source.pricing?.price),
+  suggestedAmount: amountText(source.pricing?.suggested_amount),
   translations: source.translations ?? {},
 });
 
@@ -204,6 +236,25 @@ export const ApplicationEditor = () => {
        sends back names a field index rather than a row an editor can see. */
     if (form.links.some((link) => !link.url.trim())) found.links = t("cms_pages:editor.link_url_required");
 
+    /*
+     * A paid application with no price is an editor halfway through a change: the service refuses to
+     * open a checkout for one, so the page would offer a purchase nobody can complete.
+     */
+    if (form.pricingMode === "paid") {
+      const price = Number.parseInt(form.priceAmount, 10);
+      if (!Number.isFinite(price)) found.priceAmount = t("cms:validation.required");
+      else if (price < AMOUNT_MIN || price > AMOUNT_MAX) {
+        found.priceAmount = t("cms_pages:editor.amount_range", {min: AMOUNT_MIN, max: AMOUNT_MAX});
+      }
+    }
+
+    if (form.pricingMode === "donation" && form.suggestedAmount.trim()) {
+      const suggested = Number.parseInt(form.suggestedAmount, 10);
+      if (!Number.isFinite(suggested) || suggested < AMOUNT_MIN || suggested > AMOUNT_MAX) {
+        found.suggestedAmount = t("cms_pages:editor.amount_range", {min: AMOUNT_MIN, max: AMOUNT_MAX});
+      }
+    }
+
     return found;
   };
 
@@ -227,6 +278,16 @@ export const ApplicationEditor = () => {
       links: linksPayload(),
       overview_body: orNull(form.overviewBody),
       contact_body: orNull(form.contactBody),
+      pricing_mode: form.pricingMode,
+      /*
+       * Only the amount the current mode uses is sent. Sending the other one back would write a
+       * figure the editor cannot see on this screen, which is how a stale price ends up quoted.
+       */
+      price_amount: form.pricingMode === "paid" ? Number.parseInt(form.priceAmount, 10) : undefined,
+      suggested_amount:
+        form.pricingMode === "donation" && form.suggestedAmount.trim()
+          ? Number.parseInt(form.suggestedAmount, 10)
+          : undefined,
       translations: form.translations,
     };
     const slug = form.slug.trim();
@@ -246,6 +307,9 @@ export const ApplicationEditor = () => {
     if (form.overviewBody !== baseline.overviewBody) changed.overview_body = full.overview_body;
     if (form.contactBody !== baseline.contactBody) changed.contact_body = full.contact_body;
     if (form.slug !== baseline.slug && slug) changed.slug = slug;
+    if (form.pricingMode !== baseline.pricingMode) changed.pricing_mode = full.pricing_mode;
+    if (form.priceAmount !== baseline.priceAmount) changed.price_amount = full.price_amount ?? null;
+    if (form.suggestedAmount !== baseline.suggestedAmount) changed.suggested_amount = full.suggested_amount ?? null;
     /* Sent whole or not at all: the API replaces each of these rather than merging into it. */
     if (!sameValue("tabs")) changed.tabs = full.tabs;
     if (!sameValue("links")) changed.links = full.links;
@@ -544,6 +608,83 @@ export const ApplicationEditor = () => {
                 />
               </div>
             </Field>
+          </div>
+        </Panel>
+
+        <Panel title={t("cms_pages:editor.pricing")} description={t("cms_pages:editor.pricing_hint")}>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field
+              label={t("cms_pages:fields.pricing_mode")}
+              htmlFor="application-pricing-mode"
+              hint={t(`cms_pages:hints.pricing_${form.pricingMode}`)}
+              className="sm:col-span-2"
+            >
+              <Select
+                id="application-pricing-mode"
+                value={form.pricingMode}
+                onChange={(event) => set("pricingMode", event.target.value as PricingMode)}
+              >
+                {PRICING_MODES.map((mode) => (
+                  <option key={mode} value={mode}>
+                    {t(`cms_pages:pricing_modes.${mode}`)}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+
+            {/*
+              * One amount field, and only the one this mode uses. A screen showing both would be a
+              * screen where the figure that is *not* in force is still sitting there looking edited.
+              */}
+            {form.pricingMode === "paid" && (
+              <Field
+                label={t("cms_pages:fields.price_amount")}
+                htmlFor="application-price"
+                error={errors.priceAmount}
+                hint={t("cms_pages:hints.price_amount")}
+              >
+                <Input
+                  id="application-price"
+                  type="number"
+                  inputMode="numeric"
+                  min={AMOUNT_MIN}
+                  max={AMOUNT_MAX}
+                  step={100}
+                  value={form.priceAmount}
+                  onChange={(event) => set("priceAmount", event.target.value)}
+                  aria-invalid={Boolean(errors.priceAmount)}
+                  className="font-mono"
+                />
+              </Field>
+            )}
+
+            {form.pricingMode === "donation" && (
+              <Field
+                label={t("cms_pages:fields.suggested_amount")}
+                htmlFor="application-suggested"
+                error={errors.suggestedAmount}
+                hint={t("cms_pages:hints.suggested_amount")}
+              >
+                <Input
+                  id="application-suggested"
+                  type="number"
+                  inputMode="numeric"
+                  min={AMOUNT_MIN}
+                  max={AMOUNT_MAX}
+                  step={100}
+                  value={form.suggestedAmount}
+                  onChange={(event) => set("suggestedAmount", event.target.value)}
+                  aria-invalid={Boolean(errors.suggestedAmount)}
+                  className="font-mono"
+                />
+              </Field>
+            )}
+
+            {form.pricingMode !== "free" && (
+              <p className="text-[13px] leading-relaxed text-neutral-400 sm:col-span-2">
+                {t("cms_pages:editor.pricing_downloads_hint")}
+              </p>
+            )}
           </div>
         </Panel>
 

@@ -1,4 +1,4 @@
-import {DeviceMobile, IdentificationCard, PenNib, ShieldCheck, SignIn, UserCircle} from "@phosphor-icons/react";
+import {DeviceMobile, IdentificationCard, PenNib, Receipt, ShieldCheck, SignIn, UserCircle} from "@phosphor-icons/react";
 import type {Icon} from "@phosphor-icons/react";
 import {accountRoute} from "@/lib/auth/config.ts";
 import {isCompanyEmail} from "@/pages/auth/account/signature/build-signature.ts";
@@ -31,6 +31,8 @@ export const ACCOUNT_SECTIONS: readonly AccountSection[] = [
     offeredTo: isCompanyEmail,
   },
   {value: "access", to: accountRoute.access, label: "auth:account.tabs.access", icon: ShieldCheck},
+  /* What this account has paid for and downloaded. Offered to everybody: anyone can buy. */
+  {value: "purchases", to: accountRoute.purchases, label: "auth:account.tabs.purchases", icon: Receipt},
   {value: "identities", to: accountRoute.identities, label: "auth:account.tabs.identities", icon: SignIn},
   {value: "sessions", to: accountRoute.sessions, label: "auth:account.tabs.sessions", icon: DeviceMobile},
   {value: "details", to: accountRoute.details, label: "auth:account.tabs.details", icon: IdentificationCard},

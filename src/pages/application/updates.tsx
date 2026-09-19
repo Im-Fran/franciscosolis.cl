@@ -6,6 +6,7 @@ import {SectionError, SectionSkeleton} from "@/pages/home/components/section-sta
 import {useApplicationPage} from "@/pages/application/application-context.ts";
 import {ApplicationLinks} from "@/pages/application/components/application-links.tsx";
 import {ApplicationProse} from "@/pages/application/components/application-prose.tsx";
+import {ReleaseDownloads} from "@/pages/application/components/release-downloads.tsx";
 
 /**
  * The Updates tab: the application's changelog, newest release first.
@@ -17,6 +18,10 @@ import {ApplicationProse} from "@/pages/application/components/application-prose
  * Every entry renders in full rather than collapsing behind a "read more". A changelog is a list of
  * short things, and an accordion over twenty two-line entries is a page that has to be clicked
  * twenty times to be read.
+ *
+ * It is also where the downloads live, because a build belongs to the release that published it:
+ * that is what makes "the archive of past versions" a consequence of the changelog rather than a
+ * second list somebody has to keep in step with it.
  */
 export const ApplicationUpdates = () => {
   const {t, i18n} = useTranslation(["application"]);
@@ -70,6 +75,8 @@ export const ApplicationUpdates = () => {
           {update.body?.trim() && <ApplicationProse source={update.body} className="mt-4 text-sm"/>}
 
           {update.links.length > 0 && <ApplicationLinks links={update.links} size="sm" className="mt-4"/>}
+
+          <ReleaseDownloads slug={slug} version={update.version}/>
         </li>
       ))}
     </ol>
