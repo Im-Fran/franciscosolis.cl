@@ -37,6 +37,13 @@ export type RequestOptions = {
    */
   form?: FormData;
   /**
+   * Raw request body, for the one endpoint whose body *is* the payload rather than a description
+   * of it: uploading the bytes of a release build. A `File` or a `ReadableStream` goes up as it is,
+   * so a 90 MB installer is never read into memory to be re-encoded. The caller sets its own
+   * `Content-Type` through `headers`; nothing is added here.
+   */
+  body?: BodyInit;
+  /**
    * Send an access token. `true` (the default) requires one and fails fast without it; `false`
    * is for the handful of fully public endpoints. `"optional"` attaches one when the caller
    * happens to have a live session but does not require it — for the support ticket endpoints,
@@ -145,7 +152,7 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
       return await fetch(`${baseUrl}${path}`, {
         method,
         headers,
-        body: options.form ?? (options.json === undefined ? undefined : JSON.stringify(options.json)),
+        body: options.body ?? options.form ?? (options.json === undefined ? undefined : JSON.stringify(options.json)),
         signal,
       });
     } catch (error) {
