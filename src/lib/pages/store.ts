@@ -74,8 +74,11 @@ export type DownloadState = {
   /**
    * The link, once it works. Rendered as a plain anchor beside the countdown so the download is
    * always reachable by hand: a browser that refuses a programmatic click must not be a dead end.
+   *
+   * Carries the file's id, not just its name: filenames repeat across releases, and matching on one
+   * would light up the manual link on every row that happens to ship a file called `app.jar`.
    */
-  ready: {url: string; filename: string} | null;
+  ready: {fileId: string; url: string; filename: string} | null;
   error: string | null;
   start: (fileId: string, filename: string) => void;
   dismiss: () => void;
@@ -104,7 +107,7 @@ export const useDownload = (slug: string): DownloadState => {
   useEffect(() => clearTimers, [clearTimers]);
 
   const begin = useCallback(
-    (ticket: DownloadTicket, filename: string) => {
+    (ticket: DownloadTicket, fileId: string, filename: string) => {
       const waitMs = Math.max(0, new Date(ticket.available_at).getTime() - Date.now());
       const seconds = Math.ceil(waitMs / 1000);
       setSecondsLeft(seconds);
@@ -117,7 +120,7 @@ export const useDownload = (slug: string): DownloadState => {
       timers.current.push(
         setTimeout(() => {
           setPending(null);
-          setReady({url: ticket.url, filename});
+          setReady({fileId, url: ticket.url, filename});
           triggerDownload(ticket.url, filename);
         }, waitMs),
       );
@@ -134,7 +137,7 @@ export const useDownload = (slug: string): DownloadState => {
 
       pagesContent
         .downloadTicket(slug, fileId)
-        .then((ticket) => begin(ticket, filename))
+        .then((ticket) => begin(ticket, fileId, filename))
         .catch((cause: unknown) => {
           setPending(null);
           setSecondsLeft(0);

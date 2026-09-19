@@ -91,7 +91,7 @@ const DownloadRow = ({file, locale}: {file: ReleaseFile; locale: string}) => {
   const PlatformIcon = PLATFORM_ICONS[file.platform] ?? Package;
 
   const waiting = download.pending === file.id;
-  const ready = download.ready?.filename === file.filename ? download.ready : null;
+  const ready = download.ready?.fileId === file.id ? download.ready : null;
 
   return (
     <li className="flex flex-wrap items-center gap-3 rounded-[var(--radius-sm)] bg-bg/40 px-3 py-2">
