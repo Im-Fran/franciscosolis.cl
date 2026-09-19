@@ -15,6 +15,7 @@ import type {
   TicketSummary,
   TimelineEntry,
 } from "@/lib/support/types.ts";
+import type {TranslationDraft, TranslationDraftRequest} from "@/lib/prose/types.ts";
 
 /**
  * The support console's own auth stack. Built once for the whole app: a second instance over the
@@ -58,6 +59,16 @@ export const supportApi = {
    * the support service does not admit — which is one screen rather than a dozen failing panels.
    */
   me: (signal?: AbortSignal) => http.request<SupportAgent>("/admin/me", {signal}),
+
+  /**
+   * A machine-translated draft of one prose field, for the translation dialog on that field.
+   *
+   * It writes nothing: the draft comes back as a string and is saved, edited or discarded through
+   * the ordinary update that saves every other override. A model that failed answers `translation:
+   * null` with a 200, so only a transport or authorisation failure rejects here.
+   */
+  translate: (body: TranslationDraftRequest, signal?: AbortSignal) =>
+    http.request<TranslationDraft>("/admin/translate", {method: "POST", json: body, signal}),
 
   tickets: {
     list: (params: InboxQuery = {}, signal?: AbortSignal) =>

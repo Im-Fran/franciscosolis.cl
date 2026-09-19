@@ -74,12 +74,13 @@ export const CmsProvider = ({children}: {children: ReactNode}) => {
       /* The default locale is not a translation of itself; the service rejects it as a key. */
       translationLocales: (locales ?? []).filter((locale) => locale !== defaultLocale),
       defaultLocale,
+      translation: status?.translation,
       loading,
       error,
       forbidden,
       reload,
     }),
-    [editor, collections, locales, defaultLocale, loading, error, forbidden, reload],
+    [editor, collections, locales, defaultLocale, status?.translation, loading, error, forbidden, reload],
   );
 
   return <CmsContext value={value}>{children}</CmsContext>;

@@ -1,5 +1,5 @@
 import {createContext, useContext} from "react";
-import type {CmsCollection, CmsEditor} from "@/lib/cms/types.ts";
+import type {CmsCollection, CmsEditor, TranslationSupport} from "@/lib/cms/types.ts";
 
 export type CmsContextValue = {
   /** The account behind the current token, as the CMS itself sees it. */
@@ -16,6 +16,13 @@ export type CmsContextValue = {
   translationLocales: string[];
   /** The locale an entry's own columns hold. */
   defaultLocale: string;
+  /**
+   * Whether the service drafts translations with Workers AI, and how long a field it will accept.
+   *
+   * Absent when the status call failed, which costs the editor the "draft with AI" button and
+   * nothing else — offering a draft the service cannot produce is worse than not offering one.
+   */
+  translation: TranslationSupport | undefined;
   loading: boolean;
   error: string | null;
   /** Signed in, but holding no role in this application: the API answered 403 to `/admin/me`. */

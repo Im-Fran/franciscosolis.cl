@@ -27,14 +27,13 @@ import {PageHeader} from "@/components/admin/page-header.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {LinksField} from "@/pages/cms/pages/components/links-field.tsx";
 import {ReleaseFilesPanel} from "@/pages/cms/pages/components/release-files-panel.tsx";
-import {TranslationsPanel} from "@/pages/cms/pages/components/translations-panel.tsx";
+import {TranslatableField} from "@/components/prose/translatable-field.tsx";
+import {TranslationsProvider} from "@/pages/cms/pages/components/translations-provider.tsx";
 
 const VERSION_MAX = 40;
 const TITLE_MAX = 200;
 /** Deliberately smaller than a page's: a changelog entry that long is a wiki page. */
 const BODY_MAX = 50000;
-
-const TRANSLATABLE = ["title", "body"] as const;
 
 /**
  * What the service accepts as a version. Free text rather than semver — this fronts a Minecraft
@@ -289,6 +288,7 @@ export const UpdateEditor = () => {
   }
 
   return (
+    <TranslationsProvider>
     <>
       {header}
 
@@ -333,12 +333,18 @@ export const UpdateEditor = () => {
               />
             </Field>
 
-            <Field
+            <TranslatableField
               label={t("cms_pages:fields.title")}
               htmlFor="update-title"
               error={errors.title}
               hint={t("cms_pages:hints.update_title")}
               className="sm:col-span-2"
+              field="title"
+              source={form.title}
+              value={form.translations}
+              onChange={(value) => setForm((current) => ({...current, translations: value}))}
+              limit={TITLE_MAX}
+              disabled={save.pending}
             >
               <Input
                 id="update-title"
@@ -349,7 +355,7 @@ export const UpdateEditor = () => {
                 autoComplete="off"
                 required
               />
-            </Field>
+            </TranslatableField>
 
             <Field
               label={t("cms_pages:fields.status")}
@@ -372,17 +378,31 @@ export const UpdateEditor = () => {
         </Panel>
 
         <Panel title={t("cms_pages:updates.notes")} description={t("cms_pages:updates.notes_hint")}>
-          <Field label={t("cms_pages:fields.body")} htmlFor="update-body" error={errors.body}>
-            <MarkdownEditor
-              id="update-body"
-              value={form.body}
-              onChange={(value) => set("body", value)}
-              placeholder={t("cms_pages:updates.body_placeholder")}
-              maxLength={BODY_MAX}
-              rows={16}
-              disabled={save.pending}
-            />
-          </Field>
+          <TranslatableField
+            label={t("cms_pages:fields.body")}
+            htmlFor="update-body"
+            error={errors.body}
+            field="body"
+            source={form.body}
+            value={form.translations}
+            onChange={(value) => setForm((current) => ({...current, translations: value}))}
+            limit={BODY_MAX}
+            disabled={save.pending}
+          >
+            {/* The Markdown editor has a toolbar of its own, so the icon goes in it. */}
+            {(action) => (
+              <MarkdownEditor
+                id="update-body"
+                value={form.body}
+                onChange={(value) => set("body", value)}
+                placeholder={t("cms_pages:updates.body_placeholder")}
+                maxLength={BODY_MAX}
+                rows={16}
+                disabled={save.pending}
+                action={action}
+              />
+            )}
+          </TranslatableField>
         </Panel>
 
         <Panel title={t("cms_pages:updates.links")} description={t("cms_pages:updates.links_hint")}>
@@ -402,14 +422,6 @@ export const UpdateEditor = () => {
           */}
         {updateId && <ReleaseFilesPanel applicationId={id} updateId={updateId}/>}
 
-        <TranslationsPanel
-          fields={TRANSLATABLE}
-          source={{title: form.title, body: form.body}}
-          value={form.translations}
-          onChange={(value) => setForm((current) => ({...current, translations: value}))}
-          limits={{title: TITLE_MAX, body: BODY_MAX}}
-          disabled={save.pending}
-        />
       </form>
 
       <ConfirmDialog
@@ -423,5 +435,6 @@ export const UpdateEditor = () => {
         error={remove.error}
       />
     </>
+    </TranslationsProvider>
   );
 };

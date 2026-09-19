@@ -65,12 +65,6 @@
     "publish_confirm": "Publish document",
     "delete_title": "Delete this document?",
     "delete_body": "“{{title}}” will be removed for good, and there is no undo. A policy that was ever published is usually worth keeping as Archived instead — someone may need to know what the terms said last year.",
-    "delete_confirm": "Delete document",
-    "translations_title": "Translations",
-    "translations_description": "The fields above are the {{locale}} version. Anything left blank here falls back to it, so a partly translated entry still renders.",
-    "translations_none": "This service publishes a single language, so there is nothing to translate.",
-    "translations_clear": "Clear {{locale}}",
-    "translations_source": "Original: {{text}}",
-    "translations_source_empty": "Nothing written above to translate yet."
+    "delete_confirm": "Delete document"
   }
 }

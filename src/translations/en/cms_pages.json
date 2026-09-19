@@ -115,12 +115,6 @@
     "delete_body": "“{{name}}” will be deleted, and so will every release note and wiki page it holds. This cannot be undone.",
     "delete_confirm": "Delete it",
     "updated_at": "Last saved {{date}}",
-    "translations_title": "Translations",
-    "translations_description": "The fields above are the {{locale}} version. Anything left blank here falls back to it, so a partly translated page still renders.",
-    "translations_none": "This service publishes a single language, so there is nothing to translate.",
-    "translations_clear": "Clear {{locale}}",
-    "translations_source": "Original: {{text}}",
-    "translations_source_empty": "Nothing written above to translate yet.",
     "fields": {
       "name": "Name",
       "tagline": "Tagline",

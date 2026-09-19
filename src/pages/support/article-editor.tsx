@@ -17,16 +17,16 @@ import {supportApi} from "@/lib/support/client.ts";
 import {supportRoute} from "@/lib/support/config.ts";
 import type {AdminArticle} from "@/lib/support/types.ts";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
-import {TranslationsPanel} from "@/pages/support/components/translations-panel.tsx";
+import {TranslatableField} from "@/components/prose/translatable-field.tsx";
+import {TranslationsProvider} from "@/pages/support/components/translations-provider.tsx";
 
 /** The three prose fields a help article has. Slug, section and ordering are structure, not prose. */
-const TRANSLATABLE = ["title", "summary", "body"] as const;
 const LIMITS = {title: 200, summary: 600, body: 200_000};
 
 /**
  * Writing a help article.
  *
- * The markdown editor and the translations panel are shared components (`@/components/prose`),
+ * The markdown editor and the translation controls are shared components (`@/components/prose`),
  * deliberately: this is the same job the CMS does — prose in two languages with the English in the
  * row and the Spanish as overrides — and a second implementation of it would drift within a
  * release. Shared is not the same as borrowed, though: it used to import the CMS's own copies, and
@@ -99,6 +99,7 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
   }
 
   return (
+    <TranslationsProvider>
     <section className="flex flex-col gap-6">
       <PageHeader
         title={mode === "edit" ? (form.title ?? "") : t("articles.new")}
@@ -129,22 +130,46 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
       />
 
       <form onSubmit={submit} className="flex flex-col gap-5">
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs tracking-wide text-neutral-500 uppercase">{t("articles.article_title")}</span>
+        <TranslatableField
+          label={t("articles.article_title")}
+          htmlFor="article-title"
+          field="title"
+          source={form.title ?? ""}
+          value={form.translations ?? {}}
+          onChange={(translations) =>
+            /* The dialog is typed on the shared envelope; this service's own type is narrower. */
+            setForm((current) => ({...current, translations: translations as AdminArticle["translations"]}))
+          }
+          limit={LIMITS.title}
+        >
           <Input
+            id="article-title"
             value={form.title ?? ""}
+            maxLength={LIMITS.title}
             onChange={(event) => setForm((current) => ({...current, title: event.target.value}))}
             required
           />
-        </label>
+        </TranslatableField>
 
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs tracking-wide text-neutral-500 uppercase">{t("articles.summary")}</span>
+        <TranslatableField
+          label={t("articles.summary")}
+          htmlFor="article-summary"
+          field="summary"
+          source={form.summary ?? ""}
+          value={form.translations ?? {}}
+          onChange={(translations) =>
+            /* The dialog is typed on the shared envelope; this service's own type is narrower. */
+            setForm((current) => ({...current, translations: translations as AdminArticle["translations"]}))
+          }
+          limit={LIMITS.summary}
+        >
           <Input
+            id="article-summary"
             value={form.summary ?? ""}
+            maxLength={LIMITS.summary}
             onChange={(event) => setForm((current) => ({...current, summary: event.target.value}))}
           />
-        </label>
+        </TranslatableField>
 
         <div className="flex flex-wrap gap-4">
           <label className="flex flex-col gap-1.5">
@@ -196,23 +221,30 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
           />
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs tracking-wide text-neutral-500 uppercase">{t("articles.body")}</span>
-          <MarkdownEditor
-            id="article-body"
-            value={form.body ?? ""}
-            onChange={(body) => setForm((current) => ({...current, body}))}
-            rows={18}
-          />
-        </div>
-
-        <TranslationsPanel
-          fields={TRANSLATABLE}
-          source={{title: form.title ?? "", summary: form.summary ?? "", body: form.body ?? ""}}
+        <TranslatableField
+          label={t("articles.body")}
+          htmlFor="article-body"
+          field="body"
+          source={form.body ?? ""}
           value={form.translations ?? {}}
-          onChange={(translations) => setForm((current) => ({...current, translations}))}
-          limits={LIMITS}
-        />
+          onChange={(translations) =>
+            /* The dialog is typed on the shared envelope; this service's own type is narrower. */
+            setForm((current) => ({...current, translations: translations as AdminArticle["translations"]}))
+          }
+          limit={LIMITS.body}
+        >
+          {/* The Markdown editor has a toolbar of its own, so the icon goes in it. */}
+          {(action) => (
+            <MarkdownEditor
+              id="article-body"
+              value={form.body ?? ""}
+              maxLength={LIMITS.body}
+              onChange={(body) => setForm((current) => ({...current, body}))}
+              rows={18}
+              action={action}
+            />
+          )}
+        </TranslatableField>
 
         {save.error ? <Alert tone="error">{save.error}</Alert> : null}
 
@@ -238,5 +270,6 @@ export const ArticleEditor = ({mode}: {mode: "create" | "edit"}) => {
         }}
       />
     </section>
+    </TranslationsProvider>
   );
 };

@@ -1,4 +1,5 @@
 import {useCallback, useId, useMemo, useRef, useState} from "react";
+import type {ReactNode} from "react";
 import {useTranslation} from "react-i18next";
 import {Code, Eye, ListBullets, Link as LinkIcon, TextAa, TextB, TextItalic} from "@phosphor-icons/react";
 import {Textarea} from "@/components/ui/input.tsx";
@@ -30,6 +31,14 @@ export type MarkdownEditorProps = {
   maxLength?: number;
   rows?: number;
   disabled?: boolean;
+  /**
+   * Rendered in the toolbar, before the write/preview tabs.
+   *
+   * It exists for one caller: `TranslatableField` puts its translate icon *inside* the control, and
+   * this editor is the one control with no corner to spare — a button floated over it would sit on
+   * the toolbar or on the first line of somebody's text.
+   */
+  action?: ReactNode;
   /** Names the field for assistive tech when the surrounding `<Field>` label is not enough. */
   "aria-describedby"?: string;
 };
@@ -55,6 +64,7 @@ export const MarkdownEditor = ({
   maxLength,
   rows = 18,
   disabled,
+  action,
   ...rest
 }: MarkdownEditorProps) => {
   const {t} = useTranslation("prose");
@@ -137,6 +147,7 @@ export const MarkdownEditor = ({
         ))}
 
         <div className="ml-auto flex items-center gap-0.5">
+          {action}
           {tab("write", t("prose:markdown.write"))}
           {tab("preview", t("prose:markdown.preview"))}
           {tab("split", t("prose:markdown.split"), true)}
