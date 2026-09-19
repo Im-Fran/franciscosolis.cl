@@ -9,3 +9,4 @@ This is my portfolio with all my projects and information about me.
 - [APPLICATIONS.md](docs/APPLICATIONS.md) — the standalone product pages at `/application/<slug>`
 - [LEGAL.md](docs/LEGAL.md) — how the legal pages are rendered
 - [BRAND.md](docs/BRAND.md) — the identity and the assets built from it
+- [ENVIRONMENTS.md](docs/ENVIRONMENTS.md) — the production site and the development one at `dev.franciscosolis.cl`
