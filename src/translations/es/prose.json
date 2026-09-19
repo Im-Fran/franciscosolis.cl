@@ -20,5 +20,24 @@
   "locales": {
     "en": "Inglés",
     "es": "Español"
+  },
+  "translations": {
+    "title": "Traducir {{field}}",
+    "open_label": "Traducciones de {{field}}",
+    "description": "El formulario tiene la versión en {{locale}}. Lo que quede en blanco acá vuelve a ella, así que un registro traducido a medias igual se muestra.",
+    "none": "Este servicio publica un solo idioma, así que no hay nada que traducir.",
+    "source_label": "Original · {{locale}}",
+    "source_empty": "Todavía no hay nada escrito en el formulario, así que no hay nada que traducir.",
+    "locale_label": "Traducción {{locale}}",
+    "translatable": "Traducir este campo",
+    "translatable_hint": "Desactívalo para texto que es igual en todos los idiomas, como el nombre de una aplicación. Borra lo que haya escrito acá.",
+    "generate": "Generar con IA",
+    "regenerate": "Generar de nuevo",
+    "generating": "Generando…",
+    "generate_failed": "No llegó ninguna traducción. Inténtalo otra vez o escríbela tú.",
+    "generate_hint": "Es un borrador, nunca una publicación: léelo antes de guardar.",
+    "too_long": "Es demasiado largo para generarlo automáticamente — {{max}} caracteres como máximo. Tradúcelo por partes o escríbelo tú.",
+    "clear": "Vaciar",
+    "done": "Listo"
   }
 }

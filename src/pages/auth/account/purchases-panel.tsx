@@ -6,10 +6,10 @@ import {Badge} from "@/components/ui/badge/badge.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
 import {formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
-import {applicationRoute} from "@/lib/pages/config.ts";
-import {pagesContent} from "@/lib/pages/content.ts";
-import {formatAmount} from "@/lib/pages/store.ts";
-import type {Purchase} from "@/lib/pages/types.ts";
+import {productRoute} from "@/lib/marketplace/config.ts";
+import {marketplaceContent} from "@/lib/marketplace/content.ts";
+import {formatAmount} from "@/lib/marketplace/store.ts";
+import type {Purchase} from "@/lib/marketplace/types.ts";
 import {Panel, PanelState} from "@/pages/auth/components/panel.tsx";
 
 /**
@@ -41,7 +41,7 @@ const statusTone = (purchase: Purchase) => {
 const Payments = () => {
   const {t, i18n} = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
-  const purchases = useResource(useCallback((signal: AbortSignal) => pagesContent.purchases(signal), []));
+  const purchases = useResource(useCallback((signal: AbortSignal) => marketplaceContent.purchases(signal), []));
 
   return (
     <Panel
@@ -70,10 +70,10 @@ const Payments = () => {
 
               <span className="min-w-0 flex-1">
                 <Link
-                  to={applicationRoute.overview(purchase.application_slug)}
+                  to={productRoute.overview(purchase.product_slug)}
                   className="block truncate text-sm text-text underline-offset-2 hover:underline"
                 >
-                  {purchase.application_slug}
+                  {purchase.product_slug}
                 </Link>
                 <span className="block text-[12px] text-neutral-500">
                   {t(`auth:account.purchases.kind.${purchase.kind}`, {defaultValue: purchase.kind})}
@@ -105,7 +105,7 @@ const Payments = () => {
 const Downloads = () => {
   const {t, i18n} = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
-  const downloads = useResource(useCallback((signal: AbortSignal) => pagesContent.downloads(signal), []));
+  const downloads = useResource(useCallback((signal: AbortSignal) => marketplaceContent.downloads(signal), []));
 
   return (
     <Panel
@@ -136,10 +136,10 @@ const Downloads = () => {
                 <span className="block truncate text-sm text-text">{download.filename}</span>
                 <span className="block text-[12px] text-neutral-500">
                   <Link
-                    to={applicationRoute.updates(download.application_slug)}
+                    to={productRoute.releases(download.product_slug)}
                     className="underline-offset-2 hover:underline"
                   >
-                    {download.application_slug}
+                    {download.product_slug}
                   </Link>
                   {" · "}
                   {download.version}

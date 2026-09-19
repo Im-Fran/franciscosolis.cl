@@ -1,5 +1,5 @@
 import {Suspense} from "react";
-import {Outlet} from "react-router-dom";
+import {Navigate, Outlet} from "react-router-dom";
 import type {RouteObject} from "react-router-dom";
 import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {RequireAuth} from "@/components/auth/require-auth.tsx";
@@ -10,9 +10,8 @@ import {ToastProvider} from "@/lib/admin/toast-provider.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {CmsLayout} from "@/pages/cms/components/cms-layout.tsx";
 import {ContentRedirect} from "@/pages/cms/components/content-redirect.tsx";
+import {MARKETPLACE_ADMIN_ROUTE} from "@/lib/marketplace/config.ts";
 import {
-  ApplicationEditor,
-  ApplicationList,
   AuditLog,
   Callback,
   ContentEditor,
@@ -26,10 +25,6 @@ import {
   SignIn,
   TemplateEditor,
   TemplateList,
-  UpdateEditor,
-  UpdateList,
-  WikiEditor,
-  WikiList,
 } from "@/pages/cms/lazy-screens.tsx";
 
 /**
@@ -72,20 +67,20 @@ export const cmsRoutes: RouteObject = {
         {path: "content/:collection/:id", element: <ContentEditor/>},
 
         /*
-         * Standalone app pages. They are a different service — `apps/pages` rather than `apps/cms`
-         * — but not a different application: it accepts the CMS's audience precisely so these
-         * screens can live inside this gate and this session instead of asking an editor to sign in
-         * a second time for a second console.
+         * The marketplace console is **not** here, and that is the one thing worth knowing about
+         * this file.
+         *
+         * It lived at `/cms/marketplace` for exactly one release, inheriting this subtree's
+         * `AuthProvider` the way `apps/pages` used to. That could not work: `apps/marketplace`
+         * accepts only its own audience, so a token minted under `franciscosolis-cms` is refused
+         * with a 401 before the permission is ever read — indistinguishable on this side from an
+         * expired session, which sent editors around the sign-in loop forever. It is its own
+         * console now, at `/marketplace`, with a client application of its own.
+         *
+         * Both addresses it answered to still land there.
          */
-        {path: "pages", element: <ApplicationList/>},
-        {path: "pages/new", element: <ApplicationEditor/>},
-        {path: "pages/:id", element: <ApplicationEditor/>},
-        {path: "pages/:id/updates", element: <UpdateList/>},
-        {path: "pages/:id/updates/new", element: <UpdateEditor/>},
-        {path: "pages/:id/updates/:updateId", element: <UpdateEditor/>},
-        {path: "pages/:id/wiki", element: <WikiList/>},
-        {path: "pages/:id/wiki/new", element: <WikiEditor/>},
-        {path: "pages/:id/wiki/:pageId", element: <WikiEditor/>},
+        {path: "marketplace/*", element: <Navigate to={MARKETPLACE_ADMIN_ROUTE} replace/>},
+        {path: "pages/*", element: <Navigate to={MARKETPLACE_ADMIN_ROUTE} replace/>},
 
         {path: "legal", element: <LegalList/>},
         {path: "legal/new", element: <LegalEditor/>},

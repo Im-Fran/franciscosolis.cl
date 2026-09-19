@@ -22,11 +22,12 @@ trail — behind a sign-in of its own.
 | `/cms/email/messages/:id`      | One message: what was sent, and what happened to it               |
 | `/cms/audit`                   | The record of the writes the CMS made                             |
 
-One more section lives under `/cms` without belonging to the CMS module: `/cms/pages`, which edits
-the standalone application pages served by a different Worker. It is here because that service
-accepts the CMS's own client id as its audience, so it reuses this session and this shell rather
-than asking an editor to sign in a second time for a second console. See
-[APPLICATIONS.md](./APPLICATIONS.md).
+The marketplace console used to live under `/cms`, and no longer does. `apps/marketplace` accepts
+only its own audience, so those screens signing in under `franciscosolis-cms` were refused with a
+401 before the permission was ever read — which reads on this side as an expired session and loops
+through the sign-in screen. It is its own console at `/marketplace` now, with its own client
+application, and `/cms/marketplace` and `/cms/pages` redirect there. See
+[MARKETPLACE.md](./MARKETPLACE.md).
 
 Everything except `sign-in` and `callback` needs a session; anonymous visitors are sent to
 `/cms/sign-in` with a `return_to` so the flow resumes where they were headed. A `return_to` pointing
@@ -163,16 +164,41 @@ be a lie the interface repeats every morning.
   dragging changes local state and an explicit save commits it — one write per session of nudging
   rather than one per nudge.
 - **Deletes** all go through a confirmation that names the record. There is no undo on this API.
-- **Translations** are a panel of their own rather than a second copy of the form, because only
-  prose is translatable: `title`, `subtitle`, `summary` and `body` on an entry, and the first,
-  third and fourth of those on a legal page. Slugs, ordering, dates, links, tags and `data` are the
-  same fact in every language. The record's own fields hold the default locale — `GET /cms/`
-  reports which that is, and which others the service publishes — and the panel writes the
-  overrides on top of it. A field left blank is not stored, and the API falls back to the source
-  text for that field alone, so a partly translated entry is a valid state rather than a
-  half-saved one; the badge on each language tab says how much of it is done. Like `data`, the map
-  is **replaced wholesale** on a `PATCH`, so the interface always sends every locale it means to
-  keep.
+- **Translations live on the field they translate.** Only prose is translatable — `title`,
+  `subtitle`, `summary` and `body` on an entry, and the first, third and fourth of those on a legal
+  page — while slugs, ordering, dates, links, tags and `data` are the same fact in every language.
+  So a translatable field carries a translate icon *inside* its control, and that icon opens a
+  dialog holding nothing but that one field in the other languages, with the original above it.
+
+  It used to be a panel at the foot of the form, and the reason it moved is what that panel was
+  becoming: a product page has five translatable fields and the service publishes two
+  languages, so the panel was ten more boxes below the fold, none of them beside the text they
+  translate. The icon says how much is done without being opened, and the page stops growing when a
+  third language lands.
+
+  The record's own fields hold the default locale — `GET /cms/` reports which that is and which
+  others the service publishes — and the dialog writes the overrides on top of it. A field left
+  blank is not stored and the API falls back to the source text for that field alone, so a partly
+  translated entry is a valid state rather than a half-saved one. Like `data`, the map is
+  **replaced wholesale** on a `PATCH`, so the interface always sends every locale it means to keep.
+
+- **A translation can be drafted by Workers AI**, from the same dialog: `POST /cms/admin/translate`
+  answers with a draft of one field in one language and *writes nothing*, so the draft is edited and
+  saved through the ordinary `PATCH` that saves every other override. Three things follow, and they
+  are why it works this way. A model outage cannot corrupt a record. Nothing machine-translated is
+  ever published without somebody having read it, because publishing is a separate request a human
+  makes. And a failed call answers `translation: null` with a `200`, so the cost of an outage is a
+  button that produced nothing.
+
+  The dialog also carries a **"translate this field" switch**, off for text that is the same string
+  in every language — a product's name, a collection's — where the useful answer is "leave it
+  alone" and a draft would be actively wrong. It is not stored anywhere: "not translated" and "no
+  override written" are the same state to the API, which is what lets it be a switch rather than a
+  column.
+
+  A field longer than the service will accept (`translation.max_source_chars` on `GET /cms/`) offers
+  no draft and says so — a 100 000-character legal document is not translated in one model call, and
+  silently truncating one would be worse than declining.
 
 ## Configuration
 
@@ -212,17 +238,20 @@ src/lib/prose/
   markdown.ts      the sanitized markdown renderer and the prose styles for a preview
   format.ts        the reading-time estimate the markdown editor's footer shows
   types.ts         the envelope every service stores a translation in
+  translations.ts  which control a field gets, and what writing one language does to the map
+  translation-service.ts  the context a section answers "which languages, and can you draft one?" in
 
 src/components/prose/
   markdown-editor.tsx   the write/preview editor behind every long-form field on this site
-  translations-panel.tsx the per-locale override editor, taking its locales as a parameter
+  translatable-field.tsx a field that carries its own translations: the icon inside the control
+  translation-modal.tsx  what the icon opens — that one field in the other languages
 
 src/pages/cms/
   cms-routes.tsx   the subtree, its own AuthProvider, and the one gate every screen shares
   lazy-screens.tsx every screen, split out of the main bundle and fetched on demand
   components/      the shell, its navigation, the gate and the CMS's wiring of the shared
-                   translations panel — what is specific to the CMS. The prose editors themselves
-                   are in `src/components/prose/`, shared with the standalone app pages and the
+                   translation controls — what is specific to the CMS. The prose editors themselves
+                   are in `src/components/prose/`, shared with the marketplace and the
                    support console: a component that reaches into one section's context is that
                    section's component, and the help article editor throwing
                    `useCms must be used inside <CmsProvider>` is what that costs. The primitives

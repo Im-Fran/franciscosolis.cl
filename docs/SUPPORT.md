@@ -64,7 +64,7 @@ sanitises it with DOMPurify down to exactly that one tag and no attributes.
 sections, sent mail and the audit trail.
 
 It is a **separate OAuth client** (`franciscosolis-support`, storage namespace `fs.support`), unlike
-the standalone app pages — which live inside the CMS console precisely because their editor *is* the
+the marketplace — which lives inside the CMS console precisely because its editor *is* the
 CMS editor. The reason is assignment: a ticket goes to a person, and "a person" only means something
 if there is a defined set of them. The auth service resolves roles per client application, so a
 client id of its own is what produces that set. It also means a support agent is not automatically
@@ -116,11 +116,12 @@ src/pages/support/     the console
 ```
 
 The help centre's editors are the support console's own. `article-editor.tsx` writes prose in two
-languages, which is the job the CMS does as well, so the markdown editor and the translations panel
-are **shared components** in `src/components/prose/` (with `src/lib/prose/` behind them) and each
-section wires them to its own service: `src/pages/support/components/translations-panel.tsx` hands
-the panel the locales `SupportProvider` read from `/support/status`, exactly as the CMS's wrapper
-hands it the CMS's.
+languages, which is the job the CMS does as well, so the markdown editor and the translation
+controls are **shared components** in `src/components/prose/` (with `src/lib/prose/` behind them)
+and each section wires them to its own service:
+`src/pages/support/components/translations-provider.tsx` answers with the locales `SupportProvider`
+read from `/support/status`, and with the call that drafts a translation, exactly as the CMS's
+wrapper answers with the CMS's.
 
 Sharing them is not the same as borrowing them, and the difference was a crash: the article editor
 used to import the CMS's copies directly, which made `/support/help/new` throw

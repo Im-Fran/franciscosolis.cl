@@ -104,12 +104,6 @@
     "data_description": "The payload that belongs to {{name}} alone, stored as JSON. Each collection validates its own shape, so a field it does not know about is rejected rather than saved.",
     "data": "Data (JSON)",
     "delete_title": "Delete this {{name}}?",
-    "delete_body": "“{{title}}” will be removed for good, and there is no undo. If it might come back, set its status to Archived instead — that hides it from the website without losing the text.",
-    "translations_title": "Translations",
-    "translations_description": "The fields above are the {{locale}} version. Anything left blank here falls back to it, so a partly translated entry still renders.",
-    "translations_none": "This service publishes a single language, so there is nothing to translate.",
-    "translations_clear": "Clear {{locale}}",
-    "translations_source": "Original: {{text}}",
-    "translations_source_empty": "Nothing written above to translate yet."
+    "delete_body": "“{{title}}” will be removed for good, and there is no undo. If it might come back, set its status to Archived instead — that hides it from the website without losing the text."
   }
 }

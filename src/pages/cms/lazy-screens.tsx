@@ -39,25 +39,6 @@ export const EmailDetail = lazy(() =>
   import("@/pages/cms/email/email-detail.tsx").then((m) => ({default: m.EmailDetail})),
 );
 
-export const ApplicationList = lazy(() =>
-  import("@/pages/cms/pages/application-list.tsx").then((m) => ({default: m.ApplicationList})),
-);
-export const ApplicationEditor = lazy(() =>
-  import("@/pages/cms/pages/application-editor.tsx").then((m) => ({default: m.ApplicationEditor})),
-);
-export const UpdateList = lazy(() =>
-  import("@/pages/cms/pages/update-list.tsx").then((m) => ({default: m.UpdateList})),
-);
-export const UpdateEditor = lazy(() =>
-  import("@/pages/cms/pages/update-editor.tsx").then((m) => ({default: m.UpdateEditor})),
-);
-export const WikiList = lazy(() =>
-  import("@/pages/cms/pages/wiki-list.tsx").then((m) => ({default: m.WikiList})),
-);
-export const WikiEditor = lazy(() =>
-  import("@/pages/cms/pages/wiki-editor.tsx").then((m) => ({default: m.WikiEditor})),
-);
-
 export const AuditLog = lazy(() =>
   import("@/pages/cms/audit/audit-log.tsx").then((m) => ({default: m.AuditLog})),
 );

@@ -5,6 +5,18 @@ export type TicketPriority = "low" | "normal" | "high" | "urgent";
 export type MessageKind = "reply" | "note";
 export type SupportLocale = "en" | "es";
 
+/**
+ * What the service says about machine-translated drafts.
+ *
+ * Read rather than assumed for the same reason the locale list is: whether `POST /admin/translate`
+ * is offered at all, and how long a field it will accept, is the Worker's decision. A status call
+ * that failed leaves it absent, and the editor simply does not offer the button.
+ */
+export type TranslationSupport = {
+  ai: boolean;
+  max_source_chars: number;
+};
+
 export type SupportStatus = {
   message: string;
   ticket_statuses: TicketStatus[];
@@ -14,6 +26,7 @@ export type SupportStatus = {
   timeline_events: string[];
   locales: SupportLocale[];
   default_locale: SupportLocale;
+  translation?: TranslationSupport;
 };
 
 export type SupportAgent = {
