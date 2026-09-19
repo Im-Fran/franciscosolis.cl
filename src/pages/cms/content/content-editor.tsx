@@ -22,7 +22,8 @@ import {JsonEditor} from "@/components/admin/json-editor.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {TagInput} from "@/components/admin/tag-input.tsx";
-import {TranslationsPanel} from "@/pages/cms/components/translations-panel.tsx";
+import {TranslatableField} from "@/components/prose/translatable-field.tsx";
+import {TranslationsProvider} from "@/pages/cms/components/translations-provider.tsx";
 import {useCollectionMeta} from "@/pages/cms/content/use-collection.ts";
 
 /** Every limit here is the API's own, from `openapi.json`; the form refuses what it would reject. */
@@ -35,9 +36,6 @@ const LIMITS = {
   position: 9999,
   tag: 60,
 } as const;
-
-/** The prose the API lets a translation override, in the order the panel shows it. */
-const TRANSLATABLE = ["title", "subtitle", "summary", "body"] as const;
 
 type FormState = {
   title: string;
@@ -347,6 +345,9 @@ export const ContentEditor = () => {
   const derived = slugify(form.title);
 
   return (
+    /* The translation dialogs on the fields below talk to the CMS; the app-page screens next door
+       provide their own, because that is a different service with its own languages. */
+    <TranslationsProvider>
     <div onClickCapture={guardLeaving}>
       <PageHeader
         title={heading || t("cms_content:editor.new_title", {name: meta.singular})}
@@ -409,7 +410,17 @@ export const ContentEditor = () => {
 
         <Panel title={t("cms_content:editor.basics_title")} description={t("cms_content:editor.basics_description")}>
           <div className="flex flex-col gap-4">
-            <Field label={t("cms_content:editor.title")} htmlFor={FIELD_ID.title} error={errors.title}>
+            <TranslatableField
+              label={t("cms_content:editor.title")}
+              htmlFor={FIELD_ID.title}
+              error={errors.title}
+              field="title"
+              source={form.title}
+              value={form.translations}
+              onChange={(value) => update("translations", value)}
+              limit={LIMITS.title}
+              disabled={submitting}
+            >
               <Input
                 id={FIELD_ID.title}
                 value={form.title}
@@ -418,7 +429,7 @@ export const ContentEditor = () => {
                 onChange={(event) => onTitleChange(event.target.value)}
                 placeholder={t("cms_content:editor.title_placeholder")}
               />
-            </Field>
+            </TranslatableField>
 
             <Field
               label={t("cms_content:editor.slug")}
@@ -443,11 +454,17 @@ export const ContentEditor = () => {
               />
             </Field>
 
-            <Field
+            <TranslatableField
               label={t("cms_content:editor.subtitle")}
               htmlFor={FIELD_ID.subtitle}
               error={errors.subtitle}
               hint={t("cms_content:editor.subtitle_hint")}
+              field="subtitle"
+              source={form.subtitle}
+              value={form.translations}
+              onChange={(value) => update("translations", value)}
+              limit={LIMITS.subtitle}
+              disabled={submitting}
             >
               <Input
                 id={FIELD_ID.subtitle}
@@ -455,13 +472,19 @@ export const ContentEditor = () => {
                 maxLength={LIMITS.subtitle}
                 onChange={(event) => update("subtitle", event.target.value)}
               />
-            </Field>
+            </TranslatableField>
 
-            <Field
+            <TranslatableField
               label={t("cms_content:editor.summary")}
               htmlFor={FIELD_ID.summary}
               error={errors.summary}
               hint={t("cms_content:editor.summary_hint", {used: form.summary.length, max: LIMITS.summary})}
+              field="summary"
+              source={form.summary}
+              value={form.translations}
+              onChange={(value) => update("translations", value)}
+              limit={LIMITS.summary}
+              disabled={submitting}
             >
               <Textarea
                 id={FIELD_ID.summary}
@@ -470,7 +493,7 @@ export const ContentEditor = () => {
                 rows={3}
                 onChange={(event) => update("summary", event.target.value)}
               />
-            </Field>
+            </TranslatableField>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label={t("cms_content:editor.status")} htmlFor={FIELD_ID.status}>
@@ -525,27 +548,31 @@ export const ContentEditor = () => {
         </Panel>
 
         <Panel title={t("cms_content:editor.body_title")} description={t("cms_content:editor.body_description")}>
-          <Field label={t("cms_content:editor.body")} htmlFor={FIELD_ID.body} error={errors.body}>
-            <MarkdownEditor
-              id={FIELD_ID.body}
-              value={form.body}
-              onChange={(value) => update("body", value)}
-              maxLength={LIMITS.body}
-              placeholder={t("cms_content:editor.body_placeholder")}
-              disabled={submitting}
-            />
-          </Field>
+          <TranslatableField
+            label={t("cms_content:editor.body")}
+            htmlFor={FIELD_ID.body}
+            error={errors.body}
+            field="body"
+            source={form.body}
+            value={form.translations}
+            onChange={(value) => update("translations", value)}
+            limit={LIMITS.body}
+            disabled={submitting}
+          >
+            {/* The Markdown editor has a toolbar of its own, so the icon goes in it. */}
+            {(action) => (
+              <MarkdownEditor
+                id={FIELD_ID.body}
+                value={form.body}
+                onChange={(value) => update("body", value)}
+                maxLength={LIMITS.body}
+                placeholder={t("cms_content:editor.body_placeholder")}
+                disabled={submitting}
+                action={action}
+              />
+            )}
+          </TranslatableField>
         </Panel>
-
-        <TranslationsPanel
-          ns="cms_content"
-          fields={TRANSLATABLE}
-          source={{title: form.title, subtitle: form.subtitle, summary: form.summary, body: form.body}}
-          value={form.translations}
-          onChange={(value) => update("translations", value)}
-          limits={{title: LIMITS.title, subtitle: LIMITS.subtitle, summary: LIMITS.summary, body: LIMITS.body}}
-          disabled={submitting}
-        />
 
         <Panel title={t("cms_content:editor.links_title")} description={t("cms_content:editor.links_description")}>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -656,5 +683,6 @@ export const ContentEditor = () => {
         }}
       />
     </div>
+    </TranslationsProvider>
   );
 };

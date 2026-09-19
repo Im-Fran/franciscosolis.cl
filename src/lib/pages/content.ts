@@ -13,6 +13,7 @@ import type {
   DownloadRecord,
   DownloadTicket,
   PagesStatus,
+  TranslationSupport,
   Pricing,
   Purchase,
   ReleaseFiles,
@@ -173,33 +174,45 @@ export const useApplicationWikiPage = (slug: string, page: string | null): Resou
 };
 
 /**
- * The locales this service publishes in, for the editorial translation panel.
+ * The locales this service publishes in, and whether it drafts translations, for the editorial
+ * translation dialog.
  *
  * Read from the service rather than mirrored from the CMS's own list: which languages the *pages*
  * are published in is this service's decision, and the two are free to differ. The call is public,
  * so it needs no session, and the promise is memoised for the life of the tab — the answer is a
  * deployment constant, and every editor screen would otherwise ask again on mount.
  *
- * A failed call is not fatal: the panel falls back to the same default the service ships with, so
- * an editor writing Spanish keeps working while the status endpoint is down.
+ * A failed call is not fatal: the dialog falls back to the same default the service ships with, so
+ * an editor writing Spanish keeps working while the status endpoint is down. It does lose the
+ * machine-translation button, which is the right way round — offering a draft the service cannot
+ * produce is worse than not offering one.
  */
 let statusPromise: Promise<PagesStatus> | null = null;
 
 const FALLBACK_LOCALES = ["en", "es"];
 const FALLBACK_DEFAULT_LOCALE = "en";
 
-export const usePagesLocales = (): {translationLocales: string[]; defaultLocale: string} => {
+export const usePagesLocales = (): {
+  translationLocales: string[];
+  defaultLocale: string;
+  translation: TranslationSupport | undefined;
+} => {
   const status = useResource(
     useCallback((signal: AbortSignal) => (statusPromise ??= pagesContent.status(signal)), []),
   );
 
   const defaultLocale = status.data?.default_locale ?? FALLBACK_DEFAULT_LOCALE;
   const locales = status.data?.locales ?? FALLBACK_LOCALES;
+  const translation = status.data?.translation;
 
   return useMemo(
     /* The default locale lives in the row's own columns; the service rejects it as a map key. */
-    () => ({translationLocales: locales.filter((locale) => locale !== defaultLocale), defaultLocale}),
-    [locales, defaultLocale],
+    () => ({
+      translationLocales: locales.filter((locale) => locale !== defaultLocale),
+      defaultLocale,
+      translation,
+    }),
+    [locales, defaultLocale, translation],
   );
 };
 

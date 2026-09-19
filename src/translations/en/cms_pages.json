@@ -93,8 +93,7 @@
       "appearance": "Appearance",
       "pricing": "Pricing",
       "structure": "Tabs and links",
-      "content": "Content",
-      "translations": "Translations"
+      "content": "Content"
     },
     "identity": "Identity",
     "identity_hint": "What the application is called and where it answers.",
@@ -124,12 +123,6 @@
     "delete_body": "“{{name}}” will be deleted, and so will every release note and wiki page it holds. This cannot be undone.",
     "delete_confirm": "Delete it",
     "updated_at": "Last saved {{date}}",
-    "translations_title": "Translations",
-    "translations_description": "The fields above are the {{locale}} version. Anything left blank here falls back to it, so a partly translated page still renders.",
-    "translations_none": "This service publishes a single language, so there is nothing to translate.",
-    "translations_clear": "Clear {{locale}}",
-    "translations_source": "Original: {{text}}",
-    "translations_source_empty": "Nothing written above to translate yet.",
     "fields": {
       "name": "Name",
       "tagline": "Tagline",
@@ -185,8 +178,7 @@
       "release": "Release",
       "notes": "Notes",
       "links": "Links",
-      "builds": "Downloads",
-      "translations": "Translations"
+      "builds": "Downloads"
     },
     "release": "Release",
     "release_hint": "The version, when it shipped, and what to call it.",

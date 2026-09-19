@@ -10,6 +10,18 @@
 /* ── Service metadata ─────────────────────────────────────────────────────── */
 
 /** Service status: what this CMS is, which collections it manages and which languages it publishes. */
+/**
+ * What the service says about machine-translated drafts.
+ *
+ * Read rather than assumed for the same reason the locale list is: whether `POST /admin/translate`
+ * is offered at all, and how long a field it will accept, is the Worker's decision. A status call
+ * that failed leaves it absent, and the editor simply does not offer the button.
+ */
+export type TranslationSupport = {
+  ai: boolean;
+  max_source_chars: number;
+};
+
 export type CmsStatus = {
   message: string;
   collections: string[];
@@ -17,6 +29,7 @@ export type CmsStatus = {
   locales?: string[];
   /** The locale the entry's own columns hold; every other one is an override on top of it. */
   default_locale?: string;
+  translation?: TranslationSupport;
 };
 
 /**

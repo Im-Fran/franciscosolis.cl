@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import type {FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate, useParams} from "react-router-dom";
-import {Article, CloudArrowDown, FloppyDisk, LinkSimple, Tag, Translate, Trash} from "@phosphor-icons/react";
+import {Article, CloudArrowDown, FloppyDisk, LinkSimple, Tag, Trash} from "@phosphor-icons/react";
 import type {Icon} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
@@ -29,14 +29,13 @@ import {PageHeader} from "@/components/admin/page-header.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {LinksField} from "@/pages/cms/pages/components/links-field.tsx";
 import {ReleaseFilesPanel} from "@/pages/cms/pages/components/release-files-panel.tsx";
-import {TranslationsPanel} from "@/pages/cms/pages/components/translations-panel.tsx";
+import {TranslatableField} from "@/components/prose/translatable-field.tsx";
+import {TranslationsProvider} from "@/pages/cms/pages/components/translations-provider.tsx";
 
 const VERSION_MAX = 40;
 const TITLE_MAX = 200;
 /** Deliberately smaller than a page's: a changelog entry that long is a wiki page. */
 const BODY_MAX = 50000;
-
-const TRANSLATABLE = ["title", "body"] as const;
 
 /**
  * What the service accepts as a version. Free text rather than semver — this fronts a Minecraft
@@ -57,7 +56,7 @@ type Form = {
 
 type FieldName = keyof Form;
 
-type SectionValue = "release" | "notes" | "links" | "builds" | "translations";
+type SectionValue = "release" | "notes" | "links" | "builds";
 
 type Section = {
   value: SectionValue;
@@ -76,6 +75,10 @@ type Section = {
  *
  * `builds` holds no form field at all — the panel behind it registers and uploads on its own, which
  * is why it is the one section that is not offered while the release is still being created.
+ *
+ * There is deliberately no translations section: the translation of a field lives on that field, in
+ * a dialog opened from an icon inside its control (`TranslatableField`). A tab of its own was a
+ * second copy of this form, in another language, one tab away from the text it translates.
  */
 const SECTIONS: readonly Section[] = [
   {
@@ -87,12 +90,6 @@ const SECTIONS: readonly Section[] = [
   {value: "notes", label: "cms_pages:updates.sections.notes", icon: Article, fields: ["body"]},
   {value: "links", label: "cms_pages:updates.sections.links", icon: LinkSimple, fields: ["links"]},
   {value: "builds", label: "cms_pages:updates.sections.builds", icon: CloudArrowDown, fields: []},
-  {
-    value: "translations",
-    label: "cms_pages:updates.sections.translations",
-    icon: Translate,
-    fields: ["translations"],
-  },
 ];
 
 /** The first section holding something the form refused, so a failed save can open itself. */
@@ -351,6 +348,7 @@ export const UpdateEditor = () => {
   }
 
   return (
+    <TranslationsProvider>
     <>
       {header}
 
@@ -410,12 +408,18 @@ export const UpdateEditor = () => {
                   />
                 </Field>
 
-                <Field
+                <TranslatableField
                   label={t("cms_pages:fields.title")}
                   htmlFor="update-title"
                   error={errors.title}
                   hint={t("cms_pages:hints.update_title")}
                   className="sm:col-span-2"
+                  field="title"
+                  source={form.title}
+                  value={form.translations}
+                  onChange={(value) => setForm((current) => ({...current, translations: value}))}
+                  limit={TITLE_MAX}
+                  disabled={save.pending}
                 >
                   <Input
                     id="update-title"
@@ -426,7 +430,7 @@ export const UpdateEditor = () => {
                     autoComplete="off"
                     required
                   />
-                </Field>
+                </TranslatableField>
 
                 <Field
                   label={t("cms_pages:fields.status")}
@@ -451,17 +455,31 @@ export const UpdateEditor = () => {
 
           <TabsContent value="notes">
             <Panel title={t("cms_pages:updates.notes")} description={t("cms_pages:updates.notes_hint")}>
-              <Field label={t("cms_pages:fields.body")} htmlFor="update-body" error={errors.body}>
-                <MarkdownEditor
-                  id="update-body"
-                  value={form.body}
-                  onChange={(value) => set("body", value)}
-                  placeholder={t("cms_pages:updates.body_placeholder")}
-                  maxLength={BODY_MAX}
-                  rows={16}
-                  disabled={save.pending}
-                />
-              </Field>
+              <TranslatableField
+                label={t("cms_pages:fields.body")}
+                htmlFor="update-body"
+                error={errors.body}
+                field="body"
+                source={form.body}
+                value={form.translations}
+                onChange={(value) => setForm((current) => ({...current, translations: value}))}
+                limit={BODY_MAX}
+                disabled={save.pending}
+              >
+                {/* The Markdown editor has a toolbar of its own, so the icon goes in it. */}
+                {(action) => (
+                  <MarkdownEditor
+                    id="update-body"
+                    value={form.body}
+                    onChange={(value) => set("body", value)}
+                    placeholder={t("cms_pages:updates.body_placeholder")}
+                    maxLength={BODY_MAX}
+                    rows={16}
+                    disabled={save.pending}
+                    action={action}
+                  />
+                )}
+              </TranslatableField>
             </Panel>
           </TabsContent>
 
@@ -485,17 +503,6 @@ export const UpdateEditor = () => {
               */}
             {updateId && <ReleaseFilesPanel applicationId={id} updateId={updateId}/>}
           </TabsContent>
-
-          <TabsContent value="translations">
-            <TranslationsPanel
-              fields={TRANSLATABLE}
-              source={{title: form.title, body: form.body}}
-              value={form.translations}
-              onChange={(value) => setForm((current) => ({...current, translations: value}))}
-              limits={{title: TITLE_MAX, body: BODY_MAX}}
-              disabled={save.pending}
-            />
-          </TabsContent>
         </Tabs>
       </form>
 
@@ -510,5 +517,6 @@ export const UpdateEditor = () => {
         error={remove.error}
       />
     </>
+    </TranslationsProvider>
   );
 };

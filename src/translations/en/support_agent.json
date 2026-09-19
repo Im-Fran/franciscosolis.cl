@@ -157,12 +157,6 @@
     "retry": "Start again"
   },
   "editor": {
-    "translations_title": "Translations",
-    "translations_description": "The article's own fields are English. Anything left blank here falls back to them.",
-    "translations_source": "English",
-    "translations_source_empty": "Nothing written in English yet.",
-    "translations_none": "No translations yet.",
-    "translations_clear": "Clear this language",
     "fields": {
       "title": "Title",
       "summary": "Summary",

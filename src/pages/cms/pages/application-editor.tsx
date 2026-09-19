@@ -10,7 +10,6 @@ import {
   IdentificationCard,
   Palette,
   SquaresFour,
-  Translate,
   Trash,
 } from "@phosphor-icons/react";
 import type {Icon} from "@phosphor-icons/react";
@@ -43,7 +42,8 @@ import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {ApplicationNav} from "@/pages/cms/pages/components/application-nav.tsx";
 import {LinksField} from "@/pages/cms/pages/components/links-field.tsx";
 import {TabsField} from "@/pages/cms/pages/components/tabs-field.tsx";
-import {TranslationsPanel} from "@/pages/cms/pages/components/translations-panel.tsx";
+import {TranslatableField} from "@/components/prose/translatable-field.tsx";
+import {TranslationsProvider} from "@/pages/cms/pages/components/translations-provider.tsx";
 
 /** The API's own caps. Kept here so a field cannot accept what the service will refuse. */
 const NAME_MAX = 120;
@@ -52,8 +52,6 @@ const SUMMARY_MAX = 600;
 const BODY_MAX = 200000;
 
 /** The prose an application can be translated into another language. Nothing structural is here. */
-const TRANSLATABLE = ["name", "tagline", "summary", "overview_body", "contact_body"] as const;
-
 /** `#rgb` or `#rrggbb`; the service refuses any other CSS colour, and the page interpolates it. */
 const HEX_PATTERN = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
@@ -89,7 +87,7 @@ type Form = {
 
 type FieldName = keyof Form;
 
-type SectionValue = "general" | "appearance" | "pricing" | "structure" | "content" | "translations";
+type SectionValue = "general" | "appearance" | "pricing" | "structure" | "content";
 
 type Section = {
   value: SectionValue;
@@ -109,6 +107,10 @@ type Section = {
  *
  * Each one names its fields, which is what makes a split form safe to submit: a validation failure
  * behind a closed tab would otherwise be a save that refuses with no visible reason.
+ *
+ * There is deliberately no translations section: the translation of a field lives on that field, in
+ * a dialog opened from an icon inside its control (`TranslatableField`). A tab of its own was a
+ * second copy of this form, in another language, one tab away from the text it translates.
  */
 const SECTIONS: readonly Section[] = [
   {
@@ -140,12 +142,6 @@ const SECTIONS: readonly Section[] = [
     label: "cms_pages:editor.sections.content",
     icon: Article,
     fields: ["overviewBody", "contactBody"],
-  },
-  {
-    value: "translations",
-    label: "cms_pages:editor.sections.translations",
-    icon: Translate,
-    fields: ["translations"],
   },
 ];
 
@@ -512,6 +508,7 @@ export const ApplicationEditor = () => {
   }
 
   return (
+    <TranslationsProvider>
     <>
       {header}
       {id && <ApplicationNav id={id}/>}
@@ -540,11 +537,17 @@ export const ApplicationEditor = () => {
           <TabsContent value="general">
             <Panel title={t("cms_pages:editor.identity")} description={t("cms_pages:editor.identity_hint")}>
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field
+                <TranslatableField
                   label={t("cms_pages:fields.name")}
                   htmlFor="application-name"
                   error={errors.name}
                   hint={t("cms_pages:hints.name")}
+                  field="name"
+                  source={form.name}
+                  value={form.translations}
+                  onChange={(value) => setForm((current) => ({...current, translations: value}))}
+                  limit={NAME_MAX}
+                  disabled={save.pending}
                 >
                   <Input
                     id="application-name"
@@ -555,7 +558,7 @@ export const ApplicationEditor = () => {
                     autoComplete="off"
                     required
                   />
-                </Field>
+                </TranslatableField>
 
                 <Field
                   label={t("cms_pages:fields.slug")}
@@ -578,12 +581,18 @@ export const ApplicationEditor = () => {
                   />
                 </Field>
 
-                <Field
+                <TranslatableField
                   label={t("cms_pages:fields.tagline")}
                   htmlFor="application-tagline"
                   error={errors.tagline}
                   hint={t("cms_pages:hints.tagline")}
                   className="sm:col-span-2"
+                  field="tagline"
+                  source={form.tagline}
+                  value={form.translations}
+                  onChange={(value) => setForm((current) => ({...current, translations: value}))}
+                  limit={TAGLINE_MAX}
+                  disabled={save.pending}
                 >
                   <Input
                     id="application-tagline"
@@ -593,14 +602,20 @@ export const ApplicationEditor = () => {
                     aria-invalid={Boolean(errors.tagline)}
                     autoComplete="off"
                   />
-                </Field>
+                </TranslatableField>
 
-                <Field
+                <TranslatableField
                   label={t("cms_pages:fields.summary")}
                   htmlFor="application-summary"
                   error={errors.summary}
                   hint={t("cms_pages:hints.summary", {count: form.summary.length, max: SUMMARY_MAX})}
                   className="sm:col-span-2"
+                  field="summary"
+                  source={form.summary}
+                  value={form.translations}
+                  onChange={(value) => setForm((current) => ({...current, translations: value}))}
+                  limit={SUMMARY_MAX}
+                  disabled={save.pending}
                 >
                   <Textarea
                     id="application-summary"
@@ -611,7 +626,7 @@ export const ApplicationEditor = () => {
                     aria-invalid={Boolean(errors.summary)}
                     className="resize-y"
                   />
-                </Field>
+                </TranslatableField>
 
                 <Field
                   label={t("cms_pages:fields.status")}
@@ -824,57 +839,59 @@ export const ApplicationEditor = () => {
 
           <TabsContent value="content">
             <Panel title={t("cms_pages:editor.overview")} description={t("cms_pages:editor.overview_hint")}>
-              <Field label={t("cms_pages:fields.overview_body")} htmlFor="application-overview">
-                <MarkdownEditor
-                  id="application-overview"
-                  value={form.overviewBody}
-                  onChange={(value) => set("overviewBody", value)}
-                  placeholder={t("cms_pages:editor.overview_placeholder")}
-                  maxLength={BODY_MAX}
-                  rows={24}
-                  disabled={save.pending}
-                />
-              </Field>
+              <TranslatableField
+                label={t("cms_pages:fields.overview_body")}
+                htmlFor="application-overview"
+                field="overview_body"
+                source={form.overviewBody}
+                value={form.translations}
+                onChange={(value) => setForm((current) => ({...current, translations: value}))}
+                limit={BODY_MAX}
+                disabled={save.pending}
+              >
+                {/* The Markdown editor has a toolbar of its own, so the icon goes in it. */}
+                {(action) => (
+                  <MarkdownEditor
+                    id="application-overview"
+                    value={form.overviewBody}
+                    onChange={(value) => set("overviewBody", value)}
+                    placeholder={t("cms_pages:editor.overview_placeholder")}
+                    maxLength={BODY_MAX}
+                    rows={24}
+                    disabled={save.pending}
+                    action={action}
+                  />
+                )}
+              </TranslatableField>
             </Panel>
 
             {/* Shown whether or not the Contact tab is on: writing the text is what usually comes
                 before turning the tab on, and hiding the field would make that order impossible. */}
             <Panel title={t("cms_pages:editor.contact")} description={t("cms_pages:editor.contact_hint")}>
-              <Field label={t("cms_pages:fields.contact_body")} htmlFor="application-contact">
-                <MarkdownEditor
-                  id="application-contact"
-                  value={form.contactBody}
-                  onChange={(value) => set("contactBody", value)}
-                  placeholder={t("cms_pages:editor.contact_placeholder")}
-                  maxLength={BODY_MAX}
-                  rows={14}
-                  disabled={save.pending}
-                />
-              </Field>
+              <TranslatableField
+                label={t("cms_pages:fields.contact_body")}
+                htmlFor="application-contact"
+                field="contact_body"
+                source={form.contactBody}
+                value={form.translations}
+                onChange={(value) => setForm((current) => ({...current, translations: value}))}
+                limit={BODY_MAX}
+                disabled={save.pending}
+              >
+                {(action) => (
+                  <MarkdownEditor
+                    id="application-contact"
+                    value={form.contactBody}
+                    onChange={(value) => set("contactBody", value)}
+                    placeholder={t("cms_pages:editor.contact_placeholder")}
+                    maxLength={BODY_MAX}
+                    rows={14}
+                    disabled={save.pending}
+                    action={action}
+                  />
+                )}
+              </TranslatableField>
             </Panel>
-          </TabsContent>
-
-          <TabsContent value="translations">
-            <TranslationsPanel
-              fields={TRANSLATABLE}
-              source={{
-                name: form.name,
-                tagline: form.tagline,
-                summary: form.summary,
-                overview_body: form.overviewBody,
-                contact_body: form.contactBody,
-              }}
-              value={form.translations}
-              onChange={(value) => setForm((current) => ({...current, translations: value}))}
-              limits={{
-                name: NAME_MAX,
-                tagline: TAGLINE_MAX,
-                summary: SUMMARY_MAX,
-                overview_body: BODY_MAX,
-                contact_body: BODY_MAX,
-              }}
-              disabled={save.pending}
-            />
           </TabsContent>
         </Tabs>
 
@@ -907,5 +924,6 @@ export const ApplicationEditor = () => {
         error={remove.error}
       />
     </>
+    </TranslationsProvider>
   );
 };

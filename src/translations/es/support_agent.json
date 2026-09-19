@@ -157,12 +157,6 @@
     "retry": "Empezar de nuevo"
   },
   "editor": {
-    "translations_title": "Traducciones",
-    "translations_description": "Los campos propios del artículo están en inglés. Lo que dejes en blanco aquí vuelve a ellos.",
-    "translations_source": "Inglés",
-    "translations_source_empty": "Todavía no hay nada escrito en inglés.",
-    "translations_none": "Todavía no hay traducciones.",
-    "translations_clear": "Vaciar este idioma",
     "fields": {
       "title": "Título",
       "summary": "Resumen",

@@ -104,12 +104,6 @@
     "data_description": "El payload propio de {{name}}, guardado como JSON. Cada colección valida su propia forma, así que un campo que no conoce se rechaza en vez de guardarse.",
     "data": "Datos (JSON)",
     "delete_title": "¿Eliminar esta entrada?",
-    "delete_body": "«{{title}}» se eliminará para siempre y no hay vuelta atrás. Si puede volver, mejor déjala en Archivado: eso la esconde del sitio sin perder el texto.",
-    "translations_title": "Traducciones",
-    "translations_description": "Los campos de arriba son la versión en {{locale}}. Lo que dejes en blanco aquí vuelve a ella, así que una entrada traducida a medias se sigue mostrando.",
-    "translations_none": "Este servicio publica un solo idioma, así que no hay nada que traducir.",
-    "translations_clear": "Vaciar {{locale}}",
-    "translations_source": "Original: {{text}}",
-    "translations_source_empty": "Todavía no hay nada escrito arriba que traducir."
+    "delete_body": "«{{title}}» se eliminará para siempre y no hay vuelta atrás. Si puede volver, mejor déjala en Archivado: eso la esconde del sitio sin perder el texto."
   }
 }
