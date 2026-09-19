@@ -38,7 +38,6 @@
     "updated": "Actualizada el {{date}}"
   },
   "contact": {
-    "empty": "Todavía no se han publicado datos de contacto.",
-    "links_title": "Dónde encontrarnos"
+    "empty": "Todavía no se han publicado datos de contacto."
   }
 }
