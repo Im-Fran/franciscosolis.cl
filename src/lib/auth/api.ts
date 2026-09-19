@@ -13,6 +13,8 @@ import type {
   ApplicationUpdate,
   AuditEntry,
   AuditFilters,
+  AuthSettings,
+  AuthSettingsUpdate,
   AvatarUpload,
   CreatedApplication,
   Identity,
@@ -167,6 +169,15 @@ export const createAuthApi = (request: RequestFn) => ({
       request<void>(`/admin/roles/${id(roleId)}/permissions`, {method: "POST", json: {permission_slug: slug}}),
     detachPermission: (roleId: string, slug: string) =>
       request<void>(`/admin/roles/${id(roleId)}/permissions/${id(slug)}`, {method: "DELETE"}),
+
+    /**
+     * The authentication settings — today, whether registration is open. Read behind
+     * `settings:read` and written behind `settings:write`, and the write answers the whole set
+     * rather than the keys it changed, so a screen never has to merge two halves.
+     */
+    settings: (signal?: AbortSignal) => request<AuthSettings>("/admin/settings", {signal}),
+    updateSettings: (changes: AuthSettingsUpdate) =>
+      request<AuthSettings>("/admin/settings", {method: "PATCH", json: changes}),
 
     permissions: (signal?: AbortSignal) => request<Permission[]>("/admin/permissions", {signal}),
     createPermission: (permission: NewPermission) =>

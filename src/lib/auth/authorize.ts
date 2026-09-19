@@ -25,10 +25,15 @@ export const loadAuthorizationRequest = (handle: string, signal?: AbortSignal) =
 /**
  * Emails a sign-in link that resumes this parked request. Answers the same way whether or not the
  * address can sign in, so this screen cannot be used to discover which addresses have an account.
+ *
+ * `turnstileToken` is the widget's answer, and it is only sent where the parked request said a
+ * check is required — a deployment with no Turnstile keypair has no widget to solve and asks for
+ * nothing. The service verifies it against Cloudflare before it writes or sends anything, so a
+ * refused token costs exactly one round trip and leaves no trace.
  */
-export const requestParkedMagicLink = (handle: string, email: string) =>
+export const requestParkedMagicLink = (handle: string, email: string, turnstileToken?: string | null) =>
   webHttp.request<MagicLinkAccepted>(`${parked(handle)}/magic-link`, {
     auth: false,
     method: "POST",
-    json: {email},
+    json: turnstileToken ? {email, turnstile_token: turnstileToken} : {email},
   });

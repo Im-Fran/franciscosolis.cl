@@ -95,6 +95,22 @@ registered redirect URI.
 Its two `fetch` endpoints are cross-origin by construction; the auth service allows them from any
 origin an active client registered (`CORS_PARKED_REQUEST` in its `middleware/cors.ts`).
 
+Two fields on the parked request shape what the screen offers, and both come from the service
+rather than from anything this repository configures:
+
+- **`turnstile`** — when the deployment has a Cloudflare Turnstile key pair, the magic-link form
+  carries the widget and the submit button stays disabled until it is solved. The token rides the
+  `POST` and the service verifies it against Cloudflare before it writes or sends anything, so this
+  is a courtesy rather than the check itself: submitting without one earns a `400`. A deployment
+  with no key pair says `required: false`, and then the widget's script is never even loaded — the
+  fallback for "no bot check configured" is no third-party request at all. `components/auth/turnstile.tsx`
+  owns the widget; a token is single-use, so a refused submit resets it before the next attempt.
+- **`registration_open`** — whether an address nobody invited would get an account here. It only
+  changes the footer: with registration closed the screen says sign-up is invitation only, and with
+  it open it says anybody with a working address can create one. The answer to a submitted address
+  stays deliberately identical either way, which is what keeps this screen from being a way to ask
+  whether an address has an account.
+
 ### Already signed in: authorize rather than authenticate
 
 The auth service keeps a session of its own for the browser — a cookie on `api.franciscosolis.cl`,
@@ -301,6 +317,7 @@ route and every record has an address, so a filtered list or one account is a UR
 | `/auth/admin/roles`, `/roles/new`, `/roles/:id` | Roles, global and per application |
 | `/auth/admin/permissions` | The permission catalog |
 | `/auth/admin/audit` | The authentication audit trail |
+| `/auth/admin/settings` | The service's own settings — today, whether registration is open |
 
 The `?tab=` links the previous single-screen console used are forwarded to the matching route, so a
 bookmark still lands where it meant to.
@@ -311,6 +328,16 @@ queue renders that. `avatars:read` opens the screen and `avatars:review` is what
 need, so an account can be given the queue to look at without being given the decision. A user's
 page links into it filtered by `?user_id=`, rather than carrying a review panel of its own — one
 place to make the decision is one place to keep in step with the service.
+
+The settings section is one checkbox, and it writes straight through rather than sitting behind a
+Save button: one box, one `PATCH`, and the service answers with the whole resulting set, which is
+what the screen then shows. So what is ticked is always what the service holds rather than what this
+browser last clicked, and a refused write reverts to the answer instead of to an optimistic guess.
+`settings:read` opens the screen and `settings:write` is what the box needs, the same split the
+avatar queue uses. What the copy has to be honest about is the blast radius: opening registration
+only changes what happens to an address that has *no* account yet — invitations keep working either
+way, nobody's account is touched, and closing it again refuses the next sign-up, including a
+sign-in link emailed while it was open.
 
 ### Signed in is not admitted
 
@@ -366,7 +393,9 @@ src/lib/auth/
   authorize.ts      the parked-request endpoints behind /apps/auth — no client, no session
   admin-context.ts / admin-provider.tsx   the one /admin/me answer the console is gated on,
                     plus the `can(permission)` the navigation is built from
-src/components/auth/ the sign-in and callback panels, shared by every application on this site
+src/components/auth/ the sign-in and callback panels, shared by every application on this site;
+                     turnstile.tsx is the bot-check widget the hosted screen renders when the
+                     service asks for one — the only third-party script this application loads
 src/pages/auth/      the screens, split out of the main bundle and fetched on demand;
                      authorize.tsx is the hosted screen and belongs to no application here
   account/           the account: account-layout.tsx holds the shell and the tab column,
@@ -376,8 +405,8 @@ src/pages/auth/      the screens, split out of the main bundle and fetched on de
     signature/       the corporate email signature: the HTML builder and the form that drives it
   admin/             the console: components/ holds its shell, navigation, gate and no-access
                      screen; overview.tsx, users/, sessions/, invitations/, applications/,
-                     roles/, permissions/, avatars/ and audit/ are one section each, one chunk
-                     each
+                     roles/, permissions/, avatars/, audit/ and settings/ are one section each,
+                     one chunk each
 ```
 
 The console is built from `src/components/admin/` and `src/lib/admin/` — the data table, paging,

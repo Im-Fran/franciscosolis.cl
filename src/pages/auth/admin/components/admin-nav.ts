@@ -7,6 +7,7 @@ import {
   Key,
   Monitor,
   ShieldCheck,
+  SlidersHorizontal,
   Users,
 } from "@phosphor-icons/react";
 import type {Icon} from "@phosphor-icons/react";
@@ -69,6 +70,10 @@ const SECTIONS: NavSection[] = [
   {
     title: "nav.activity",
     items: [{to: adminRoute.audit, label: "nav.audit", icon: ClockCounterClockwise, permission: "audit:read"}],
+  },
+  {
+    title: "nav.service",
+    items: [{to: adminRoute.settings, label: "nav.settings", icon: SlidersHorizontal, permission: "settings:read"}],
   },
 ];
 
