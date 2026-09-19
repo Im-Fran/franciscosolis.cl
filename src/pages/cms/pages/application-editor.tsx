@@ -2,12 +2,24 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import type {FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate, useParams} from "react-router-dom";
-import {ArrowSquareOut, FloppyDisk, Trash} from "@phosphor-icons/react";
+import {
+  Article,
+  ArrowSquareOut,
+  CurrencyDollar,
+  FloppyDisk,
+  IdentificationCard,
+  Palette,
+  SquaresFour,
+  Translate,
+  Trash,
+} from "@phosphor-icons/react";
+import type {Icon} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input, Select, Textarea} from "@/components/ui/input.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
 import {formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {SLUG_PATTERN, orNull, slugify} from "@/lib/admin/format.ts";
@@ -76,6 +88,70 @@ type Form = {
 };
 
 type FieldName = keyof Form;
+
+type SectionValue = "general" | "appearance" | "pricing" | "structure" | "content" | "translations";
+
+type Section = {
+  value: SectionValue;
+  label: string;
+  icon: Icon;
+  /** The form fields this section holds. It is what lights a tab up when one of them is refused. */
+  fields: readonly FieldName[];
+};
+
+/**
+ * The editor's sections, in the order a page is usually filled in.
+ *
+ * They used to be one column of panels, which made editing a published page a scroll past
+ * everything that was already right to reach the one field that was not. They are tabs now, beside
+ * the content rather than above it — and tabs of this screen rather than routes, because a section
+ * per route would throw away whatever is typed on the way between two of them.
+ *
+ * Each one names its fields, which is what makes a split form safe to submit: a validation failure
+ * behind a closed tab would otherwise be a save that refuses with no visible reason.
+ */
+const SECTIONS: readonly Section[] = [
+  {
+    value: "general",
+    label: "cms_pages:editor.sections.general",
+    icon: IdentificationCard,
+    fields: ["name", "slug", "tagline", "summary", "status", "featured"],
+  },
+  {
+    value: "appearance",
+    label: "cms_pages:editor.sections.appearance",
+    icon: Palette,
+    fields: ["bannerImageUrl", "iconImageUrl", "accentColor"],
+  },
+  {
+    value: "pricing",
+    label: "cms_pages:editor.sections.pricing",
+    icon: CurrencyDollar,
+    fields: ["pricingMode", "priceAmount", "suggestedAmount"],
+  },
+  {
+    value: "structure",
+    label: "cms_pages:editor.sections.structure",
+    icon: SquaresFour,
+    fields: ["tabs", "links"],
+  },
+  {
+    value: "content",
+    label: "cms_pages:editor.sections.content",
+    icon: Article,
+    fields: ["overviewBody", "contactBody"],
+  },
+  {
+    value: "translations",
+    label: "cms_pages:editor.sections.translations",
+    icon: Translate,
+    fields: ["translations"],
+  },
+];
+
+/** The first section holding something the form refused, so a failed save can open itself. */
+const firstInvalidSection = (found: Partial<Record<FieldName, string>>) =>
+  SECTIONS.find((section) => section.fields.some((field) => found[field]))?.value;
 
 const EMPTY: Form = {
   name: "",
@@ -152,6 +228,7 @@ export const ApplicationEditor = () => {
   /* What the server last confirmed — the yardstick for "dirty" and for the PATCH's diff. */
   const [baseline, setBaseline] = useState<Form>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
+  const [section, setSection] = useState<SectionValue>("general");
   const [slugTouched, setSlugTouched] = useState(false);
   const [askPublish, setAskPublish] = useState(false);
   const [askDelete, setAskDelete] = useState(false);
@@ -196,6 +273,15 @@ export const ApplicationEditor = () => {
     () => (Object.keys(form) as FieldName[]).some((key) => !sameValue(key)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [form, baseline],
+  );
+
+  /* Marked on the tab itself: the field saying why is inside a section that may not be open. */
+  const invalidSections = useMemo(
+    () =>
+      new Set(
+        SECTIONS.filter((entry) => entry.fields.some((field) => errors[field])).map((entry) => entry.value),
+      ),
+    [errors],
   );
 
   /* The browser's own "leave site?" prompt is the only guard that survives a tab close. */
@@ -340,7 +426,12 @@ export const ApplicationEditor = () => {
     event.preventDefault();
     const found = validate();
     setErrors(found);
-    if (Object.keys(found).length > 0) return;
+    if (Object.keys(found).length > 0) {
+      /* Opened rather than only marked: the message is under the field, and the field is in here. */
+      const target = firstInvalidSection(found);
+      if (target) setSection(target);
+      return;
+    }
 
     /* Only the transition into `published` is worth a question; re-saving a live page is not. */
     if (form.status === "published" && baseline.status !== "published") {
@@ -432,331 +523,360 @@ export const ApplicationEditor = () => {
           </Alert>
         )}
 
-        <Panel title={t("cms_pages:editor.identity")} description={t("cms_pages:editor.identity_hint")}>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field
-              label={t("cms_pages:fields.name")}
-              htmlFor="application-name"
-              error={errors.name}
-              hint={t("cms_pages:hints.name")}
-            >
-              <Input
-                id="application-name"
-                value={form.name}
-                onChange={(event) => onNameChange(event.target.value)}
-                maxLength={NAME_MAX}
-                aria-invalid={Boolean(errors.name)}
-                autoComplete="off"
-                required
-              />
-            </Field>
-
-            <Field
-              label={t("cms_pages:fields.slug")}
-              htmlFor="application-slug"
-              error={errors.slug}
-              hint={t("cms_pages:hints.slug")}
-            >
-              <Input
-                id="application-slug"
-                value={form.slug}
-                onChange={(event) => {
-                  setSlugTouched(true);
-                  set("slug", event.target.value);
-                }}
-                placeholder="openbattery"
-                maxLength={80}
-                aria-invalid={Boolean(errors.slug)}
-                autoComplete="off"
-                className="font-mono"
-              />
-            </Field>
-
-            <Field
-              label={t("cms_pages:fields.tagline")}
-              htmlFor="application-tagline"
-              error={errors.tagline}
-              hint={t("cms_pages:hints.tagline")}
-              className="sm:col-span-2"
-            >
-              <Input
-                id="application-tagline"
-                value={form.tagline}
-                onChange={(event) => set("tagline", event.target.value)}
-                maxLength={TAGLINE_MAX}
-                aria-invalid={Boolean(errors.tagline)}
-                autoComplete="off"
-              />
-            </Field>
-
-            <Field
-              label={t("cms_pages:fields.summary")}
-              htmlFor="application-summary"
-              error={errors.summary}
-              hint={t("cms_pages:hints.summary", {count: form.summary.length, max: SUMMARY_MAX})}
-              className="sm:col-span-2"
-            >
-              <Textarea
-                id="application-summary"
-                value={form.summary}
-                onChange={(event) => set("summary", event.target.value)}
-                rows={3}
-                maxLength={SUMMARY_MAX}
-                aria-invalid={Boolean(errors.summary)}
-                className="resize-y"
-              />
-            </Field>
-
-            <Field
-              label={t("cms_pages:fields.status")}
-              htmlFor="application-status"
-              hint={t(`cms_pages:editor.status_hint.${form.status}`)}
-            >
-              <Select
-                id="application-status"
-                value={form.status}
-                onChange={(event) => set("status", asStatus(event.target.value))}
+        <Tabs value={section} onValueChange={(value) => setSection(value as SectionValue)}>
+          <TabsList aria-label={t("cms_pages:editor.sections.label")}>
+            {SECTIONS.map(({value, label, icon: SectionIcon}) => (
+              <TabsTrigger
+                key={value}
+                value={value}
+                icon={<SectionIcon size={16}/>}
+                invalid={invalidSections.has(value)}
               >
-                {CONTENT_STATUSES.map((status) => (
-                  <option key={status} value={status}>
-                    {t(`admin:status.${status}`)}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+                {t(label)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-            <Field
-              label={t("cms_pages:fields.featured")}
-              htmlFor="application-featured"
-              hint={t("cms_pages:hints.featured")}
-            >
-              <label className="flex h-11 items-center gap-2.5 text-sm text-neutral-300">
-                <input
-                  id="application-featured"
-                  type="checkbox"
-                  checked={form.featured}
-                  onChange={(event) => set("featured", event.target.checked)}
-                  className="size-4 accent-[var(--color-accent)]"
-                />
-                {t("cms_pages:fields.featured_label")}
-              </label>
-            </Field>
-          </div>
-        </Panel>
+          <TabsContent value="general">
+            <Panel title={t("cms_pages:editor.identity")} description={t("cms_pages:editor.identity_hint")}>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field
+                  label={t("cms_pages:fields.name")}
+                  htmlFor="application-name"
+                  error={errors.name}
+                  hint={t("cms_pages:hints.name")}
+                >
+                  <Input
+                    id="application-name"
+                    value={form.name}
+                    onChange={(event) => onNameChange(event.target.value)}
+                    maxLength={NAME_MAX}
+                    aria-invalid={Boolean(errors.name)}
+                    autoComplete="off"
+                    required
+                  />
+                </Field>
 
-        <Panel title={t("cms_pages:editor.appearance")} description={t("cms_pages:editor.appearance_hint")}>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field
-              label={t("cms_pages:fields.banner")}
-              htmlFor="application-banner"
-              hint={t("cms_pages:hints.banner")}
-              className="sm:col-span-2"
-            >
-              <Input
-                id="application-banner"
-                type="url"
-                value={form.bannerImageUrl}
-                onChange={(event) => set("bannerImageUrl", event.target.value)}
-                placeholder="https://"
-                className="font-mono text-[13px]"
-              />
-            </Field>
+                <Field
+                  label={t("cms_pages:fields.slug")}
+                  htmlFor="application-slug"
+                  error={errors.slug}
+                  hint={t("cms_pages:hints.slug")}
+                >
+                  <Input
+                    id="application-slug"
+                    value={form.slug}
+                    onChange={(event) => {
+                      setSlugTouched(true);
+                      set("slug", event.target.value);
+                    }}
+                    placeholder="openbattery"
+                    maxLength={80}
+                    aria-invalid={Boolean(errors.slug)}
+                    autoComplete="off"
+                    className="font-mono"
+                  />
+                </Field>
 
-            {/* Shown as soon as there is a URL: a broken banner is far easier to notice than to
-                debug from the public page, and this is the only place it is cheap to check. */}
-            {form.bannerImageUrl.trim() && (
-              <div className="sm:col-span-2">
-                <img
-                  src={form.bannerImageUrl}
-                  alt=""
-                  className="max-h-48 w-full rounded-[var(--radius-md)] border border-neutral-800 object-contain"
-                />
+                <Field
+                  label={t("cms_pages:fields.tagline")}
+                  htmlFor="application-tagline"
+                  error={errors.tagline}
+                  hint={t("cms_pages:hints.tagline")}
+                  className="sm:col-span-2"
+                >
+                  <Input
+                    id="application-tagline"
+                    value={form.tagline}
+                    onChange={(event) => set("tagline", event.target.value)}
+                    maxLength={TAGLINE_MAX}
+                    aria-invalid={Boolean(errors.tagline)}
+                    autoComplete="off"
+                  />
+                </Field>
+
+                <Field
+                  label={t("cms_pages:fields.summary")}
+                  htmlFor="application-summary"
+                  error={errors.summary}
+                  hint={t("cms_pages:hints.summary", {count: form.summary.length, max: SUMMARY_MAX})}
+                  className="sm:col-span-2"
+                >
+                  <Textarea
+                    id="application-summary"
+                    value={form.summary}
+                    onChange={(event) => set("summary", event.target.value)}
+                    rows={3}
+                    maxLength={SUMMARY_MAX}
+                    aria-invalid={Boolean(errors.summary)}
+                    className="resize-y"
+                  />
+                </Field>
+
+                <Field
+                  label={t("cms_pages:fields.status")}
+                  htmlFor="application-status"
+                  hint={t(`cms_pages:editor.status_hint.${form.status}`)}
+                >
+                  <Select
+                    id="application-status"
+                    value={form.status}
+                    onChange={(event) => set("status", asStatus(event.target.value))}
+                  >
+                    {CONTENT_STATUSES.map((status) => (
+                      <option key={status} value={status}>
+                        {t(`admin:status.${status}`)}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+
+                <Field
+                  label={t("cms_pages:fields.featured")}
+                  htmlFor="application-featured"
+                  hint={t("cms_pages:hints.featured")}
+                >
+                  <label className="flex h-11 items-center gap-2.5 text-sm text-neutral-300">
+                    <input
+                      id="application-featured"
+                      type="checkbox"
+                      checked={form.featured}
+                      onChange={(event) => set("featured", event.target.checked)}
+                      className="size-4 accent-[var(--color-accent)]"
+                    />
+                    {t("cms_pages:fields.featured_label")}
+                  </label>
+                </Field>
               </div>
-            )}
+            </Panel>
+          </TabsContent>
 
-            <Field label={t("cms_pages:fields.icon")} htmlFor="application-icon" hint={t("cms_pages:hints.icon")}>
-              <Input
-                id="application-icon"
-                type="url"
-                value={form.iconImageUrl}
-                onChange={(event) => set("iconImageUrl", event.target.value)}
-                placeholder="https://"
-                className="font-mono text-[13px]"
-              />
-            </Field>
+          <TabsContent value="appearance">
+            <Panel title={t("cms_pages:editor.appearance")} description={t("cms_pages:editor.appearance_hint")}>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field
+                  label={t("cms_pages:fields.banner")}
+                  htmlFor="application-banner"
+                  hint={t("cms_pages:hints.banner")}
+                  className="sm:col-span-2"
+                >
+                  <Input
+                    id="application-banner"
+                    type="url"
+                    value={form.bannerImageUrl}
+                    onChange={(event) => set("bannerImageUrl", event.target.value)}
+                    placeholder="https://"
+                    className="font-mono text-[13px]"
+                  />
+                </Field>
 
-            <Field
-              label={t("cms_pages:fields.accent")}
-              htmlFor="application-accent"
-              error={errors.accentColor}
-              hint={t("cms_pages:hints.accent")}
-            >
-              <div className="flex items-center gap-2">
-                <Input
-                  id="application-accent"
-                  value={form.accentColor}
-                  onChange={(event) => set("accentColor", event.target.value)}
-                  placeholder="#A855F7"
-                  maxLength={7}
-                  aria-invalid={Boolean(errors.accentColor)}
-                  className="font-mono"
-                />
-                <span
-                  aria-hidden="true"
-                  className="size-11 shrink-0 rounded-[var(--radius-md)] border border-neutral-800"
-                  style={{background: HEX_PATTERN.test(form.accentColor.trim()) ? form.accentColor.trim() : undefined}}
-                />
+                {/* Shown as soon as there is a URL: a broken banner is far easier to notice than to
+                    debug from the public page, and this is the only place it is cheap to check. */}
+                {form.bannerImageUrl.trim() && (
+                  <div className="sm:col-span-2">
+                    <img
+                      src={form.bannerImageUrl}
+                      alt=""
+                      className="max-h-48 w-full rounded-[var(--radius-md)] border border-neutral-800 object-contain"
+                    />
+                  </div>
+                )}
+
+                <Field label={t("cms_pages:fields.icon")} htmlFor="application-icon" hint={t("cms_pages:hints.icon")}>
+                  <Input
+                    id="application-icon"
+                    type="url"
+                    value={form.iconImageUrl}
+                    onChange={(event) => set("iconImageUrl", event.target.value)}
+                    placeholder="https://"
+                    className="font-mono text-[13px]"
+                  />
+                </Field>
+
+                <Field
+                  label={t("cms_pages:fields.accent")}
+                  htmlFor="application-accent"
+                  error={errors.accentColor}
+                  hint={t("cms_pages:hints.accent")}
+                >
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="application-accent"
+                      value={form.accentColor}
+                      onChange={(event) => set("accentColor", event.target.value)}
+                      placeholder="#A855F7"
+                      maxLength={7}
+                      aria-invalid={Boolean(errors.accentColor)}
+                      className="font-mono"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="size-11 shrink-0 rounded-[var(--radius-md)] border border-neutral-800"
+                      style={{
+                        background: HEX_PATTERN.test(form.accentColor.trim()) ? form.accentColor.trim() : undefined,
+                      }}
+                    />
+                  </div>
+                </Field>
               </div>
-            </Field>
-          </div>
-        </Panel>
+            </Panel>
+          </TabsContent>
 
-        <Panel title={t("cms_pages:editor.pricing")} description={t("cms_pages:editor.pricing_hint")}>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field
-              label={t("cms_pages:fields.pricing_mode")}
-              htmlFor="application-pricing-mode"
-              hint={t(`cms_pages:hints.pricing_${form.pricingMode}`)}
-              className="sm:col-span-2"
-            >
-              <Select
-                id="application-pricing-mode"
-                value={form.pricingMode}
-                onChange={(event) => set("pricingMode", event.target.value as PricingMode)}
-              >
-                {PRICING_MODES.map((mode) => (
-                  <option key={mode} value={mode}>
-                    {t(`cms_pages:pricing_modes.${mode}`)}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+          <TabsContent value="pricing">
+            <Panel title={t("cms_pages:editor.pricing")} description={t("cms_pages:editor.pricing_hint")}>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field
+                  label={t("cms_pages:fields.pricing_mode")}
+                  htmlFor="application-pricing-mode"
+                  hint={t(`cms_pages:hints.pricing_${form.pricingMode}`)}
+                  className="sm:col-span-2"
+                >
+                  <Select
+                    id="application-pricing-mode"
+                    value={form.pricingMode}
+                    onChange={(event) => set("pricingMode", event.target.value as PricingMode)}
+                  >
+                    {PRICING_MODES.map((mode) => (
+                      <option key={mode} value={mode}>
+                        {t(`cms_pages:pricing_modes.${mode}`)}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
 
-            {/*
-              * One amount field, and only the one this mode uses. A screen showing both would be a
-              * screen where the figure that is *not* in force is still sitting there looking edited.
-              */}
-            {form.pricingMode === "paid" && (
-              <Field
-                label={t("cms_pages:fields.price_amount")}
-                htmlFor="application-price"
-                error={errors.priceAmount}
-                hint={t("cms_pages:hints.price_amount")}
-              >
-                <Input
-                  id="application-price"
-                  type="number"
-                  inputMode="numeric"
-                  min={AMOUNT_MIN}
-                  max={AMOUNT_MAX}
-                  step={100}
-                  value={form.priceAmount}
-                  onChange={(event) => set("priceAmount", event.target.value)}
-                  aria-invalid={Boolean(errors.priceAmount)}
-                  className="font-mono"
+                {/*
+                  * One amount field, and only the one this mode uses. A screen showing both would be a
+                  * screen where the figure that is *not* in force is still sitting there looking edited.
+                  */}
+                {form.pricingMode === "paid" && (
+                  <Field
+                    label={t("cms_pages:fields.price_amount")}
+                    htmlFor="application-price"
+                    error={errors.priceAmount}
+                    hint={t("cms_pages:hints.price_amount")}
+                  >
+                    <Input
+                      id="application-price"
+                      type="number"
+                      inputMode="numeric"
+                      min={AMOUNT_MIN}
+                      max={AMOUNT_MAX}
+                      step={100}
+                      value={form.priceAmount}
+                      onChange={(event) => set("priceAmount", event.target.value)}
+                      aria-invalid={Boolean(errors.priceAmount)}
+                      className="font-mono"
+                    />
+                  </Field>
+                )}
+
+                {form.pricingMode === "donation" && (
+                  <Field
+                    label={t("cms_pages:fields.suggested_amount")}
+                    htmlFor="application-suggested"
+                    error={errors.suggestedAmount}
+                    hint={t("cms_pages:hints.suggested_amount")}
+                  >
+                    <Input
+                      id="application-suggested"
+                      type="number"
+                      inputMode="numeric"
+                      min={AMOUNT_MIN}
+                      max={AMOUNT_MAX}
+                      step={100}
+                      value={form.suggestedAmount}
+                      onChange={(event) => set("suggestedAmount", event.target.value)}
+                      aria-invalid={Boolean(errors.suggestedAmount)}
+                      className="font-mono"
+                    />
+                  </Field>
+                )}
+
+                {form.pricingMode !== "free" && (
+                  <p className="text-[13px] leading-relaxed text-neutral-400 sm:col-span-2">
+                    {t("cms_pages:editor.pricing_downloads_hint")}
+                  </p>
+                )}
+              </div>
+            </Panel>
+          </TabsContent>
+
+          <TabsContent value="structure">
+            <Panel title={t("cms_pages:editor.tabs")} description={t("cms_pages:editor.tabs_hint")}>
+              <TabsField
+                available={availableTabs}
+                value={form.tabs}
+                onChange={(tabs) => set("tabs", tabs)}
+                disabled={save.pending}
+              />
+            </Panel>
+
+            <Panel title={t("cms_pages:editor.links")} description={t("cms_pages:editor.links_hint")}>
+              {errors.links && <p className="mb-3 text-xs text-red-400">{errors.links}</p>}
+              <LinksField
+                idPrefix="application-link"
+                value={form.links}
+                onChange={(links) => set("links", links)}
+                disabled={save.pending}
+              />
+            </Panel>
+          </TabsContent>
+
+          <TabsContent value="content">
+            <Panel title={t("cms_pages:editor.overview")} description={t("cms_pages:editor.overview_hint")}>
+              <Field label={t("cms_pages:fields.overview_body")} htmlFor="application-overview">
+                <MarkdownEditor
+                  id="application-overview"
+                  value={form.overviewBody}
+                  onChange={(value) => set("overviewBody", value)}
+                  placeholder={t("cms_pages:editor.overview_placeholder")}
+                  maxLength={BODY_MAX}
+                  rows={24}
+                  disabled={save.pending}
                 />
               </Field>
-            )}
+            </Panel>
 
-            {form.pricingMode === "donation" && (
-              <Field
-                label={t("cms_pages:fields.suggested_amount")}
-                htmlFor="application-suggested"
-                error={errors.suggestedAmount}
-                hint={t("cms_pages:hints.suggested_amount")}
-              >
-                <Input
-                  id="application-suggested"
-                  type="number"
-                  inputMode="numeric"
-                  min={AMOUNT_MIN}
-                  max={AMOUNT_MAX}
-                  step={100}
-                  value={form.suggestedAmount}
-                  onChange={(event) => set("suggestedAmount", event.target.value)}
-                  aria-invalid={Boolean(errors.suggestedAmount)}
-                  className="font-mono"
+            {/* Shown whether or not the Contact tab is on: writing the text is what usually comes
+                before turning the tab on, and hiding the field would make that order impossible. */}
+            <Panel title={t("cms_pages:editor.contact")} description={t("cms_pages:editor.contact_hint")}>
+              <Field label={t("cms_pages:fields.contact_body")} htmlFor="application-contact">
+                <MarkdownEditor
+                  id="application-contact"
+                  value={form.contactBody}
+                  onChange={(value) => set("contactBody", value)}
+                  placeholder={t("cms_pages:editor.contact_placeholder")}
+                  maxLength={BODY_MAX}
+                  rows={14}
+                  disabled={save.pending}
                 />
               </Field>
-            )}
+            </Panel>
+          </TabsContent>
 
-            {form.pricingMode !== "free" && (
-              <p className="text-[13px] leading-relaxed text-neutral-400 sm:col-span-2">
-                {t("cms_pages:editor.pricing_downloads_hint")}
-              </p>
-            )}
-          </div>
-        </Panel>
-
-        <Panel title={t("cms_pages:editor.tabs")} description={t("cms_pages:editor.tabs_hint")}>
-          <TabsField
-            available={availableTabs}
-            value={form.tabs}
-            onChange={(tabs) => set("tabs", tabs)}
-            disabled={save.pending}
-          />
-        </Panel>
-
-        <Panel title={t("cms_pages:editor.links")} description={t("cms_pages:editor.links_hint")}>
-          {errors.links && <p className="mb-3 text-xs text-red-400">{errors.links}</p>}
-          <LinksField
-            idPrefix="application-link"
-            value={form.links}
-            onChange={(links) => set("links", links)}
-            disabled={save.pending}
-          />
-        </Panel>
-
-        <Panel title={t("cms_pages:editor.overview")} description={t("cms_pages:editor.overview_hint")}>
-          <Field label={t("cms_pages:fields.overview_body")} htmlFor="application-overview">
-            <MarkdownEditor
-              id="application-overview"
-              value={form.overviewBody}
-              onChange={(value) => set("overviewBody", value)}
-              placeholder={t("cms_pages:editor.overview_placeholder")}
-              maxLength={BODY_MAX}
-              rows={24}
+          <TabsContent value="translations">
+            <TranslationsPanel
+              fields={TRANSLATABLE}
+              source={{
+                name: form.name,
+                tagline: form.tagline,
+                summary: form.summary,
+                overview_body: form.overviewBody,
+                contact_body: form.contactBody,
+              }}
+              value={form.translations}
+              onChange={(value) => setForm((current) => ({...current, translations: value}))}
+              limits={{
+                name: NAME_MAX,
+                tagline: TAGLINE_MAX,
+                summary: SUMMARY_MAX,
+                overview_body: BODY_MAX,
+                contact_body: BODY_MAX,
+              }}
               disabled={save.pending}
             />
-          </Field>
-        </Panel>
-
-        {/* Shown whether or not the Contact tab is on: writing the text is what usually comes
-            before turning the tab on, and hiding the field would make that order impossible. */}
-        <Panel title={t("cms_pages:editor.contact")} description={t("cms_pages:editor.contact_hint")}>
-          <Field label={t("cms_pages:fields.contact_body")} htmlFor="application-contact">
-            <MarkdownEditor
-              id="application-contact"
-              value={form.contactBody}
-              onChange={(value) => set("contactBody", value)}
-              placeholder={t("cms_pages:editor.contact_placeholder")}
-              maxLength={BODY_MAX}
-              rows={14}
-              disabled={save.pending}
-            />
-          </Field>
-        </Panel>
-
-        <TranslationsPanel
-          fields={TRANSLATABLE}
-          source={{
-            name: form.name,
-            tagline: form.tagline,
-            summary: form.summary,
-            overview_body: form.overviewBody,
-            contact_body: form.contactBody,
-          }}
-          value={form.translations}
-          onChange={(value) => setForm((current) => ({...current, translations: value}))}
-          limits={{
-            name: NAME_MAX,
-            tagline: TAGLINE_MAX,
-            summary: SUMMARY_MAX,
-            overview_body: BODY_MAX,
-            contact_body: BODY_MAX,
-          }}
-          disabled={save.pending}
-        />
+          </TabsContent>
+        </Tabs>
 
         {loaded?.updated_at && (
           <p className="text-[13px] text-neutral-600">

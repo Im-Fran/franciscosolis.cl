@@ -102,11 +102,16 @@ export const ReleaseFilesPanel = ({applicationId, updateId}: {applicationId: str
         title={t("cms_pages:files.title")}
         description={t("cms_pages:files.hint")}
         action={
+          /*
+           * Every button in here is `type="button"`, and that is load-bearing rather than tidy: the
+           * panel is rendered inside the release editor's form, where a button with no type is a
+           * submit button. Picking a file used to save the release on the way to the file dialog.
+           */
           <span className="flex flex-wrap gap-1">
-            <Button variant="ghost" size="sm" onClick={files.reload}>
+            <Button type="button" variant="ghost" size="sm" onClick={files.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
-            <Button size="sm" onClick={() => picker.current?.click()} disabled={add.pending}>
+            <Button type="button" size="sm" onClick={() => picker.current?.click()} disabled={add.pending}>
               <CloudArrowUp size={14}/>
               {add.pending ? t("cms_pages:files.uploading") : t("cms_pages:files.add")}
             </Button>
@@ -154,6 +159,7 @@ export const ReleaseFilesPanel = ({applicationId, updateId}: {applicationId: str
                   {!file.has_content && <Badge variant="outline" size="sm">{t("cms_pages:files.unfinished")}</Badge>}
 
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => setDeleting(file)}

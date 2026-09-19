@@ -2,12 +2,14 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import type {FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate, useParams} from "react-router-dom";
-import {FloppyDisk, Trash} from "@phosphor-icons/react";
+import {Article, CloudArrowDown, FloppyDisk, LinkSimple, Tag, Translate, Trash} from "@phosphor-icons/react";
+import type {Icon} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input, Select} from "@/components/ui/input.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {fromDateTimeLocal, orNull, toDateTimeLocal} from "@/lib/admin/format.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
@@ -55,6 +57,48 @@ type Form = {
 
 type FieldName = keyof Form;
 
+type SectionValue = "release" | "notes" | "links" | "builds" | "translations";
+
+type Section = {
+  value: SectionValue;
+  label: string;
+  icon: Icon;
+  /** The form fields this section holds; empty for a section that writes straight to the service. */
+  fields: readonly FieldName[];
+};
+
+/**
+ * The release editor's sections, in the order an entry is written.
+ *
+ * Tabs rather than a stack of panels, for the same reason the application's are: attaching a build
+ * to a release that shipped months ago should not mean scrolling past its notes to get there. They
+ * are tabs of this screen rather than routes, so moving between them keeps what has been typed.
+ *
+ * `builds` holds no form field at all — the panel behind it registers and uploads on its own, which
+ * is why it is the one section that is not offered while the release is still being created.
+ */
+const SECTIONS: readonly Section[] = [
+  {
+    value: "release",
+    label: "cms_pages:updates.sections.release",
+    icon: Tag,
+    fields: ["version", "title", "releasedAt", "status"],
+  },
+  {value: "notes", label: "cms_pages:updates.sections.notes", icon: Article, fields: ["body"]},
+  {value: "links", label: "cms_pages:updates.sections.links", icon: LinkSimple, fields: ["links"]},
+  {value: "builds", label: "cms_pages:updates.sections.builds", icon: CloudArrowDown, fields: []},
+  {
+    value: "translations",
+    label: "cms_pages:updates.sections.translations",
+    icon: Translate,
+    fields: ["translations"],
+  },
+];
+
+/** The first section holding something the form refused, so a failed save can open itself. */
+const firstInvalidSection = (found: Partial<Record<FieldName, string>>) =>
+  SECTIONS.find((section) => section.fields.some((field) => found[field]))?.value;
+
 const EMPTY: Form = {
   version: "",
   title: "",
@@ -95,7 +139,20 @@ export const UpdateEditor = () => {
   const [form, setForm] = useState<Form>(EMPTY);
   const [baseline, setBaseline] = useState<Form>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
+  const [section, setSection] = useState<SectionValue>("release");
   const [askDelete, setAskDelete] = useState(false);
+
+  /* No builds tab until there is a release to hang one off — the panel behind it has no id to use. */
+  const sections = useMemo(
+    () => SECTIONS.filter((entry) => entry.value !== "builds" || Boolean(updateId)),
+    [updateId],
+  );
+
+  /* Marked on the tab itself: the field saying why is inside a section that may not be open. */
+  const invalidSections = useMemo(
+    () => new Set(SECTIONS.filter((entry) => entry.fields.some((field) => errors[field])).map((entry) => entry.value)),
+    [errors],
+  );
 
   const record = useResource(
     useCallback(
@@ -218,7 +275,12 @@ export const UpdateEditor = () => {
     event.preventDefault();
     const found = validate();
     setErrors(found);
-    if (Object.keys(found).length > 0) return;
+    if (Object.keys(found).length > 0) {
+      /* Opened rather than only marked: the message is under the field, and the field is in here. */
+      const target = firstInvalidSection(found);
+      if (target) setSection(target);
+      return;
+    }
     void persist();
   };
 
@@ -299,117 +361,142 @@ export const UpdateEditor = () => {
           </Alert>
         )}
 
-        <Panel title={t("cms_pages:updates.release")} description={t("cms_pages:updates.release_hint")}>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field
-              label={t("cms_pages:fields.version")}
-              htmlFor="update-version"
-              error={errors.version}
-              hint={t("cms_pages:hints.version")}
-            >
-              <Input
-                id="update-version"
-                value={form.version}
-                onChange={(event) => set("version", event.target.value)}
-                placeholder="2.6.4"
-                maxLength={VERSION_MAX}
-                aria-invalid={Boolean(errors.version)}
-                autoComplete="off"
-                className="font-mono"
-                required
-              />
-            </Field>
-
-            <Field
-              label={t("cms_pages:fields.released_at")}
-              htmlFor="update-released-at"
-              hint={t("cms_pages:hints.released_at")}
-            >
-              <Input
-                id="update-released-at"
-                type="datetime-local"
-                value={form.releasedAt}
-                onChange={(event) => set("releasedAt", event.target.value)}
-              />
-            </Field>
-
-            <Field
-              label={t("cms_pages:fields.title")}
-              htmlFor="update-title"
-              error={errors.title}
-              hint={t("cms_pages:hints.update_title")}
-              className="sm:col-span-2"
-            >
-              <Input
-                id="update-title"
-                value={form.title}
-                onChange={(event) => set("title", event.target.value)}
-                maxLength={TITLE_MAX}
-                aria-invalid={Boolean(errors.title)}
-                autoComplete="off"
-                required
-              />
-            </Field>
-
-            <Field
-              label={t("cms_pages:fields.status")}
-              htmlFor="update-status"
-              hint={t(`cms_pages:updates.status_hint.${form.status}`)}
-            >
-              <Select
-                id="update-status"
-                value={form.status}
-                onChange={(event) => set("status", asStatus(event.target.value))}
+        <Tabs value={section} onValueChange={(value) => setSection(value as SectionValue)}>
+          <TabsList aria-label={t("cms_pages:updates.sections.label")}>
+            {sections.map(({value, label, icon: SectionIcon}) => (
+              <TabsTrigger
+                key={value}
+                value={value}
+                icon={<SectionIcon size={16}/>}
+                invalid={invalidSections.has(value)}
               >
-                {CONTENT_STATUSES.map((status) => (
-                  <option key={status} value={status}>
-                    {t(`admin:status.${status}`)}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-          </div>
-        </Panel>
+                {t(label)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        <Panel title={t("cms_pages:updates.notes")} description={t("cms_pages:updates.notes_hint")}>
-          <Field label={t("cms_pages:fields.body")} htmlFor="update-body" error={errors.body}>
-            <MarkdownEditor
-              id="update-body"
-              value={form.body}
-              onChange={(value) => set("body", value)}
-              placeholder={t("cms_pages:updates.body_placeholder")}
-              maxLength={BODY_MAX}
-              rows={16}
+          <TabsContent value="release">
+            <Panel title={t("cms_pages:updates.release")} description={t("cms_pages:updates.release_hint")}>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field
+                  label={t("cms_pages:fields.version")}
+                  htmlFor="update-version"
+                  error={errors.version}
+                  hint={t("cms_pages:hints.version")}
+                >
+                  <Input
+                    id="update-version"
+                    value={form.version}
+                    onChange={(event) => set("version", event.target.value)}
+                    placeholder="2.6.4"
+                    maxLength={VERSION_MAX}
+                    aria-invalid={Boolean(errors.version)}
+                    autoComplete="off"
+                    className="font-mono"
+                    required
+                  />
+                </Field>
+
+                <Field
+                  label={t("cms_pages:fields.released_at")}
+                  htmlFor="update-released-at"
+                  hint={t("cms_pages:hints.released_at")}
+                >
+                  <Input
+                    id="update-released-at"
+                    type="datetime-local"
+                    value={form.releasedAt}
+                    onChange={(event) => set("releasedAt", event.target.value)}
+                  />
+                </Field>
+
+                <Field
+                  label={t("cms_pages:fields.title")}
+                  htmlFor="update-title"
+                  error={errors.title}
+                  hint={t("cms_pages:hints.update_title")}
+                  className="sm:col-span-2"
+                >
+                  <Input
+                    id="update-title"
+                    value={form.title}
+                    onChange={(event) => set("title", event.target.value)}
+                    maxLength={TITLE_MAX}
+                    aria-invalid={Boolean(errors.title)}
+                    autoComplete="off"
+                    required
+                  />
+                </Field>
+
+                <Field
+                  label={t("cms_pages:fields.status")}
+                  htmlFor="update-status"
+                  hint={t(`cms_pages:updates.status_hint.${form.status}`)}
+                >
+                  <Select
+                    id="update-status"
+                    value={form.status}
+                    onChange={(event) => set("status", asStatus(event.target.value))}
+                  >
+                    {CONTENT_STATUSES.map((status) => (
+                      <option key={status} value={status}>
+                        {t(`admin:status.${status}`)}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+              </div>
+            </Panel>
+          </TabsContent>
+
+          <TabsContent value="notes">
+            <Panel title={t("cms_pages:updates.notes")} description={t("cms_pages:updates.notes_hint")}>
+              <Field label={t("cms_pages:fields.body")} htmlFor="update-body" error={errors.body}>
+                <MarkdownEditor
+                  id="update-body"
+                  value={form.body}
+                  onChange={(value) => set("body", value)}
+                  placeholder={t("cms_pages:updates.body_placeholder")}
+                  maxLength={BODY_MAX}
+                  rows={16}
+                  disabled={save.pending}
+                />
+              </Field>
+            </Panel>
+          </TabsContent>
+
+          <TabsContent value="links">
+            <Panel title={t("cms_pages:updates.links")} description={t("cms_pages:updates.links_hint")}>
+              {errors.links && <p className="mb-3 text-xs text-red-400">{errors.links}</p>}
+              <LinksField
+                idPrefix="update-link"
+                value={form.links}
+                onChange={(links) => set("links", links)}
+                disabled={save.pending}
+              />
+            </Panel>
+          </TabsContent>
+
+          <TabsContent value="builds">
+            {/*
+              * Only once the release exists. A build hangs off a release note, so there is nothing to
+              * attach it to while the note is still being written — and the panel writes straight to the
+              * service rather than through this form's save, because bytes are not a field.
+              */}
+            {updateId && <ReleaseFilesPanel applicationId={id} updateId={updateId}/>}
+          </TabsContent>
+
+          <TabsContent value="translations">
+            <TranslationsPanel
+              fields={TRANSLATABLE}
+              source={{title: form.title, body: form.body}}
+              value={form.translations}
+              onChange={(value) => setForm((current) => ({...current, translations: value}))}
+              limits={{title: TITLE_MAX, body: BODY_MAX}}
               disabled={save.pending}
             />
-          </Field>
-        </Panel>
-
-        <Panel title={t("cms_pages:updates.links")} description={t("cms_pages:updates.links_hint")}>
-          {errors.links && <p className="mb-3 text-xs text-red-400">{errors.links}</p>}
-          <LinksField
-            idPrefix="update-link"
-            value={form.links}
-            onChange={(links) => set("links", links)}
-            disabled={save.pending}
-          />
-        </Panel>
-
-        {/*
-          * Only once the release exists. A build hangs off a release note, so there is nothing to
-          * attach it to while the note is still being written — and the panel writes straight to the
-          * service rather than through this form's save, because bytes are not a field.
-          */}
-        {updateId && <ReleaseFilesPanel applicationId={id} updateId={updateId}/>}
-
-        <TranslationsPanel
-          fields={TRANSLATABLE}
-          source={{title: form.title, body: form.body}}
-          value={form.translations}
-          onChange={(value) => setForm((current) => ({...current, translations: value}))}
-          limits={{title: TITLE_MAX, body: BODY_MAX}}
-          disabled={save.pending}
-        />
+          </TabsContent>
+        </Tabs>
       </form>
 
       <ConfirmDialog

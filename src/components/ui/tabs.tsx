@@ -14,9 +14,15 @@ const COLUMN_QUERY = "(min-width: 64rem)";
  * use — triggers beside the content above `lg`, and the same triggers as a row that scrolls
  * sideways below it, because a narrow screen has no room for a second column.
  *
- * Activation is manual on purpose. The triggers on these screens are links, so selecting a tab is
- * a navigation: arrow keys move through them and Enter opens one, rather than every keypress
- * pushing another entry into the history.
+ * Two kinds of tab draw from this: a section that is a *route* (the account's, whose triggers are
+ * links) and a section of one screen that is not (an editor's, whose triggers are plain buttons —
+ * splitting a form across routes would throw away what is typed on the way between them). Which one
+ * a trigger is depends on whether it was given a `to`; nothing else about them differs.
+ *
+ * Activation is manual on purpose. The routed triggers are links, so selecting one is a navigation:
+ * arrow keys move through them and Enter opens one, rather than every keypress pushing another
+ * entry into the history. The in-page ones keep it for consistency — and because their sections are
+ * whole forms, which is exactly the content the pattern says not to mount on a passing keypress.
  */
 export const Tabs = ({className, ...props}: ComponentPropsWithoutRef<typeof TabsPrimitive.Root>) => {
   /*
@@ -47,34 +53,54 @@ export const TabsList = ({className, ...props}: ComponentPropsWithoutRef<typeof 
 );
 
 export type TabsTriggerProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & {
-  /** Where the tab's section lives. Each one is a route, so a tab can be linked to and opened in a new window. */
-  to: string;
+  /**
+   * Where the tab's section lives, when the sections are routes — a tab with one can be copied,
+   * bookmarked and middle-clicked. Left off, the tab is a button and the selection stays on screen.
+   */
+  to?: string;
   /** Sits before the label, at the size the console navigation uses. */
   icon?: ReactNode;
+  /**
+   * Marks a section holding something that failed validation, so a form split across tabs cannot
+   * refuse to save for a reason sitting behind a tab nobody is looking at.
+   */
+  invalid?: boolean;
 };
 
 /**
- * One tab. It is an anchor rather than a button: these sections are routes, and a tab that cannot
- * be copied, bookmarked or middle-clicked is a worse version of the link it is standing in for.
+ * One tab: an anchor when it stands for a route, a button when it stands for a section of this
+ * screen. The two are styled and announced identically — what changes is only whether following it
+ * is a navigation.
  */
-export const TabsTrigger = ({className, to, icon, children, ...props}: TabsTriggerProps) => (
-  <TabsPrimitive.Trigger
-    asChild
-    className={cn(
-      "flex shrink-0 items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-[13px] whitespace-nowrap transition-colors",
-      "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
-      "data-[state=active]:bg-accent-900/50 data-[state=active]:text-accent-200",
-      "lg:w-full lg:justify-start",
-      className,
-    )}
-    {...props}
-  >
-    <Link to={to}>
+export const TabsTrigger = ({className, to, icon, invalid, children, ...props}: TabsTriggerProps) => {
+  const body = (
+    <>
       {icon && <span className="shrink-0">{icon}</span>}
       <span className="truncate">{children}</span>
-    </Link>
-  </TabsPrimitive.Trigger>
-);
+      {invalid && (
+        <span aria-hidden="true" className="ml-auto size-1.5 shrink-0 rounded-full bg-red-400"/>
+      )}
+    </>
+  );
+
+  return (
+    <TabsPrimitive.Trigger
+      asChild={Boolean(to)}
+      /* Never a submit button: an in-page tab bar usually sits inside the form it is splitting up. */
+      type={to ? undefined : "button"}
+      className={cn(
+        "flex shrink-0 items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-[13px] whitespace-nowrap transition-colors",
+        "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
+        "data-[state=active]:bg-accent-900/50 data-[state=active]:text-accent-200",
+        "lg:w-full lg:justify-start",
+        className,
+      )}
+      {...props}
+    >
+      {to ? <Link to={to}>{body}</Link> : body}
+    </TabsPrimitive.Trigger>
+  );
+};
 
 export const TabsContent = ({className, ...props}: ComponentPropsWithoutRef<typeof TabsPrimitive.Content>) => (
   <TabsPrimitive.Content className={cn("flex min-w-0 flex-col gap-6 focus-visible:outline-none", className)} {...props}/>
