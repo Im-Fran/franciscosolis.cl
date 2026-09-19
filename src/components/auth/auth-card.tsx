@@ -29,14 +29,14 @@ export const AuthCard = ({title, subtitle, eyebrow, children, footer, className}
       />
 
       <div className="absolute top-6 right-4 z-10">
-        <Button variant="ghost" size="sm" onClick={toggleLanguage} data-fs-hover>
+        <Button variant="ghost" size="sm" onClick={toggleLanguage}>
           <GlobeSimple size={16}/> {language === "es" ? "EN" : "ES"}
         </Button>
       </div>
 
       <div className={cn("relative z-10 w-full max-w-md", className)}>
         <div className="mx-auto mb-10 flex w-fit flex-col items-center gap-2">
-          <Link to="/" className="flex" aria-label="FranciscoSolis" data-fs-hover>
+          <Link to="/" className="flex" aria-label="FranciscoSolis">
             <BrandLockup size={34} tone="auto"/>
           </Link>
           {eyebrow && (

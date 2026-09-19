@@ -31,23 +31,23 @@ export const AuthShell = ({title, children}: {title: string; children: ReactNode
     <div className="flex flex-1 flex-col">
       <header className="border-b border-neutral-800">
         <div className="container mx-auto flex flex-wrap items-center gap-4 px-4 py-4">
-          <Link to="/" aria-label="FranciscoSolis" data-fs-hover>
+          <Link to="/" aria-label="FranciscoSolis">
             <BrandLockup size={28} tone="auto"/>
           </Link>
 
           <nav className="flex items-center gap-1" aria-label={title}>
-            <NavLink to={ACCOUNT_ROUTE} className={navLinkClass} data-fs-hover>
+            <NavLink to={ACCOUNT_ROUTE} className={navLinkClass}>
               {t("auth:nav.account")}
             </NavLink>
             {canAdminister && (
-              <NavLink to={ADMIN_ROUTE} className={navLinkClass} data-fs-hover>
+              <NavLink to={ADMIN_ROUTE} className={navLinkClass}>
                 {t("auth:nav.admin")}
               </NavLink>
             )}
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={toggleLanguage} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={toggleLanguage}>
               <GlobeSimple size={16}/> {language === "es" ? "EN" : "ES"}
             </Button>
 
@@ -66,7 +66,6 @@ export const AuthShell = ({title, children}: {title: string; children: ReactNode
                 setSigningOut(true);
                 void signOut().finally(() => setSigningOut(false));
               }}
-              data-fs-hover
             >
               {signingOut ? <Spinner size={14}/> : <SignOut size={16}/>}
               <span className="hidden sm:inline">{t("auth:nav.sign_out")}</span>

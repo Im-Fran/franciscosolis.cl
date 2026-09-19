@@ -49,10 +49,10 @@ export const SignIn = () => {
       <AuthCard title={t("sign_in.error_title")} subtitle={t("sign_in.error_subtitle")} eyebrow={t("app_name")}>
         <div className="flex flex-col gap-5">
           <Alert tone="error">{error}</Alert>
-          <Button onClick={start} data-fs-hover>
+          <Button onClick={start}>
             <ArrowSquareOut size={16} /> {t("sign_in.retry")}
           </Button>
-          <Button variant="ghost" asChild data-fs-hover>
+          <Button variant="ghost" asChild>
             <Link to="/">
               <ArrowLeft size={16} /> {t("sign_in.back_home")}
             </Link>
@@ -70,7 +70,7 @@ export const SignIn = () => {
       footer={
         <>
           {t("sign_in.staff_only")}{" "}
-          <Link to="/" className="text-neutral-400 underline-offset-4 transition-colors hover:text-text" data-fs-hover>
+          <Link to="/" className="text-neutral-400 underline-offset-4 transition-colors hover:text-text">
             {t("sign_in.back_home")}
           </Link>
         </>

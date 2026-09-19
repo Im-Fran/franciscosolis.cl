@@ -156,7 +156,7 @@ export const SignaturePanel = ({user}: {user: User}) => {
       title={t("auth:account.signature.title")}
       description={t("auth:account.signature.description")}
       action={
-        <Button variant="ghost" size="sm" onClick={() => setData(fromProfile(user))} data-fs-hover>
+        <Button variant="ghost" size="sm" onClick={() => setData(fromProfile(user))}>
           <ArrowCounterClockwise size={14}/> {t("auth:account.signature.reset")}
         </Button>
       }
@@ -242,10 +242,10 @@ export const SignaturePanel = ({user}: {user: User}) => {
         </section>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button onClick={() => void copy(false)} data-fs-hover>
+          <Button onClick={() => void copy(false)}>
             <Copy size={16}/> {t("auth:account.signature.copy")}
           </Button>
-          <Button variant="secondary" onClick={() => void copy(true)} data-fs-hover>
+          <Button variant="secondary" onClick={() => void copy(true)}>
             <Code size={16}/> {t("auth:account.signature.copy_html")}
           </Button>
         </div>
@@ -278,7 +278,6 @@ const SocialFieldset = ({title, hint, emptyLabel, placeholder, socials, onChange
           variant="secondary"
           size="sm"
           onClick={() => onChange([...socials, {id: newId(), url: ""}])}
-          data-fs-hover
         >
           <Plus size={14}/> {t("auth:account.signature.add_social")}
         </Button>
@@ -311,7 +310,6 @@ const SocialFieldset = ({title, hint, emptyLabel, placeholder, socials, onChange
                 size="sm"
                 onClick={() => onChange(socials.filter((item) => item.id !== social.id))}
                 aria-label={t("auth:account.signature.remove_social")}
-                data-fs-hover
               >
                 <Trash size={14}/>
               </Button>

@@ -71,7 +71,7 @@ export const LabelList = () => {
       key: "actions",
       header: "",
       cell: (row) => (
-        <Button variant="ghost" size="sm" onClick={() => setPendingDelete(row)} data-fs-hover>
+        <Button variant="ghost" size="sm" onClick={() => setPendingDelete(row)}>
           <Trash size={14} />
         </Button>
       ),

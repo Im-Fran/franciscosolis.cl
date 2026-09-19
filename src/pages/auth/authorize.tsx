@@ -98,7 +98,7 @@ export const Authorize = () => {
   };
 
   const backHome = (
-    <Link to="/" className="text-neutral-400 underline-offset-4 transition-colors hover:text-text" data-fs-hover>
+    <Link to="/" className="text-neutral-400 underline-offset-4 transition-colors hover:text-text">
       {t("auth:authorize.back_home")}
     </Link>
   );
@@ -168,7 +168,7 @@ export const Authorize = () => {
             </div>
           </div>
 
-          <Button onClick={() => authorizeFromSession(account.continue_url)} disabled={busy !== null} data-fs-hover>
+          <Button onClick={() => authorizeFromSession(account.continue_url)} disabled={busy !== null}>
             {busy === "continue" ? <Spinner size={16}/> : <ShieldCheck size={16}/>}
             {t("auth:authorize.authorize_cta", {application: pending.client_name})}
           </Button>
@@ -180,7 +180,6 @@ export const Authorize = () => {
               setSwitching(true);
             }}
             disabled={busy !== null}
-            data-fs-hover
           >
             <UserSwitch size={16}/> {t("auth:authorize.use_another_account")}
           </Button>
@@ -203,7 +202,7 @@ export const Authorize = () => {
             {t("auth:sign_in.sent_expiry", {count: Math.max(1, Math.round(phase.expiresIn / 60))})}
           </Alert>
           <p className="text-[13px] leading-relaxed text-neutral-400">{t("auth:authorize.sent_note")}</p>
-          <Button variant="secondary" onClick={() => setPhase({kind: "form"})} data-fs-hover>
+          <Button variant="secondary" onClick={() => setPhase({kind: "form"})}>
             <ArrowLeft size={16}/> {t("auth:sign_in.use_another")}
           </Button>
         </div>
@@ -227,7 +226,7 @@ export const Authorize = () => {
 
         {/* Only reachable through "use another account": the session is still there to go back to. */}
         {account && switching && (
-          <Button variant="ghost" size="sm" onClick={() => setSwitching(false)} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={() => setSwitching(false)}>
             <ArrowLeft size={14}/> {t("auth:authorize.back_to_account", {account: account.name ?? account.email})}
           </Button>
         )}
@@ -249,7 +248,7 @@ export const Authorize = () => {
               />
             </Field>
 
-            <Button type="submit" disabled={busy !== null} data-fs-hover>
+            <Button type="submit" disabled={busy !== null}>
               {busy === "magic_link" ? <Spinner size={16}/> : <PaperPlaneTilt size={16}/>}
               {t("auth:sign_in.magic_link_cta")}
             </Button>
@@ -273,7 +272,6 @@ export const Authorize = () => {
               variant="secondary"
               onClick={() => startRedirectProvider(provider)}
               disabled={busy !== null}
-              data-fs-hover
             >
               {busy === "redirect" ? <Spinner size={16}/> : providerIcon(provider)}
               {t("auth:authorize.continue_with", {provider: provider.display_name})}

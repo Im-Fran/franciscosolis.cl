@@ -32,7 +32,7 @@ export const SupportLayout = () => {
         <Alert tone="error" title={t("admin:common.failed")}>
           <div className="flex flex-wrap items-center gap-3">
             <span>{error}</span>
-            <Button variant="ghost" size="sm" onClick={reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={reload}>
               <ArrowClockwise size={14} /> {t("admin:common.retry")}
             </Button>
           </div>

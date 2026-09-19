@@ -39,13 +39,12 @@ export const NoAccess = ({email}: {email?: string}) => {
               setSigningOut(true);
               void signOut().finally(() => setSigningOut(false));
             }}
-            data-fs-hover
           >
             {signingOut ? <Spinner size={16} /> : <SignOut size={16} />}
             {t("no_access.sign_out")}
           </Button>
 
-          <Button variant="ghost" asChild data-fs-hover>
+          <Button variant="ghost" asChild>
             <Link to="/">
               <ArrowLeft size={16} /> {t("no_access.back_home")}
             </Link>

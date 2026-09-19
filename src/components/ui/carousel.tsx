@@ -32,7 +32,6 @@ export const Carousel = ({children, slideClassName}: CarouselProps) => {
         <>
           <button
             type="button"
-            data-fs-hover
             onClick={scrollPrev}
             disabled={!canScrollPrev}
             aria-label={t("common:carousel_previous")}
@@ -42,7 +41,6 @@ export const Carousel = ({children, slideClassName}: CarouselProps) => {
           </button>
           <button
             type="button"
-            data-fs-hover
             onClick={scrollNext}
             disabled={!canScrollNext}
             aria-label={t("common:carousel_next")}

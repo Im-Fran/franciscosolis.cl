@@ -101,7 +101,6 @@ export const ApplicationLinks = ({links, size = "lg", className}: ApplicationLin
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex rounded-[10px] transition-opacity hover:opacity-80"
-            data-fs-hover
           >
             {/*
               * The badge already reads "Download on the Mac App Store", so the alt text is the
@@ -124,7 +123,6 @@ export const ApplicationLinks = ({links, size = "lg", className}: ApplicationLin
             asChild
             variant={size === "lg" ? "primary" : "ghost"}
             size={size === "lg" ? "default" : "sm"}
-            data-fs-hover
           >
             <a href={link.url} target="_blank" rel="noopener noreferrer">
               <LinkIcon size={size === "lg" ? 18 : 15} weight="fill"/>

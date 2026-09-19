@@ -73,11 +73,11 @@ export const ApplicationsList = () => {
         description={t("auth_admin:applications.description")}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={applications.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={applications.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
             {can("applications:write") && (
-              <Button size="sm" onClick={() => navigate(adminRoute.newApplication)} data-fs-hover>
+              <Button size="sm" onClick={() => navigate(adminRoute.newApplication)}>
                 <Plus size={14}/> {t("auth_admin:applications.register")}
               </Button>
             )}
@@ -96,7 +96,7 @@ export const ApplicationsList = () => {
               description={t("auth_admin:applications.empty_hint")}
               action={
                 can("applications:write") ? (
-                  <Button size="sm" onClick={() => navigate(adminRoute.newApplication)} data-fs-hover>
+                  <Button size="sm" onClick={() => navigate(adminRoute.newApplication)}>
                     <Plus size={14}/> {t("auth_admin:applications.register")}
                   </Button>
                 ) : undefined

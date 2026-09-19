@@ -25,7 +25,7 @@ export const ArticleList = () => {
       key: "title",
       header: t("articles.article_title"),
       cell: (row) => (
-        <Link to={supportRoute.article(row.id)} className="text-text hover:text-accent-200" data-fs-hover>
+        <Link to={supportRoute.article(row.id)} className="text-text hover:text-accent-200">
           {row.title}
         </Link>
       ),
@@ -58,7 +58,7 @@ export const ArticleList = () => {
       <PageHeader
         title={t("articles.title")}
         actions={
-          <Button asChild size="sm" data-fs-hover>
+          <Button asChild size="sm">
             <Link to={supportRoute.articleNew}>
               <Plus size={15} /> {t("articles.new")}
             </Link>

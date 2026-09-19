@@ -3,7 +3,6 @@ export {A11yContext, useA11y} from "@/lib/a11y/a11y-context.ts";
 export type {A11yContextValue} from "@/lib/a11y/a11y-context.ts";
 export {
   A11Y_STORAGE_KEY,
-  CURSORS,
   DEFAULT_PREFERENCES,
   FONT_SCALES,
   FONT_SCALE_RATIO,
@@ -17,7 +16,6 @@ export {
 } from "@/lib/a11y/preferences.ts";
 export type {
   A11yPreferences,
-  Cursor,
   FontScale,
   Language,
   Motion,

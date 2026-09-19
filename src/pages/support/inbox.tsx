@@ -63,7 +63,7 @@ export const Inbox = () => {
       key: "subject",
       header: t("inbox.subject"),
       cell: (row) => (
-        <Link to={supportRoute.ticket(row.id)} className="text-text hover:text-accent-200" data-fs-hover>
+        <Link to={supportRoute.ticket(row.id)} className="text-text hover:text-accent-200">
           {row.subject}
         </Link>
       ),

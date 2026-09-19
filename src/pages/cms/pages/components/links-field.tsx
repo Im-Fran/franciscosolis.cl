@@ -89,7 +89,6 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
             onClick={() => remove(index)}
             aria-label={t("cms_pages:links.remove", {url: link.url || t("cms_pages:links.untitled")})}
             className="text-neutral-400 hover:text-red-300"
-            data-fs-hover
           >
             <Trash size={16}/>
           </Button>
@@ -103,7 +102,6 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
           size="sm"
           onClick={add}
           disabled={disabled || value.length >= MAX_LINKS}
-          data-fs-hover
         >
           <Plus size={15}/> {t("cms_pages:links.add")}
         </Button>

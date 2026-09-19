@@ -114,7 +114,6 @@ export const MarkdownEditor = ({
         mode === target ? "bg-neutral-800 text-text" : "text-neutral-500 hover:text-neutral-300",
         hiddenBelowLg && "hidden lg:inline-flex",
       )}
-      data-fs-hover
     >
       {label}
     </button>
@@ -132,7 +131,6 @@ export const MarkdownEditor = ({
             title={t(`prose:markdown.${actionId}`)}
             aria-label={t(`prose:markdown.${actionId}`)}
             className="cursor-pointer rounded-[var(--radius-sm)] p-1.5 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
-            data-fs-hover
           >
             <Icon size={15}/>
           </button>

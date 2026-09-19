@@ -15,8 +15,6 @@ export type A11yContextValue = {
   theme: ResolvedTheme;
   /** What `motion` actually resolves to right now. Animations should branch on this, not on the raw value. */
   motion: ResolvedMotion;
-  /** True when the liquid drop cursor is both wanted and usable (a fine pointer, motion allowed). */
-  dropCursorEnabled: boolean;
   setPreference: <K extends keyof A11yPreferences>(key: K, value: A11yPreferences[K]) => void;
   reset: () => void;
   /** Sends a message to the panel's live region, so a change made from the palette is announced. */
@@ -28,7 +26,6 @@ export const A11yContext = createContext<A11yContextValue>({
   system: DEFAULT_SYSTEM,
   theme: "dark",
   motion: "full",
-  dropCursorEnabled: true,
   setPreference: () => {},
   reset: () => {},
   announce: () => {},

@@ -99,7 +99,7 @@ export const AvatarsReview = () => {
         title={t("auth_admin:avatars.title")}
         description={t("auth_admin:avatars.description")}
         actions={
-          <Button variant="ghost" size="sm" onClick={uploads.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={uploads.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
@@ -112,7 +112,6 @@ export const AvatarsReview = () => {
             size="sm"
             variant={value === status ? "primary" : "ghost"}
             onClick={() => setFilter(value)}
-            data-fs-hover
           >
             {t(`auth_admin:avatars.filter_${value}`)}
           </Button>
@@ -128,7 +127,6 @@ export const AvatarsReview = () => {
                 return search;
               })
             }
-            data-fs-hover
           >
             <XCircle size={14}/> {t("auth_admin:avatars.clear_user")}
           </Button>
@@ -178,7 +176,6 @@ export const AvatarsReview = () => {
                     <Link
                       to={adminRoute.user(upload.user_id)}
                       className="block truncate text-sm text-text hover:underline"
-                      data-fs-hover
                     >
                       {upload.user_name || upload.user_email || upload.user_id}
                     </Link>
@@ -208,7 +205,7 @@ export const AvatarsReview = () => {
                 {mayReview && (upload.status === "pending" || upload.status === "approved") && (
                   <div className="flex flex-wrap gap-2">
                     {upload.status === "pending" && (
-                      <Button size="sm" disabled={approve.pending} onClick={() => onApprove(upload)} data-fs-hover>
+                      <Button size="sm" disabled={approve.pending} onClick={() => onApprove(upload)}>
                         {approve.pending ? <Spinner size={14}/> : <CheckCircle size={14}/>}
                         {t("auth_admin:avatars.approve")}
                       </Button>
@@ -221,7 +218,6 @@ export const AvatarsReview = () => {
                         setReason("");
                         reject.reset();
                       }}
-                      data-fs-hover
                     >
                       <XCircle size={14}/>
                       {t(upload.status === "approved" ? "auth_admin:avatars.take_down" : "auth_admin:avatars.reject")}
@@ -254,10 +250,10 @@ export const AvatarsReview = () => {
             <Alert tone="error">{t(`admin:errors.${reject.error}`, {defaultValue: reject.error})}</Alert>
           )}
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setRefusing(null)} data-fs-hover>
+            <Button variant="ghost" onClick={() => setRefusing(null)}>
               {t("admin:common.cancel")}
             </Button>
-            <Button onClick={onReject} disabled={reject.pending} data-fs-hover>
+            <Button onClick={onReject} disabled={reject.pending}>
               {reject.pending ? <Spinner size={16}/> : <XCircle size={16}/>}
               {t("auth_admin:avatars.confirm_reject")}
             </Button>

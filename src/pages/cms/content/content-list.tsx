@@ -212,7 +212,7 @@ export const ContentList = () => {
       className: "w-24 text-right",
       cell: (row) => (
         <span className="flex items-center justify-end gap-1">
-          <Button variant="ghost" size="icon" className="size-9" asChild data-fs-hover>
+          <Button variant="ghost" size="icon" className="size-9" asChild>
             <Link
               to={cmsRoute.contentItem(collection, row.id)}
               aria-label={t("cms_content:list.edit_aria", {title: row.title})}
@@ -231,7 +231,6 @@ export const ContentList = () => {
               remove.reset();
               setPendingDelete(row);
             }}
-            data-fs-hover
           >
             <Trash size={15}/>
           </Button>
@@ -247,10 +246,10 @@ export const ContentList = () => {
         description={meta.known ? meta.description || undefined : t("cms_content:list.unknown_collection")}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={list.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={list.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
-            <Button variant="primary" size="sm" asChild data-fs-hover>
+            <Button variant="primary" size="sm" asChild>
               <Link to={cmsRoute.contentNew(collection)}>
                 <Plus size={15}/> {t("cms_content:list.new", {name: meta.singular})}
               </Link>
@@ -265,7 +264,7 @@ export const ContentList = () => {
           description={t("cms_content:list.filters_description")}
           action={
             filtered && (
-              <Button variant="ghost" size="sm" onClick={clearFilters} data-fs-hover>
+              <Button variant="ghost" size="sm" onClick={clearFilters}>
                 <Broom size={14}/> {t("admin:common.clear_filters")}
               </Button>
             )
@@ -340,11 +339,10 @@ export const ContentList = () => {
                       setReordering(false);
                       reorder.reset();
                     }}
-                    data-fs-hover
                   >
                     {t("admin:common.cancel")}
                   </Button>
-                  <Button variant="primary" size="sm" disabled={reorder.pending} onClick={saveOrder} data-fs-hover>
+                  <Button variant="primary" size="sm" disabled={reorder.pending} onClick={saveOrder}>
                     {reorder.pending ? <Spinner size={14}/> : <FloppyDisk size={15}/>}
                     {t("cms_content:list.save_order")}
                   </Button>
@@ -358,7 +356,6 @@ export const ContentList = () => {
                     setOrder(items);
                     setReordering(true);
                   }}
-                  data-fs-hover
                 >
                   <ArrowsDownUp size={15}/> {t("cms_content:list.reorder")}
                 </Button>
@@ -382,7 +379,7 @@ export const ContentList = () => {
                   title={t("cms_content:list.no_matches_title")}
                   description={t("cms_content:list.no_matches_description")}
                   action={
-                    <Button variant="secondary" size="sm" onClick={clearFilters} data-fs-hover>
+                    <Button variant="secondary" size="sm" onClick={clearFilters}>
                       <Broom size={14}/> {t("admin:common.clear_filters")}
                     </Button>
                   }
@@ -392,7 +389,7 @@ export const ContentList = () => {
                   title={t("cms_content:list.empty_title", {name: meta.name})}
                   description={t("cms_content:list.empty_description", {name: meta.singular})}
                   action={
-                    <Button variant="primary" size="sm" asChild data-fs-hover>
+                    <Button variant="primary" size="sm" asChild>
                       <Link to={cmsRoute.contentNew(collection)}>
                         <Plus size={15}/> {t("cms_content:list.empty_cta", {name: meta.singular})}
                       </Link>

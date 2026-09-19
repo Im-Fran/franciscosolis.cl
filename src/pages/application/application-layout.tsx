@@ -60,13 +60,13 @@ export const ApplicationLayout = () => {
     <ApplicationContext value={value}>
       <div className="flex flex-1 flex-col pb-24">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-5">
-          <Link to="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-text" data-fs-hover>
+          <Link to="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-text">
             <BrandLockup size={24} tone="auto"/>
             <span className="sr-only">{t("application:back_home")}</span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild data-fs-hover>
+            <Button variant="ghost" size="sm" asChild>
               <Link to="/">
                 <ArrowLeft size={15}/>
                 <span className="hidden sm:inline">{t("application:back_home")}</span>
@@ -77,7 +77,6 @@ export const ApplicationLayout = () => {
               size="sm"
               onClick={toggleLanguage}
               aria-label={t("common:toggle_lang", {lang: language === "es" ? "EN" : "ES"})}
-              data-fs-hover
             >
               <GlobeSimple size={15}/> {language === "es" ? "EN" : "ES"}
             </Button>

@@ -248,13 +248,12 @@ export const UpdateEditor = () => {
               type="button"
               variant="secondary"
               onClick={() => setAskDelete(true)}
-              className="border-red-500/50 text-red-300 hover:bg-red-500/10"
-              data-fs-hover
+              className="border-red-500/50 text-red-300 fs-ripple-danger"
             >
               <Trash size={16}/> {t("admin:common.delete")}
             </Button>
           )}
-          <Button type="submit" form={formId} disabled={save.pending} data-fs-hover>
+          <Button type="submit" form={formId} disabled={save.pending}>
             {save.pending ? <Spinner size={16}/> : <FloppyDisk size={16}/>}
             {save.pending
               ? updateId

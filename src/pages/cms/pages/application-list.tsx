@@ -120,7 +120,6 @@ export const ApplicationList = () => {
                 asChild
                 aria-label={t("cms_pages:list.view_aria", {name: row.name})}
                 className="size-9"
-                data-fs-hover
               >
                 <a
                   href={applicationRoute.overview(row.slug)}
@@ -138,7 +137,6 @@ export const ApplicationList = () => {
               asChild
               aria-label={t("cms_pages:list.edit_aria", {name: row.name})}
               className="size-9"
-              data-fs-hover
             >
               <Link to={pagesRoute.item(row.id)} onClick={(event) => event.stopPropagation()}>
                 <PencilSimple size={16}/>
@@ -154,7 +152,6 @@ export const ApplicationList = () => {
               }}
               aria-label={t("cms_pages:list.delete_aria", {name: row.name})}
               className="size-9 text-neutral-400 hover:text-red-300"
-              data-fs-hover
             >
               <Trash size={16}/>
             </Button>
@@ -195,20 +192,20 @@ export const ApplicationList = () => {
             {total > 1 &&
               (ordering ? (
                 <>
-                  <Button variant="ghost" onClick={() => setOrdering(null)} disabled={reorder.pending} data-fs-hover>
+                  <Button variant="ghost" onClick={() => setOrdering(null)} disabled={reorder.pending}>
                     {t("admin:common.cancel")}
                   </Button>
-                  <Button onClick={() => void saveOrder()} disabled={reorder.pending} data-fs-hover>
+                  <Button onClick={() => void saveOrder()} disabled={reorder.pending}>
                     {reorder.pending ? <Spinner size={16}/> : <ArrowsDownUp size={16}/>}
                     {t("cms_pages:list.save_order")}
                   </Button>
                 </>
               ) : (
-                <Button variant="secondary" onClick={() => setOrdering(rows)} data-fs-hover>
+                <Button variant="secondary" onClick={() => setOrdering(rows)}>
                   <ArrowsDownUp size={16}/> {t("cms_pages:list.reorder")}
                 </Button>
               ))}
-            <Button asChild data-fs-hover>
+            <Button asChild>
               <Link to={pagesRoute.new}>
                 <Plus size={16}/> {t("cms_pages:list.new")}
               </Link>
@@ -221,7 +218,7 @@ export const ApplicationList = () => {
         title={t("cms_pages:list.panel_title")}
         description={total > 0 ? t("cms_pages:list.count", {count: total}) : undefined}
         action={
-          <Button variant="ghost" size="sm" onClick={applications.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={applications.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
           </Button>
         }
@@ -262,7 +259,7 @@ export const ApplicationList = () => {
               title={t("cms_pages:list.empty_title")}
               description={t("cms_pages:list.empty_description")}
               action={
-                <Button asChild data-fs-hover>
+                <Button asChild>
                   <Link to={pagesRoute.new}>
                     <Plus size={16}/> {t("cms_pages:list.empty_action")}
                   </Link>

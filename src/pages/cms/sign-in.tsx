@@ -57,7 +57,7 @@ export const SignIn = () => {
   if (status === "authenticated") return <Navigate to={returnTo} replace/>;
 
   const backHome = (
-    <Link to="/" className="text-neutral-400 underline-offset-4 transition-colors hover:text-text" data-fs-hover>
+    <Link to="/" className="text-neutral-400 underline-offset-4 transition-colors hover:text-text">
       {t("cms:sign_in.back_home")}
     </Link>
   );
@@ -71,10 +71,10 @@ export const SignIn = () => {
       >
         <div className="flex flex-col gap-5">
           <Alert tone="error">{t(`cms:errors.${error}`, {defaultValue: error})}</Alert>
-          <Button onClick={start} data-fs-hover>
+          <Button onClick={start}>
             <ArrowSquareOut size={16}/> {t("cms:sign_in.retry")}
           </Button>
-          <Button variant="ghost" asChild data-fs-hover>
+          <Button variant="ghost" asChild>
             <Link to="/">
               <ArrowLeft size={16}/> {t("cms:sign_in.back_home")}
             </Link>

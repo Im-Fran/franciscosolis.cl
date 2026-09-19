@@ -38,7 +38,7 @@ export const HelpHeader = () => {
   return (
     <header className="border-b border-neutral-800 bg-bg/90 backdrop-blur-sm">
       <div className="container mx-auto flex flex-wrap items-center gap-3 px-4 py-3">
-        <Link to={helpRoute.home} className="flex items-center gap-2" aria-label={t("help.app_label")} data-fs-hover>
+        <Link to={helpRoute.home} className="flex items-center gap-2" aria-label={t("help.app_label")}>
           <BrandLockup size={26} tone="auto"/>
           <span className="flex items-center gap-1.5 text-sm text-neutral-500">
             <LifebuoyIcon size={15} aria-hidden/>
@@ -49,12 +49,12 @@ export const HelpHeader = () => {
         <nav className="ml-auto flex items-center gap-1" aria-label={t("help.nav_label")}>
           {status === "authenticated" && user ? (
             <>
-              <NavLink to={helpRoute.myTickets} className={linkClass} data-fs-hover>
+              <NavLink to={helpRoute.myTickets} className={linkClass}>
                 <Ticket size={15} aria-hidden/>
                 <span className="max-sm:sr-only">{t("help.nav_tickets")}</span>
               </NavLink>
 
-              <NavLink to={ACCOUNT_ROUTE} end className={linkClass} data-fs-hover>
+              <NavLink to={ACCOUNT_ROUTE} end className={linkClass}>
                 <Avatar name={user.name} email={user.email} picture={user.picture} size={22}/>
                 <span className="max-w-[160px] truncate max-sm:sr-only">{t("help.nav_account")}</span>
               </NavLink>
@@ -62,7 +62,7 @@ export const HelpHeader = () => {
           ) : null}
 
           {status === "anonymous" ? (
-            <NavLink to={helpRoute.myTickets} className={linkClass} data-fs-hover>
+            <NavLink to={helpRoute.myTickets} className={linkClass}>
               <SignIn size={15} aria-hidden/>
               {t("help.nav_sign_in")}
             </NavLink>

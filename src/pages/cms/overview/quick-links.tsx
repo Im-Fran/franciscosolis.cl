@@ -19,7 +19,6 @@ const LinkRow = ({to, icon, label, hint, trailing}: {
     <Link
       to={to}
       className="flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 transition-colors hover:bg-neutral-800/40"
-      data-fs-hover
     >
       <span className="shrink-0 text-neutral-500" aria-hidden="true">{icon}</span>
       <span className="min-w-0 flex-1">

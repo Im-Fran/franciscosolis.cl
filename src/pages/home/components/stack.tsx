@@ -116,7 +116,6 @@ export const Stack = () => {
                 <Card key={category.key} elevation="sm" className="reveal-item fs-hoverable w-full flex-1 flex flex-col">
                   <button
                     type="button"
-                    data-fs-hover
                     onClick={() => setActiveCategory(category.key)}
                     className="flex flex-1 flex-col w-full h-full text-left"
                   >
@@ -175,7 +174,7 @@ export const Stack = () => {
                 "block rounded-[var(--radius-sm)] border border-neutral-800 p-4 transition-colors hover:border-accent-700";
 
               return href ? (
-                <a key={project.id} href={href} target="_blank" rel="noreferrer" data-fs-hover className={className}>
+                <a key={project.id} href={href} target="_blank" rel="noreferrer" className={className}>
                   {content}
                 </a>
               ) : (

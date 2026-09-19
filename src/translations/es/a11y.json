@@ -43,14 +43,6 @@
         "reduced": "Reducidas"
       }
     },
-    "cursor": {
-      "label": "Cursor",
-      "hint": "El cursor de gota solo aparece con mouse o trackpad.",
-      "options": {
-        "drop": "Gota líquida",
-        "system": "Del sistema"
-      }
-    },
     "language": {
       "label": "Idioma",
       "hint": "También cambia el atributo lang de la página para los lectores de pantalla.",

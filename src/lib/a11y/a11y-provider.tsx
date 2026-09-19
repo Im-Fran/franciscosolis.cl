@@ -13,8 +13,6 @@ import {
   type SystemPreferences,
 } from "@/lib/a11y/preferences.ts";
 
-const FINE_POINTER_QUERY = "(pointer: fine)";
-
 /** `matchMedia` in one place, with the older `addListener` fallback Safari needed until 14. */
 const observeMedia = (query: string, onChange: (matches: boolean) => void) => {
   if (typeof window === "undefined" || typeof window.matchMedia !== "function") return () => {};
@@ -39,9 +37,6 @@ const observeMedia = (query: string, onChange: (matches: boolean) => void) => {
 export const A11yProvider = ({children}: {children: ReactNode}) => {
   const [preferences, setPreferences] = useState<A11yPreferences>(readPreferences);
   const [system, setSystem] = useState<SystemPreferences>(readSystemPreferences);
-  const [finePointer, setFinePointer] = useState(
-    () => typeof window === "undefined" || window.matchMedia?.(FINE_POINTER_QUERY).matches !== false,
-  );
   const [announcement, setAnnouncement] = useState("");
 
   useEffect(() => observeMedia("(prefers-color-scheme: dark)", (prefersDark) =>
@@ -53,8 +48,6 @@ export const A11yProvider = ({children}: {children: ReactNode}) => {
       current.prefersReducedMotion === prefersReducedMotion ? current : {...current, prefersReducedMotion},
     ),
   ), []);
-
-  useEffect(() => observeMedia(FINE_POINTER_QUERY, setFinePointer), []);
 
   /* Applied before paint so a preference change never shows a frame of the previous theme. */
   useLayoutEffect(() => {
@@ -95,11 +88,10 @@ export const A11yProvider = ({children}: {children: ReactNode}) => {
     system,
     theme: resolveTheme(preferences.theme, system),
     motion: resolveMotion(preferences.motion, system),
-    dropCursorEnabled: preferences.cursor === "drop" && finePointer,
     setPreference,
     reset,
     announce,
-  }), [preferences, system, finePointer, setPreference, reset, announce]);
+  }), [preferences, system, setPreference, reset, announce]);
 
   return (
     <A11yContext.Provider value={value}>

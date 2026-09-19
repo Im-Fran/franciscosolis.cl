@@ -36,7 +36,6 @@ export const ApplicationNav = ({id}: {id: string}) => {
                 : "text-neutral-400 hover:bg-neutral-800/50 hover:text-text",
             )
           }
-          data-fs-hover
         >
           <Icon size={16}/> {label}
         </NavLink>

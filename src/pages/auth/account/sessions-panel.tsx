@@ -56,12 +56,12 @@ export const SessionsPanel = () => {
       description={t("auth:account.sessions_description")}
       action={
         <span className="flex flex-wrap gap-1">
-          <Button variant="ghost" size="sm" onClick={sessions.reload} data-fs-hover>
+          <Button variant="ghost" size="sm" onClick={sessions.reload}>
             <ArrowClockwise size={14}/> {t("auth:common.refresh")}
           </Button>
           {/* Offered only once there is something to prune besides the session doing the pruning. */}
           {active.length > 1 && (
-            <Button variant="ghost" size="sm" onClick={() => setPruning(true)} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={() => setPruning(true)}>
               <Broom size={14}/> {t("auth:account.prune.action")}
             </Button>
           )}
@@ -100,7 +100,7 @@ export const SessionsPanel = () => {
                 </p>
               </div>
 
-              <Button variant="ghost" size="sm" onClick={() => setRevoking(session)} data-fs-hover>
+              <Button variant="ghost" size="sm" onClick={() => setRevoking(session)}>
                 <Trash size={14}/>
                 {session.current ? t("auth:account.sign_out_here") : t("auth:account.revoke")}
               </Button>

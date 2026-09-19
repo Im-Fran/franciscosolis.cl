@@ -435,7 +435,7 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
       {editable && (
         <div className="flex flex-wrap items-center justify-end gap-3">
           {touched && <span className="text-[13px] text-neutral-500">{t("admin:common.unsaved")}</span>}
-          <Button onClick={submit} disabled={!valid || pending} data-fs-hover>
+          <Button onClick={submit} disabled={!valid || pending}>
             {pending ? <Spinner size={16}/> : mode === "create" ? <Plus size={16}/> : <FloppyDisk size={16}/>}
             {mode === "create" ? t("auth_admin:applications.register") : t("admin:common.save")}
           </Button>
@@ -452,7 +452,7 @@ export const ApplicationEditor = ({mode}: {mode: "create" | "edit"}) => {
         back={{to: adminRoute.applications, label: t("auth_admin:applications.back")}}
         actions={
           mode === "edit" ? (
-            <Button variant="ghost" size="sm" onClick={applications.reload} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={applications.reload}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
           ) : undefined

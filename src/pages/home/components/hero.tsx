@@ -78,10 +78,10 @@ export const Hero = () => {
           {t("hero:bio")}
         </p>
         <div data-fs-hero-line className="mt-8 flex flex-wrap gap-4">
-          <Button asChild variant="primary" data-fs-hover>
+          <Button asChild variant="primary">
             <a href="#contact">{t("hero:cta_work")}</a>
           </Button>
-          <Button asChild variant="secondary" data-fs-hover>
+          <Button asChild variant="secondary">
             <a href="https://github.com/Im-Fran" target="_blank" rel="noreferrer">
               <GithubLogoIcon size={18}/>
               {t("hero:cta_github")}

@@ -109,13 +109,13 @@ export const UserDetail = () => {
              * it is two places to keep in step.
              */}
             {can("avatars:read") && id && (
-              <Button variant="ghost" size="sm" asChild data-fs-hover>
+              <Button variant="ghost" size="sm" asChild>
                 <Link to={adminRoute.userAvatars(id)}>
                   <ImageSquare size={14}/> {t("auth_admin:users.review_avatars")}
                 </Link>
               </Button>
             )}
-            <Button variant="ghost" size="sm" onClick={refresh} data-fs-hover>
+            <Button variant="ghost" size="sm" onClick={refresh}>
               <ArrowClockwise size={14}/> {t("admin:common.refresh")}
             </Button>
           </>
@@ -169,7 +169,7 @@ export const UserDetail = () => {
                       size="sm"
                       disabled={setStatus.pending}
                       className={
-                        user.status === "disabled" ? undefined : "border-red-500/50 text-red-300 hover:bg-red-500/10"
+                        user.status === "disabled" ? undefined : "border-red-500/50 text-red-300 fs-ripple-danger"
                       }
                       onClick={async () => {
                         const next = user.status === "disabled" ? "active" : "disabled";
@@ -179,7 +179,6 @@ export const UserDetail = () => {
                           refresh();
                         }
                       }}
-                      data-fs-hover
                     >
                       {setStatus.pending ? <Spinner size={14}/> : user.status === "disabled" ? <CheckCircle size={16}/> : <Prohibit size={16}/>}
                       {user.status === "disabled" ? t("auth_admin:users.enable") : t("auth_admin:users.disable")}
@@ -228,7 +227,6 @@ export const UserDetail = () => {
                               }
                             }}
                             className="cursor-pointer rounded-[var(--radius-sm)] p-1 text-neutral-500 transition-colors hover:bg-neutral-700/60 hover:text-red-300"
-                            data-fs-hover
                           >
                             <Trash size={12}/>
                           </button>
@@ -266,7 +264,6 @@ export const UserDetail = () => {
                           detail.reload();
                         }
                       }}
-                      data-fs-hover
                     >
                       {grantRole.pending ? <Spinner size={14}/> : null}
                       {t("auth_admin:users.grant")}
@@ -327,9 +324,8 @@ export const UserDetail = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-300 hover:bg-red-500/10"
+                      className="text-red-300 fs-ripple-danger"
                       onClick={() => setConfirmSignOut(true)}
-                      data-fs-hover
                     >
                       <SignOut size={14}/> {t("auth_admin:users.revoke_sessions")}
                     </Button>
@@ -361,7 +357,7 @@ export const UserDetail = () => {
                             variant="ghost"
                             size="sm"
                             disabled={revokeSession.pending}
-                            className="text-red-300 hover:bg-red-500/10"
+                            className="text-red-300 fs-ripple-danger"
                             onClick={async () => {
                               const result = await revokeSession.run(session.id);
                               if (result.ok) {
@@ -369,7 +365,6 @@ export const UserDetail = () => {
                                 sessions.reload();
                               }
                             }}
-                            data-fs-hover
                           >
                             <SignOut size={14}/> {t("auth_admin:sessions.revoke")}
                           </Button>

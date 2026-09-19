@@ -117,7 +117,6 @@ export const AuditEntryItem = ({entry, last}: AuditEntryItemProps) => {
               aria-expanded={open}
               aria-controls={detailsId}
               className="mt-2 inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] text-[12px] text-neutral-500 transition-colors hover:text-text"
-              data-fs-hover
             >
               <CaretRight size={12} className={cn("transition-transform", open && "rotate-90")} aria-hidden="true"/>
               {open ? t("cms_audit:entry.hide_metadata") : t("cms_audit:entry.show_metadata")}

@@ -43,15 +43,14 @@ export const ConfirmDialog = ({
         )}
 
         <div className="flex flex-wrap justify-end gap-2">
-          <Button variant="ghost" onClick={onClose} disabled={pending} data-fs-hover>
+          <Button variant="ghost" onClick={onClose} disabled={pending}>
             {t("admin:common.cancel")}
           </Button>
           <Button
             variant="secondary"
             onClick={onConfirm}
             disabled={pending}
-            className="border-red-500/50 text-red-300 hover:bg-red-500/10"
-            data-fs-hover
+            className="border-red-500/50 text-red-300 fs-ripple-danger"
           >
             {pending ? <Spinner size={16}/> : <Warning size={16}/>}
             {confirmLabel}
