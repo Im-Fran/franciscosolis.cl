@@ -39,32 +39,32 @@ export const EmailDetail = lazy(() =>
   import("@/pages/cms/email/email-detail.tsx").then((m) => ({default: m.EmailDetail})),
 );
 
-export const ApplicationList = lazy(() =>
-  import("@/pages/cms/pages/application-list.tsx").then((m) => ({default: m.ApplicationList})),
+export const ProductList = lazy(() =>
+  import("@/pages/cms/marketplace/product-list.tsx").then((m) => ({default: m.ProductList})),
 );
-export const ApplicationEditor = lazy(() =>
-  import("@/pages/cms/pages/application-editor.tsx").then((m) => ({default: m.ApplicationEditor})),
+export const ProductEditor = lazy(() =>
+  import("@/pages/cms/marketplace/product-editor.tsx").then((m) => ({default: m.ProductEditor})),
 );
-export const UpdateList = lazy(() =>
-  import("@/pages/cms/pages/update-list.tsx").then((m) => ({default: m.UpdateList})),
+export const ReleaseList = lazy(() =>
+  import("@/pages/cms/marketplace/release-list.tsx").then((m) => ({default: m.ReleaseList})),
 );
-export const UpdateEditor = lazy(() =>
-  import("@/pages/cms/pages/update-editor.tsx").then((m) => ({default: m.UpdateEditor})),
+export const ReleaseEditor = lazy(() =>
+  import("@/pages/cms/marketplace/release-editor.tsx").then((m) => ({default: m.ReleaseEditor})),
 );
 export const WikiList = lazy(() =>
-  import("@/pages/cms/pages/wiki-list.tsx").then((m) => ({default: m.WikiList})),
+  import("@/pages/cms/marketplace/wiki-list.tsx").then((m) => ({default: m.WikiList})),
 );
 export const WikiEditor = lazy(() =>
-  import("@/pages/cms/pages/wiki-editor.tsx").then((m) => ({default: m.WikiEditor})),
+  import("@/pages/cms/marketplace/wiki-editor.tsx").then((m) => ({default: m.WikiEditor})),
 );
 export const SalesList = lazy(() =>
-  import("@/pages/cms/pages/sales-list.tsx").then((m) => ({default: m.SalesList})),
+  import("@/pages/cms/marketplace/sales-list.tsx").then((m) => ({default: m.SalesList})),
 );
 export const SaleDetail = lazy(() =>
-  import("@/pages/cms/pages/sale-detail.tsx").then((m) => ({default: m.SaleDetail})),
+  import("@/pages/cms/marketplace/sale-detail.tsx").then((m) => ({default: m.SaleDetail})),
 );
 export const VoucherList = lazy(() =>
-  import("@/pages/cms/pages/voucher-list.tsx").then((m) => ({default: m.VoucherList})),
+  import("@/pages/cms/marketplace/voucher-list.tsx").then((m) => ({default: m.VoucherList})),
 );
 
 export const AuditLog = lazy(() =>

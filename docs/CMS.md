@@ -22,11 +22,11 @@ trail — behind a sign-in of its own.
 | `/cms/email/messages/:id`      | One message: what was sent, and what happened to it               |
 | `/cms/audit`                   | The record of the writes the CMS made                             |
 
-One more section lives under `/cms` without belonging to the CMS module: `/cms/pages`, which edits
-the standalone application pages served by a different Worker. It is here because that service
+One more section lives under `/cms` without belonging to the CMS module: `/cms/marketplace`, which
+edits the product pages served by a different Worker. It is here because that service
 accepts the CMS's own client id as its audience, so it reuses this session and this shell rather
 than asking an editor to sign in a second time for a second console. See
-[APPLICATIONS.md](./APPLICATIONS.md).
+[MARKETPLACE.md](./MARKETPLACE.md).
 
 Everything except `sign-in` and `callback` needs a session; anonymous visitors are sent to
 `/cms/sign-in` with a `return_to` so the flow resumes where they were headed. A `return_to` pointing
@@ -170,7 +170,7 @@ be a lie the interface repeats every morning.
   dialog holding nothing but that one field in the other languages, with the original above it.
 
   It used to be a panel at the foot of the form, and the reason it moved is what that panel was
-  becoming: an application page has five translatable fields and the service publishes two
+  becoming: a product page has five translatable fields and the service publishes two
   languages, so the panel was ten more boxes below the fold, none of them beside the text they
   translate. The icon says how much is done without being opened, and the page stops growing when a
   third language lands.
@@ -190,7 +190,7 @@ be a lie the interface repeats every morning.
   button that produced nothing.
 
   The dialog also carries a **"translate this field" switch**, off for text that is the same string
-  in every language — an application's name, a product's — where the useful answer is "leave it
+  in every language — a product's name, a collection's — where the useful answer is "leave it
   alone" and a draft would be actively wrong. It is not stored anywhere: "not translated" and "no
   override written" are the same state to the API, which is what lets it be a switch rather than a
   column.
@@ -250,7 +250,7 @@ src/pages/cms/
   lazy-screens.tsx every screen, split out of the main bundle and fetched on demand
   components/      the shell, its navigation, the gate and the CMS's wiring of the shared
                    translation controls — what is specific to the CMS. The prose editors themselves
-                   are in `src/components/prose/`, shared with the standalone app pages and the
+                   are in `src/components/prose/`, shared with the marketplace and the
                    support console: a component that reaches into one section's context is that
                    section's component, and the help article editor throwing
                    `useCms must be used inside <CmsProvider>` is what that costs. The primitives
