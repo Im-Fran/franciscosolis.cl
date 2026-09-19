@@ -20,5 +20,24 @@
   "locales": {
     "en": "English",
     "es": "Spanish"
+  },
+  "translations": {
+    "title": "Translate {{field}}",
+    "open_label": "Translations of {{field}}",
+    "description": "The form holds the {{locale}} version. Anything left blank here falls back to it, so a partly translated record still renders.",
+    "none": "This service publishes a single language, so there is nothing to translate.",
+    "source_label": "Original · {{locale}}",
+    "source_empty": "Nothing written in the form yet, so there is nothing to translate.",
+    "locale_label": "{{locale}} translation",
+    "translatable": "Translate this field",
+    "translatable_hint": "Turn it off for text that is the same in every language, like an application's name. It clears what is written here.",
+    "generate": "Draft with AI",
+    "regenerate": "Draft again",
+    "generating": "Drafting…",
+    "generate_failed": "No draft came back. Try again, or write the translation yourself.",
+    "generate_hint": "A draft, never a publication: read it before you save.",
+    "too_long": "Too long to draft automatically — {{max}} characters at most. Translate it in pieces, or write it yourself.",
+    "clear": "Clear",
+    "done": "Done"
   }
 }

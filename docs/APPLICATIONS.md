@@ -130,6 +130,12 @@ not been translated yet" line under the banner reads.
 Only prose is translated. Which tabs a page has, its slug, a release's version number and a wiki
 page's ordering are the same fact in every language.
 
+In the editor, a translatable field carries a translate icon **inside** its control, and that icon
+opens a dialog holding that one field in the other languages, with the original above it. The dialog
+also offers to draft the translation with Workers AI (`POST /pages/admin/translate`), which writes
+nothing: the draft is saved through the ordinary `PATCH` that saves every other override, so a model
+outage cannot corrupt a page and nothing machine-translated is published unread.
+
 ## The editor
 
 It lives at `/cms/pages`, inside the CMS interface, and that is a deliberate arrangement rather than
@@ -155,11 +161,15 @@ session to do it.
 | `/cms/pages/:id/vouchers`               | Every receipt it ever issued, void ones included     |
 
 Both editing screens are **tabbed**, and their tabs are sections of the screen rather than routes.
-An application is General / Appearance / Pricing / Tabs and links / Content / Translations; a release
-is Release / Notes / Links / Downloads / Translations. The stack of panels they replaced made editing
-a published page a scroll past everything already right to reach the one field that was not — but a
-section per *route* would have thrown away whatever was typed on the way between two of them, so the
-form stays mounted and only its sections are swapped.
+An application is General / Appearance / Pricing / Tabs and links / Content; a release is Release /
+Notes / Links / Downloads. The stack of panels they replaced made editing a published page a scroll
+past everything already right to reach the one field that was not — but a section per *route* would
+have thrown away whatever was typed on the way between two of them, so the form stays mounted and
+only its sections are swapped.
+
+Neither has a Translations section, and that is the same reasoning one step further: a tab of its own
+was still a second copy of the form, in another language, one tab away from the text it translates.
+The translation of a field lives on the field (see *The language* above).
 
 That split has one cost, and it is paid in `SECTIONS` in each editor: every section names the fields
 it holds. A refused save opens the first section holding one and marks the rest, because a validation

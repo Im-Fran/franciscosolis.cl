@@ -20,15 +20,14 @@ import {useMutation} from "@/lib/admin/useMutation.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
-import {TranslationsPanel} from "@/pages/cms/components/translations-panel.tsx";
+import {TranslatableField} from "@/components/prose/translatable-field.tsx";
+import {TranslationsProvider} from "@/pages/cms/components/translations-provider.tsx";
 
 const TITLE_MAX = 200;
 const SUMMARY_MAX = 600;
 const VERSION_MAX = 40;
 const BODY_MAX = 200000;
 
-/** A legal page has no subtitle, so its translatable prose is these three fields. */
-const TRANSLATABLE = ["title", "summary", "body"] as const;
 
 type Form = {
   title: string;
@@ -309,6 +308,7 @@ export const LegalEditor = () => {
   }
 
   return (
+    <TranslationsProvider>
     <>
       {header}
 
@@ -321,12 +321,18 @@ export const LegalEditor = () => {
 
         <Panel title={t("cms_legal:editor.document")} description={t("cms_legal:editor.document_hint")}>
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field
+            <TranslatableField
               label={t("cms_legal:editor.fields.title")}
               htmlFor="legal-title"
               error={errors.title}
               hint={t("cms_legal:editor.hints.title")}
               className="sm:col-span-2"
+              field="title"
+              source={form.title}
+              value={form.translations}
+              onChange={(value) => setForm((current) => ({...current, translations: value}))}
+              limit={TITLE_MAX}
+              disabled={save.pending}
             >
               <Input
                 id="legal-title"
@@ -337,7 +343,7 @@ export const LegalEditor = () => {
                 autoComplete="off"
                 required
               />
-            </Field>
+            </TranslatableField>
 
             <Field
               label={t("cms_legal:editor.fields.slug")}
@@ -361,12 +367,18 @@ export const LegalEditor = () => {
               />
             </Field>
 
-            <Field
+            <TranslatableField
               label={t("cms_legal:editor.fields.summary")}
               htmlFor="legal-summary"
               error={errors.summary}
               hint={t("cms_legal:editor.hints.summary", {count: form.summary.length, max: SUMMARY_MAX})}
               className="sm:col-span-2"
+              field="summary"
+              source={form.summary}
+              value={form.translations}
+              onChange={(value) => setForm((current) => ({...current, translations: value}))}
+              limit={SUMMARY_MAX}
+              disabled={save.pending}
             >
               <Textarea
                 id="legal-summary"
@@ -377,7 +389,7 @@ export const LegalEditor = () => {
                 aria-invalid={Boolean(errors.summary)}
                 className="resize-y"
               />
-            </Field>
+            </TranslatableField>
 
             <Field
               label={t("cms_legal:editor.fields.status")}
@@ -433,28 +445,32 @@ export const LegalEditor = () => {
         </Panel>
 
         <Panel title={t("cms_legal:editor.text")} description={t("cms_legal:editor.text_hint")}>
-          <Field label={t("cms_legal:editor.fields.body")} htmlFor="legal-body" error={errors.body}>
-            <MarkdownEditor
-              id="legal-body"
-              value={form.body}
-              onChange={(value) => set("body", value)}
-              placeholder={t("cms_legal:editor.body_placeholder")}
-              maxLength={BODY_MAX}
-              rows={30}
-              disabled={save.pending}
-            />
-          </Field>
+          <TranslatableField
+            label={t("cms_legal:editor.fields.body")}
+            htmlFor="legal-body"
+            error={errors.body}
+            field="body"
+            source={form.body}
+            value={form.translations}
+            onChange={(value) => setForm((current) => ({...current, translations: value}))}
+            limit={BODY_MAX}
+            disabled={save.pending}
+          >
+            {/* The Markdown editor has a toolbar of its own, so the icon goes in it. */}
+            {(action) => (
+              <MarkdownEditor
+                id="legal-body"
+                value={form.body}
+                onChange={(value) => set("body", value)}
+                placeholder={t("cms_legal:editor.body_placeholder")}
+                maxLength={BODY_MAX}
+                rows={30}
+                disabled={save.pending}
+                action={action}
+              />
+            )}
+          </TranslatableField>
         </Panel>
-
-        <TranslationsPanel
-          ns="cms_legal"
-          fields={TRANSLATABLE}
-          source={{title: form.title, summary: form.summary, body: form.body}}
-          value={form.translations}
-          onChange={(value) => setForm((current) => ({...current, translations: value}))}
-          limits={{title: TITLE_MAX, summary: SUMMARY_MAX, body: BODY_MAX}}
-          disabled={save.pending}
-        />
 
         {loaded?.updated_at && (
           <p className="text-[13px] text-neutral-600">
@@ -485,5 +501,6 @@ export const LegalEditor = () => {
         error={remove.error}
       />
     </>
+    </TranslationsProvider>
   );
 };

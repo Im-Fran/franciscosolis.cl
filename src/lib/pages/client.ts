@@ -26,6 +26,7 @@ import type {
   WikiPage,
   WikiPayload,
 } from "@/lib/pages/types.ts";
+import type {TranslationDraft, TranslationDraftRequest} from "@/lib/prose/types.ts";
 
 /**
  * The editorial client for the Standalone App Pages service.
@@ -63,6 +64,16 @@ export const pagesApi = {
   /** The "am I allowed to edit application pages" probe. 403 for an account the service refuses. */
   me: (signal?: AbortSignal) =>
     http.request<{id: string; email: string}>("/admin/me", {signal}),
+
+  /**
+   * A machine-translated draft of one prose field, for the translation dialog on that field.
+   *
+   * It writes nothing: the draft comes back as a string and is saved, edited or discarded through
+   * the ordinary update that saves every other override. A model that failed answers `translation:
+   * null` with a 200, so only a transport or authorisation failure rejects here.
+   */
+  translate: (body: TranslationDraftRequest, signal?: AbortSignal) =>
+    http.request<TranslationDraft>("/admin/translate", {method: "POST", json: body, signal}),
 
   /* ── Applications ───────────────────────────────────────────────────────── */
 

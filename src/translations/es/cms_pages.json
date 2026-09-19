@@ -95,8 +95,7 @@
       "appearance": "Apariencia",
       "pricing": "Cobro",
       "structure": "Pestañas y enlaces",
-      "content": "Contenido",
-      "translations": "Traducciones"
+      "content": "Contenido"
     },
     "identity": "Identidad",
     "identity_hint": "Cómo se llama la aplicación y en qué dirección responde.",
@@ -126,12 +125,6 @@
     "delete_body": "Se eliminará «{{name}}» y con ella todas sus novedades y páginas de wiki. No se puede deshacer.",
     "delete_confirm": "Eliminarla",
     "updated_at": "Guardada por última vez el {{date}}",
-    "translations_title": "Traducciones",
-    "translations_description": "Los campos de arriba son la versión en {{locale}}. Lo que dejes en blanco aquí vuelve a ella, así que una página traducida a medias se sigue mostrando.",
-    "translations_none": "Este servicio publica un solo idioma, así que no hay nada que traducir.",
-    "translations_clear": "Vaciar {{locale}}",
-    "translations_source": "Original: {{text}}",
-    "translations_source_empty": "Todavía no hay nada escrito arriba que traducir.",
     "fields": {
       "name": "Nombre",
       "tagline": "Bajada",
@@ -187,8 +180,7 @@
       "release": "Versión",
       "notes": "Notas",
       "links": "Enlaces",
-      "builds": "Descargas",
-      "translations": "Traducciones"
+      "builds": "Descargas"
     },
     "release": "Lanzamiento",
     "release_hint": "La versión, cuándo salió y cómo llamarla.",

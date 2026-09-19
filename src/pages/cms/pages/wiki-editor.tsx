@@ -19,13 +19,12 @@ import type {ContentStatus, Translations, WikiPage, WikiPayload} from "@/lib/pag
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
-import {TranslationsPanel} from "@/pages/cms/pages/components/translations-panel.tsx";
+import {TranslatableField} from "@/components/prose/translatable-field.tsx";
+import {TranslationsProvider} from "@/pages/cms/pages/components/translations-provider.tsx";
 
 const TITLE_MAX = 200;
 const ICON_MAX = 60;
 const BODY_MAX = 200000;
-
-const TRANSLATABLE = ["title", "body"] as const;
 
 type Form = {
   title: string;
@@ -288,6 +287,7 @@ export const WikiEditor = () => {
   }
 
   return (
+    <TranslationsProvider>
     <>
       {header}
 
@@ -300,11 +300,17 @@ export const WikiEditor = () => {
 
         <Panel title={t("cms_pages:wiki.page")} description={t("cms_pages:wiki.page_hint")}>
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field
+            <TranslatableField
               label={t("cms_pages:fields.title")}
               htmlFor="wiki-title"
               error={errors.title}
               hint={t("cms_pages:hints.wiki_title")}
+              field="title"
+              source={form.title}
+              value={form.translations}
+              onChange={(value) => setForm((current) => ({...current, translations: value}))}
+              limit={TITLE_MAX}
+              disabled={save.pending}
             >
               <Input
                 id="wiki-title"
@@ -315,7 +321,7 @@ export const WikiEditor = () => {
                 autoComplete="off"
                 required
               />
-            </Field>
+            </TranslatableField>
 
             <Field
               label={t("cms_pages:fields.slug")}
@@ -398,27 +404,33 @@ export const WikiEditor = () => {
         </Panel>
 
         <Panel title={t("cms_pages:wiki.text")} description={t("cms_pages:wiki.text_hint")}>
-          <Field label={t("cms_pages:fields.body")} htmlFor="wiki-body" error={errors.body}>
-            <MarkdownEditor
-              id="wiki-body"
-              value={form.body}
-              onChange={(value) => set("body", value)}
-              placeholder={t("cms_pages:wiki.body_placeholder")}
-              maxLength={BODY_MAX}
-              rows={28}
-              disabled={save.pending}
-            />
-          </Field>
+          <TranslatableField
+            label={t("cms_pages:fields.body")}
+            htmlFor="wiki-body"
+            error={errors.body}
+            field="body"
+            source={form.body}
+            value={form.translations}
+            onChange={(value) => setForm((current) => ({...current, translations: value}))}
+            limit={BODY_MAX}
+            disabled={save.pending}
+          >
+            {/* The Markdown editor has a toolbar of its own, so the icon goes in it. */}
+            {(action) => (
+              <MarkdownEditor
+                id="wiki-body"
+                value={form.body}
+                onChange={(value) => set("body", value)}
+                placeholder={t("cms_pages:wiki.body_placeholder")}
+                maxLength={BODY_MAX}
+                rows={28}
+                disabled={save.pending}
+                action={action}
+              />
+            )}
+          </TranslatableField>
         </Panel>
 
-        <TranslationsPanel
-          fields={TRANSLATABLE}
-          source={{title: form.title, body: form.body}}
-          value={form.translations}
-          onChange={(value) => setForm((current) => ({...current, translations: value}))}
-          limits={{title: TITLE_MAX, body: BODY_MAX}}
-          disabled={save.pending}
-        />
       </form>
 
       <ConfirmDialog
@@ -432,5 +444,6 @@ export const WikiEditor = () => {
         error={remove.error}
       />
     </>
+    </TranslationsProvider>
   );
 };

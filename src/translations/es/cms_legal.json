@@ -65,12 +65,6 @@
     "publish_confirm": "Publicar documento",
     "delete_title": "¿Eliminar este documento?",
     "delete_body": "«{{title}}» se eliminará para siempre y no hay vuelta atrás. Una política que alguna vez estuvo publicada normalmente conviene dejarla en Archivado: alguien puede necesitar saber qué decían los términos el año pasado.",
-    "delete_confirm": "Eliminar documento",
-    "translations_title": "Traducciones",
-    "translations_description": "Los campos de arriba son la versión en {{locale}}. Lo que dejes en blanco aquí vuelve a ella, así que una entrada traducida a medias se sigue mostrando.",
-    "translations_none": "Este servicio publica un solo idioma, así que no hay nada que traducir.",
-    "translations_clear": "Vaciar {{locale}}",
-    "translations_source": "Original: {{text}}",
-    "translations_source_empty": "Todavía no hay nada escrito arriba que traducir."
+    "delete_confirm": "Eliminar documento"
   }
 }
