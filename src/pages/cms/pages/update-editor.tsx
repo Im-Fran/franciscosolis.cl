@@ -26,6 +26,7 @@ import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {LinksField} from "@/pages/cms/pages/components/links-field.tsx";
+import {ReleaseFilesPanel} from "@/pages/cms/pages/components/release-files-panel.tsx";
 import {TranslationsPanel} from "@/pages/cms/pages/components/translations-panel.tsx";
 
 const VERSION_MAX = 40;
@@ -393,6 +394,13 @@ export const UpdateEditor = () => {
             disabled={save.pending}
           />
         </Panel>
+
+        {/*
+          * Only once the release exists. A build hangs off a release note, so there is nothing to
+          * attach it to while the note is still being written — and the panel writes straight to the
+          * service rather than through this form's save, because bytes are not a field.
+          */}
+        {updateId && <ReleaseFilesPanel applicationId={id} updateId={updateId}/>}
 
         <TranslationsPanel
           fields={TRANSLATABLE}

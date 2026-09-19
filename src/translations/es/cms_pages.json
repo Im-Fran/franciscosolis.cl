@@ -22,7 +22,10 @@
     "body": "Contenido",
     "version": "Versión",
     "released_at": "Fecha de lanzamiento",
-    "parent": "Sección"
+    "parent": "Sección",
+    "pricing_mode": "Cómo se paga",
+    "price_amount": "Precio (CLP)",
+    "suggested_amount": "Monto sugerido (CLP)"
   },
   "hints": {
     "name": "Cómo se llama la aplicación. Lo usan el banner y la pestaña del navegador.",
@@ -40,7 +43,12 @@
     "wiki_slug": "La dirección dentro de la wiki. Se deriva del título hasta que lo edites.",
     "wiki_icon": "Un nombre de ícono que el sitio resuelve, como book-open. No es una URL.",
     "parent": "Déjala en el primer nivel o cuélgala de una sección.",
-    "parent_locked": "Esta página tiene páginas debajo, así que no puede anidarse."
+    "parent_locked": "Esta página tiene páginas debajo, así que no puede anidarse.",
+    "pricing_free": "No se cobra nada ni se ofrece ningún pago.",
+    "pricing_donation": "Los archivos se descargan gratis. A quien no haya pagado se le ofrece el pago y se le dice explícitamente que puede rechazarlo y descargar igual.",
+    "pricing_paid": "Cada archivo requiere una compra aprobada en la cuenta: tanto las versiones nuevas como las anteriores.",
+    "price_amount": "Cuánto cuesta una compra. Una aplicación de pago sin precio no puede abrir el checkout.",
+    "suggested_amount": "Lo que viene precargado en el diálogo de pago. Es una sugerencia, no un mínimo: se acepta un monto menor."
   },
   "list": {
     "title": "Páginas de aplicaciones",
@@ -121,7 +129,11 @@
       "contact_body": "Contacto",
       "title": "Título",
       "body": "Contenido"
-    }
+    },
+    "pricing": "Cobro",
+    "pricing_hint": "Si esta aplicación es gratis, acepta un pago opcional o debe comprarse antes de poder descargar sus archivos.",
+    "pricing_downloads_hint": "Los pagos y las descargas quedan asociados a una cuenta de este sitio: quien compra inicia sesión primero y la licencia queda en su cuenta. Las descargas las sirve la API con un enlace de un solo uso, nunca directo desde el almacenamiento.",
+    "amount_range": "Entre {{min}} y {{max}} pesos."
   },
   "links": {
     "empty": "Todavía no hay enlaces. El banner muestra los que agregues aquí.",
@@ -225,5 +237,40 @@
     "clear": "Borrar {{locale}}",
     "source": "Original: {{text}}",
     "source_empty": "Todavía no hay nada escrito arriba."
+  },
+  "pricing_modes": {
+    "free": "Gratis",
+    "donation": "Pago opcional",
+    "paid": "De pago"
+  },
+  "files": {
+    "title": "Descargas",
+    "hint": "Los archivos que publica esta versión. Los sirve la API con un enlace de un solo uso, así que quién puede llevárselos depende del cobro de la aplicación.",
+    "add": "Subir un archivo",
+    "uploading": "Subiendo…",
+    "uploaded": "{{filename}} subido.",
+    "empty": "Esta versión no tiene archivos adjuntos.",
+    "no_content": "Esperando sus bytes.",
+    "unfinished": "Incompleto",
+    "publish_blocked": "Sube el archivo antes de publicarlo.",
+    "downloads_one": "{{count}} descarga",
+    "downloads_other": "{{count}} descargas",
+    "platform": "Build",
+    "status": "Visibilidad",
+    "naming": "El nombre del archivo es el que guarda quien lo descarga, y sale del archivo que subes. Para cambiarlo, súbelo con el nombre que corresponde.",
+    "delete_label": "Eliminar {{filename}}",
+    "delete_title": "¿Eliminar este archivo?",
+    "delete_body": "{{filename}} y sus bytes se eliminan definitivamente. Quien tenga el enlace recibirá un 404.",
+    "delete_confirm": "Eliminar archivo",
+    "platforms": {
+      "any": "Cualquier plataforma",
+      "windows": "Windows",
+      "macos": "macOS",
+      "linux": "Linux",
+      "android": "Android",
+      "ios": "iOS",
+      "web": "Web",
+      "server": "Servidor"
+    }
   }
 }

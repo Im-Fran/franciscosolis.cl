@@ -22,7 +22,10 @@
     "body": "Body",
     "version": "Version",
     "released_at": "Release date",
-    "parent": "Section"
+    "parent": "Section",
+    "pricing_mode": "How it is paid for",
+    "price_amount": "Price (CLP)",
+    "suggested_amount": "Suggested amount (CLP)"
   },
   "hints": {
     "name": "What the application is called. The banner and the browser tab both use it.",
@@ -40,7 +43,12 @@
     "wiki_slug": "The address inside the wiki. Derived from the title until you edit it.",
     "wiki_icon": "An icon name the site resolves, like book-open. Not a URL.",
     "parent": "Leave it at the top level, or hang this page under a section.",
-    "parent_locked": "This page has pages under it, so it cannot itself be nested."
+    "parent_locked": "This page has pages under it, so it cannot itself be nested.",
+    "pricing_free": "Nothing is charged and no payment is ever offered.",
+    "pricing_donation": "The builds are free to take. Everybody who has not paid is offered the payment, and told outright that they can decline and download anyway.",
+    "pricing_paid": "Every build needs an approved purchase on the account — the new releases and the archive alike.",
+    "price_amount": "What one purchase costs. A paid application without a price cannot open a checkout.",
+    "suggested_amount": "What the payment dialog prefills. It is a suggestion, not a floor: a smaller amount is still accepted."
   },
   "list": {
     "title": "Application pages",
@@ -121,7 +129,11 @@
       "contact_body": "Contact",
       "title": "Title",
       "body": "Body"
-    }
+    },
+    "pricing": "Pricing",
+    "pricing_hint": "Whether this application is free, takes an optional payment, or has to be bought before its builds can be downloaded.",
+    "pricing_downloads_hint": "Payments and downloads are tied to an account on this site: the buyer signs in first, and the licence stays on their account. Downloads are served by the API against a one-off link, never straight from storage.",
+    "amount_range": "Between {{min}} and {{max}} pesos."
   },
   "links": {
     "empty": "No links yet. The banner shows whatever you add here.",
@@ -225,5 +237,40 @@
     "clear": "Clear {{locale}}",
     "source": "Original: {{text}}",
     "source_empty": "Nothing written above yet."
+  },
+  "pricing_modes": {
+    "free": "Free",
+    "donation": "Optional payment",
+    "paid": "Paid"
+  },
+  "files": {
+    "title": "Downloads",
+    "hint": "The builds this release publishes. They are served by the API against a one-off link, so whether a visitor may take one depends on the application's pricing.",
+    "add": "Upload a build",
+    "uploading": "Uploading…",
+    "uploaded": "{{filename}} uploaded.",
+    "empty": "This release has no builds attached.",
+    "no_content": "Waiting for its bytes.",
+    "unfinished": "Incomplete",
+    "publish_blocked": "Upload the file before publishing it.",
+    "downloads_one": "{{count}} download",
+    "downloads_other": "{{count}} downloads",
+    "platform": "Build",
+    "status": "Visibility",
+    "naming": "The filename is what a visitor saves, and it is taken from the file you upload. To rename it, upload the file under the name it should have.",
+    "delete_label": "Delete {{filename}}",
+    "delete_title": "Delete this build?",
+    "delete_body": "{{filename}} and its bytes are removed for good. Anybody linking to it gets a 404.",
+    "delete_confirm": "Delete build",
+    "platforms": {
+      "any": "Any platform",
+      "windows": "Windows",
+      "macos": "macOS",
+      "linux": "Linux",
+      "android": "Android",
+      "ios": "iOS",
+      "web": "Web",
+      "server": "Server"
+    }
   }
 }
