@@ -87,6 +87,14 @@
     "description_new": "Basta un nombre para empezar. Todo lo demás se puede completar sobre la marcha.",
     "description_edit": "La página en sí. Sus novedades y su wiki tienen pantallas propias.",
     "view": "Ver la página",
+    "sections": {
+      "label": "Secciones de esta página",
+      "general": "General",
+      "appearance": "Apariencia",
+      "pricing": "Cobro",
+      "structure": "Pestañas y enlaces",
+      "content": "Contenido"
+    },
     "identity": "Identidad",
     "identity_hint": "Cómo se llama la aplicación y en qué dirección responde.",
     "appearance": "Apariencia",
@@ -165,6 +173,13 @@
     "title_edit": "Lanzamiento {{version}}",
     "title_edit_generic": "Lanzamiento",
     "editor_description": "Una entrada del historial de cambios.",
+    "sections": {
+      "label": "Secciones de esta versión",
+      "release": "Versión",
+      "notes": "Notas",
+      "links": "Enlaces",
+      "builds": "Descargas"
+    },
     "release": "Lanzamiento",
     "release_hint": "La versión, cuándo salió y cómo llamarla.",
     "notes": "Notas del lanzamiento",

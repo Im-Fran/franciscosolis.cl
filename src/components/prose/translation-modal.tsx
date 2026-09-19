@@ -1,5 +1,8 @@
 import {useEffect, useId, useState} from "react";
 import {useTranslation} from "react-i18next";
+/* Radix directly rather than `@/components/ui/tabs.tsx`: that one lays its triggers out as a
+   220px sidebar column beside the content above `lg`, which is the console's shape and not a
+   dialog's. Two language tabs above one editor is a row, at every width. */
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import {Sparkle, Trash} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";

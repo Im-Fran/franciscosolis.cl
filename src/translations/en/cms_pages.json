@@ -87,6 +87,14 @@
     "description_new": "A name is all it takes to start. Everything else can be filled in as you go.",
     "description_edit": "The page itself. Its release notes and its wiki have screens of their own.",
     "view": "View page",
+    "sections": {
+      "label": "Sections of this page",
+      "general": "General",
+      "appearance": "Appearance",
+      "pricing": "Pricing",
+      "structure": "Tabs and links",
+      "content": "Content"
+    },
     "identity": "Identity",
     "identity_hint": "What the application is called and where it answers.",
     "appearance": "Appearance",
@@ -165,6 +173,13 @@
     "title_edit": "Release {{version}}",
     "title_edit_generic": "Release",
     "editor_description": "One entry of the changelog.",
+    "sections": {
+      "label": "Sections of this release",
+      "release": "Release",
+      "notes": "Notes",
+      "links": "Links",
+      "builds": "Downloads"
+    },
     "release": "Release",
     "release_hint": "The version, when it shipped, and what to call it.",
     "notes": "Release notes",
