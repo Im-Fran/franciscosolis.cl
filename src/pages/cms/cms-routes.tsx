@@ -1,5 +1,5 @@
 import {Suspense} from "react";
-import {Outlet} from "react-router-dom";
+import {Navigate, Outlet} from "react-router-dom";
 import type {RouteObject} from "react-router-dom";
 import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {RequireAuth} from "@/components/auth/require-auth.tsx";
@@ -10,9 +10,10 @@ import {ToastProvider} from "@/lib/admin/toast-provider.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {CmsLayout} from "@/pages/cms/components/cms-layout.tsx";
 import {ContentRedirect} from "@/pages/cms/components/content-redirect.tsx";
+import {MARKETPLACE_ADMIN_ROUTE} from "@/lib/marketplace/config.ts";
 import {
-  ApplicationEditor,
-  ApplicationList,
+  ProductEditor,
+  ProductList,
   AuditLog,
   Callback,
   ContentEditor,
@@ -28,8 +29,8 @@ import {
   SignIn,
   TemplateEditor,
   TemplateList,
-  UpdateEditor,
-  UpdateList,
+  ReleaseEditor,
+  ReleaseList,
   VoucherList,
   WikiEditor,
   WikiList,
@@ -75,29 +76,39 @@ export const cmsRoutes: RouteObject = {
         {path: "content/:collection/:id", element: <ContentEditor/>},
 
         /*
-         * Standalone app pages. They are a different service — `apps/pages` rather than `apps/cms`
-         * — but not a different application: it accepts the CMS's audience precisely so these
+         * The marketplace. It is a different service — `apps/marketplace` rather than `apps/cms` —
+         * but not a different client application: it accepts the CMS's audience precisely so these
          * screens can live inside this gate and this session instead of asking an editor to sign in
          * a second time for a second console.
          */
-        {path: "pages", element: <ApplicationList/>},
-        {path: "pages/new", element: <ApplicationEditor/>},
-        {path: "pages/:id", element: <ApplicationEditor/>},
-        {path: "pages/:id/updates", element: <UpdateList/>},
-        {path: "pages/:id/updates/new", element: <UpdateEditor/>},
-        {path: "pages/:id/updates/:updateId", element: <UpdateEditor/>},
-        {path: "pages/:id/wiki", element: <WikiList/>},
-        {path: "pages/:id/wiki/new", element: <WikiEditor/>},
-        {path: "pages/:id/wiki/:pageId", element: <WikiEditor/>},
+        {path: "marketplace", element: <ProductList/>},
+        {path: "marketplace/new", element: <ProductEditor/>},
+        {path: "marketplace/:id", element: <ProductEditor/>},
+        {path: "marketplace/:id/releases", element: <ReleaseList/>},
+        {path: "marketplace/:id/releases/new", element: <ReleaseEditor/>},
+        {path: "marketplace/:id/releases/:releaseId", element: <ReleaseEditor/>},
+        {path: "marketplace/:id/wiki", element: <WikiList/>},
+        {path: "marketplace/:id/wiki/new", element: <WikiEditor/>},
+        {path: "marketplace/:id/wiki/:pageId", element: <WikiEditor/>},
 
         /*
-         * The sales of one application, and the receipts it issued. Not tabs on the product page —
+         * The sales of one product, and the receipts it issued. Not tabs on the product page —
          * that set is a house standard the service enforces with a registry — but sections of this
          * console, which is where the takings belong.
          */
-        {path: "pages/:id/sales", element: <SalesList/>},
-        {path: "pages/:id/sales/:saleId", element: <SaleDetail/>},
-        {path: "pages/:id/vouchers", element: <VoucherList/>},
+        {path: "marketplace/:id/sales", element: <SalesList/>},
+        {path: "marketplace/:id/sales/:saleId", element: <SaleDetail/>},
+        {path: "marketplace/:id/vouchers", element: <VoucherList/>},
+
+        /*
+         * The editorial screens that came with the store are deliberately not here yet: review
+         * moderation, the cross-product report queue, per-release compatibility and the analytics
+         * series are the second half of this work. The public page is what breaks when the service
+         * is renamed, so it goes first.
+         */
+
+        /* The address these screens lived at before the rename, kept so a bookmark still lands. */
+        {path: "pages/*", element: <Navigate to={MARKETPLACE_ADMIN_ROUTE} replace/>},
 
         {path: "legal", element: <LegalList/>},
         {path: "legal/new", element: <LegalEditor/>},

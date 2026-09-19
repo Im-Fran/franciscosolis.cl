@@ -64,7 +64,7 @@ sanitises it with DOMPurify down to exactly that one tag and no attributes.
 sections, sent mail and the audit trail.
 
 It is a **separate OAuth client** (`franciscosolis-support`, storage namespace `fs.support`), unlike
-the standalone app pages — which live inside the CMS console precisely because their editor *is* the
+the marketplace — which lives inside the CMS console precisely because its editor *is* the
 CMS editor. The reason is assignment: a ticket goes to a person, and "a person" only means something
 if there is a defined set of them. The auth service resolves roles per client application, so a
 client id of its own is what produces that set. It also means a support agent is not automatically
