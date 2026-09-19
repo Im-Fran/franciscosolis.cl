@@ -18,7 +18,7 @@ import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {SortableList} from "@/components/admin/sortable-list.tsx";
 import {StatusBadge} from "@/components/admin/status-badge.tsx";
-import {ProductNav} from "@/pages/cms/marketplace/components/product-nav.tsx";
+import {ProductNav} from "@/pages/marketplace/components/product-nav.tsx";
 
 /**
  * One product's wiki, as a flat list in sidebar order.
@@ -31,7 +31,7 @@ import {ProductNav} from "@/pages/cms/marketplace/components/product-nav.tsx";
  * wiki has a reading order somebody chose, and a changelog has dates.
  */
 export const WikiList = () => {
-  const {t} = useTranslation(["cms_marketplace", "cms"]);
+  const {t} = useTranslation(["marketplace_admin", "cms"]);
   const {id = ""} = useParams<{id: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
@@ -62,7 +62,7 @@ export const WikiList = () => {
     () => [
       {
         key: "title",
-        header: t("cms_marketplace:wiki.columns.page"),
+        header: t("marketplace_admin:wiki.columns.page"),
         cell: (row) => (
           <div className={row.parent_id ? "min-w-0 pl-5" : "min-w-0"}>
             <p className="flex items-center gap-1.5 truncate text-sm text-text">
@@ -75,27 +75,27 @@ export const WikiList = () => {
       },
       {
         key: "parent",
-        header: t("cms_marketplace:wiki.columns.section"),
+        header: t("marketplace_admin:wiki.columns.section"),
         className: "w-44",
         hideBelowLg: true,
         cell: (row) =>
           row.parent_id ? (
             <span className="text-[13px] text-neutral-400">
-              {titleById.get(row.parent_id) ?? t("cms_marketplace:wiki.unknown_section")}
+              {titleById.get(row.parent_id) ?? t("marketplace_admin:wiki.unknown_section")}
             </span>
           ) : (
-            <span className="text-[13px] text-neutral-600">{t("cms_marketplace:wiki.top_level")}</span>
+            <span className="text-[13px] text-neutral-600">{t("marketplace_admin:wiki.top_level")}</span>
           ),
       },
       {
         key: "status",
-        header: t("cms_marketplace:wiki.columns.status"),
+        header: t("marketplace_admin:wiki.columns.status"),
         className: "w-32",
         cell: (row) => <StatusBadge status={row.status}/>,
       },
       {
         key: "actions",
-        header: <span className="sr-only">{t("cms_marketplace:wiki.columns.actions")}</span>,
+        header: <span className="sr-only">{t("marketplace_admin:wiki.columns.actions")}</span>,
         className: "w-24 pr-0 text-right",
         cell: (row) => (
           <div className="flex items-center justify-end gap-1">
@@ -103,7 +103,7 @@ export const WikiList = () => {
               variant="ghost"
               size="icon"
               asChild
-              aria-label={t("cms_marketplace:wiki.edit_aria", {title: row.title})}
+              aria-label={t("marketplace_admin:wiki.edit_aria", {title: row.title})}
               className="size-9"
             >
               <Link to={marketplaceRoute.wikiItem(id, row.id)} onClick={(event) => event.stopPropagation()}>
@@ -118,7 +118,7 @@ export const WikiList = () => {
                 resetRemoveError();
                 setPendingDelete(row);
               }}
-              aria-label={t("cms_marketplace:wiki.delete_aria", {title: row.title})}
+              aria-label={t("marketplace_admin:wiki.delete_aria", {title: row.title})}
               className="size-9 text-neutral-400 hover:text-red-300"
             >
               <Trash size={16}/>
@@ -153,9 +153,9 @@ export const WikiList = () => {
   return (
     <>
       <PageHeader
-        title={t("cms_marketplace:wiki.title")}
-        description={t("cms_marketplace:wiki.description", {name: product.data?.name ?? ""})}
-        back={{to: marketplaceRoute.list, label: t("cms_marketplace:editor.back")}}
+        title={t("marketplace_admin:wiki.title")}
+        description={t("marketplace_admin:wiki.description", {name: product.data?.name ?? ""})}
+        back={{to: marketplaceRoute.list, label: t("marketplace_admin:editor.back")}}
         actions={
           <>
             {total > 1 &&
@@ -166,17 +166,17 @@ export const WikiList = () => {
                   </Button>
                   <Button onClick={() => void saveOrder()} disabled={reorder.pending}>
                     {reorder.pending ? <Spinner size={16}/> : <ArrowsDownUp size={16}/>}
-                    {t("cms_marketplace:wiki.save_order")}
+                    {t("marketplace_admin:wiki.save_order")}
                   </Button>
                 </>
               ) : (
                 <Button variant="secondary" onClick={() => setOrdering(rows)}>
-                  <ArrowsDownUp size={16}/> {t("cms_marketplace:wiki.reorder")}
+                  <ArrowsDownUp size={16}/> {t("marketplace_admin:wiki.reorder")}
                 </Button>
               ))}
             <Button asChild>
               <Link to={marketplaceRoute.wikiNew(id)}>
-                <Plus size={16}/> {t("cms_marketplace:wiki.new")}
+                <Plus size={16}/> {t("marketplace_admin:wiki.new")}
               </Link>
             </Button>
           </>
@@ -186,8 +186,8 @@ export const WikiList = () => {
       <ProductNav id={id}/>
 
       <Panel
-        title={t("cms_marketplace:wiki.panel_title")}
-        description={total > 0 ? t("cms_marketplace:wiki.count", {count: total}) : undefined}
+        title={t("marketplace_admin:wiki.panel_title")}
+        description={total > 0 ? t("marketplace_admin:wiki.count", {count: total}) : undefined}
         action={
           <Button variant="ghost" size="sm" onClick={pages.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
@@ -210,12 +210,12 @@ export const WikiList = () => {
           {total === 0 ? (
             <EmptyState
               icon={<BookOpen size={28}/>}
-              title={t("cms_marketplace:wiki.empty_title")}
-              description={t("cms_marketplace:wiki.empty_description")}
+              title={t("marketplace_admin:wiki.empty_title")}
+              description={t("marketplace_admin:wiki.empty_description")}
               action={
                 <Button asChild>
                   <Link to={marketplaceRoute.wikiNew(id)}>
-                    <Plus size={16}/> {t("cms_marketplace:wiki.empty_action")}
+                    <Plus size={16}/> {t("marketplace_admin:wiki.empty_action")}
                   </Link>
                 </Button>
               }
@@ -226,7 +226,7 @@ export const WikiList = () => {
               itemKey={(row) => row.id}
               onReorder={setOrdering}
               disabled={reorder.pending}
-              label={t("cms_marketplace:wiki.reorder_label")}
+              label={t("marketplace_admin:wiki.reorder_label")}
               renderItem={(row) => (
                 <div className="flex min-w-0 items-center gap-3">
                   <span className={row.parent_id ? "min-w-0 flex-1 truncate pl-5 text-sm text-text" : "min-w-0 flex-1 truncate text-sm text-text"}>
@@ -242,7 +242,7 @@ export const WikiList = () => {
               rows={rows}
               rowKey={(row) => row.id}
               onRowClick={(row) => navigate(marketplaceRoute.wikiItem(id, row.id))}
-              caption={t("cms_marketplace:wiki.caption")}
+              caption={t("marketplace_admin:wiki.caption")}
             />
           )}
         </PanelState>
@@ -250,10 +250,10 @@ export const WikiList = () => {
 
       <ConfirmDialog
         open={pendingDelete !== null}
-        title={t("cms_marketplace:wiki.delete_title")}
+        title={t("marketplace_admin:wiki.delete_title")}
         /* Says what happens to the pages under it, because the answer is not "they go too". */
-        body={t("cms_marketplace:wiki.delete_body", {title: pendingDelete?.title ?? ""})}
-        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_marketplace:wiki.delete_confirm")}
+        body={t("marketplace_admin:wiki.delete_body", {title: pendingDelete?.title ?? ""})}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("marketplace_admin:wiki.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setPendingDelete(null)}
         pending={remove.pending}

@@ -1,16 +1,26 @@
-import {CMS_ROUTE} from "@/lib/cms/config.ts";
+import {AUTH_BASE_URL, AUTH_SCOPE} from "@/lib/auth/config.ts";
+import type {AuthClientConfig} from "@/lib/auth/config.ts";
 
 /**
- * Where the marketplace service lives, and where its two interfaces sit in this site.
+ * Where the marketplace service lives, and how the three halves of this section identify themselves.
  *
- * Unlike the CMS and the auth service, this one is **not** a client application of its own on this
- * side. Its editor is a section of the CMS interface, signed in under `franciscosolis-cms`, so
- * there is no client id, no redirect URI and no storage namespace here — only a base URL. The
- * service accepts the CMS's audience precisely so this file can stay this short.
+ * Three, and they are deliberately not the same thing:
  *
- * The buying half is signed in under the *site's* own client id (`franciscosolis-web`), which the
- * service accepts on a second audience list with no domain gate: anybody may buy, and anybody who
- * bought may review.
+ * - The **product pages** at `/product/<slug>` are public. Nothing there touches an OAuth client,
+ *   which is why `content.ts` is built on the bare HTTP client and imports nothing from here but
+ *   the base URL.
+ * - **Buying and reviewing** are signed in under the *site's* own client id (`franciscosolis-web`),
+ *   which the service accepts on a second audience list with no domain gate at all: anybody may
+ *   buy, and anybody who bought may review.
+ * - The **console** at `/marketplace` is a client application of its own,
+ *   `franciscosolis-marketplace`.
+ *
+ * That last one is worth stating plainly, because getting it wrong is what broke this section once
+ * already. Unlike `apps/pages` before it — whose editor lived inside the CMS precisely because the
+ * service accepted the CMS's audience — `apps/marketplace` accepts **only its own**
+ * (`MARKETPLACE_ALLOWED_AUDIENCES`). A console signing in under `franciscosolis-cms` gets a token
+ * the service refuses with a 401 *before* it ever looks at the permission, which reads on this side
+ * as an expired session and sends the editor around the sign-in loop forever.
  */
 
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
@@ -54,8 +64,44 @@ export const productRoute = {
   contact: (slug: string) => `${PRODUCT_ROUTE}/${slug}/contact`,
 } as const;
 
-/** Base path of the editorial screens, which live inside the CMS interface. */
-export const MARKETPLACE_ADMIN_ROUTE = `${CMS_ROUTE}/marketplace`;
+export const MARKETPLACE_CLIENT_ID =
+  import.meta.env.VITE_MARKETPLACE_CLIENT_ID ?? "franciscosolis-marketplace";
+
+/** Base path of the editorial console, which is its own section of this site. */
+export const MARKETPLACE_ADMIN_ROUTE = "/marketplace";
+export const MARKETPLACE_SIGN_IN_ROUTE = `${MARKETPLACE_ADMIN_ROUTE}/sign-in`;
+export const MARKETPLACE_CALLBACK_ROUTE = `${MARKETPLACE_ADMIN_ROUTE}/callback`;
+
+/**
+ * The address the console lived at before it had a client application of its own, kept as a
+ * redirect. `/cms/pages` came before that one, and both still land here.
+ */
+export const LEGACY_ADMIN_ROUTES = ["marketplace", "pages"] as const;
+
+/**
+ * Redirect URI the console asks for. It matches `MARKETPLACE_CALLBACK_ROUTE`, which is the whole
+ * point: the auth service compares redirect URIs byte for byte, so the registered value and the
+ * route this site actually serves have to be the same string.
+ */
+export const MARKETPLACE_REDIRECT_PATH =
+  import.meta.env.VITE_MARKETPLACE_REDIRECT_PATH ?? MARKETPLACE_CALLBACK_ROUTE;
+
+/**
+ * Its own storage namespace, so signing out of the marketplace console leaves the site's session
+ * and the CMS's alone. Several sessions can be live in one browser and none of them knows about
+ * the others.
+ */
+export const MARKETPLACE_AUTH_CONFIG: AuthClientConfig = {
+  storageNamespace: "fs.marketplace",
+  clientId: MARKETPLACE_CLIENT_ID,
+  baseUrl: AUTH_BASE_URL,
+  scope: AUTH_SCOPE,
+  signInRoute: MARKETPLACE_SIGN_IN_ROUTE,
+  callbackRoute: MARKETPLACE_CALLBACK_ROUTE,
+  redirectPath: MARKETPLACE_REDIRECT_PATH,
+  defaultReturnTo: MARKETPLACE_ADMIN_ROUTE,
+  returnToPrefix: MARKETPLACE_ADMIN_ROUTE,
+};
 
 /** Where the editorial sections live. Kept here so a link and its route cannot drift apart. */
 export const marketplaceRoute = {

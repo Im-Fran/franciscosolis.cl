@@ -20,7 +20,7 @@ import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
 import {TranslatableField} from "@/components/prose/translatable-field.tsx";
-import {TranslationsProvider} from "@/pages/cms/marketplace/components/translations-provider.tsx";
+import {TranslationsProvider} from "@/pages/marketplace/components/translations-provider.tsx";
 
 const TITLE_MAX = 200;
 const ICON_MAX = 60;
@@ -71,7 +71,7 @@ const toForm = (source: WikiPage): Form => ({
  * is a worse way to learn it.
  */
 export const WikiEditor = () => {
-  const {t} = useTranslation(["cms_marketplace", "cms"]);
+  const {t} = useTranslation(["marketplace_admin", "cms"]);
   const {id = "", pageId} = useParams<{id: string; pageId?: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
@@ -231,14 +231,14 @@ export const WikiEditor = () => {
     navigate(marketplaceRoute.wiki(id), {replace: true});
   };
 
-  const heading = pageId ? loaded?.title || t("cms_marketplace:wiki.title_edit") : t("cms_marketplace:wiki.title_new");
+  const heading = pageId ? loaded?.title || t("marketplace_admin:wiki.title_edit") : t("marketplace_admin:wiki.title_new");
   const formId = "wiki-editor-form";
 
   const header = (
     <PageHeader
       title={heading}
-      description={t("cms_marketplace:wiki.editor_description")}
-      back={{to: marketplaceRoute.wiki(id), label: t("cms_marketplace:wiki.back")}}
+      description={t("marketplace_admin:wiki.editor_description")}
+      back={{to: marketplaceRoute.wiki(id), label: t("marketplace_admin:wiki.back")}}
       actions={
         <>
           {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
@@ -271,7 +271,7 @@ export const WikiEditor = () => {
     return (
       <>
         {header}
-        <Panel title={t("cms_marketplace:wiki.page")}>
+        <Panel title={t("marketplace_admin:wiki.page")}>
           <PanelState
             loading={record.loading}
             error={record.error}
@@ -298,13 +298,13 @@ export const WikiEditor = () => {
           </Alert>
         )}
 
-        <Panel title={t("cms_marketplace:wiki.page")} description={t("cms_marketplace:wiki.page_hint")}>
+        <Panel title={t("marketplace_admin:wiki.page")} description={t("marketplace_admin:wiki.page_hint")}>
           <div className="grid gap-5 sm:grid-cols-2">
             <TranslatableField
-              label={t("cms_marketplace:fields.title")}
+              label={t("marketplace_admin:fields.title")}
               htmlFor="wiki-title"
               error={errors.title}
-              hint={t("cms_marketplace:hints.wiki_title")}
+              hint={t("marketplace_admin:hints.wiki_title")}
               field="title"
               source={form.title}
               value={form.translations}
@@ -324,10 +324,10 @@ export const WikiEditor = () => {
             </TranslatableField>
 
             <Field
-              label={t("cms_marketplace:fields.slug")}
+              label={t("marketplace_admin:fields.slug")}
               htmlFor="wiki-slug"
               error={errors.slug}
-              hint={t("cms_marketplace:hints.wiki_slug")}
+              hint={t("marketplace_admin:hints.wiki_slug")}
             >
               <Input
                 id="wiki-slug"
@@ -345,9 +345,9 @@ export const WikiEditor = () => {
             </Field>
 
             <Field
-              label={t("cms_marketplace:fields.parent")}
+              label={t("marketplace_admin:fields.parent")}
               htmlFor="wiki-parent"
-              hint={hasChildren ? t("cms_marketplace:hints.parent_locked") : t("cms_marketplace:hints.parent")}
+              hint={hasChildren ? t("marketplace_admin:hints.parent_locked") : t("marketplace_admin:hints.parent")}
             >
               <Select
                 id="wiki-parent"
@@ -355,7 +355,7 @@ export const WikiEditor = () => {
                 disabled={hasChildren}
                 onChange={(event) => set("parentId", event.target.value)}
               >
-                <option value="">{t("cms_marketplace:wiki.top_level")}</option>
+                <option value="">{t("marketplace_admin:wiki.top_level")}</option>
                 {parentOptions.map((page) => (
                   <option key={page.id} value={page.id}>
                     {page.title}
@@ -365,9 +365,9 @@ export const WikiEditor = () => {
             </Field>
 
             <Field
-              label={t("cms_marketplace:fields.status")}
+              label={t("marketplace_admin:fields.status")}
               htmlFor="wiki-status"
-              hint={t(`cms_marketplace:wiki.status_hint.${form.status}`)}
+              hint={t(`marketplace_admin:wiki.status_hint.${form.status}`)}
             >
               <Select
                 id="wiki-status"
@@ -383,10 +383,10 @@ export const WikiEditor = () => {
             </Field>
 
             <Field
-              label={t("cms_marketplace:fields.icon")}
+              label={t("marketplace_admin:fields.icon")}
               htmlFor="wiki-icon"
               error={errors.icon}
-              hint={t("cms_marketplace:hints.wiki_icon")}
+              hint={t("marketplace_admin:hints.wiki_icon")}
               className="sm:col-span-2"
             >
               <Input
@@ -403,9 +403,9 @@ export const WikiEditor = () => {
           </div>
         </Panel>
 
-        <Panel title={t("cms_marketplace:wiki.text")} description={t("cms_marketplace:wiki.text_hint")}>
+        <Panel title={t("marketplace_admin:wiki.text")} description={t("marketplace_admin:wiki.text_hint")}>
           <TranslatableField
-            label={t("cms_marketplace:fields.body")}
+            label={t("marketplace_admin:fields.body")}
             htmlFor="wiki-body"
             error={errors.body}
             field="body"
@@ -421,7 +421,7 @@ export const WikiEditor = () => {
                 id="wiki-body"
                 value={form.body}
                 onChange={(value) => set("body", value)}
-                placeholder={t("cms_marketplace:wiki.body_placeholder")}
+                placeholder={t("marketplace_admin:wiki.body_placeholder")}
                 maxLength={BODY_MAX}
                 rows={28}
                 disabled={save.pending}
@@ -435,9 +435,9 @@ export const WikiEditor = () => {
 
       <ConfirmDialog
         open={askDelete}
-        title={t("cms_marketplace:wiki.delete_title")}
-        body={t("cms_marketplace:wiki.delete_body", {title: form.title.trim()})}
-        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_marketplace:wiki.delete_confirm")}
+        title={t("marketplace_admin:wiki.delete_title")}
+        body={t("marketplace_admin:wiki.delete_body", {title: form.title.trim()})}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("marketplace_admin:wiki.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setAskDelete(false)}
         pending={remove.pending}

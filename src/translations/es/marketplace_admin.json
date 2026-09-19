@@ -1,11 +1,45 @@
 {
+  "app_name": "Marketplace",
+  "shell": {
+    "label": "Secciones del marketplace",
+    "products": "Productos",
+    "storefront": "Ver la tienda"
+  },
   "nav": {
     "label": "Secciones de este producto",
     "page": "Página",
-    "releases": "Novedades",
+    "releases": "Versiones",
     "wiki": "Wiki",
     "sales": "Ventas",
     "vouchers": "Comprobantes"
+  },
+  "sign_in": {
+    "title": "Consola del marketplace",
+    "subtitle": "Iniciando tu sesión…",
+    "working": "Te estamos llevando a la pantalla de inicio de sesión.",
+    "staff_only": "Para el equipo editorial.",
+    "back_home": "Volver al sitio",
+    "retry": "Reintentar",
+    "error_title": "No pudimos iniciar la sesión",
+    "error_subtitle": "No se entregó nada, así que puedes intentarlo de nuevo sin riesgo."
+  },
+  "callback": {
+    "title": "Iniciando tu sesión",
+    "subtitle": "Un momento.",
+    "working": "Terminando el inicio de sesión…",
+    "error_title": "No pudimos terminar el inicio de sesión",
+    "error_subtitle": "No se otorgó nada, así que puedes empezar de nuevo sin riesgo.",
+    "retry": "Empezar de nuevo",
+    "back_home": "Volver al sitio"
+  },
+  "no_access": {
+    "title": "No eres editor del marketplace",
+    "subtitle": "Esta cuenta tiene sesión iniciada, pero no puede editar el marketplace.",
+    "subtitle_email": "{{email}} tiene sesión iniciada, pero no puede editar el marketplace.",
+    "alert_title": "Qué falta",
+    "alert_body": "Un administrador tiene que otorgar el permiso marketplace:editor, y la dirección debe ser @franciscosolis.cl. Después hay que volver a iniciar sesión para que un token nuevo lo lleve: un permiso otorgado mientras tenías sesión abierta no cambia nada hasta entonces.",
+    "sign_out": "Cerrar sesión",
+    "back_home": "Volver al sitio"
   },
   "fields": {
     "name": "Nombre",

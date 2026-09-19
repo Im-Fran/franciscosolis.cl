@@ -27,7 +27,7 @@ import type {ContentStatus, ReleaseFile} from "@/lib/marketplace/types.ts";
  * the two calls, and it cannot be published — the public page would show a download that 404s.
  */
 export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; releaseId: string}) => {
-  const {t, i18n} = useTranslation(["cms_marketplace", "cms", "admin"]);
+  const {t, i18n} = useTranslation(["marketplace_admin", "cms", "admin"]);
   const locale = i18n.resolvedLanguage ?? "en";
   const {notify} = useToast();
   const picker = useRef<HTMLInputElement>(null);
@@ -76,7 +76,7 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
     if (!file) return;
     const outcome = await add.run(file);
     if (!outcome.ok) return;
-    notify(t("cms_marketplace:files.uploaded", {filename: file.name}));
+    notify(t("marketplace_admin:files.uploaded", {filename: file.name}));
     files.reload();
   };
 
@@ -90,7 +90,7 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
     const outcome = await remove.run(deleting.id);
     if (!outcome.ok) return;
     setDeleting(null);
-    notify(t("cms_marketplace:files.deleted"));
+    notify(t("marketplace_admin:files.deleted"));
     files.reload();
   };
 
@@ -99,8 +99,8 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
   return (
     <>
       <Panel
-        title={t("cms_marketplace:files.title")}
-        description={t("cms_marketplace:files.hint")}
+        title={t("marketplace_admin:files.title")}
+        description={t("marketplace_admin:files.hint")}
         action={
           /*
            * Every button in here is `type="button"`, and that is load-bearing rather than tidy: the
@@ -113,7 +113,7 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
             </Button>
             <Button type="button" size="sm" onClick={() => picker.current?.click()} disabled={add.pending}>
               <CloudArrowUp size={14}/>
-              {add.pending ? t("cms_marketplace:files.uploading") : t("cms_marketplace:files.add")}
+              {add.pending ? t("marketplace_admin:files.uploading") : t("marketplace_admin:files.add")}
             </Button>
           </span>
         }
@@ -139,7 +139,7 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
           loading={files.loading && !files.data}
           error={files.error}
           empty={rows.length === 0}
-          emptyLabel={t("cms_marketplace:files.empty")}
+          emptyLabel={t("marketplace_admin:files.empty")}
           onRetry={files.reload}
           ns="cms"
         >
@@ -151,26 +151,26 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
                     <span className="block truncate text-sm text-text">{file.filename}</span>
                     <span className="block text-[12px] text-neutral-500">
                       {file.has_content
-                        ? `${formatBytes(file.size, locale)} · ${t("cms_marketplace:files.downloads", {count: file.download_count ?? 0})}`
-                        : t("cms_marketplace:files.no_content")}
+                        ? `${formatBytes(file.size, locale)} · ${t("marketplace_admin:files.downloads", {count: file.download_count ?? 0})}`
+                        : t("marketplace_admin:files.no_content")}
                     </span>
                   </span>
 
-                  {!file.has_content && <Badge variant="outline" size="sm">{t("cms_marketplace:files.unfinished")}</Badge>}
+                  {!file.has_content && <Badge variant="outline" size="sm">{t("marketplace_admin:files.unfinished")}</Badge>}
 
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => setDeleting(file)}
-                    aria-label={t("cms_marketplace:files.delete_label", {filename: file.filename})}
+                    aria-label={t("marketplace_admin:files.delete_label", {filename: file.filename})}
                   >
                     <Trash size={14}/>
                   </Button>
                 </div>
 
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <Field label={t("cms_marketplace:files.platform")} htmlFor={`file-platform-${file.id}`}>
+                  <Field label={t("marketplace_admin:files.platform")} htmlFor={`file-platform-${file.id}`}>
                     <Select
                       id={`file-platform-${file.id}`}
                       value={file.platform}
@@ -179,17 +179,17 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
                     >
                       {RELEASE_FILE_PLATFORMS.map((platform) => (
                         <option key={platform} value={platform}>
-                          {t(`cms_marketplace:files.platforms.${platform}`)}
+                          {t(`marketplace_admin:files.platforms.${platform}`)}
                         </option>
                       ))}
                     </Select>
                   </Field>
 
                   <Field
-                    label={t("cms_marketplace:files.status")}
+                    label={t("marketplace_admin:files.status")}
                     htmlFor={`file-status-${file.id}`}
                     /* The service refuses to publish a row with no bytes; saying so beats a 422. */
-                    hint={file.has_content ? undefined : t("cms_marketplace:files.publish_blocked")}
+                    hint={file.has_content ? undefined : t("marketplace_admin:files.publish_blocked")}
                   >
                     <Select
                       id={`file-status-${file.id}`}
@@ -212,14 +212,14 @@ export const ReleaseFilesPanel = ({productId, releaseId}: {productId: string; re
 
         {/* A label rather than a hint: what the visitor sees is this filename, and it cannot be
             changed here without renaming what they save — so renaming lives on the file itself. */}
-        <p className="mt-4 text-[12px] leading-relaxed text-neutral-500">{t("cms_marketplace:files.naming")}</p>
+        <p className="mt-4 text-[12px] leading-relaxed text-neutral-500">{t("marketplace_admin:files.naming")}</p>
       </Panel>
 
       <ConfirmDialog
         open={Boolean(deleting)}
-        title={t("cms_marketplace:files.delete_title")}
-        body={t("cms_marketplace:files.delete_body", {filename: deleting?.filename ?? ""})}
-        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_marketplace:files.delete_confirm")}
+        title={t("marketplace_admin:files.delete_title")}
+        body={t("marketplace_admin:files.delete_body", {filename: deleting?.filename ?? ""})}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("marketplace_admin:files.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setDeleting(null)}
         pending={remove.pending}

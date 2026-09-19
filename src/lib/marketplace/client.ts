@@ -1,6 +1,6 @@
+import {createAuthClient} from "@/lib/auth/auth-client.ts";
 import {createHttpClient} from "@/lib/auth/client.ts";
-import {cmsAuth} from "@/lib/cms/client.ts";
-import {MARKETPLACE_BASE_URL} from "@/lib/marketplace/config.ts";
+import {MARKETPLACE_AUTH_CONFIG, MARKETPLACE_BASE_URL} from "@/lib/marketplace/config.ts";
 import type {
   Product,
   ProductPayload,
@@ -29,18 +29,25 @@ import type {
 import type {TranslationDraft, TranslationDraftRequest} from "@/lib/prose/types.ts";
 
 /**
- * The editorial client for the Standalone App Pages service.
+ * The marketplace console's own auth stack. Built once for the whole app: a second instance over
+ * the same storage namespace would not hear about this one's sign-ins within the tab.
  *
- * It is a different service than the CMS but the *same session*: these screens live at
- * `/cms/pages`, inside the CMS's `AuthProvider`, and the service accepts the CMS's audience for
- * exactly that reason. Reusing `cmsAuth.session` rather than building a second auth stack is what
- * keeps that true — a client of its own would mint a second token, over a second storage namespace,
- * for a product nobody registered.
+ * It has to be its own, and that is not a preference. The service accepts **only** its own
+ * audience (`MARKETPLACE_ALLOWED_AUDIENCES`), unlike `apps/pages` before it, whose editor could
+ * live inside the CMS because the service took the CMS's. A client built over `cmsAuth.session`
+ * mints a token the service refuses with a 401 before it ever reads the permission — which this
+ * side cannot tell apart from an expired session, so it refreshes, fails again and loops through
+ * the sign-in screen. That is exactly what happened.
+ */
+export const marketplaceAuth = createAuthClient(MARKETPLACE_AUTH_CONFIG);
+
+/**
+ * The editorial client for the marketplace service.
  *
  * The public half is in `content.ts` and shares none of this: it is unauthenticated, and importing
- * this module from the landing side would drag the whole CMS auth stack onto a product page.
+ * this module from the landing side would drag a whole auth stack onto a product page.
  */
-const http = createHttpClient(MARKETPLACE_BASE_URL, cmsAuth.session);
+const http = createHttpClient(MARKETPLACE_BASE_URL, marketplaceAuth.session);
 
 const query = (params: Record<string, string | number | boolean | undefined | null>) => {
   const search = new URLSearchParams();

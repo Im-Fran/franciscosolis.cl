@@ -19,18 +19,18 @@ import {marketplaceRoute} from "@/lib/marketplace/config.ts";
  * question about a free product too — and because a product's mode changes.
  */
 export const ProductNav = ({id}: {id: string}) => {
-  const {t} = useTranslation(["cms_marketplace"]);
+  const {t} = useTranslation(["marketplace_admin"]);
 
   const items = [
-    {to: marketplaceRoute.item(id), label: t("cms_marketplace:nav.page"), icon: SquaresFour, end: true},
-    {to: marketplaceRoute.releases(id), label: t("cms_marketplace:nav.releases"), icon: Note, end: false},
-    {to: marketplaceRoute.wiki(id), label: t("cms_marketplace:nav.wiki"), icon: BookOpen, end: false},
-    {to: marketplaceRoute.sales(id), label: t("cms_marketplace:nav.sales"), icon: CurrencyDollar, end: false},
-    {to: marketplaceRoute.vouchers(id), label: t("cms_marketplace:nav.vouchers"), icon: Receipt, end: false},
+    {to: marketplaceRoute.item(id), label: t("marketplace_admin:nav.page"), icon: SquaresFour, end: true},
+    {to: marketplaceRoute.releases(id), label: t("marketplace_admin:nav.releases"), icon: Note, end: false},
+    {to: marketplaceRoute.wiki(id), label: t("marketplace_admin:nav.wiki"), icon: BookOpen, end: false},
+    {to: marketplaceRoute.sales(id), label: t("marketplace_admin:nav.sales"), icon: CurrencyDollar, end: false},
+    {to: marketplaceRoute.vouchers(id), label: t("marketplace_admin:nav.vouchers"), icon: Receipt, end: false},
   ];
 
   return (
-    <nav aria-label={t("cms_marketplace:nav.label")} className="mb-6 flex flex-wrap gap-1">
+    <nav aria-label={t("marketplace_admin:nav.label")} className="mb-6 flex flex-wrap gap-1">
       {items.map(({to, label, icon: Icon, end}) => (
         <NavLink
           key={to}

@@ -42,7 +42,7 @@ import {StatusBadge} from "@/components/admin/status-badge.tsx";
  * would fire a write per nudge.
  */
 export const ProductList = () => {
-  const {t, i18n} = useTranslation(["cms_marketplace", "cms"]);
+  const {t, i18n} = useTranslation(["marketplace_admin", "cms"]);
   const navigate = useNavigate();
   const {notify} = useToast();
   const [search, setSearch] = useState("");
@@ -73,7 +73,7 @@ export const ProductList = () => {
     () => [
       {
         key: "name",
-        header: t("cms_marketplace:list.columns.product"),
+        header: t("marketplace_admin:list.columns.product"),
         cell: (row) => (
           <div className="min-w-0">
             <p className="truncate text-sm text-text">{row.name}</p>
@@ -83,13 +83,13 @@ export const ProductList = () => {
       },
       {
         key: "status",
-        header: t("cms_marketplace:list.columns.status"),
+        header: t("marketplace_admin:list.columns.status"),
         className: "w-32",
         cell: (row) => <StatusBadge status={row.status}/>,
       },
       {
         key: "tabs",
-        header: t("cms_marketplace:list.columns.tabs"),
+        header: t("marketplace_admin:list.columns.tabs"),
         className: "w-44",
         hideBelowLg: true,
         cell: (row) => (
@@ -100,7 +100,7 @@ export const ProductList = () => {
       },
       {
         key: "updated_at",
-        header: t("cms_marketplace:list.columns.updated"),
+        header: t("marketplace_admin:list.columns.updated"),
         className: "w-36",
         hideBelowLg: true,
         cell: (row) =>
@@ -108,7 +108,7 @@ export const ProductList = () => {
       },
       {
         key: "actions",
-        header: <span className="sr-only">{t("cms_marketplace:list.columns.actions")}</span>,
+        header: <span className="sr-only">{t("marketplace_admin:list.columns.actions")}</span>,
         className: "w-32 pr-0 text-right",
         cell: (row) => (
           <div className="flex items-center justify-end gap-1">
@@ -118,7 +118,7 @@ export const ProductList = () => {
                 variant="ghost"
                 size="icon"
                 asChild
-                aria-label={t("cms_marketplace:list.view_aria", {name: row.name})}
+                aria-label={t("marketplace_admin:list.view_aria", {name: row.name})}
                 className="size-9"
               >
                 <a
@@ -135,7 +135,7 @@ export const ProductList = () => {
               variant="ghost"
               size="icon"
               asChild
-              aria-label={t("cms_marketplace:list.edit_aria", {name: row.name})}
+              aria-label={t("marketplace_admin:list.edit_aria", {name: row.name})}
               className="size-9"
             >
               <Link to={marketplaceRoute.item(row.id)} onClick={(event) => event.stopPropagation()}>
@@ -150,7 +150,7 @@ export const ProductList = () => {
                 resetRemoveError();
                 setPendingDelete(row);
               }}
-              aria-label={t("cms_marketplace:list.delete_aria", {name: row.name})}
+              aria-label={t("marketplace_admin:list.delete_aria", {name: row.name})}
               className="size-9 text-neutral-400 hover:text-red-300"
             >
               <Trash size={16}/>
@@ -185,8 +185,8 @@ export const ProductList = () => {
   return (
     <>
       <PageHeader
-        title={t("cms_marketplace:list.title")}
-        description={t("cms_marketplace:list.description")}
+        title={t("marketplace_admin:list.title")}
+        description={t("marketplace_admin:list.description")}
         actions={
           <>
             {total > 1 &&
@@ -197,17 +197,17 @@ export const ProductList = () => {
                   </Button>
                   <Button onClick={() => void saveOrder()} disabled={reorder.pending}>
                     {reorder.pending ? <Spinner size={16}/> : <ArrowsDownUp size={16}/>}
-                    {t("cms_marketplace:list.save_order")}
+                    {t("marketplace_admin:list.save_order")}
                   </Button>
                 </>
               ) : (
                 <Button variant="secondary" onClick={() => setOrdering(rows)}>
-                  <ArrowsDownUp size={16}/> {t("cms_marketplace:list.reorder")}
+                  <ArrowsDownUp size={16}/> {t("marketplace_admin:list.reorder")}
                 </Button>
               ))}
             <Button asChild>
               <Link to={marketplaceRoute.new}>
-                <Plus size={16}/> {t("cms_marketplace:list.new")}
+                <Plus size={16}/> {t("marketplace_admin:list.new")}
               </Link>
             </Button>
           </>
@@ -215,8 +215,8 @@ export const ProductList = () => {
       />
 
       <Panel
-        title={t("cms_marketplace:list.panel_title")}
-        description={total > 0 ? t("cms_marketplace:list.count", {count: total}) : undefined}
+        title={t("marketplace_admin:list.panel_title")}
+        description={total > 0 ? t("marketplace_admin:list.count", {count: total}) : undefined}
         action={
           <Button variant="ghost" size="sm" onClick={products.reload}>
             <ArrowClockwise size={14}/> {t("admin:common.refresh")}
@@ -233,8 +233,8 @@ export const ProductList = () => {
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder={t("cms_marketplace:list.search_placeholder")}
-              aria-label={t("cms_marketplace:list.search_placeholder")}
+              placeholder={t("marketplace_admin:list.search_placeholder")}
+              aria-label={t("marketplace_admin:list.search_placeholder")}
               className="pl-9"
             />
           </div>
@@ -256,12 +256,12 @@ export const ProductList = () => {
           {total === 0 ? (
             <EmptyState
               icon={<SquaresFour size={28}/>}
-              title={t("cms_marketplace:list.empty_title")}
-              description={t("cms_marketplace:list.empty_description")}
+              title={t("marketplace_admin:list.empty_title")}
+              description={t("marketplace_admin:list.empty_description")}
               action={
                 <Button asChild>
                   <Link to={marketplaceRoute.new}>
-                    <Plus size={16}/> {t("cms_marketplace:list.empty_action")}
+                    <Plus size={16}/> {t("marketplace_admin:list.empty_action")}
                   </Link>
                 </Button>
               }
@@ -272,7 +272,7 @@ export const ProductList = () => {
               itemKey={(row) => row.id}
               onReorder={setOrdering}
               disabled={reorder.pending}
-              label={t("cms_marketplace:list.reorder_label")}
+              label={t("marketplace_admin:list.reorder_label")}
               renderItem={(row) => (
                 <div className="flex min-w-0 items-center gap-3">
                   <span className="min-w-0 flex-1 truncate text-sm text-text">{row.name}</span>
@@ -281,14 +281,14 @@ export const ProductList = () => {
               )}
             />
           ) : rows.length === 0 ? (
-            <p className="py-4 text-sm text-neutral-500">{t("cms_marketplace:list.no_matches", {search: search.trim()})}</p>
+            <p className="py-4 text-sm text-neutral-500">{t("marketplace_admin:list.no_matches", {search: search.trim()})}</p>
           ) : (
             <DataTable
               columns={columns}
               rows={rows}
               rowKey={(row) => row.id}
               onRowClick={(row) => navigate(marketplaceRoute.item(row.id))}
-              caption={t("cms_marketplace:list.caption")}
+              caption={t("marketplace_admin:list.caption")}
             />
           )}
         </PanelState>
@@ -296,10 +296,10 @@ export const ProductList = () => {
 
       <ConfirmDialog
         open={pendingDelete !== null}
-        title={t("cms_marketplace:list.delete_title")}
+        title={t("marketplace_admin:list.delete_title")}
         /* Named in full because this one cascades: the release notes and the wiki go with it. */
-        body={t("cms_marketplace:list.delete_body", {name: pendingDelete?.name ?? ""})}
-        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_marketplace:list.delete_confirm")}
+        body={t("marketplace_admin:list.delete_body", {name: pendingDelete?.name ?? ""})}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("marketplace_admin:list.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setPendingDelete(null)}
         pending={remove.pending}

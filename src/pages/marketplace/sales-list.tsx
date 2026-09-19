@@ -19,10 +19,10 @@ import type {Column} from "@/components/admin/data-table.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {StatusBadge} from "@/components/admin/status-badge.tsx";
-import {ProductNav} from "@/pages/cms/marketplace/components/product-nav.tsx";
-import {EnvironmentBadge, SourceBadge} from "@/pages/cms/marketplace/components/sale-badges.tsx";
-import {RecordSaleDialog} from "@/pages/cms/marketplace/components/record-sale-dialog.tsx";
-import type {RecordSalePayload} from "@/pages/cms/marketplace/components/record-sale-dialog.tsx";
+import {ProductNav} from "@/pages/marketplace/components/product-nav.tsx";
+import {EnvironmentBadge, SourceBadge} from "@/pages/marketplace/components/sale-badges.tsx";
+import {RecordSaleDialog} from "@/pages/marketplace/components/record-sale-dialog.tsx";
+import type {RecordSalePayload} from "@/pages/marketplace/components/record-sale-dialog.tsx";
 
 /**
  * The takings of one product: what came in, how, and what went back out.
@@ -36,7 +36,7 @@ import type {RecordSalePayload} from "@/pages/cms/marketplace/components/record-
  * honest answers, and quoting the wrong one counts a refund as income.
  */
 export const SalesList = () => {
-  const {t, i18n} = useTranslation(["cms_marketplace", "cms", "admin"]);
+  const {t, i18n} = useTranslation(["marketplace_admin", "cms", "admin"]);
   const {id = ""} = useParams<{id: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
@@ -74,13 +74,13 @@ export const SalesList = () => {
     () => [
       {
         key: "created_at",
-        header: t("cms_marketplace:sales.columns.date"),
+        header: t("marketplace_admin:sales.columns.date"),
         className: "w-32",
         cell: (row) => formatDate(row.created_at, locale) ?? <span className="text-neutral-600">—</span>,
       },
       {
         key: "email",
-        header: t("cms_marketplace:sales.columns.buyer"),
+        header: t("marketplace_admin:sales.columns.buyer"),
         cell: (row) => (
           <span className="flex flex-col">
             <span className="text-sm text-text">{row.email}</span>
@@ -90,7 +90,7 @@ export const SalesList = () => {
       },
       {
         key: "amount",
-        header: t("cms_marketplace:sales.columns.amount"),
+        header: t("marketplace_admin:sales.columns.amount"),
         className: "w-32",
         cell: (row) => (
           <span className="flex flex-col">
@@ -106,7 +106,7 @@ export const SalesList = () => {
       },
       {
         key: "source",
-        header: t("cms_marketplace:sales.columns.source"),
+        header: t("marketplace_admin:sales.columns.source"),
         className: "w-40",
         cell: (row) => (
           <span className="flex flex-wrap items-center gap-1.5">
@@ -117,13 +117,13 @@ export const SalesList = () => {
       },
       {
         key: "status",
-        header: t("cms_marketplace:sales.columns.status"),
+        header: t("marketplace_admin:sales.columns.status"),
         className: "w-32",
         cell: (row) => <StatusBadge status={row.status}/>,
       },
       {
         key: "withdrawal",
-        header: t("cms_marketplace:sales.columns.withdrawal"),
+        header: t("marketplace_admin:sales.columns.withdrawal"),
         className: "w-36",
         hideBelowLg: true,
         /*
@@ -135,10 +135,10 @@ export const SalesList = () => {
             <span className="text-neutral-600">—</span>
           ) : row.withdrawal.within_period ? (
             <span className="text-[13px] text-amber-300">
-              {t("cms_marketplace:sales.withdrawal_left", {count: row.withdrawal.days_left ?? 0})}
+              {t("marketplace_admin:sales.withdrawal_left", {count: row.withdrawal.days_left ?? 0})}
             </span>
           ) : (
-            <span className="text-[13px] text-neutral-500">{t("cms_marketplace:sales.withdrawal_over")}</span>
+            <span className="text-[13px] text-neutral-500">{t("marketplace_admin:sales.withdrawal_over")}</span>
           ),
       },
     ],
@@ -159,7 +159,7 @@ export const SalesList = () => {
       }
       return;
     }
-    notify(t("cms_marketplace:sales.record.done"));
+    notify(t("marketplace_admin:sales.record.done"));
     setRecording(false);
     sales.reload();
     summary.reload();
@@ -170,12 +170,12 @@ export const SalesList = () => {
   return (
     <>
       <PageHeader
-        title={t("cms_marketplace:sales.title")}
-        description={t("cms_marketplace:sales.description", {name: product.data?.name ?? ""})}
-        back={{to: marketplaceRoute.list, label: t("cms_marketplace:editor.back")}}
+        title={t("marketplace_admin:sales.title")}
+        description={t("marketplace_admin:sales.description", {name: product.data?.name ?? ""})}
+        back={{to: marketplaceRoute.list, label: t("marketplace_admin:editor.back")}}
         actions={
           <Button onClick={() => setRecording(true)}>
-            <Plus size={16}/> {t("cms_marketplace:sales.record.open")}
+            <Plus size={16}/> {t("marketplace_admin:sales.record.open")}
           </Button>
         }
       />
@@ -183,8 +183,8 @@ export const SalesList = () => {
       <ProductNav id={id}/>
 
       <Panel
-        title={t("cms_marketplace:sales.totals.title")}
-        description={t("cms_marketplace:sales.totals.description")}
+        title={t("marketplace_admin:sales.totals.title")}
+        description={t("marketplace_admin:sales.totals.description")}
         className="mb-6"
         action={
           totals?.environment === "sandbox" ? <EnvironmentBadge environment={totals.environment}/> : undefined
@@ -206,24 +206,24 @@ export const SalesList = () => {
             ].map(({key, value, accent}) => (
               <div key={key} className="rounded-[var(--radius-md)] bg-neutral-900/60 px-4 py-3">
                 <dt className="text-[12px] tracking-wide text-neutral-500 uppercase">
-                  {t(`cms_marketplace:sales.totals.${key}`)}
+                  {t(`marketplace_admin:sales.totals.${key}`)}
                 </dt>
                 <dd className={accent ? "mt-1 font-display text-2xl text-accent-200" : "mt-1 font-display text-2xl text-text"}>
                   {value}
                 </dd>
-                <p className="mt-1 text-[12px] text-neutral-500">{t(`cms_marketplace:sales.totals.${key}_hint`)}</p>
+                <p className="mt-1 text-[12px] text-neutral-500">{t(`marketplace_admin:sales.totals.${key}_hint`)}</p>
               </div>
             ))}
           </dl>
           <p className="mt-4 text-[13px] text-neutral-400">
-            {t("cms_marketplace:sales.totals.buyers", {count: totals?.buyers ?? 0})}
+            {t("marketplace_admin:sales.totals.buyers", {count: totals?.buyers ?? 0})}
           </p>
         </PanelState>
       </Panel>
 
       <Panel
-        title={t("cms_marketplace:sales.panel_title")}
-        description={sales.data ? t("cms_marketplace:sales.count", {count: sales.data.length}) : undefined}
+        title={t("marketplace_admin:sales.panel_title")}
+        description={sales.data ? t("marketplace_admin:sales.count", {count: sales.data.length}) : undefined}
         action={
           <Button variant="ghost" size="sm" onClick={() => {
             sales.reload();
@@ -234,33 +234,33 @@ export const SalesList = () => {
         }
       >
         <div className="mb-5 grid gap-3 sm:grid-cols-3">
-          <Field label={t("cms_marketplace:sales.filters.status")} htmlFor="sales-status">
+          <Field label={t("marketplace_admin:sales.filters.status")} htmlFor="sales-status">
             <Select id="sales-status" value={status} onChange={(event) => setStatus(event.target.value)}>
-              <option value="">{t("cms_marketplace:sales.filters.any")}</option>
+              <option value="">{t("marketplace_admin:sales.filters.any")}</option>
               {PURCHASE_STATUSES.map((entry) => (
                 <option key={entry} value={entry}>
-                  {t(`cms_marketplace:sales.statuses.${entry}`, {defaultValue: entry})}
+                  {t(`marketplace_admin:sales.statuses.${entry}`, {defaultValue: entry})}
                 </option>
               ))}
             </Select>
           </Field>
-          <Field label={t("cms_marketplace:sales.filters.source")} htmlFor="sales-source">
+          <Field label={t("marketplace_admin:sales.filters.source")} htmlFor="sales-source">
             <Select id="sales-source" value={source} onChange={(event) => setSource(event.target.value)}>
-              <option value="">{t("cms_marketplace:sales.filters.any")}</option>
+              <option value="">{t("marketplace_admin:sales.filters.any")}</option>
               {SALE_SOURCES.map((entry) => (
                 <option key={entry} value={entry}>
-                  {t(`cms_marketplace:sales.sources.${entry}`)}
+                  {t(`marketplace_admin:sales.sources.${entry}`)}
                 </option>
               ))}
             </Select>
           </Field>
-          <Field label={t("cms_marketplace:sales.filters.email")} htmlFor="sales-email">
+          <Field label={t("marketplace_admin:sales.filters.email")} htmlFor="sales-email">
             <Input
               id="sales-email"
               type="search"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder={t("cms_marketplace:sales.filters.email_placeholder")}
+              placeholder={t("marketplace_admin:sales.filters.email_placeholder")}
             />
           </Field>
         </div>
@@ -275,11 +275,11 @@ export const SalesList = () => {
           {(sales.data?.length ?? 0) === 0 ? (
             <EmptyState
               icon={<CurrencyDollar size={28}/>}
-              title={t("cms_marketplace:sales.empty_title")}
-              description={t("cms_marketplace:sales.empty_description")}
+              title={t("marketplace_admin:sales.empty_title")}
+              description={t("marketplace_admin:sales.empty_description")}
               action={
                 <Button onClick={() => setRecording(true)}>
-                  <Plus size={16}/> {t("cms_marketplace:sales.record.open")}
+                  <Plus size={16}/> {t("marketplace_admin:sales.record.open")}
                 </Button>
               }
             />
@@ -289,7 +289,7 @@ export const SalesList = () => {
               rows={sales.data ?? []}
               rowKey={(row) => row.id}
               onRowClick={(row) => navigate(marketplaceRoute.saleItem(id, row.id))}
-              caption={t("cms_marketplace:sales.caption")}
+              caption={t("marketplace_admin:sales.caption")}
             />
           )}
         </PanelState>

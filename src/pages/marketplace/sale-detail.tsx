@@ -20,8 +20,8 @@ import type {Column} from "@/components/admin/data-table.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {StatusBadge} from "@/components/admin/status-badge.tsx";
-import {ProductNav} from "@/pages/cms/marketplace/components/product-nav.tsx";
-import {EnvironmentBadge, SourceBadge} from "@/pages/cms/marketplace/components/sale-badges.tsx";
+import {ProductNav} from "@/pages/marketplace/components/product-nav.tsx";
+import {EnvironmentBadge, SourceBadge} from "@/pages/marketplace/components/sale-badges.tsx";
 
 /**
  * One sale, and everything that can be done to it: correct its address, issue or re-send its
@@ -35,7 +35,7 @@ import {EnvironmentBadge, SourceBadge} from "@/pages/cms/marketplace/components/
  * for why not), so the button's state and the API's answer come from one place.
  */
 export const SaleDetail = () => {
-  const {t, i18n} = useTranslation(["cms_marketplace", "cms", "admin"]);
+  const {t, i18n} = useTranslation(["marketplace_admin", "cms", "admin"]);
   const {id = "", saleId = ""} = useParams<{id: string; saleId: string}>();
   const {notify} = useToast();
   const locale = i18n.language;
@@ -93,7 +93,7 @@ export const SaleDetail = () => {
             </span>
           ),
         },
-        {key: "kind", value: t(`cms_marketplace:sales.kinds.${sale.kind}`, {defaultValue: sale.kind})},
+        {key: "kind", value: t(`marketplace_admin:sales.kinds.${sale.kind}`, {defaultValue: sale.kind})},
         {key: "reference", value: <span className="font-mono text-[12px]">{sale.reference ?? "—"}</span>},
         {key: "payment_id", value: <span className="font-mono text-[12px]">{sale.payment_id ?? "—"}</span>},
         {key: "created_at", value: formatDateTime(sale.created_at, locale) ?? "—"},
@@ -104,8 +104,8 @@ export const SaleDetail = () => {
             sale.withdrawal?.deadline == null
               ? "—"
               : sale.withdrawal.within_period
-                ? t("cms_marketplace:sales.withdrawal_left", {count: sale.withdrawal.days_left ?? 0})
-                : t("cms_marketplace:sales.withdrawal_over"),
+                ? t("marketplace_admin:sales.withdrawal_left", {count: sale.withdrawal.days_left ?? 0})
+                : t("marketplace_admin:sales.withdrawal_over"),
         },
         {
           key: "refund",
@@ -113,12 +113,12 @@ export const SaleDetail = () => {
             sale.refunded_at == null
               ? "—"
               : `${formatAmount(sale.refunded_amount ?? sale.amount, sale.currency, locale)} · ${t(
-                  `cms_marketplace:sales.reasons.${sale.refund_reason ?? "other"}`,
+                  `marketplace_admin:sales.reasons.${sale.refund_reason ?? "other"}`,
                   {defaultValue: sale.refund_reason ?? ""},
                 )}`,
         },
-        {key: "account", value: sale.linked_to_account ? sale.user_id : t("cms_marketplace:sales.unlinked")},
-        {key: "recorded_by", value: sale.created_by ?? t("cms_marketplace:sales.recorded_by_provider")},
+        {key: "account", value: sale.linked_to_account ? sale.user_id : t("marketplace_admin:sales.unlinked")},
+        {key: "recorded_by", value: sale.created_by ?? t("marketplace_admin:sales.recorded_by_provider")},
       ]
     : [];
 
@@ -127,7 +127,7 @@ export const SaleDetail = () => {
   const runVoid = async (voucher: Voucher) => {
     const outcome = await voidVoucher.run(voucher.id);
     if (!outcome.ok) return;
-    notify(t("cms_marketplace:vouchers.voided"));
+    notify(t("marketplace_admin:vouchers.voided"));
     detail.reload();
   };
 
@@ -136,7 +136,7 @@ export const SaleDetail = () => {
     const address = sendAddress.trim();
     const outcome = await send.run(sendTo.id, address && address !== sendTo.email ? address : undefined);
     if (!outcome.ok) return;
-    notify(t("cms_marketplace:vouchers.sent"));
+    notify(t("marketplace_admin:vouchers.sent"));
     setSendTo(null);
     detail.reload();
   };
@@ -144,39 +144,39 @@ export const SaleDetail = () => {
   const voucherColumns: Column<Voucher>[] = [
     {
       key: "number",
-      header: t("cms_marketplace:vouchers.columns.number"),
+      header: t("marketplace_admin:vouchers.columns.number"),
       className: "w-44",
       cell: (row) => <span className="font-mono text-[13px] text-accent-300">{row.number}</span>,
     },
     {
       key: "email",
-      header: t("cms_marketplace:vouchers.columns.email"),
+      header: t("marketplace_admin:vouchers.columns.email"),
       cell: (row) => <span className="text-sm text-text">{row.email ?? "—"}</span>,
     },
     {
       key: "status",
-      header: t("cms_marketplace:vouchers.columns.status"),
+      header: t("marketplace_admin:vouchers.columns.status"),
       className: "w-28",
       cell: (row) => <StatusBadge status={row.status === "void" ? "revoked" : "sent"}/>,
     },
     {
       key: "sent",
-      header: t("cms_marketplace:vouchers.columns.sent"),
+      header: t("marketplace_admin:vouchers.columns.sent"),
       className: "w-40",
       hideBelowLg: true,
       cell: (row) =>
         row.sent_count ? (
           <span className="text-[13px] text-neutral-400">
-            {t("cms_marketplace:vouchers.sent_times", {count: row.sent_count})} ·{" "}
+            {t("marketplace_admin:vouchers.sent_times", {count: row.sent_count})} ·{" "}
             {formatDateTime(row.last_sent_at, locale)}
           </span>
         ) : (
-          <span className="text-[13px] text-amber-300">{t("cms_marketplace:vouchers.never_sent")}</span>
+          <span className="text-[13px] text-amber-300">{t("marketplace_admin:vouchers.never_sent")}</span>
         ),
     },
     {
       key: "actions",
-      header: <span className="sr-only">{t("cms_marketplace:vouchers.columns.actions")}</span>,
+      header: <span className="sr-only">{t("marketplace_admin:vouchers.columns.actions")}</span>,
       className: "w-28 pr-0 text-right",
       cell: (row) => (
         <div className="flex items-center justify-end gap-1">
@@ -185,7 +185,7 @@ export const SaleDetail = () => {
             size="icon"
             className="size-9"
             disabled={row.status !== "issued" || send.pending}
-            aria-label={t("cms_marketplace:vouchers.send_aria", {number: row.number})}
+            aria-label={t("marketplace_admin:vouchers.send_aria", {number: row.number})}
             onClick={() => {
               setSendAddress(row.email ?? "");
               setSendTo(row);
@@ -198,7 +198,7 @@ export const SaleDetail = () => {
             size="icon"
             className="size-9 text-neutral-400 hover:text-red-300"
             disabled={row.status !== "issued" || voidVoucher.pending}
-            aria-label={t("cms_marketplace:vouchers.void_aria", {number: row.number})}
+            aria-label={t("marketplace_admin:vouchers.void_aria", {number: row.number})}
             onClick={() => void runVoid(row)}
           >
             <Prohibit size={16}/>
@@ -211,7 +211,7 @@ export const SaleDetail = () => {
   const runIssue = async () => {
     const outcome = await issue.run();
     if (!outcome.ok) return;
-    notify(t("cms_marketplace:vouchers.issued"));
+    notify(t("marketplace_admin:vouchers.issued"));
     detail.reload();
   };
 
@@ -219,7 +219,7 @@ export const SaleDetail = () => {
     const amount = partial.trim() === "" ? undefined : Number.parseInt(partial, 10);
     const outcome = await refund.run({reason, amount, notify: notifyBuyer});
     if (!outcome.ok) return;
-    notify(t("cms_marketplace:sales.refund.done"));
+    notify(t("marketplace_admin:sales.refund.done"));
     setRefunding(false);
     setPartial("");
     detail.reload();
@@ -240,9 +240,9 @@ export const SaleDetail = () => {
   return (
     <>
       <PageHeader
-        title={sale ? sale.email : t("cms_marketplace:sales.detail.title")}
-        description={t("cms_marketplace:sales.detail.description")}
-        back={{to: marketplaceRoute.sales(id), label: t("cms_marketplace:sales.detail.back")}}
+        title={sale ? sale.email : t("marketplace_admin:sales.detail.title")}
+        description={t("marketplace_admin:sales.detail.description")}
+        back={{to: marketplaceRoute.sales(id), label: t("marketplace_admin:sales.detail.back")}}
         actions={
           <>
             <Button variant="ghost" size="sm" onClick={detail.reload}>
@@ -256,7 +256,7 @@ export const SaleDetail = () => {
                 setRefunding(true);
               }}
             >
-              <ArrowUUpLeft size={16}/> {t("cms_marketplace:sales.refund.open")}
+              <ArrowUUpLeft size={16}/> {t("marketplace_admin:sales.refund.open")}
             </Button>
           </>
         }
@@ -264,7 +264,7 @@ export const SaleDetail = () => {
 
       <ProductNav id={id}/>
 
-      <Panel title={t("cms_marketplace:sales.detail.panel_title")} className="mb-6">
+      <Panel title={t("marketplace_admin:sales.detail.panel_title")} className="mb-6">
         <PanelState
           loading={detail.loading}
           error={detail.error}
@@ -276,7 +276,7 @@ export const SaleDetail = () => {
             {facts.map(({key, value}) => (
               <div key={key} className="flex flex-col gap-0.5 border-b border-neutral-800/60 pb-2">
                 <dt className="text-[12px] tracking-wide text-neutral-500 uppercase">
-                  {t(`cms_marketplace:sales.detail.facts.${key}`)}
+                  {t(`marketplace_admin:sales.detail.facts.${key}`)}
                 </dt>
                 <dd className="text-sm text-text">{value}</dd>
               </div>
@@ -289,22 +289,22 @@ export const SaleDetail = () => {
             */}
           {!refundable && detail.data?.refund.reason && (
             <p className="mt-4 text-[13px] text-neutral-400">
-              {t(`cms_marketplace:sales.refund.blocked_${detail.data.refund.reason}`)}
+              {t(`marketplace_admin:sales.refund.blocked_${detail.data.refund.reason}`)}
             </p>
           )}
         </PanelState>
       </Panel>
 
       <Panel
-        title={t("cms_marketplace:sales.detail.edit_title")}
-        description={t("cms_marketplace:sales.detail.edit_description")}
+        title={t("marketplace_admin:sales.detail.edit_title")}
+        description={t("marketplace_admin:sales.detail.edit_description")}
         className="mb-6"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label={t("cms_marketplace:sales.detail.facts.email")}
+            label={t("marketplace_admin:sales.detail.facts.email")}
             htmlFor="sale-edit-email"
-            hint={t("cms_marketplace:sales.detail.email_hint")}
+            hint={t("marketplace_admin:sales.detail.email_hint")}
           >
             <Input
               id="sale-edit-email"
@@ -314,9 +314,9 @@ export const SaleDetail = () => {
             />
           </Field>
           <Field
-            label={t("cms_marketplace:sales.detail.facts.note")}
+            label={t("marketplace_admin:sales.detail.facts.note")}
             htmlFor="sale-edit-note"
-            hint={t("cms_marketplace:sales.detail.note_hint")}
+            hint={t("marketplace_admin:sales.detail.note_hint")}
           >
             <Textarea
               id="sale-edit-note"
@@ -335,43 +335,43 @@ export const SaleDetail = () => {
       </Panel>
 
       <Panel
-        title={t("cms_marketplace:vouchers.panel_title")}
-        description={t("cms_marketplace:vouchers.panel_description")}
+        title={t("marketplace_admin:vouchers.panel_title")}
+        description={t("marketplace_admin:vouchers.panel_description")}
         action={
           <Button variant="secondary" size="sm" onClick={() => void runIssue()} disabled={issue.pending}>
-            <Receipt size={14}/> {t("cms_marketplace:vouchers.issue")}
+            <Receipt size={14}/> {t("marketplace_admin:vouchers.issue")}
           </Button>
         }
       >
         {issue.error && (
           <p className="mb-3 text-[13px] text-red-400">
-            {issue.status === 502 ? t("cms_marketplace:vouchers.issue_send_failed") : issue.error}
+            {issue.status === 502 ? t("marketplace_admin:vouchers.issue_send_failed") : issue.error}
           </p>
         )}
         {send.error && <p className="mb-3 text-[13px] text-red-400">{send.error}</p>}
         {vouchers.length === 0 ? (
           <EmptyState
             icon={<Receipt size={28}/>}
-            title={t("cms_marketplace:vouchers.empty_title")}
-            description={t("cms_marketplace:vouchers.empty_description")}
+            title={t("marketplace_admin:vouchers.empty_title")}
+            description={t("marketplace_admin:vouchers.empty_description")}
           />
         ) : (
           <DataTable
             columns={voucherColumns}
             rows={vouchers}
             rowKey={(row) => row.id}
-            caption={t("cms_marketplace:vouchers.caption")}
+            caption={t("marketplace_admin:vouchers.caption")}
           />
         )}
       </Panel>
 
-      <Modal open={refunding} onClose={() => setRefunding(false)} title={t("cms_marketplace:sales.refund.title")}>
-        <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">{t("cms_marketplace:sales.refund.body")}</p>
+      <Modal open={refunding} onClose={() => setRefunding(false)} title={t("marketplace_admin:sales.refund.title")}>
+        <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">{t("marketplace_admin:sales.refund.body")}</p>
         <div className="grid gap-4">
           <Field
-            label={t("cms_marketplace:sales.refund.reason")}
+            label={t("marketplace_admin:sales.refund.reason")}
             htmlFor="refund-reason"
-            hint={t("cms_marketplace:sales.refund.reason_hint")}
+            hint={t("marketplace_admin:sales.refund.reason_hint")}
           >
             <Select
               id="refund-reason"
@@ -380,15 +380,15 @@ export const SaleDetail = () => {
             >
               {REFUND_REASONS.map((entry) => (
                 <option key={entry} value={entry}>
-                  {t(`cms_marketplace:sales.reasons.${entry}`)}
+                  {t(`marketplace_admin:sales.reasons.${entry}`)}
                 </option>
               ))}
             </Select>
           </Field>
           <Field
-            label={t("cms_marketplace:sales.refund.amount")}
+            label={t("marketplace_admin:sales.refund.amount")}
             htmlFor="refund-amount"
-            hint={t("cms_marketplace:sales.refund.amount_hint", {
+            hint={t("marketplace_admin:sales.refund.amount_hint", {
               amount: sale ? formatAmount(sale.amount, sale.currency, locale) : "",
             })}
           >
@@ -410,7 +410,7 @@ export const SaleDetail = () => {
               onChange={(event) => setNotifyBuyer(event.target.checked)}
               className="size-4 accent-accent-500"
             />
-            {t("cms_marketplace:sales.refund.notify")}
+            {t("marketplace_admin:sales.refund.notify")}
           </label>
         </div>
         {refund.error && <p className="mt-4 text-[13px] text-red-400">{refund.error}</p>}
@@ -419,17 +419,17 @@ export const SaleDetail = () => {
             {t("admin:common.cancel")}
           </Button>
           <Button onClick={() => void runRefund()} disabled={refund.pending}>
-            {refund.pending ? t("cms_marketplace:sales.refund.pending") : t("cms_marketplace:sales.refund.submit")}
+            {refund.pending ? t("marketplace_admin:sales.refund.pending") : t("marketplace_admin:sales.refund.submit")}
           </Button>
         </div>
       </Modal>
 
-      <Modal open={sendTo !== null} onClose={() => setSendTo(null)} title={t("cms_marketplace:vouchers.send_title")}>
-        <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">{t("cms_marketplace:vouchers.send_body")}</p>
+      <Modal open={sendTo !== null} onClose={() => setSendTo(null)} title={t("marketplace_admin:vouchers.send_title")}>
+        <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">{t("marketplace_admin:vouchers.send_body")}</p>
         <Field
-          label={t("cms_marketplace:vouchers.send_to")}
+          label={t("marketplace_admin:vouchers.send_to")}
           htmlFor="voucher-send-to"
-          hint={t("cms_marketplace:vouchers.send_to_hint")}
+          hint={t("marketplace_admin:vouchers.send_to_hint")}
         >
           <Input
             id="voucher-send-to"
@@ -444,7 +444,7 @@ export const SaleDetail = () => {
             {t("admin:common.cancel")}
           </Button>
           <Button onClick={() => void runSend()} disabled={send.pending}>
-            {send.pending ? t("cms_marketplace:vouchers.sending") : t("cms_marketplace:vouchers.send")}
+            {send.pending ? t("marketplace_admin:vouchers.sending") : t("marketplace_admin:vouchers.send")}
           </Button>
         </div>
       </Modal>

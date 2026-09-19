@@ -39,11 +39,11 @@ import type {
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
-import {ProductNav} from "@/pages/cms/marketplace/components/product-nav.tsx";
-import {LinksField} from "@/pages/cms/marketplace/components/links-field.tsx";
-import {TabsField} from "@/pages/cms/marketplace/components/tabs-field.tsx";
+import {ProductNav} from "@/pages/marketplace/components/product-nav.tsx";
+import {LinksField} from "@/pages/marketplace/components/links-field.tsx";
+import {TabsField} from "@/pages/marketplace/components/tabs-field.tsx";
 import {TranslatableField} from "@/components/prose/translatable-field.tsx";
-import {TranslationsProvider} from "@/pages/cms/marketplace/components/translations-provider.tsx";
+import {TranslationsProvider} from "@/pages/marketplace/components/translations-provider.tsx";
 
 /** The API's own caps. Kept here so a field cannot accept what the service will refuse. */
 const NAME_MAX = 120;
@@ -115,31 +115,31 @@ type Section = {
 const SECTIONS: readonly Section[] = [
   {
     value: "general",
-    label: "cms_marketplace:editor.sections.general",
+    label: "marketplace_admin:editor.sections.general",
     icon: IdentificationCard,
     fields: ["name", "slug", "tagline", "summary", "status", "featured"],
   },
   {
     value: "appearance",
-    label: "cms_marketplace:editor.sections.appearance",
+    label: "marketplace_admin:editor.sections.appearance",
     icon: Palette,
     fields: ["bannerImageUrl", "iconImageUrl", "accentColor"],
   },
   {
     value: "pricing",
-    label: "cms_marketplace:editor.sections.pricing",
+    label: "marketplace_admin:editor.sections.pricing",
     icon: CurrencyDollar,
     fields: ["pricingMode", "priceAmount", "suggestedAmount"],
   },
   {
     value: "structure",
-    label: "cms_marketplace:editor.sections.structure",
+    label: "marketplace_admin:editor.sections.structure",
     icon: SquaresFour,
     fields: ["tabs", "links"],
   },
   {
     value: "content",
-    label: "cms_marketplace:editor.sections.content",
+    label: "marketplace_admin:editor.sections.content",
     icon: Article,
     fields: ["overviewBody", "contactBody"],
   },
@@ -214,7 +214,7 @@ const toForm = (source: Product): Form => ({
  * once the product exists to hold them.
  */
 export const ProductEditor = () => {
-  const {t, i18n} = useTranslation(["cms_marketplace", "cms"]);
+  const {t, i18n} = useTranslation(["marketplace_admin", "cms"]);
   const {id} = useParams<{id: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
@@ -311,12 +311,12 @@ export const ProductEditor = () => {
     if (form.summary.trim().length > SUMMARY_MAX) found.summary = t("cms:validation.too_long", {max: SUMMARY_MAX});
 
     if (form.accentColor.trim() && !HEX_PATTERN.test(form.accentColor.trim())) {
-      found.accentColor = t("cms_marketplace:editor.accent_invalid");
+      found.accentColor = t("marketplace_admin:editor.accent_invalid");
     }
 
     /* A link with no destination is the one thing the API will certainly refuse, and the message it
        sends back names a field index rather than a row an editor can see. */
-    if (form.links.some((link) => !link.url.trim())) found.links = t("cms_marketplace:editor.link_url_required");
+    if (form.links.some((link) => !link.url.trim())) found.links = t("marketplace_admin:editor.link_url_required");
 
     /*
      * A paid product with no price is an editor halfway through a change: the service refuses to
@@ -326,14 +326,14 @@ export const ProductEditor = () => {
       const price = Number.parseInt(form.priceAmount, 10);
       if (!Number.isFinite(price)) found.priceAmount = t("cms:validation.required");
       else if (price < AMOUNT_MIN || price > AMOUNT_MAX) {
-        found.priceAmount = t("cms_marketplace:editor.amount_range", {min: AMOUNT_MIN, max: AMOUNT_MAX});
+        found.priceAmount = t("marketplace_admin:editor.amount_range", {min: AMOUNT_MIN, max: AMOUNT_MAX});
       }
     }
 
     if (form.pricingMode === "donation" && form.suggestedAmount.trim()) {
       const suggested = Number.parseInt(form.suggestedAmount, 10);
       if (!Number.isFinite(suggested) || suggested < AMOUNT_MIN || suggested > AMOUNT_MAX) {
-        found.suggestedAmount = t("cms_marketplace:editor.amount_range", {min: AMOUNT_MIN, max: AMOUNT_MAX});
+        found.suggestedAmount = t("marketplace_admin:editor.amount_range", {min: AMOUNT_MIN, max: AMOUNT_MAX});
       }
     }
 
@@ -444,21 +444,21 @@ export const ProductEditor = () => {
     navigate(marketplaceRoute.list, {replace: true});
   };
 
-  const heading = id ? loaded?.name || t("cms_marketplace:editor.title_edit") : t("cms_marketplace:editor.title_new");
+  const heading = id ? loaded?.name || t("marketplace_admin:editor.title_edit") : t("marketplace_admin:editor.title_new");
   const formId = "product-editor-form";
 
   const header = (
     <PageHeader
       title={heading}
-      description={id ? t("cms_marketplace:editor.description_edit") : t("cms_marketplace:editor.description_new")}
-      back={{to: marketplaceRoute.list, label: t("cms_marketplace:editor.back")}}
+      description={id ? t("marketplace_admin:editor.description_edit") : t("marketplace_admin:editor.description_new")}
+      back={{to: marketplaceRoute.list, label: t("marketplace_admin:editor.back")}}
       actions={
         <>
           {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
           {loaded?.status === "published" && (
             <Button variant="ghost" asChild>
               <a href={productRoute.overview(loaded.slug)} target="_blank" rel="noopener">
-                <ArrowSquareOut size={16}/> {t("cms_marketplace:editor.view")}
+                <ArrowSquareOut size={16}/> {t("marketplace_admin:editor.view")}
               </a>
             </Button>
           )}
@@ -492,7 +492,7 @@ export const ProductEditor = () => {
     return (
       <>
         {header}
-        <Panel title={t("cms_marketplace:editor.identity")}>
+        <Panel title={t("marketplace_admin:editor.identity")}>
           <PanelState
             loading={record.loading}
             error={record.error}
@@ -521,7 +521,7 @@ export const ProductEditor = () => {
         )}
 
         <Tabs value={section} onValueChange={(value) => setSection(value as SectionValue)}>
-          <TabsList aria-label={t("cms_marketplace:editor.sections.label")}>
+          <TabsList aria-label={t("marketplace_admin:editor.sections.label")}>
             {SECTIONS.map(({value, label, icon: SectionIcon}) => (
               <TabsTrigger
                 key={value}
@@ -535,13 +535,13 @@ export const ProductEditor = () => {
           </TabsList>
 
           <TabsContent value="general">
-            <Panel title={t("cms_marketplace:editor.identity")} description={t("cms_marketplace:editor.identity_hint")}>
+            <Panel title={t("marketplace_admin:editor.identity")} description={t("marketplace_admin:editor.identity_hint")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <TranslatableField
-                  label={t("cms_marketplace:fields.name")}
+                  label={t("marketplace_admin:fields.name")}
                   htmlFor="product-name"
                   error={errors.name}
-                  hint={t("cms_marketplace:hints.name")}
+                  hint={t("marketplace_admin:hints.name")}
                   field="name"
                   source={form.name}
                   value={form.translations}
@@ -561,10 +561,10 @@ export const ProductEditor = () => {
                 </TranslatableField>
 
                 <Field
-                  label={t("cms_marketplace:fields.slug")}
+                  label={t("marketplace_admin:fields.slug")}
                   htmlFor="product-slug"
                   error={errors.slug}
-                  hint={t("cms_marketplace:hints.slug")}
+                  hint={t("marketplace_admin:hints.slug")}
                 >
                   <Input
                     id="product-slug"
@@ -582,10 +582,10 @@ export const ProductEditor = () => {
                 </Field>
 
                 <TranslatableField
-                  label={t("cms_marketplace:fields.tagline")}
+                  label={t("marketplace_admin:fields.tagline")}
                   htmlFor="product-tagline"
                   error={errors.tagline}
-                  hint={t("cms_marketplace:hints.tagline")}
+                  hint={t("marketplace_admin:hints.tagline")}
                   className="sm:col-span-2"
                   field="tagline"
                   source={form.tagline}
@@ -605,10 +605,10 @@ export const ProductEditor = () => {
                 </TranslatableField>
 
                 <TranslatableField
-                  label={t("cms_marketplace:fields.summary")}
+                  label={t("marketplace_admin:fields.summary")}
                   htmlFor="product-summary"
                   error={errors.summary}
-                  hint={t("cms_marketplace:hints.summary", {count: form.summary.length, max: SUMMARY_MAX})}
+                  hint={t("marketplace_admin:hints.summary", {count: form.summary.length, max: SUMMARY_MAX})}
                   className="sm:col-span-2"
                   field="summary"
                   source={form.summary}
@@ -629,9 +629,9 @@ export const ProductEditor = () => {
                 </TranslatableField>
 
                 <Field
-                  label={t("cms_marketplace:fields.status")}
+                  label={t("marketplace_admin:fields.status")}
                   htmlFor="product-status"
-                  hint={t(`cms_marketplace:editor.status_hint.${form.status}`)}
+                  hint={t(`marketplace_admin:editor.status_hint.${form.status}`)}
                 >
                   <Select
                     id="product-status"
@@ -647,9 +647,9 @@ export const ProductEditor = () => {
                 </Field>
 
                 <Field
-                  label={t("cms_marketplace:fields.featured")}
+                  label={t("marketplace_admin:fields.featured")}
                   htmlFor="product-featured"
-                  hint={t("cms_marketplace:hints.featured")}
+                  hint={t("marketplace_admin:hints.featured")}
                 >
                   <label className="flex h-11 items-center gap-2.5 text-sm text-neutral-300">
                     <input
@@ -659,7 +659,7 @@ export const ProductEditor = () => {
                       onChange={(event) => set("featured", event.target.checked)}
                       className="size-4 accent-[var(--color-accent)]"
                     />
-                    {t("cms_marketplace:fields.featured_label")}
+                    {t("marketplace_admin:fields.featured_label")}
                   </label>
                 </Field>
               </div>
@@ -667,12 +667,12 @@ export const ProductEditor = () => {
           </TabsContent>
 
           <TabsContent value="appearance">
-            <Panel title={t("cms_marketplace:editor.appearance")} description={t("cms_marketplace:editor.appearance_hint")}>
+            <Panel title={t("marketplace_admin:editor.appearance")} description={t("marketplace_admin:editor.appearance_hint")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field
-                  label={t("cms_marketplace:fields.banner")}
+                  label={t("marketplace_admin:fields.banner")}
                   htmlFor="product-banner"
-                  hint={t("cms_marketplace:hints.banner")}
+                  hint={t("marketplace_admin:hints.banner")}
                   className="sm:col-span-2"
                 >
                   <Input
@@ -697,7 +697,7 @@ export const ProductEditor = () => {
                   </div>
                 )}
 
-                <Field label={t("cms_marketplace:fields.icon")} htmlFor="product-icon" hint={t("cms_marketplace:hints.icon")}>
+                <Field label={t("marketplace_admin:fields.icon")} htmlFor="product-icon" hint={t("marketplace_admin:hints.icon")}>
                   <Input
                     id="product-icon"
                     type="url"
@@ -709,10 +709,10 @@ export const ProductEditor = () => {
                 </Field>
 
                 <Field
-                  label={t("cms_marketplace:fields.accent")}
+                  label={t("marketplace_admin:fields.accent")}
                   htmlFor="product-accent"
                   error={errors.accentColor}
-                  hint={t("cms_marketplace:hints.accent")}
+                  hint={t("marketplace_admin:hints.accent")}
                 >
                   <div className="flex items-center gap-2">
                     <Input
@@ -738,12 +738,12 @@ export const ProductEditor = () => {
           </TabsContent>
 
           <TabsContent value="pricing">
-            <Panel title={t("cms_marketplace:editor.pricing")} description={t("cms_marketplace:editor.pricing_hint")}>
+            <Panel title={t("marketplace_admin:editor.pricing")} description={t("marketplace_admin:editor.pricing_hint")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field
-                  label={t("cms_marketplace:fields.pricing_mode")}
+                  label={t("marketplace_admin:fields.pricing_mode")}
                   htmlFor="product-pricing-mode"
-                  hint={t(`cms_marketplace:hints.pricing_${form.pricingMode}`)}
+                  hint={t(`marketplace_admin:hints.pricing_${form.pricingMode}`)}
                   className="sm:col-span-2"
                 >
                   <Select
@@ -753,7 +753,7 @@ export const ProductEditor = () => {
                   >
                     {PRICING_MODES.map((mode) => (
                       <option key={mode} value={mode}>
-                        {t(`cms_marketplace:pricing_modes.${mode}`)}
+                        {t(`marketplace_admin:pricing_modes.${mode}`)}
                       </option>
                     ))}
                   </Select>
@@ -765,10 +765,10 @@ export const ProductEditor = () => {
                   */}
                 {form.pricingMode === "paid" && (
                   <Field
-                    label={t("cms_marketplace:fields.price_amount")}
+                    label={t("marketplace_admin:fields.price_amount")}
                     htmlFor="product-price"
                     error={errors.priceAmount}
-                    hint={t("cms_marketplace:hints.price_amount")}
+                    hint={t("marketplace_admin:hints.price_amount")}
                   >
                     <Input
                       id="product-price"
@@ -787,10 +787,10 @@ export const ProductEditor = () => {
 
                 {form.pricingMode === "donation" && (
                   <Field
-                    label={t("cms_marketplace:fields.suggested_amount")}
+                    label={t("marketplace_admin:fields.suggested_amount")}
                     htmlFor="product-suggested"
                     error={errors.suggestedAmount}
-                    hint={t("cms_marketplace:hints.suggested_amount")}
+                    hint={t("marketplace_admin:hints.suggested_amount")}
                   >
                     <Input
                       id="product-suggested"
@@ -809,7 +809,7 @@ export const ProductEditor = () => {
 
                 {form.pricingMode !== "free" && (
                   <p className="text-[13px] leading-relaxed text-neutral-400 sm:col-span-2">
-                    {t("cms_marketplace:editor.pricing_downloads_hint")}
+                    {t("marketplace_admin:editor.pricing_downloads_hint")}
                   </p>
                 )}
               </div>
@@ -817,7 +817,7 @@ export const ProductEditor = () => {
           </TabsContent>
 
           <TabsContent value="structure">
-            <Panel title={t("cms_marketplace:editor.tabs")} description={t("cms_marketplace:editor.tabs_hint")}>
+            <Panel title={t("marketplace_admin:editor.tabs")} description={t("marketplace_admin:editor.tabs_hint")}>
               <TabsField
                 available={availableTabs}
                 value={form.tabs}
@@ -826,7 +826,7 @@ export const ProductEditor = () => {
               />
             </Panel>
 
-            <Panel title={t("cms_marketplace:editor.links")} description={t("cms_marketplace:editor.links_hint")}>
+            <Panel title={t("marketplace_admin:editor.links")} description={t("marketplace_admin:editor.links_hint")}>
               {errors.links && <p className="mb-3 text-xs text-red-400">{errors.links}</p>}
               <LinksField
                 idPrefix="product-link"
@@ -838,9 +838,9 @@ export const ProductEditor = () => {
           </TabsContent>
 
           <TabsContent value="content">
-            <Panel title={t("cms_marketplace:editor.overview")} description={t("cms_marketplace:editor.overview_hint")}>
+            <Panel title={t("marketplace_admin:editor.overview")} description={t("marketplace_admin:editor.overview_hint")}>
               <TranslatableField
-                label={t("cms_marketplace:fields.overview_body")}
+                label={t("marketplace_admin:fields.overview_body")}
                 htmlFor="product-overview"
                 field="overview_body"
                 source={form.overviewBody}
@@ -855,7 +855,7 @@ export const ProductEditor = () => {
                     id="product-overview"
                     value={form.overviewBody}
                     onChange={(value) => set("overviewBody", value)}
-                    placeholder={t("cms_marketplace:editor.overview_placeholder")}
+                    placeholder={t("marketplace_admin:editor.overview_placeholder")}
                     maxLength={BODY_MAX}
                     rows={24}
                     disabled={save.pending}
@@ -867,9 +867,9 @@ export const ProductEditor = () => {
 
             {/* Shown whether or not the Contact tab is on: writing the text is what usually comes
                 before turning the tab on, and hiding the field would make that order impossible. */}
-            <Panel title={t("cms_marketplace:editor.contact")} description={t("cms_marketplace:editor.contact_hint")}>
+            <Panel title={t("marketplace_admin:editor.contact")} description={t("marketplace_admin:editor.contact_hint")}>
               <TranslatableField
-                label={t("cms_marketplace:fields.contact_body")}
+                label={t("marketplace_admin:fields.contact_body")}
                 htmlFor="product-contact"
                 field="contact_body"
                 source={form.contactBody}
@@ -883,7 +883,7 @@ export const ProductEditor = () => {
                     id="product-contact"
                     value={form.contactBody}
                     onChange={(value) => set("contactBody", value)}
-                    placeholder={t("cms_marketplace:editor.contact_placeholder")}
+                    placeholder={t("marketplace_admin:editor.contact_placeholder")}
                     maxLength={BODY_MAX}
                     rows={14}
                     disabled={save.pending}
@@ -897,16 +897,16 @@ export const ProductEditor = () => {
 
         {loaded?.updated_at && (
           <p className="text-[13px] text-neutral-600">
-            {t("cms_marketplace:editor.updated_at", {date: formatDateTime(loaded.updated_at, i18n.language)})}
+            {t("marketplace_admin:editor.updated_at", {date: formatDateTime(loaded.updated_at, i18n.language)})}
           </p>
         )}
       </form>
 
       <ConfirmDialog
         open={askPublish}
-        title={t("cms_marketplace:editor.publish_title")}
-        body={t("cms_marketplace:editor.publish_body", {name: form.name.trim(), slug: form.slug.trim()})}
-        confirmLabel={save.pending ? t("admin:common.saving") : t("cms_marketplace:editor.publish_confirm")}
+        title={t("marketplace_admin:editor.publish_title")}
+        body={t("marketplace_admin:editor.publish_body", {name: form.name.trim(), slug: form.slug.trim()})}
+        confirmLabel={save.pending ? t("admin:common.saving") : t("marketplace_admin:editor.publish_confirm")}
         onConfirm={() => void persist()}
         onClose={() => setAskPublish(false)}
         pending={save.pending}
@@ -915,9 +915,9 @@ export const ProductEditor = () => {
 
       <ConfirmDialog
         open={askDelete}
-        title={t("cms_marketplace:editor.delete_title")}
-        body={t("cms_marketplace:editor.delete_body", {name: form.name.trim()})}
-        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_marketplace:editor.delete_confirm")}
+        title={t("marketplace_admin:editor.delete_title")}
+        body={t("marketplace_admin:editor.delete_body", {name: form.name.trim()})}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("marketplace_admin:editor.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setAskDelete(false)}
         pending={remove.pending}

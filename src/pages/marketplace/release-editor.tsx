@@ -27,10 +27,10 @@ import type {
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {MarkdownEditor} from "@/components/prose/markdown-editor.tsx";
-import {LinksField} from "@/pages/cms/marketplace/components/links-field.tsx";
-import {ReleaseFilesPanel} from "@/pages/cms/marketplace/components/release-files-panel.tsx";
+import {LinksField} from "@/pages/marketplace/components/links-field.tsx";
+import {ReleaseFilesPanel} from "@/pages/marketplace/components/release-files-panel.tsx";
 import {TranslatableField} from "@/components/prose/translatable-field.tsx";
-import {TranslationsProvider} from "@/pages/cms/marketplace/components/translations-provider.tsx";
+import {TranslationsProvider} from "@/pages/marketplace/components/translations-provider.tsx";
 
 const VERSION_MAX = 40;
 const TITLE_MAX = 200;
@@ -83,13 +83,13 @@ type Section = {
 const SECTIONS: readonly Section[] = [
   {
     value: "release",
-    label: "cms_marketplace:releases.sections.release",
+    label: "marketplace_admin:releases.sections.release",
     icon: Tag,
     fields: ["version", "title", "releasedAt", "status"],
   },
-  {value: "notes", label: "cms_marketplace:releases.sections.notes", icon: Article, fields: ["body"]},
-  {value: "links", label: "cms_marketplace:releases.sections.links", icon: LinkSimple, fields: ["links"]},
-  {value: "builds", label: "cms_marketplace:releases.sections.builds", icon: CloudArrowDown, fields: []},
+  {value: "notes", label: "marketplace_admin:releases.sections.notes", icon: Article, fields: ["body"]},
+  {value: "links", label: "marketplace_admin:releases.sections.links", icon: LinkSimple, fields: ["links"]},
+  {value: "builds", label: "marketplace_admin:releases.sections.builds", icon: CloudArrowDown, fields: []},
 ];
 
 /** The first section holding something the form refused, so a failed save can open itself. */
@@ -128,7 +128,7 @@ const toForm = (source: ProductRelease): Form => ({
  * is exactly what it exists for.
  */
 export const ReleaseEditor = () => {
-  const {t} = useTranslation(["cms_marketplace", "cms"]);
+  const {t} = useTranslation(["marketplace_admin", "cms"]);
   const {id = "", releaseId} = useParams<{id: string; releaseId?: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
@@ -212,13 +212,13 @@ export const ReleaseEditor = () => {
 
     if (!version) found.version = t("cms:validation.required");
     else if (version.length > VERSION_MAX) found.version = t("cms:validation.too_long", {max: VERSION_MAX});
-    else if (!VERSION_PATTERN.test(version)) found.version = t("cms_marketplace:releases.version_invalid");
+    else if (!VERSION_PATTERN.test(version)) found.version = t("marketplace_admin:releases.version_invalid");
 
     if (!title) found.title = t("cms:validation.required");
     else if (title.length > TITLE_MAX) found.title = t("cms:validation.too_long", {max: TITLE_MAX});
 
     if (form.body.length > BODY_MAX) found.body = t("cms:validation.too_long", {max: BODY_MAX});
-    if (form.links.some((link) => !link.url.trim())) found.links = t("cms_marketplace:editor.link_url_required");
+    if (form.links.some((link) => !link.url.trim())) found.links = t("marketplace_admin:editor.link_url_required");
 
     return found;
   };
@@ -290,16 +290,16 @@ export const ReleaseEditor = () => {
 
   const heading = releaseId
     ? loaded?.version
-      ? t("cms_marketplace:releases.title_edit", {version: loaded.version})
-      : t("cms_marketplace:releases.title_edit_generic")
-    : t("cms_marketplace:releases.title_new");
+      ? t("marketplace_admin:releases.title_edit", {version: loaded.version})
+      : t("marketplace_admin:releases.title_edit_generic")
+    : t("marketplace_admin:releases.title_new");
   const formId = "release-editor-form";
 
   const header = (
     <PageHeader
       title={heading}
-      description={t("cms_marketplace:releases.editor_description")}
-      back={{to: marketplaceRoute.releases(id), label: t("cms_marketplace:releases.back")}}
+      description={t("marketplace_admin:releases.editor_description")}
+      back={{to: marketplaceRoute.releases(id), label: t("marketplace_admin:releases.back")}}
       actions={
         <>
           {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
@@ -332,7 +332,7 @@ export const ReleaseEditor = () => {
     return (
       <>
         {header}
-        <Panel title={t("cms_marketplace:releases.release")}>
+        <Panel title={t("marketplace_admin:releases.release")}>
           <PanelState
             loading={record.loading}
             error={record.error}
@@ -360,7 +360,7 @@ export const ReleaseEditor = () => {
         )}
 
         <Tabs value={section} onValueChange={(value) => setSection(value as SectionValue)}>
-          <TabsList aria-label={t("cms_marketplace:releases.sections.label")}>
+          <TabsList aria-label={t("marketplace_admin:releases.sections.label")}>
             {sections.map(({value, label, icon: SectionIcon}) => (
               <TabsTrigger
                 key={value}
@@ -374,13 +374,13 @@ export const ReleaseEditor = () => {
           </TabsList>
 
           <TabsContent value="release">
-            <Panel title={t("cms_marketplace:releases.release")} description={t("cms_marketplace:releases.release_hint")}>
+            <Panel title={t("marketplace_admin:releases.release")} description={t("marketplace_admin:releases.release_hint")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field
-                  label={t("cms_marketplace:fields.version")}
+                  label={t("marketplace_admin:fields.version")}
                   htmlFor="release-version"
                   error={errors.version}
-                  hint={t("cms_marketplace:hints.version")}
+                  hint={t("marketplace_admin:hints.version")}
                 >
                   <Input
                     id="release-version"
@@ -396,9 +396,9 @@ export const ReleaseEditor = () => {
                 </Field>
 
                 <Field
-                  label={t("cms_marketplace:fields.released_at")}
+                  label={t("marketplace_admin:fields.released_at")}
                   htmlFor="release-released-at"
-                  hint={t("cms_marketplace:hints.released_at")}
+                  hint={t("marketplace_admin:hints.released_at")}
                 >
                   <Input
                     id="release-released-at"
@@ -409,10 +409,10 @@ export const ReleaseEditor = () => {
                 </Field>
 
                 <TranslatableField
-                  label={t("cms_marketplace:fields.title")}
+                  label={t("marketplace_admin:fields.title")}
                   htmlFor="release-title"
                   error={errors.title}
-                  hint={t("cms_marketplace:hints.update_title")}
+                  hint={t("marketplace_admin:hints.update_title")}
                   className="sm:col-span-2"
                   field="title"
                   source={form.title}
@@ -433,9 +433,9 @@ export const ReleaseEditor = () => {
                 </TranslatableField>
 
                 <Field
-                  label={t("cms_marketplace:fields.status")}
+                  label={t("marketplace_admin:fields.status")}
                   htmlFor="release-status"
-                  hint={t(`cms_marketplace:releases.status_hint.${form.status}`)}
+                  hint={t(`marketplace_admin:releases.status_hint.${form.status}`)}
                 >
                   <Select
                     id="release-status"
@@ -454,9 +454,9 @@ export const ReleaseEditor = () => {
           </TabsContent>
 
           <TabsContent value="notes">
-            <Panel title={t("cms_marketplace:releases.notes")} description={t("cms_marketplace:releases.notes_hint")}>
+            <Panel title={t("marketplace_admin:releases.notes")} description={t("marketplace_admin:releases.notes_hint")}>
               <TranslatableField
-                label={t("cms_marketplace:fields.body")}
+                label={t("marketplace_admin:fields.body")}
                 htmlFor="release-body"
                 error={errors.body}
                 field="body"
@@ -472,7 +472,7 @@ export const ReleaseEditor = () => {
                     id="release-body"
                     value={form.body}
                     onChange={(value) => set("body", value)}
-                    placeholder={t("cms_marketplace:releases.body_placeholder")}
+                    placeholder={t("marketplace_admin:releases.body_placeholder")}
                     maxLength={BODY_MAX}
                     rows={16}
                     disabled={save.pending}
@@ -484,7 +484,7 @@ export const ReleaseEditor = () => {
           </TabsContent>
 
           <TabsContent value="links">
-            <Panel title={t("cms_marketplace:releases.links")} description={t("cms_marketplace:releases.links_hint")}>
+            <Panel title={t("marketplace_admin:releases.links")} description={t("marketplace_admin:releases.links_hint")}>
               {errors.links && <p className="mb-3 text-xs text-red-400">{errors.links}</p>}
               <LinksField
                 idPrefix="release-link"
@@ -508,9 +508,9 @@ export const ReleaseEditor = () => {
 
       <ConfirmDialog
         open={askDelete}
-        title={t("cms_marketplace:releases.delete_title")}
-        body={t("cms_marketplace:releases.delete_body", {version: form.version.trim()})}
-        confirmLabel={remove.pending ? t("admin:common.deleting") : t("cms_marketplace:releases.delete_confirm")}
+        title={t("marketplace_admin:releases.delete_title")}
+        body={t("marketplace_admin:releases.delete_body", {version: form.version.trim()})}
+        confirmLabel={remove.pending ? t("admin:common.deleting") : t("marketplace_admin:releases.delete_confirm")}
         onConfirm={() => void confirmDelete()}
         onClose={() => setAskDelete(false)}
         pending={remove.pending}
