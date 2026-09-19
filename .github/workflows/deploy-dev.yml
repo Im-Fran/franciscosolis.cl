@@ -1,0 +1,84 @@
+name: Deploy (development)
+
+# Deploys the development site: `franciscosolis-dev`, on dev.franciscosolis.cl, built against the
+# `-dev` half of the API at api-dev.franciscosolis.cl.
+#
+# Production is deployed by Cloudflare's Git integration, which this repository does not configure.
+# That integration runs a plain `wrangler deploy` with no way to pass `--env dev`, and its settings
+# live in the dashboard where a pull request cannot see them — so the development deploy is the
+# half that can live in git, and does.
+#
+# The one thing worth knowing: which API this site talks to is decided by the *build*, not by the
+# Worker. The base URLs are Vite variables compiled into the bundle, so `build:dev` (which loads
+# `.env.dev`) and `deploy:dev` (which selects `env.dev` in wrangler.jsonc) are two halves of the
+# same decision. Running one without the other puts the production bundle on dev.franciscosolis.cl,
+# which looks like it works right up until a test writes to the real database.
+#
+# Until the `prd` branch exists, this runs on the same push to `dev` that ships production. That is
+# deliberate and temporary: today `dev` is the default branch and releases both.
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: deploy franciscosolis-dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+    steps:
+      # First, before anything installs, so a missing secret reads as a missing secret rather than
+      # as a Wrangler authentication error several minutes later.
+      - name: Check credentials
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must be set as repository secrets. The token needs Workers Scripts:Edit on this account."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      # Loads `.env.dev`, so every VITE_*_BASE_URL in the bundle names api-dev.franciscosolis.cl.
+      - name: Build
+        run: pnpm run build:dev
+
+      - name: Deploy
+        run: pnpm run deploy:dev
+
+      - name: Record what is deployed
+        run: |
+          {
+            echo '## Development site'
+            echo
+            echo '- Front-end: https://dev.franciscosolis.cl'
+            echo '- API it talks to: https://api-dev.franciscosolis.cl'
+          } >> "$GITHUB_STEP_SUMMARY"

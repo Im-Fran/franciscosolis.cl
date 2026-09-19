@@ -7,6 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:dev": "tsc -b && CLOUDFLARE_ENV=dev vite build --mode dev",
+    "deploy": "wrangler deploy",
+    "deploy:dev": "wrangler deploy --env dev",
     "brand:icons": "node scripts/generate-brand-icons.mjs",
     "brand:kit": "node scripts/brand-kit.mjs",
     "lint": "oxlint",

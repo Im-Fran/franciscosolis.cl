@@ -30,6 +30,10 @@ dist-ssr
 .env
 .env.*
 !.env.example
+# The development build's configuration. It is committed on purpose: it holds nothing but the
+# public base URLs of the -dev stack, which is the same class of value as .env.example, and the
+# build that produces dev.franciscosolis.cl has to be reproducible from the repository alone.
+!.env.dev
 
 # Cloudflare
 .wrangler

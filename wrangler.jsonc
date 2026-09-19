@@ -32,5 +32,25 @@
       "invocation_logs": true,
       "head_sampling_rate": 0.25
     }
+  },
+  // The development site: `franciscosolis-dev`, on dev.franciscosolis.cl, talking to the `-dev`
+  // half of api.franciscosolis.cl.
+  //
+  // `routes` is one of the keys a named Wrangler environment *inherits*, so the override below is
+  // not decoration: without it the development Worker would claim franciscosolis.cl the first time
+  // it deployed and serve the test build to everybody.
+  //
+  // Which API this build talks to is decided at build time, not here — the base URLs are Vite
+  // variables baked into the bundle. `.env.dev` holds them and `pnpm run build:dev` loads it.
+  "env": {
+    "dev": {
+      "routes": [
+        {
+          "pattern": "dev.franciscosolis.cl",
+          "zone_name": "franciscosolis.cl",
+          "custom_domain": true
+        }
+      ]
+    }
   }
 }
