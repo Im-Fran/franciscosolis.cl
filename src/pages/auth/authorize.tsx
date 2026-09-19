@@ -155,7 +155,9 @@ export const Authorize = () => {
   const account = pending.authenticated;
   const emailProviders = pending.providers.filter((provider) => provider.initiation === "email");
   const redirectProviders = pending.providers.filter((provider) => provider.initiation === "redirect");
-  const challenge = pending.turnstile.required ? pending.turnstile.site_key : null;
+  /* Read defensively: a service that predates the bot check sends no `turnstile` at all, and the
+     screen has to keep signing people in rather than crash on a field it only just started reading. */
+  const challenge = pending.turnstile?.required ? pending.turnstile.site_key : null;
   /* Submitting without a solved challenge would only earn a 400 from the service. */
   const blockedByChallenge = challenge !== null && turnstileToken === null;
 
