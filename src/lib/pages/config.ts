@@ -47,4 +47,15 @@ export const pagesRoute = {
   wiki: (id: string) => `${PAGES_ADMIN_ROUTE}/${id}/wiki`,
   wikiNew: (id: string) => `${PAGES_ADMIN_ROUTE}/${id}/wiki/new`,
   wikiItem: (id: string, pageId: string) => `${PAGES_ADMIN_ROUTE}/${id}/wiki/${pageId}`,
+  /**
+   * The sales of one application: its payments, its receipts and its refunds.
+   *
+   * Nested under the application like every other section, because that is how the service exposes
+   * it — a sale is read, refunded and receipted through its own application's URL and no other's.
+   * There is no public counterpart: nothing in `applicationRoute` above corresponds to these, and
+   * the four public tabs are unchanged. A page's shape is a house standard; this is a back office.
+   */
+  sales: (id: string) => `${PAGES_ADMIN_ROUTE}/${id}/sales`,
+  saleItem: (id: string, saleId: string) => `${PAGES_ADMIN_ROUTE}/${id}/sales/${saleId}`,
+  vouchers: (id: string) => `${PAGES_ADMIN_ROUTE}/${id}/vouchers`,
 } as const;

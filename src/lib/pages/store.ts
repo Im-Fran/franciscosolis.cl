@@ -225,24 +225,12 @@ export const usePaymentReturn = (access: Resource<ApplicationAccess>): PaymentRe
   return {confirming, confirmed};
 };
 
-/**
- * An amount as the currency the service quoted it in.
- *
- * CLP has no minor unit, so the fraction digits are zero rather than the two `Intl` would default
- * to — `$4.990` is the price, `$4.990,00` is a price nobody in Chile writes.
+/*
+ * `formatAmount` moved to `money.ts` when the sales console started needing it: the console must
+ * not import this module, whose hooks and public content client it has no use for. Re-exported here
+ * so the product page's own imports read as they always have.
  */
-export const formatAmount = (amount: number, currency: string, locale: string): string => {
-  try {
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency,
-      maximumFractionDigits: currency === "CLP" ? 0 : 2,
-    }).format(amount);
-  } catch {
-    /* An unknown currency code must not take the price off the screen. */
-    return `${amount} ${currency}`;
-  }
-};
+export {formatAmount} from "@/lib/pages/money.ts";
 
 /** A file size somebody can read at a glance. Binary units, because that is what a build is measured in. */
 export const formatBytes = (bytes: number, locale: string): string => {

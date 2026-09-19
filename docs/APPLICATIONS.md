@@ -92,6 +92,12 @@ provider put in the query string. That status is the payer's browser talking; th
 webhook's, and it arrives on its own schedule — so the page says "confirming" until our own service
 agrees, and cleans the query string either way.
 
+Which MercadoPago account the money goes to is the service's configuration, not this interface's:
+`dev.franciscosolis.cl` is paired with a `pages-dev` that runs `MERCADOPAGO_ENVIRONMENT: sandbox` and
+hands back the sandbox checkout, so the provider's test cards work there and nothing charges a real
+card. Production is paired with the live one. Nothing here reads or reports that setting — a page that
+displayed which account it was talking to would be a page that can say the wrong thing.
+
 ## Downloads
 
 The builds live on the **Updates** tab, because a build belongs to the release that published it.
@@ -150,6 +156,9 @@ session to do it.
 | `/cms/pages/:id/updates/new`, `/:updateId` | One release note, and the builds it publishes     |
 | `/cms/pages/:id/wiki`                   | The wiki, in sidebar order                           |
 | `/cms/pages/:id/wiki/new`, `/:pageId`   | One wiki page                                        |
+| `/cms/pages/:id/sales`                  | Its sales, with the totals, and where one is recorded by hand |
+| `/cms/pages/:id/sales/:saleId`          | One sale: its facts, its receipts, its refund        |
+| `/cms/pages/:id/vouchers`               | Every receipt it ever issued, void ones included     |
 
 Both editing screens are **tabbed**, and their tabs are sections of the screen rather than routes.
 An application is General / Appearance / Pricing / Tabs and links / Content; a release is Release /
@@ -165,6 +174,43 @@ The translation of a field lives on the field (see *The language* above).
 That split has one cost, and it is paid in `SECTIONS` in each editor: every section names the fields
 it holds. A refused save opens the first section holding one and marks the rest, because a validation
 message under a field inside a closed tab is a save that fails for no visible reason.
+
+## The sales screens
+
+The last three rows of that table are a **back office**, not a fifth tab, and the distinction is the
+same one the tab registry is about: the four public tabs are what a visitor sees, and a visitor has no
+business reading the takings. `ApplicationNav` shows Sales and Receipts for every application,
+including the free ones — "did anybody donate" is a question about a free application too, and an
+application's mode changes.
+
+Six things about these screens are deliberate:
+
+- **The totals come from the service, over the same filters as the rows.** `GET …/sales/summary` is
+  computed in the database over exactly the sales the listing beside it selects, so the figure at the
+  top and the rows underneath cannot disagree. Summing the fifty rows on screen and calling it revenue
+  is the one bug in a screen like this that nobody forgives.
+- **Three figures, not one.** Gross is what ever settled, returned is what went back out, net is the
+  difference — and quoting the first as revenue counts a refund as income.
+- **A sale can be recorded by hand, and MercadoPago is not in the list of sources.** Cash, a transfer,
+  a gift, other. The service refuses the provider's own name there, and the dialog does not offer it: a
+  row claiming MercadoPago took money it has no record of would be indistinguishable from a real
+  payment and would grant the same download.
+- **The date is asked for.** A sale entered a week late whose statutory ten days ran from the day it
+  was typed would give the buyer three days too many. So the field defaults to now and is editable,
+  and the service backdates the approval with it.
+- **Whether a refund is possible is read off the service, and so is why not.** `refund.refundable` and
+  `refund.reason` come back on the sale, so the button's state and the API's answer come from one
+  place — and a greyed-out button that nobody can explain is the state this avoids. The two reasons
+  are "not approved" and "taken against the other MercadoPago account".
+- **A receipt is re-issued, never edited.** Correcting one voids it and issues the next number, which
+  is what the service does and what the screen says. Re-sending is a separate action with its own
+  count, because "I never got it" is a different problem from "this is wrong" — and a void receipt
+  stays in the list, since "you sent me this and now you say it is invalid" is exactly the conversation
+  the row exists to settle.
+
+A sale that was recorded but whose receipt could not be emailed answers 502, and the screen says so
+rather than claiming the sale failed: the sale and the voucher are both written by then, and Resend is
+one click away on the sale itself.
 
 Two details of the editor are worth knowing:
 
