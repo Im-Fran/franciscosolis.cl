@@ -23,11 +23,11 @@ const SOURCE_TONES: Record<string, string> = {
 const chip = "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2 py-0.5 text-[11px] font-medium";
 
 export const SourceBadge = ({source, className}: {source: SaleSource | string; className?: string}) => {
-  const {t} = useTranslation(["cms_marketplace"]);
+  const {t} = useTranslation(["marketplace_admin"]);
 
   return (
     <span className={cn(chip, SOURCE_TONES[source] ?? SOURCE_TONES.other, className)}>
-      {t(`cms_marketplace:sales.sources.${source}`, {defaultValue: source})}
+      {t(`marketplace_admin:sales.sources.${source}`, {defaultValue: source})}
     </span>
   );
 };
@@ -40,12 +40,12 @@ export const SourceBadge = ({source, className}: {source: SaleSource | string; c
  * to be impossible to miss, which is why this one is loud.
  */
 export const EnvironmentBadge = ({environment, className}: {environment?: string; className?: string}) => {
-  const {t} = useTranslation(["cms_marketplace"]);
+  const {t} = useTranslation(["marketplace_admin"]);
   if (environment !== "sandbox") return null;
 
   return (
     <span className={cn(chip, "border-amber-500/40 bg-amber-500/10 text-amber-300", className)}>
-      {t("cms_marketplace:sales.sandbox")}
+      {t("marketplace_admin:sales.sandbox")}
     </span>
   );
 };

@@ -12,8 +12,6 @@ import {CmsLayout} from "@/pages/cms/components/cms-layout.tsx";
 import {ContentRedirect} from "@/pages/cms/components/content-redirect.tsx";
 import {MARKETPLACE_ADMIN_ROUTE} from "@/lib/marketplace/config.ts";
 import {
-  ProductEditor,
-  ProductList,
   AuditLog,
   Callback,
   ContentEditor,
@@ -24,16 +22,9 @@ import {
   LegalEditor,
   LegalList,
   Overview,
-  SaleDetail,
-  SalesList,
   SignIn,
   TemplateEditor,
   TemplateList,
-  ReleaseEditor,
-  ReleaseList,
-  VoucherList,
-  WikiEditor,
-  WikiList,
 } from "@/pages/cms/lazy-screens.tsx";
 
 /**
@@ -76,38 +67,19 @@ export const cmsRoutes: RouteObject = {
         {path: "content/:collection/:id", element: <ContentEditor/>},
 
         /*
-         * The marketplace. It is a different service — `apps/marketplace` rather than `apps/cms` —
-         * but not a different client application: it accepts the CMS's audience precisely so these
-         * screens can live inside this gate and this session instead of asking an editor to sign in
-         * a second time for a second console.
+         * The marketplace console is **not** here, and that is the one thing worth knowing about
+         * this file.
+         *
+         * It lived at `/cms/marketplace` for exactly one release, inheriting this subtree's
+         * `AuthProvider` the way `apps/pages` used to. That could not work: `apps/marketplace`
+         * accepts only its own audience, so a token minted under `franciscosolis-cms` is refused
+         * with a 401 before the permission is ever read — indistinguishable on this side from an
+         * expired session, which sent editors around the sign-in loop forever. It is its own
+         * console now, at `/marketplace`, with a client application of its own.
+         *
+         * Both addresses it answered to still land there.
          */
-        {path: "marketplace", element: <ProductList/>},
-        {path: "marketplace/new", element: <ProductEditor/>},
-        {path: "marketplace/:id", element: <ProductEditor/>},
-        {path: "marketplace/:id/releases", element: <ReleaseList/>},
-        {path: "marketplace/:id/releases/new", element: <ReleaseEditor/>},
-        {path: "marketplace/:id/releases/:releaseId", element: <ReleaseEditor/>},
-        {path: "marketplace/:id/wiki", element: <WikiList/>},
-        {path: "marketplace/:id/wiki/new", element: <WikiEditor/>},
-        {path: "marketplace/:id/wiki/:pageId", element: <WikiEditor/>},
-
-        /*
-         * The sales of one product, and the receipts it issued. Not tabs on the product page —
-         * that set is a house standard the service enforces with a registry — but sections of this
-         * console, which is where the takings belong.
-         */
-        {path: "marketplace/:id/sales", element: <SalesList/>},
-        {path: "marketplace/:id/sales/:saleId", element: <SaleDetail/>},
-        {path: "marketplace/:id/vouchers", element: <VoucherList/>},
-
-        /*
-         * The editorial screens that came with the store are deliberately not here yet: review
-         * moderation, the cross-product report queue, per-release compatibility and the analytics
-         * series are the second half of this work. The public page is what breaks when the service
-         * is renamed, so it goes first.
-         */
-
-        /* The address these screens lived at before the rename, kept so a bookmark still lands. */
+        {path: "marketplace/*", element: <Navigate to={MARKETPLACE_ADMIN_ROUTE} replace/>},
         {path: "pages/*", element: <Navigate to={MARKETPLACE_ADMIN_ROUTE} replace/>},
 
         {path: "legal", element: <LegalList/>},

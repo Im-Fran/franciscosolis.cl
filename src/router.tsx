@@ -9,6 +9,7 @@ import {accountRoutes, authRoutes, authorizeRoutes} from "@/pages/auth/auth-rout
 import {cmsRoutes} from "@/pages/cms/cms-routes.tsx";
 import {helpRoutes, ticketRoutes} from "@/pages/help/help-routes.tsx";
 import {supportRoutes} from "@/pages/support/support-routes.tsx";
+import {marketplaceRoutes} from "@/pages/marketplace/marketplace-routes.tsx";
 import {legacyProductRoutes, productRoutes} from "@/pages/product/product-routes.tsx";
 import {CmsLegacyRedirect} from "@/pages/cms/components/legacy-redirect.tsx";
 import {Legal} from "@/pages/legal/lazy-screens.tsx";
@@ -50,6 +51,12 @@ const routes = [
       ticketRoutes,
       /* The support team's console — its own client application, signed in under its own client id */
       supportRoutes,
+      /*
+       * The marketplace console. Its own client application too, and here that is what the service
+       * requires rather than a preference: `apps/marketplace` accepts only its own audience, so an
+       * editor signing in under the CMS's client id is refused before the permission is ever read.
+       */
+      marketplaceRoutes,
       /*
        * The marketplace. Registered after the console routes deliberately: React Router ranks
        * a static segment above a dynamic one, so `/cms` and `/auth` win over `product/:slug`

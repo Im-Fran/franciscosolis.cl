@@ -22,10 +22,11 @@ trail — behind a sign-in of its own.
 | `/cms/email/messages/:id`      | One message: what was sent, and what happened to it               |
 | `/cms/audit`                   | The record of the writes the CMS made                             |
 
-One more section lives under `/cms` without belonging to the CMS module: `/cms/marketplace`, which
-edits the product pages served by a different Worker. It is here because that service
-accepts the CMS's own client id as its audience, so it reuses this session and this shell rather
-than asking an editor to sign in a second time for a second console. See
+The marketplace console used to live under `/cms`, and no longer does. `apps/marketplace` accepts
+only its own audience, so those screens signing in under `franciscosolis-cms` were refused with a
+401 before the permission was ever read — which reads on this side as an expired session and loops
+through the sign-in screen. It is its own console at `/marketplace` now, with its own client
+application, and `/cms/marketplace` and `/cms/pages` redirect there. See
 [MARKETPLACE.md](./MARKETPLACE.md).
 
 Everything except `sign-in` and `callback` needs a session; anonymous visitors are sent to

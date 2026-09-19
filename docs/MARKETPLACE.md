@@ -2,8 +2,8 @@
 
 `/product/<slug>` is the page of one of the things built here, and every one of them is the same
 page: a banner, a row of tabs under it, and the content behind them. The content comes from the
-`marketplace` module of the [API](https://api.franciscosolis.cl/openapi.json); the editor for it is
-a section of the CMS interface at `/cms/marketplace`.
+`marketplace` module of the [API](https://api.franciscosolis.cl/openapi.json); the console that
+edits it is at `/marketplace`, and is a client application of its own.
 
 | Route                                             | What it is                                              |
 | ------------------------------------------------- | ------------------------------------------------------- |
@@ -243,39 +243,47 @@ also offers to draft the translation with Workers AI (`POST /marketplace/admin/t
 writes nothing: the draft is saved through the ordinary `PATCH` that saves every other override, so a
 model outage cannot corrupt a page and nothing machine-translated is published unread.
 
-## The editor
+## The console
 
-It lives at `/cms/marketplace`, inside the CMS interface, and that is a deliberate arrangement rather
-than a convenience: the `marketplace` service accepts the CMS's own client id as its audience, so
-these screens sit inside the CMS's `AuthProvider` and reuse its session. There is no second client
-application to register, no second redirect URI, and no second sign-in for an editor who is already
-in the console.
+It lives at `/marketplace`, as a section of its own, and it is a **client application of its own** —
+`franciscosolis-marketplace`, with its own storage namespace (`fs.marketplace`) and its own sign-in.
 
-`src/lib/marketplace/client.ts` is built over `cmsAuth.session` for exactly that reason. The public
-half, `src/lib/marketplace/content.ts`, shares none of it — importing the editorial client would drag
-the whole CMS auth stack onto a product page, and a visitor reading a changelog has no business
-holding a session to do it. The *buying* half in `store.ts` and `reviews.ts` is a third thing again:
-per person, never cached, and signed in under the site's own client id.
+That is not a preference, and it is worth writing down because getting it wrong cost a release. The
+service accepts **only** its own audience (`MARKETPLACE_ALLOWED_AUDIENCES`), unlike `apps/pages`
+before it, whose editor could live inside the CMS precisely because that service took the CMS's
+audience. The console shipped once at `/cms/marketplace`, inheriting the CMS's `AuthProvider` the way
+the old one did, and every call came back **401 before the permission was ever read** — which this
+side cannot tell apart from an expired session, so it refreshed, failed again and sent editors around
+the CMS's sign-in screen in a loop. `/cms/marketplace` and `/cms/pages` now redirect here.
+
+`src/lib/marketplace/client.ts` builds `marketplaceAuth` for exactly that reason. The public half,
+`src/lib/marketplace/content.ts`, shares none of it — importing the editorial client would drag a
+whole auth stack onto a product page, and a visitor reading a changelog has no business holding a
+session to do it. The *buying* half in `store.ts` and `reviews.ts` is a third thing again: per
+person, never cached, and signed in under the site's own client id, which the service accepts on a
+second audience list with no domain gate.
+
+`MarketplaceProvider` asks `GET /admin/me` once above the whole signed-in subtree, so an account
+without `marketplace:editor` meets one screen saying what is missing rather than nine panels that
+each fail with their own 403 — and that screen says the part people forget: a permission granted
+while you are signed in changes nothing until a fresh token carries it.
 
 | Screen                                          | What it edits                                        |
 | ----------------------------------------------- | ---------------------------------------------------- |
-| `/cms/marketplace`                              | Every product, with drag-and-drop ordering           |
-| `/cms/marketplace/new`, `/cms/marketplace/:id`  | One product: identity, artwork, tabs, links, bodies  |
-| `/cms/marketplace/:id/releases`                 | The changelog                                        |
-| `…/releases/new`, `…/releases/:releaseId`       | One release note, and the builds it publishes        |
-| `/cms/marketplace/:id/wiki`                     | The wiki, in sidebar order                           |
-| `…/wiki/new`, `…/wiki/:pageId`                  | One wiki page                                        |
-| `/cms/marketplace/:id/sales`                    | Its sales, with the totals, and where one is recorded by hand |
-| `…/sales/:saleId`                               | One sale: its facts, its receipts, its refund        |
-| `/cms/marketplace/:id/vouchers`                 | Every receipt it ever issued, void ones included     |
-
-`/cms/pages/*` redirects here, the same way `/application/:slug` does on the public side.
+| `/marketplace`                            | Every product, with drag-and-drop ordering           |
+| `/marketplace/new`, `/marketplace/:id`    | One product: identity, artwork, tabs, links, bodies  |
+| `/marketplace/:id/releases`               | The changelog                                        |
+| `…/releases/new`, `…/releases/:releaseId` | One release note, and the builds it publishes        |
+| `/marketplace/:id/wiki`                   | The wiki, in sidebar order                           |
+| `…/wiki/new`, `…/wiki/:pageId`            | One wiki page                                        |
+| `/marketplace/:id/sales`                  | Its sales, with the totals, and where one is recorded by hand |
+| `…/sales/:saleId`                         | One sale: its facts, its receipts, its refund        |
+| `/marketplace/:id/vouchers`               | Every receipt it ever issued, void ones included     |
 
 **Not built yet**, and deliberately left for a second pass: review moderation and the owner's reply,
 the cross-product report queue, per-release compatibility editing, the channel and `resets_rating`
-controls on the release editor, the category picker, and the analytics series. The public page is
-what breaks when the service is renamed, so it went first. Until those land, a product's compatibility
-and channels are set through the API directly.
+controls on the release editor, the category picker, and the analytics series. Until those land, a
+product's compatibility and channels are set through the API directly.
 
 Both editing screens are **tabbed**, and their tabs are sections of the screen rather than routes.
 A product is General / Appearance / Pricing / Tabs and links / Content; a release is Release / Notes /
@@ -352,7 +360,10 @@ Two details of the editor are worth knowing:
 ## Configuration
 
 `VITE_MARKETPLACE_BASE_URL` points the interface at the service; it defaults to the production one.
-There is no client id and no redirect path here, because there is no client application of its own —
-see above. The paid and reviewing halves need no configuration either: checkout, reviews and `/me/*`
-are called with the *site's* own session (`franciscosolis-web`), which the service accepts on a second
-audience list of its own.
+`VITE_MARKETPLACE_CLIENT_ID` and `VITE_MARKETPLACE_REDIRECT_PATH` are the console's, and both default
+to the registered values — the redirect URI is compared byte for byte by the auth service, so the
+value registered there and the route this site serves have to be the same string.
+
+The paid and reviewing halves need no configuration: checkout, reviews and `/me/*` are called with
+the *site's* own session (`franciscosolis-web`), which the service accepts on a second audience list
+of its own.

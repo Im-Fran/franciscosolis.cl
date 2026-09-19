@@ -26,7 +26,7 @@ export type LinksFieldProps = {
 };
 
 export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProps) => {
-  const {t} = useTranslation(["cms_marketplace", "product"]);
+  const {t} = useTranslation(["marketplace_admin", "product"]);
 
   const set = (index: number, patch: Partial<ProductLink>) =>
     onChange(value.map((link, position) => (position === index ? {...link, ...patch} : link)));
@@ -37,7 +37,7 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
 
   return (
     <div className="flex flex-col gap-3">
-      {value.length === 0 && <p className="text-[13px] text-neutral-500">{t("cms_marketplace:links.empty")}</p>}
+      {value.length === 0 && <p className="text-[13px] text-neutral-500">{t("marketplace_admin:links.empty")}</p>}
 
       {value.map((link, index) => (
         <div
@@ -50,7 +50,7 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
             id={`${idPrefix}-kind-${index}`}
             value={link.kind}
             disabled={disabled}
-            aria-label={t("cms_marketplace:links.kind")}
+            aria-label={t("marketplace_admin:links.kind")}
             onChange={(event) => set(index, {kind: event.target.value})}
           >
             {LINK_KINDS.map((kind) => (
@@ -66,7 +66,7 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
             value={link.url}
             disabled={disabled}
             placeholder="https://"
-            aria-label={t("cms_marketplace:links.url")}
+            aria-label={t("marketplace_admin:links.url")}
             className="font-mono text-[13px]"
             onChange={(event) => set(index, {url: event.target.value})}
           />
@@ -77,7 +77,7 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
             disabled={disabled}
             maxLength={80}
             placeholder={t(`product:links.${link.kind}`, {defaultValue: ""})}
-            aria-label={t("cms_marketplace:links.label")}
+            aria-label={t("marketplace_admin:links.label")}
             onChange={(event) => set(index, {label: event.target.value})}
           />
 
@@ -87,7 +87,7 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
             size="icon"
             disabled={disabled}
             onClick={() => remove(index)}
-            aria-label={t("cms_marketplace:links.remove", {url: link.url || t("cms_marketplace:links.untitled")})}
+            aria-label={t("marketplace_admin:links.remove", {url: link.url || t("marketplace_admin:links.untitled")})}
             className="text-neutral-400 hover:text-red-300"
           >
             <Trash size={16}/>
@@ -103,10 +103,10 @@ export const LinksField = ({value, onChange, disabled, idPrefix}: LinksFieldProp
           onClick={add}
           disabled={disabled || value.length >= MAX_LINKS}
         >
-          <Plus size={15}/> {t("cms_marketplace:links.add")}
+          <Plus size={15}/> {t("marketplace_admin:links.add")}
         </Button>
         <span className="text-[12px] text-neutral-600">
-          {t("cms_marketplace:links.count", {count: value.length, max: MAX_LINKS})}
+          {t("marketplace_admin:links.count", {count: value.length, max: MAX_LINKS})}
         </span>
       </div>
     </div>

@@ -25,7 +25,7 @@ export type TabsFieldProps = {
 const REQUIRED_TAB = "overview";
 
 export const TabsField = ({available, value, onChange, disabled}: TabsFieldProps) => {
-  const {t} = useTranslation(["cms_marketplace", "product"]);
+  const {t} = useTranslation(["marketplace_admin", "product"]);
 
   const toggle = (key: string, on: boolean) => {
     if (key === REQUIRED_TAB) return;

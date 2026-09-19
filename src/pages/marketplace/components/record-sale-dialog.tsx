@@ -45,7 +45,7 @@ type RecordSaleDialogProps = {
  * one of the sources and a gift with a price is not a thing.
  */
 export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSaleDialogProps) => {
-  const {t} = useTranslation(["cms_marketplace", "admin"]);
+  const {t} = useTranslation(["marketplace_admin", "admin"]);
 
   const [email, setEmail] = useState("");
   const [source, setSource] = useState<string>("cash");
@@ -96,11 +96,11 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={t("cms_marketplace:sales.record.title")}>
-      <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">{t("cms_marketplace:sales.record.body")}</p>
+    <Modal open={open} onClose={onClose} title={t("marketplace_admin:sales.record.title")}>
+      <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">{t("marketplace_admin:sales.record.body")}</p>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label={t("cms_marketplace:sales.record.email")} htmlFor="sale-email" hint={t("cms_marketplace:sales.record.email_hint")}>
+        <Field label={t("marketplace_admin:sales.record.email")} htmlFor="sale-email" hint={t("marketplace_admin:sales.record.email_hint")}>
           <Input
             id="sale-email"
             type="email"
@@ -111,17 +111,17 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
           />
         </Field>
 
-        <Field label={t("cms_marketplace:sales.record.source")} htmlFor="sale-source" hint={t("cms_marketplace:sales.record.source_hint")}>
+        <Field label={t("marketplace_admin:sales.record.source")} htmlFor="sale-source" hint={t("marketplace_admin:sales.record.source_hint")}>
           <Select id="sale-source" value={source} onChange={(event) => setSource(event.target.value)}>
             {MANUAL_SALE_SOURCES.map((entry) => (
               <option key={entry} value={entry}>
-                {t(`cms_marketplace:sales.sources.${entry}`)}
+                {t(`marketplace_admin:sales.sources.${entry}`)}
               </option>
             ))}
           </Select>
         </Field>
 
-        <Field label={t("cms_marketplace:sales.record.amount")} htmlFor="sale-amount" hint={t("cms_marketplace:sales.record.amount_hint")}>
+        <Field label={t("marketplace_admin:sales.record.amount")} htmlFor="sale-amount" hint={t("marketplace_admin:sales.record.amount_hint")}>
           <Input
             id="sale-amount"
             type="number"
@@ -132,18 +132,18 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
           />
         </Field>
 
-        <Field label={t("cms_marketplace:sales.record.kind")} htmlFor="sale-kind" hint={t("cms_marketplace:sales.record.kind_hint")}>
+        <Field label={t("marketplace_admin:sales.record.kind")} htmlFor="sale-kind" hint={t("marketplace_admin:sales.record.kind_hint")}>
           <Select
             id="sale-kind"
             value={kind}
             onChange={(event) => setKind(event.target.value === "donation" ? "donation" : "purchase")}
           >
-            <option value="purchase">{t("cms_marketplace:sales.kinds.purchase")}</option>
-            <option value="donation">{t("cms_marketplace:sales.kinds.donation")}</option>
+            <option value="purchase">{t("marketplace_admin:sales.kinds.purchase")}</option>
+            <option value="donation">{t("marketplace_admin:sales.kinds.donation")}</option>
           </Select>
         </Field>
 
-        <Field label={t("cms_marketplace:sales.record.occurred_at")} htmlFor="sale-date" hint={t("cms_marketplace:sales.record.occurred_at_hint")}>
+        <Field label={t("marketplace_admin:sales.record.occurred_at")} htmlFor="sale-date" hint={t("marketplace_admin:sales.record.occurred_at_hint")}>
           <Input
             id="sale-date"
             type="datetime-local"
@@ -152,23 +152,23 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
           />
         </Field>
 
-        <Field label={t("cms_marketplace:sales.record.reference")} htmlFor="sale-reference" hint={t("cms_marketplace:sales.record.reference_hint")}>
+        <Field label={t("marketplace_admin:sales.record.reference")} htmlFor="sale-reference" hint={t("marketplace_admin:sales.record.reference_hint")}>
           <Input id="sale-reference" value={reference} onChange={(event) => setReference(event.target.value)}/>
         </Field>
 
         <Field
-          label={t("cms_marketplace:sales.record.note")}
+          label={t("marketplace_admin:sales.record.note")}
           htmlFor="sale-note"
-          hint={t("cms_marketplace:sales.record.note_hint")}
+          hint={t("marketplace_admin:sales.record.note_hint")}
           className="sm:col-span-2"
         >
           <Textarea id="sale-note" rows={2} value={note} onChange={(event) => setNote(event.target.value)}/>
         </Field>
 
-        <Field label={t("cms_marketplace:sales.record.locale")} htmlFor="sale-locale" hint={t("cms_marketplace:sales.record.locale_hint")}>
+        <Field label={t("marketplace_admin:sales.record.locale")} htmlFor="sale-locale" hint={t("marketplace_admin:sales.record.locale_hint")}>
           <Select id="sale-locale" value={locale} onChange={(event) => setLocale(event.target.value)}>
-            <option value="es">{t("cms_marketplace:sales.locales.es")}</option>
-            <option value="en">{t("cms_marketplace:sales.locales.en")}</option>
+            <option value="es">{t("marketplace_admin:sales.locales.es")}</option>
+            <option value="en">{t("marketplace_admin:sales.locales.en")}</option>
           </Select>
         </Field>
 
@@ -180,7 +180,7 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
               onChange={(event) => setIssueVoucher(event.target.checked)}
               className="size-4 accent-accent-500"
             />
-            {t("cms_marketplace:sales.record.issue_voucher")}
+            {t("marketplace_admin:sales.record.issue_voucher")}
           </label>
           <label className="flex items-center gap-2 text-neutral-400">
             <input
@@ -190,7 +190,7 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
               onChange={(event) => setNotify(event.target.checked)}
               className="size-4 accent-accent-500"
             />
-            {t("cms_marketplace:sales.record.notify")}
+            {t("marketplace_admin:sales.record.notify")}
           </label>
         </div>
       </div>
@@ -202,7 +202,7 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
             * is a different sentence from "nothing happened" — the list is reloaded either way and
             * "Resend" is on the sale itself.
             */}
-          {mutation.status === 502 ? t("cms_marketplace:sales.record.sent_failed") : mutation.error}
+          {mutation.status === 502 ? t("marketplace_admin:sales.record.sent_failed") : mutation.error}
         </p>
       )}
 
@@ -211,7 +211,7 @@ export const RecordSaleDialog = ({open, onClose, onSubmit, mutation}: RecordSale
           {t("admin:common.cancel")}
         </Button>
         <Button onClick={submit} disabled={invalid || mutation.pending}>
-          {mutation.pending ? t("admin:common.creating") : t("cms_marketplace:sales.record.submit")}
+          {mutation.pending ? t("admin:common.creating") : t("marketplace_admin:sales.record.submit")}
         </Button>
       </div>
     </Modal>

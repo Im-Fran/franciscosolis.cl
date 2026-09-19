@@ -1,11 +1,45 @@
 {
+  "app_name": "Marketplace",
+  "shell": {
+    "label": "Marketplace sections",
+    "products": "Products",
+    "storefront": "Storefront"
+  },
   "nav": {
     "label": "Sections of this product",
     "page": "Page",
-    "releases": "Updates",
+    "releases": "Releases",
     "wiki": "Wiki",
     "sales": "Sales",
     "vouchers": "Receipts"
+  },
+  "sign_in": {
+    "title": "Marketplace console",
+    "subtitle": "Signing you in…",
+    "working": "Taking you to the sign-in screen.",
+    "staff_only": "For the editorial team.",
+    "back_home": "Back to the site",
+    "retry": "Try again",
+    "error_title": "We could not start the sign-in",
+    "error_subtitle": "Nothing was handed over, so it is safe to try again."
+  },
+  "callback": {
+    "title": "Signing you in",
+    "subtitle": "One moment.",
+    "working": "Finishing the sign-in…",
+    "error_title": "We could not finish the sign-in",
+    "error_subtitle": "Nothing was granted, so it is safe to start again.",
+    "retry": "Start again",
+    "back_home": "Back to the site"
+  },
+  "no_access": {
+    "title": "Not a marketplace editor",
+    "subtitle": "This account is signed in, but it cannot edit the marketplace.",
+    "subtitle_email": "{{email}} is signed in, but it cannot edit the marketplace.",
+    "alert_title": "What is missing",
+    "alert_body": "An administrator has to grant the marketplace:editor permission, and the address has to be a @franciscosolis.cl one. Sign in again afterwards so a fresh token carries it — a permission granted while you were signed in changes nothing until then.",
+    "sign_out": "Sign out",
+    "back_home": "Back to the site"
   },
   "fields": {
     "name": "Name",
