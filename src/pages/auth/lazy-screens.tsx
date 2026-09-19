@@ -84,6 +84,9 @@ export const RoleEditor = lazy(() =>
 export const PermissionsList = lazy(() =>
   import("@/pages/auth/admin/permissions/permissions-list.tsx").then((m) => ({default: m.PermissionsList})),
 );
+export const AuthSettings = lazy(() =>
+  import("@/pages/auth/admin/settings/settings-panel.tsx").then((m) => ({default: m.SettingsPanel})),
+);
 export const AuditLog = lazy(() =>
   import("@/pages/auth/admin/audit/audit-log.tsx").then((m) => ({default: m.AuditLog})),
 );

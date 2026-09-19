@@ -1,10 +1,12 @@
-import {useCallback, useState} from "react";
+import {useCallback, useRef, useState} from "react";
 import type {FormEvent} from "react";
 import {useTranslation} from "react-i18next";
 import {Link, useSearchParams} from "react-router-dom";
 import {ArrowLeft, ArrowSquareOut, EnvelopeSimple, PaperPlaneTilt, ShieldCheck, UserSwitch} from "@phosphor-icons/react";
 import {SiGoogle} from "@icons-pack/react-simple-icons";
 import {AuthCard} from "@/components/auth/auth-card.tsx";
+import {Turnstile} from "@/components/auth/turnstile.tsx";
+import type {TurnstileHandle} from "@/components/auth/turnstile.tsx";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input} from "@/components/ui/input.tsx";
@@ -33,6 +35,13 @@ import {describeError, useResource} from "@/lib/auth/useResource.ts";
  * never a `fetch` — because the cookie proving the session only rides a navigation, and the service
  * re-checks it there. "Use another account" simply reveals the providers again: signing in through
  * one replaces the session on this browser, which is what changing account means.
+ *
+ * Two things the parked request now also says shape this screen. `turnstile` decides whether the
+ * magic-link form carries a bot check: the widget is rendered only where the service asked for one,
+ * and the form cannot be submitted until it is solved, because the service would refuse the request
+ * anyway. And `registration_open` decides what the footer promises, since with registration closed
+ * an address nobody invited gets nothing — saying so up front is kinder than the deliberately
+ * identical "if this address can sign in" answer that follows either way.
  */
 
 const providerIcon = (provider: PendingAuthorizationProvider, size = 16) =>
@@ -59,6 +68,9 @@ export const Authorize = () => {
   const [error, setError] = useState<string | null>(null);
   /* Set by "use another account": the session is still live, the user just does not want it here. */
   const [switching, setSwitching] = useState(false);
+  /* The solved Turnstile token, and the widget it came from so a refused submit can ask again. */
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstile = useRef<TurnstileHandle>(null);
 
   /* The service's `login_hint` seeds the field, but only until the user types over it. */
   const address = email ?? request.data?.login_hint ?? "";
@@ -74,10 +86,12 @@ export const Authorize = () => {
 
     setBusy("magic_link");
     try {
-      const {expires_in} = await requestParkedMagicLink(handle, recipient);
+      const {expires_in} = await requestParkedMagicLink(handle, recipient, turnstileToken);
       setPhase({kind: "sent", email: recipient, expiresIn: expires_in});
     } catch (cause) {
       setError(describeError(cause).message);
+      /* A token is single-use at Cloudflare's end, so the next attempt needs a fresh challenge. */
+      turnstile.current?.reset();
     } finally {
       setBusy(null);
     }
@@ -141,6 +155,11 @@ export const Authorize = () => {
   const account = pending.authenticated;
   const emailProviders = pending.providers.filter((provider) => provider.initiation === "email");
   const redirectProviders = pending.providers.filter((provider) => provider.initiation === "redirect");
+  /* Read defensively: a service that predates the bot check sends no `turnstile` at all, and the
+     screen has to keep signing people in rather than crash on a field it only just started reading. */
+  const challenge = pending.turnstile?.required ? pending.turnstile.site_key : null;
+  /* Submitting without a solved challenge would only earn a 400 from the service. */
+  const blockedByChallenge = challenge !== null && turnstileToken === null;
 
   /*
    * Already signed in: authorize, do not authenticate. The account shown is the one the service
@@ -217,7 +236,8 @@ export const Authorize = () => {
       eyebrow={eyebrow}
       footer={
         <>
-          {t("auth:sign_in.invite_only")} {backHome}
+          {pending.registration_open ? t("auth:authorize.open_registration") : t("auth:sign_in.invite_only")}{" "}
+          {backHome}
         </>
       }
     >
@@ -248,10 +268,24 @@ export const Authorize = () => {
               />
             </Field>
 
-            <Button type="submit" disabled={busy !== null}>
+            {challenge && (
+              <Turnstile
+                ref={turnstile}
+                siteKey={challenge}
+                language={i18n.language}
+                onToken={setTurnstileToken}
+                onError={() => setError("turnstile-unavailable")}
+              />
+            )}
+
+            <Button type="submit" disabled={busy !== null || blockedByChallenge}>
               {busy === "magic_link" ? <Spinner size={16}/> : <PaperPlaneTilt size={16}/>}
               {t("auth:sign_in.magic_link_cta")}
             </Button>
+
+            {blockedByChallenge && (
+              <p className="text-[13px] text-neutral-500">{t("auth:authorize.turnstile_pending")}</p>
+            )}
           </form>
         )}
 

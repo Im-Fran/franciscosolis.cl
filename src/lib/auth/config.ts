@@ -115,6 +115,7 @@ export const adminRoute = {
   role: (id: string) => `${ADMIN_ROUTE}/roles/${encodeURIComponent(id)}`,
   permissions: `${ADMIN_ROUTE}/permissions`,
   audit: `${ADMIN_ROUTE}/audit`,
+  settings: `${ADMIN_ROUTE}/settings`,
 } as const;
 
 /**

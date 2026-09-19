@@ -20,7 +20,9 @@
     "audit": "Audit log",
     "account": "My account",
     "site_link": "Back to the site",
-    "sign_out": "Sign out"
+    "sign_out": "Sign out",
+    "service": "Service",
+    "settings": "Settings"
   },
   "status": {
     "active": "Active",
@@ -387,5 +389,17 @@
     "permission.created": "Permission created",
     "permission.updated": "Permission updated",
     "permission.deleted": "Permission deleted"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "How this authentication service behaves. Changes take effect on the next sign-in; nothing here touches an account that already exists.",
+    "registration_label": "Open registration",
+    "registration_open": "Anybody who can receive mail at an address, or sign in with Google, gets an account on their first sign-in.",
+    "registration_closed": "Only an invited address can create an account. Everybody else is refused, without being told whether the address exists.",
+    "registration_hint": "Invitations keep working either way. Closing this again refuses the next sign-up, including a sign-in link that was emailed while it was open.",
+    "opened": "Registration is open.",
+    "closed": "Registration is closed. Only invited addresses can create an account.",
+    "read_only": "You can read these settings but not change them. That needs the settings:write permission.",
+    "turnstile_note": "The sign-in screen is protected by Cloudflare Turnstile wherever the deployment has a key pair configured — which is what keeps an open registration from being an invitation to a script. That is deployment configuration rather than a setting, so it is not changed from here."
   }
 }

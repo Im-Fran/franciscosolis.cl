@@ -38,8 +38,32 @@ export type AuthProviderInfo = {
 export type ServiceStatus = {
   message: string;
   issuer: string;
+  /** Whether an address nobody invited can create an account on this deployment. */
+  registration_open: boolean;
+  turnstile: TurnstileConfig;
   providers: AuthProviderInfo[];
 };
+
+/**
+ * The bot check a sign-in screen has to render, as the service describes it.
+ *
+ * `required: false` is a deployment with no Turnstile keypair — a local stack, a preview — and it
+ * challenges nobody, so the screen renders no widget and the endpoints ask for no token. The site
+ * key is public by design: it is meaningless without the secret half, which never leaves the
+ * service.
+ */
+export type TurnstileConfig = {
+  required: boolean;
+  site_key: string | null;
+};
+
+/** The authentication settings the console reads and writes at `/admin/settings`. */
+export type AuthSettings = {
+  registration_open: boolean;
+};
+
+/** A settings write. Only the keys present are changed. */
+export type AuthSettingsUpdate = Partial<AuthSettings>;
 
 /* ── Parked authorization requests ────────────────────────────────────────── */
 
@@ -86,6 +110,10 @@ export type PendingAuthorizationRequest = {
   scope: string | null;
   login_hint: string | null;
   expires_at: string;
+  /** Whether signing in with an address that has no account here would create one. */
+  registration_open: boolean;
+  /** The bot check to solve before the magic-link form may be submitted. */
+  turnstile: TurnstileConfig;
   providers: PendingAuthorizationProvider[];
   /** Null when the browser holds no session, or when the request asked for a fresh sign-in. */
   authenticated: PendingAuthorizationAccount | null;
