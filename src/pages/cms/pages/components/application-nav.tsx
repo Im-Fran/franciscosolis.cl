@@ -1,16 +1,22 @@
 import {useTranslation} from "react-i18next";
 import {NavLink} from "react-router-dom";
-import {BookOpen, Note, SquaresFour} from "@phosphor-icons/react";
+import {BookOpen, CurrencyDollar, Note, Receipt, SquaresFour} from "@phosphor-icons/react";
 import {cn} from "@/lib/utils.ts";
 import {pagesRoute} from "@/lib/pages/config.ts";
 
 /**
- * Moving between the three things one application is made of, once it exists.
+ * Moving between the sections of one application, once it exists.
  *
- * It mirrors the tab bar a visitor sees, deliberately: an editor who knows the page knows this
- * navigation. Updates and Wiki are shown whether or not the application turned those tabs on —
- * writing the content is what usually comes *before* turning the tab on, and hiding the editor
- * until the tab is enabled would make that order impossible.
+ * The first three mirror the tab bar a visitor sees, deliberately: an editor who knows the page
+ * knows this navigation. Updates and Wiki are shown whether or not the application turned those
+ * tabs on — writing the content is what usually comes *before* turning the tab on, and hiding the
+ * editor until the tab is enabled would make that order impossible.
+ *
+ * Sales and Receipts are the exception and are **not** tabs on the product page. There is no fifth
+ * public tab and there must not be: the page's shape is a house standard enforced by a registry in
+ * the service (`apps/pages/src/lib/tabs.ts`), and a visitor has no business reading the takings.
+ * They are shown for every application, including the free ones, because "did anybody donate" is a
+ * question about a free application too — and because an application's mode changes.
  */
 export const ApplicationNav = ({id}: {id: string}) => {
   const {t} = useTranslation(["cms_pages"]);
@@ -19,6 +25,8 @@ export const ApplicationNav = ({id}: {id: string}) => {
     {to: pagesRoute.item(id), label: t("cms_pages:nav.page"), icon: SquaresFour, end: true},
     {to: pagesRoute.updates(id), label: t("cms_pages:nav.updates"), icon: Note, end: false},
     {to: pagesRoute.wiki(id), label: t("cms_pages:nav.wiki"), icon: BookOpen, end: false},
+    {to: pagesRoute.sales(id), label: t("cms_pages:nav.sales"), icon: CurrencyDollar, end: false},
+    {to: pagesRoute.vouchers(id), label: t("cms_pages:nav.vouchers"), icon: Receipt, end: false},
   ];
 
   return (

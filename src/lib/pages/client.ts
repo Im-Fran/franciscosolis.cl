@@ -13,10 +13,15 @@ import type {
   NewWikiPage,
   PagesStatus,
   Purchase,
+  RefundReason,
   ReleaseFile,
   ReleaseFilePayload,
   ReorderItem,
+  Sale,
+  SaleDetail,
+  SalesSummary,
   UpdatePayload,
+  Voucher,
   WikiNode,
   WikiPage,
   WikiPayload,
@@ -170,20 +175,158 @@ export const pagesApi = {
   /* ── Payments ───────────────────────────────────────────────────────────── */
 
   /**
-   * What came in, and what went out with it. Read-only, as the service is: a payment's status is
-   * the provider's to change and arrives over its webhook, so there is nothing here to write.
+   * The cross-application view: what came in, whatever product it came in for. Read-only, because
+   * a total over every payment is the only thing it is for — administering the sales *of one
+   * application* is `sales` below, which is where every write lives.
    */
   store: {
     purchases: (
       params: {application_id?: string; status?: string; email?: string; limit?: number; offset?: number} = {},
       signal?: AbortSignal,
     ) => http.request<Purchase[]>(`/admin/purchases${query({...params})}`, {signal}),
+  },
+
+  /* ── Sales, per application ─────────────────────────────────────────────── */
+
+  /**
+   * One application's sales: the payments MercadoPago took, the ones recorded by hand, their
+   * receipts and their refunds.
+   *
+   * Everything here is nested under the application, exactly as the updates and the wiki are, and
+   * for the same reason: it is what stops a sale of one product being read or refunded through
+   * another's URL.
+   */
+  sales: {
+    list: (
+      applicationId: string,
+      params: {
+        status?: string;
+        source?: string;
+        environment?: string;
+        kind?: string;
+        email?: string;
+        from?: string;
+        to?: string;
+        limit?: number;
+        offset?: number;
+      } = {},
+      signal?: AbortSignal,
+    ) => http.request<Sale[]>(`/admin/applications/${seg(applicationId)}/sales${query({...params})}`, {signal}),
+
+    /**
+     * The totals, computed in the database over exactly the rows `list` returns for the same
+     * filters — which is the difference between a lifetime figure and the sum of one page.
+     */
+    summary: (
+      applicationId: string,
+      params: {status?: string; source?: string; environment?: string; kind?: string; email?: string; from?: string; to?: string} = {},
+      signal?: AbortSignal,
+    ) =>
+      http.request<SalesSummary>(
+        `/admin/applications/${seg(applicationId)}/sales/summary${query({...params})}`,
+        {signal},
+      ),
+
+    /** One sale in full: the payment, its vouchers and whether it can still be refunded. */
+    get: (applicationId: string, saleId: string, signal?: AbortSignal) =>
+      http.request<SaleDetail>(`/admin/applications/${seg(applicationId)}/sales/${seg(saleId)}`, {signal}),
+
+    /**
+     * Records a sale taken outside MercadoPago — cash, a transfer, or a copy given away — as an
+     * approved payment that entitles its recipient exactly as a paid one does.
+     */
+    create: (
+      applicationId: string,
+      body: {
+        email: string;
+        source: string;
+        kind?: "purchase" | "donation";
+        amount: number;
+        user_id?: string;
+        note?: string;
+        reference?: string;
+        occurred_at?: string | null;
+        locale?: string;
+        issue_voucher?: boolean;
+        notify?: boolean;
+      },
+    ) =>
+      http.request<{sale: Sale; voucher: Voucher | null}>(`/admin/applications/${seg(applicationId)}/sales`, {
+        method: "POST",
+        json: body,
+      }),
+
+    /**
+     * Corrects the address, the account or the note. The amount, the status, the source and the
+     * dates are not editable — correcting one of those is a refund and a new sale.
+     */
+    update: (
+      applicationId: string,
+      saleId: string,
+      body: {email?: string; user_id?: string; note?: string | null},
+    ) =>
+      http.request<Sale>(`/admin/applications/${seg(applicationId)}/sales/${seg(saleId)}`, {
+        method: "PATCH",
+        json: body,
+      }),
+
+    /** Gives a sale back, in full or in part, and tells the buyer unless asked not to. */
+    refund: (
+      applicationId: string,
+      saleId: string,
+      body: {reason: RefundReason; amount?: number; notify?: boolean},
+    ) =>
+      http.request<Sale>(`/admin/applications/${seg(applicationId)}/sales/${seg(saleId)}/refund`, {
+        method: "POST",
+        json: body,
+      }),
 
     downloads: (applicationId: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
       http.request<DownloadRecord[]>(
         `/admin/applications/${seg(applicationId)}/downloads${query({...params})}`,
         {signal},
       ),
+  },
+
+  /* ── Vouchers ───────────────────────────────────────────────────────────── */
+
+  /**
+   * The receipts. A voucher is never edited: correcting one means issuing the next, which voids the
+   * previous and takes a new number, and that is why there is no `update` here.
+   */
+  vouchers: {
+    list: (
+      applicationId: string,
+      params: {status?: string; sale_id?: string; email?: string; limit?: number; offset?: number} = {},
+      signal?: AbortSignal,
+    ) => http.request<Voucher[]>(`/admin/applications/${seg(applicationId)}/vouchers${query({...params})}`, {signal}),
+
+    get: (applicationId: string, voucherId: string, signal?: AbortSignal) =>
+      http.request<Voucher>(`/admin/applications/${seg(applicationId)}/vouchers/${seg(voucherId)}`, {signal}),
+
+    /** Issues a voucher for a sale, voiding whatever was live for it. */
+    issue: (
+      applicationId: string,
+      saleId: string,
+      body: {email?: string; locale?: string; notify?: boolean} = {},
+    ) =>
+      http.request<Voucher>(`/admin/applications/${seg(applicationId)}/sales/${seg(saleId)}/vouchers`, {
+        method: "POST",
+        json: body,
+      }),
+
+    /** Emails it again — to the address it was issued to, or elsewhere for this send only. */
+    send: (applicationId: string, voucherId: string, body: {email?: string} = {}) =>
+      http.request<Voucher>(`/admin/applications/${seg(applicationId)}/vouchers/${seg(voucherId)}/send`, {
+        method: "POST",
+        json: body,
+      }),
+
+    void: (applicationId: string, voucherId: string, body: {reason?: string} = {}) =>
+      http.request<Voucher>(`/admin/applications/${seg(applicationId)}/vouchers/${seg(voucherId)}/void`, {
+        method: "POST",
+        json: body,
+      }),
   },
 
   /* ── Wiki ───────────────────────────────────────────────────────────────── */

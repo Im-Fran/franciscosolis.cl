@@ -136,6 +136,10 @@ export type Purchase = {
   amount: number;
   currency: string;
   provider?: string;
+  /** How the money arrived: the provider, or the channel an editor recorded by hand. */
+  source?: SaleSource | string;
+  /** What went back, when something did. */
+  refunded_amount?: number | null;
   payment_id?: string | null;
   reference?: string;
   approved_at?: string | null;
@@ -143,6 +147,147 @@ export type Purchase = {
   charged_back_at?: string | null;
   created_at?: string;
   updated_at?: string;
+};
+
+/**
+ * How the money reached us, as the service records it.
+ *
+ * `mercadopago` is the only one it can produce by itself; the rest are what an editor records after
+ * taking money outside the provider. That is why the picker in the sales screen offers the other
+ * four and not this one — a row claiming MercadoPago took money it has no record of would be
+ * indistinguishable from a real payment.
+ */
+export const SALE_SOURCES = ["mercadopago", "cash", "bank_transfer", "gift", "other"] as const;
+export type SaleSource = (typeof SALE_SOURCES)[number];
+
+/** The four an editor may pick. Mirrors `MANUAL_SALE_SOURCES` in the service. */
+export const MANUAL_SALE_SOURCES = ["cash", "bank_transfer", "gift", "other"] as const;
+
+/** Which MercadoPago account a sale was taken against. A badge, and a refund precondition. */
+export const PAYMENT_ENVIRONMENTS = ["live", "sandbox"] as const;
+export type PaymentEnvironment = (typeof PAYMENT_ENVIRONMENTS)[number];
+
+/**
+ * Why a payment was given back.
+ *
+ * `withdrawal` is the Chilean consumer statute's *derecho a retracto* — a right the buyer holds
+ * unconditionally for ten days — and is deliberately not a synonym for the rest.
+ */
+export const REFUND_REASONS = ["withdrawal", "duplicate", "not_delivered", "goodwill", "fraud", "other"] as const;
+export type RefundReason = (typeof REFUND_REASONS)[number];
+
+export const PURCHASE_STATUSES = [
+  "pending",
+  "in_process",
+  "approved",
+  "rejected",
+  "cancelled",
+  "refunded",
+  "charged_back",
+] as const;
+
+/** The statutory withdrawal window as the service reports it on every sale. */
+export type Withdrawal = {
+  /** When the right runs out, or null for a sale nobody paid. */
+  deadline: string | null;
+  /** Rounded up, so the last partial day reads as one rather than zero. */
+  days_left: number | null;
+  within_period: boolean;
+};
+
+/**
+ * One sale as the editor sees it: the payment, who it belongs to, and whether it can still be
+ * given back.
+ *
+ * The same row the buyer reads back as a `Purchase`, plus the three things that are ours — which
+ * MercadoPago account took it, the note an editor wrote *about* the sale rather than to the buyer,
+ * and the withdrawal window, which is the answer to "may I still refund this".
+ */
+export type Sale = Purchase & {
+  user_id?: string;
+  /** Whether the sale is tied to an SSO account, or so far only to an address. */
+  linked_to_account?: boolean;
+  email: string;
+  environment?: PaymentEnvironment | string;
+  preference_id?: string | null;
+  refund_reason?: RefundReason | string | null;
+  refunded_by?: string | null;
+  refund_id?: string | null;
+  note?: string | null;
+  created_by?: string | null;
+  withdrawal: Withdrawal;
+  metadata?: Record<string, unknown> | null;
+};
+
+/** A count and a sum, for one bucket of a summary. Always present, at zero when empty. */
+export type SalesBucket = {count: number; total: number};
+
+/**
+ * The totals a sales screen opens with, over exactly the rows the listing beside it shows.
+ *
+ * Three figures rather than one, because the question has three honest answers and quoting the
+ * wrong one counts a refund as income: `gross` is what ever settled, `returned` is what went back
+ * out, `net` is the difference.
+ */
+export type SalesSummary = {
+  currency: string;
+  /** Which account the *service* is currently configured for, so the screen can badge itself. */
+  environment: PaymentEnvironment | string;
+  count: number;
+  active_count: number;
+  gross: number;
+  returned: number;
+  net: number;
+  buyers: number;
+  by_status: Record<string, SalesBucket>;
+  by_source: Record<string, SalesBucket>;
+  first_sale_at: string | null;
+  last_sale_at: string | null;
+};
+
+/**
+ * A voucher: the receipt for a sale, as the buyer was sent it.
+ *
+ * It is a document rather than a view of the sale — everything it prints was copied onto it when it
+ * was issued — and it is never edited. Correcting one is a re-issue, which voids the previous and
+ * allocates a new number.
+ */
+export type Voucher = {
+  id: string;
+  number: string;
+  purchase_id: string;
+  application_id?: string;
+  application_slug: string;
+  application_name: string;
+  kind: string;
+  amount: number;
+  currency: string;
+  source: SaleSource | string;
+  status: "issued" | "void" | string;
+  locale: string;
+  issued_at: string;
+  /* Editorial only. */
+  email?: string;
+  issued_by?: string | null;
+  voided_at?: string | null;
+  voided_by?: string | null;
+  void_reason?: string | null;
+  sent_count?: number;
+  last_sent_at?: string | null;
+  last_sent_to?: string | null;
+};
+
+/** One sale in full, as `GET /admin/applications/:id/sales/:saleId` answers it. */
+export type SaleDetail = {
+  sale: Sale;
+  vouchers: Voucher[];
+  refund: {
+    refundable: boolean;
+    /** Which rule refused it: the status, or the environment it was taken in. */
+    reason: "status" | "environment" | null;
+    withdrawal_days: number;
+    currency: string;
+  };
 };
 
 /**

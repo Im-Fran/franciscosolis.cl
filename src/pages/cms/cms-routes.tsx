@@ -23,11 +23,14 @@ import {
   LegalEditor,
   LegalList,
   Overview,
+  SaleDetail,
+  SalesList,
   SignIn,
   TemplateEditor,
   TemplateList,
   UpdateEditor,
   UpdateList,
+  VoucherList,
   WikiEditor,
   WikiList,
 } from "@/pages/cms/lazy-screens.tsx";
@@ -86,6 +89,15 @@ export const cmsRoutes: RouteObject = {
         {path: "pages/:id/wiki", element: <WikiList/>},
         {path: "pages/:id/wiki/new", element: <WikiEditor/>},
         {path: "pages/:id/wiki/:pageId", element: <WikiEditor/>},
+
+        /*
+         * The sales of one application, and the receipts it issued. Not tabs on the product page —
+         * that set is a house standard the service enforces with a registry — but sections of this
+         * console, which is where the takings belong.
+         */
+        {path: "pages/:id/sales", element: <SalesList/>},
+        {path: "pages/:id/sales/:saleId", element: <SaleDetail/>},
+        {path: "pages/:id/vouchers", element: <VoucherList/>},
 
         {path: "legal", element: <LegalList/>},
         {path: "legal/new", element: <LegalEditor/>},

@@ -57,6 +57,15 @@ export const WikiList = lazy(() =>
 export const WikiEditor = lazy(() =>
   import("@/pages/cms/pages/wiki-editor.tsx").then((m) => ({default: m.WikiEditor})),
 );
+export const SalesList = lazy(() =>
+  import("@/pages/cms/pages/sales-list.tsx").then((m) => ({default: m.SalesList})),
+);
+export const SaleDetail = lazy(() =>
+  import("@/pages/cms/pages/sale-detail.tsx").then((m) => ({default: m.SaleDetail})),
+);
+export const VoucherList = lazy(() =>
+  import("@/pages/cms/pages/voucher-list.tsx").then((m) => ({default: m.VoucherList})),
+);
 
 export const AuditLog = lazy(() =>
   import("@/pages/cms/audit/audit-log.tsx").then((m) => ({default: m.AuditLog})),

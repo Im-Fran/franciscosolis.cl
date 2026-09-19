@@ -3,7 +3,9 @@
     "label": "Secciones de esta aplicación",
     "page": "Página",
     "updates": "Novedades",
-    "wiki": "Wiki"
+    "wiki": "Wiki",
+    "sales": "Ventas",
+    "vouchers": "Comprobantes"
   },
   "fields": {
     "name": "Nombre",
@@ -288,6 +290,197 @@
       "ios": "iOS",
       "web": "Web",
       "server": "Servidor"
+    }
+  },
+  "sales": {
+    "title": "Ventas",
+    "description": "Lo que recaudó {{name}}, cómo llegó y qué se devolvió.",
+    "panel_title": "Pagos",
+    "count": "{{count}} venta",
+    "count_other": "{{count}} ventas",
+    "caption": "Ventas de esta aplicación",
+    "sandbox": "Cuenta de prueba",
+    "unlinked": "Todavía sin cuenta",
+    "recorded_by_provider": "MercadoPago",
+    "withdrawal_left": "{{count}} día para retractarse",
+    "withdrawal_left_other": "{{count}} días para retractarse",
+    "withdrawal_over": "Plazo vencido",
+    "empty_title": "Todavía no hay ventas",
+    "empty_description": "Los pagos de MercadoPago llegan aquí solos. Una venta en efectivo, por transferencia o un regalo se registra a mano.",
+    "columns": {
+      "date": "Fecha",
+      "buyer": "Comprador",
+      "amount": "Monto",
+      "source": "Pagado con",
+      "status": "Estado",
+      "withdrawal": "Retracto"
+    },
+    "sources": {
+      "mercadopago": "MercadoPago",
+      "cash": "Efectivo",
+      "bank_transfer": "Transferencia",
+      "gift": "Regalo",
+      "other": "Otro"
+    },
+    "statuses": {
+      "pending": "Pendiente",
+      "in_process": "En proceso",
+      "approved": "Aprobado",
+      "rejected": "Rechazado",
+      "cancelled": "Cancelado",
+      "refunded": "Reembolsado",
+      "charged_back": "Contracargo"
+    },
+    "kinds": {
+      "purchase": "Compra",
+      "donation": "Aporte"
+    },
+    "reasons": {
+      "withdrawal": "Derecho a retracto",
+      "duplicate": "Pago duplicado",
+      "not_delivered": "No entregado",
+      "goodwill": "Por nuestra decisión",
+      "fraud": "Pago desconocido",
+      "other": "Otro"
+    },
+    "locales": {
+      "es": "Español",
+      "en": "Inglés"
+    },
+    "filters": {
+      "status": "Estado",
+      "source": "Pagado con",
+      "email": "Comprador",
+      "email_placeholder": "persona@example.com",
+      "any": "Cualquiera"
+    },
+    "totals": {
+      "title": "Totales",
+      "description": "Calculados sobre exactamente las ventas de abajo, no sobre la página que se muestra.",
+      "net": "Neto",
+      "net_hint": "Lo que entró, menos lo que se devolvió.",
+      "gross": "Bruto",
+      "gross_hint": "Todo lo que alguna vez se acreditó.",
+      "returned": "Devuelto",
+      "returned_hint": "Reembolsos y contracargos.",
+      "active": "Licencias vigentes",
+      "active_hint": "Ventas que hoy habilitan a alguien.",
+      "buyers": "{{count}} comprador",
+      "buyers_other": "{{count}} compradores"
+    },
+    "record": {
+      "open": "Registrar venta",
+      "title": "Registrar una venta",
+      "body": "Para dinero que llegó por fuera de este servicio: efectivo, una transferencia o una copia regalada. Se registra como un pago aprobado y habilita las descargas igual que un pago con tarjeta.",
+      "email": "Correo del comprador",
+      "email_hint": "A dónde va el comprobante y bajo qué correo queda la venta.",
+      "source": "Pagado con",
+      "source_hint": "MercadoPago no está en la lista: una fila que dijera que el proveedor cobró algo de lo que no tiene registro sería indistinguible de un pago real.",
+      "amount": "Monto",
+      "amount_hint": "Pesos enteros. Déjalo en cero si es un regalo.",
+      "kind": "Tipo",
+      "kind_hint": "Una compra otorga la licencia; un aporte registra el apoyo.",
+      "occurred_at": "Cuándo ocurrió",
+      "occurred_at_hint": "Los diez días legales se cuentan desde esta fecha, no desde hoy.",
+      "reference": "Referencia",
+      "reference_hint": "El id de la transferencia, para cuadrar la venta con la cartola.",
+      "note": "Nota",
+      "note_hint": "En qué stand, qué transferencia, a quién fue la copia.",
+      "locale": "Idioma del comprobante",
+      "locale_hint": "El idioma en que se escribe el comprobante.",
+      "issue_voucher": "Emitir un comprobante",
+      "notify": "Enviarlo por correo al comprador",
+      "submit": "Registrar la venta",
+      "done": "Venta registrada.",
+      "sent_failed": "La venta y su comprobante quedaron registrados, pero el correo no se pudo enviar. Usa Reenviar en la venta."
+    },
+    "detail": {
+      "title": "Venta",
+      "description": "El pago, sus comprobantes y lo que todavía se puede hacer con él.",
+      "back": "Todas las ventas",
+      "panel_title": "El pago",
+      "edit_title": "Correcciones",
+      "edit_description": "Las tres cosas que pueden estar mal respecto del mundo y no de la venta. El monto, el estado y las fechas no se editan: corregir uno de esos es un reembolso y una venta nueva.",
+      "email_hint": "A dónde iría un comprobante reemitido. Cambiarlo no envía nada por sí solo.",
+      "note_hint": "Tuya, no del comprador. Nunca aparece en un comprobante.",
+      "facts": {
+        "status": "Estado",
+        "amount": "Monto",
+        "source": "Pagado con",
+        "kind": "Tipo",
+        "reference": "Referencia",
+        "payment_id": "Id del pago",
+        "created_at": "Registrada",
+        "approved_at": "Aprobada",
+        "withdrawal": "Retracto",
+        "refund": "Reembolso",
+        "account": "Cuenta",
+        "recorded_by": "Registrada por",
+        "email": "Correo del comprador",
+        "note": "Nota"
+      }
+    },
+    "refund": {
+      "open": "Reembolsar",
+      "title": "Reembolsar esta venta",
+      "body": "Un pago con tarjeta vuelve por MercadoPago; uno en efectivo o por transferencia vuelve por donde llegó y esto registra que así fue. La descarga se cierra en ambos casos.",
+      "reason": "Motivo",
+      "reason_hint": "El derecho a retracto es del comprador, sin condiciones, por diez días. Se mantiene aparte del resto para que siga siendo contable.",
+      "amount": "Monto",
+      "amount_hint": "Déjalo vacío para devolver toda la venta ({{amount}}).",
+      "notify": "Avisar al comprador por correo",
+      "submit": "Reembolsar",
+      "pending": "Reembolsando…",
+      "done": "Reembolsado.",
+      "blocked_status": "Solo se puede reembolsar una venta aprobada.",
+      "blocked_environment": "Esta venta se cobró en la otra cuenta de MercadoPago, así que este servicio no puede reembolsarla."
+    }
+  },
+  "vouchers": {
+    "title": "Comprobantes",
+    "description": "Todos los comprobantes que emitió {{name}}, incluidos los anulados.",
+    "list_title": "Comprobantes",
+    "panel_title": "Comprobantes",
+    "panel_description": "Un comprobante nunca se edita: corregir uno emite el siguiente y anula este.",
+    "count": "{{count}} comprobante",
+    "count_other": "{{count}} comprobantes",
+    "caption": "Comprobantes",
+    "issue": "Emitir comprobante",
+    "issued": "Comprobante emitido.",
+    "issue_send_failed": "El comprobante se emitió, pero no se pudo enviar por correo.",
+    "send": "Enviar",
+    "sending": "Enviando…",
+    "sent": "Comprobante enviado.",
+    "send_title": "Enviar este comprobante",
+    "send_body": "Reenvía el comprobante por correo. Enviarlo a otra dirección no cambia el comprobante: corregir a quién fue emitido es reemitirlo.",
+    "send_to": "Enviar a",
+    "send_to_hint": "Por omisión, la dirección a la que fue emitido.",
+    "send_aria": "Enviar el comprobante {{number}}",
+    "void_aria": "Anular el comprobante {{number}}",
+    "voided": "Comprobante anulado.",
+    "sent_times": "Enviado una vez",
+    "sent_times_other": "Enviado {{count}} veces",
+    "never_sent": "Nunca enviado",
+    "empty_title": "Todavía no hay comprobantes",
+    "empty_description": "El comprobante se emite solo cuando un pago se aprueba, y a mano para una venta registrada aquí.",
+    "list_empty_description": "Los comprobantes aparecen aquí a medida que las ventas se acreditan y se emiten.",
+    "statuses": {
+      "issued": "Emitido",
+      "void": "Anulado"
+    },
+    "filters": {
+      "status": "Estado",
+      "email": "Destinatario"
+    },
+    "columns": {
+      "number": "Número",
+      "email": "Emitido a",
+      "amount": "Monto",
+      "source": "Pagado con",
+      "status": "Estado",
+      "issued": "Emitido",
+      "sent": "Enviado",
+      "actions": "Acciones"
     }
   }
 }
