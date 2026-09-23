@@ -19,7 +19,8 @@ This is the one thing to understand before changing any of it. The base URLs are
 compiled into the bundle:
 
 - `pnpm run build:dev` runs `vite build --mode dev`, which loads **`.env.dev`** — where every
-  `VITE_*_BASE_URL` names `api-dev.franciscosolis.cl`.
+  `VITE_*_BASE_URL` names `api-dev.franciscosolis.cl` — auth, CMS, marketplace, support and
+  notifications alike.
 - `pnpm run deploy:dev` runs `wrangler deploy --env dev`, which selects the `env.dev` block in
   `wrangler.jsonc` — the Worker name and the `dev.franciscosolis.cl` route.
 

@@ -236,6 +236,7 @@ tab is a route, so a section can be reloaded into, bookmarked and linked to.
 | `/account/signature` | The corporate email signature — company accounts only |
 | `/account/access` | The roles and permissions held in the application signed in to |
 | `/account/identities` | The providers linked to the account |
+| `/account/notifications` | Notifications, email and push preferences, and push devices — see [NOTIFICATIONS.md](./NOTIFICATIONS.md) |
 | `/account/sessions` | Every device signed in, the browsers holding a sign-in, and the bulk prune |
 | `/account/details` | The read-only record: status, verification, dates, user id |
 

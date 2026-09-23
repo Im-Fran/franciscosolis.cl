@@ -7,6 +7,7 @@ This is my portfolio with all my projects and information about me.
 - [CMS.md](docs/CMS.md) — the editorial interface behind the landing page
 - [SUPPORT.md](docs/SUPPORT.md) — the help centre, the ticket flow and the support team's console
 - [MARKETPLACE.md](docs/MARKETPLACE.md) — the marketplace: one product page per thing built here, at `/product/<slug>`
+- [NOTIFICATIONS.md](docs/NOTIFICATIONS.md) — the bell, the account's notifications tab, Web Push and the installable app
 - [LEGAL.md](docs/LEGAL.md) — how the legal pages are rendered
 - [BRAND.md](docs/BRAND.md) — the identity and the assets built from it
 - [ENVIRONMENTS.md](docs/ENVIRONMENTS.md) — the production site and the development one at `dev.franciscosolis.cl`
