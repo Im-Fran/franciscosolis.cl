@@ -61,6 +61,14 @@ export type RequestOptions = {
    * Merged *before* the headers below, so a caller cannot overwrite the bearer token by accident.
    */
   headers?: Record<string, string>;
+  /**
+   * Hand back the whole `{ code, data, … }` body instead of unwrapping `data`.
+   *
+   * Added for the notifications service, whose list answers its paging cursor and the unread count
+   * *beside* `data` rather than inside it — unwrapping would drop exactly the two fields the list
+   * needs to page and to keep the bell honest.
+   */
+  envelope?: boolean;
   signal?: AbortSignal;
 };
 
@@ -212,6 +220,7 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
     if (!text) return undefined as T;
 
     const body = parseJson<ApiEnvelope<T> | T>(text);
+    if (options.envelope) return body as T;
     return body && typeof body === "object" && "code" in body && "data" in body
       ? (body as ApiEnvelope<T>).data
       : (body as T);
