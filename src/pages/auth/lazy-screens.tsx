@@ -43,6 +43,11 @@ export const AccountDetails = lazy(() =>
 export const AccountPurchases = lazy(() =>
   import("@/pages/auth/account/purchases-panel.tsx").then((m) => ({default: m.PurchasesPanel})),
 );
+export const AccountNotifications = lazy(() =>
+  import("@/pages/auth/account/notifications/notifications-section.tsx").then((m) => ({
+    default: m.NotificationsSection,
+  })),
+);
 
 /*
  * The console is one screen per section rather than one screen with tabs, so each section is its
