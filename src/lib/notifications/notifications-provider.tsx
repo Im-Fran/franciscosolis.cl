@@ -1,8 +1,10 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import type {ReactNode} from "react";
+import {useA11y} from "@/lib/a11y";
 import {useAuth} from "@/lib/auth/auth-context.ts";
 import {UNREAD_POLL_MS} from "@/lib/notifications/config.ts";
 import {notificationsApi} from "@/lib/notifications/client.ts";
+import {reconcileStoredDevice} from "@/lib/notifications/device-sync.ts";
 import {NotificationsContext} from "@/lib/notifications/notifications-context.ts";
 import {
   currentSubscription,
@@ -11,6 +13,7 @@ import {
   unsubscribe,
   writeStoredDevice,
 } from "@/lib/notifications/push.ts";
+import {useLanguageSync} from "@/lib/notifications/use-language-sync.ts";
 
 /** A focus and a visibility change usually arrive together; one request answers both. */
 const MIN_REFRESH_GAP_MS = 5_000;
@@ -39,8 +42,11 @@ const MIN_REFRESH_GAP_MS = 5_000;
  */
 export const NotificationsProvider = ({children}: {children: ReactNode}) => {
   const {status, me} = useAuth();
+  const {preferences} = useA11y();
   const sub = me?.user.id ?? null;
   const enabled = status === "authenticated";
+
+  useLanguageSync(enabled ? sub : null, me?.user.locale, preferences.language);
 
   const [unread, setUnread] = useState<number | null>(null);
   const [revision, setRevision] = useState(0);
@@ -87,6 +93,10 @@ export const NotificationsProvider = ({children}: {children: ReactNode}) => {
    * Keeps the service's row for this browser pointing at the live subscription. Browsers rotate a
    * subscription's endpoint now and then, and the worker cannot tell the API itself — it holds no
    * token — so the page does it, whenever it is open and signed in as the account that registered.
+   *
+   * It first asks whether that row still exists at all. One removed from another device, or pruned
+   * after a bounce, must not be put back by the endpoint refresh below — the local subscription goes
+   * instead, so every screen stops calling this browser "enabled".
    */
   const syncDevice = useCallback(async () => {
     const stored = readStoredDevice();
@@ -100,6 +110,7 @@ export const NotificationsProvider = ({children}: {children: ReactNode}) => {
       writeStoredDevice(null);
       return;
     }
+    if ((await reconcileStoredDevice(sub)) !== true) return;
     if (subscription.endpoint === stored.endpoint) return;
     try {
       const device = await notificationsApi.registerDevice(subscriptionBody(subscription));

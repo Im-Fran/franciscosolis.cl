@@ -53,6 +53,15 @@ read feeds its `unread` back into the provider.
 Titles and bodies arrive already written in the reader's language: every read passes `?locale=`
 from the accessibility preferences, and nothing about a notification is translated on this side.
 
+What leaves the site — a push, a notification email, a digest, the security notice auth falls back
+to, a sign-in link — is written by a service that never sees this page, in a language *it* holds for
+the account. `use-language-sync.ts` keeps that language in step: whenever the signed-in account and
+the site's language are a pair it has not confirmed yet (remembered under
+`fs.notifications.language`), it writes the language to the notifications service's `locale`
+preference and, when the base language differs, to the account's own `locale` in auth. The last
+language chosen on the last device wins. A sign-in link is requested before anybody is signed in,
+so the authorize screen sends its language with the request instead.
+
 ## The bell
 
 The panel reads the latest eight only when it opens — fetching them every minute for a menu nobody
@@ -101,6 +110,13 @@ that have to run whatever page is open:
 - **Endpoints rotate.** The worker holds no token and cannot tell the API, so it posts
   `{type: "pushsubscriptionchange"}` to open tabs, and on every signed-in load the provider
   re-registers a subscription whose endpoint no longer matches the one it recorded.
+- **A row can vanish from elsewhere.** Removing this browser from the list on another device — or
+  the service pruning it after a bounce — leaves the local subscription and record intact, which
+  used to keep the switch saying *enabled* forever. `device-sync.ts` asks the service whether the
+  recorded row still exists (on every signed-in load, and on the tab whenever its list disagrees
+  with the record) and, when it does not, unsubscribes locally so the tab offers *Enable* again. It
+  never re-registers: a removal made on purpose must stick. The tab also reloads its list when it
+  becomes visible again.
 
 ## The service worker
 
@@ -135,6 +151,8 @@ src/lib/notifications/
   types.ts                    the contract's shapes
   client.ts                   one function per endpoint, over the site's session
   push.ts                     support detection, service worker, subscribe/unsubscribe, device record
+  device-sync.ts              drops the local subscription once the service no longer lists it
+  use-language-sync.ts        copies the site's language to the services that write on its behalf
   notifications-context.ts / notifications-provider.tsx   the live unread count
   format.ts                   relative times and the site-path guard
 src/components/notifications/ the bell, the account menu and the category icons

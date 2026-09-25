@@ -13,6 +13,7 @@ import {useAuth} from "@/lib/auth/auth-context.ts";
 import {describeUserAgent, formatDate} from "@/lib/auth/format.ts";
 import {describeError, useResource} from "@/lib/auth/useResource.ts";
 import {notificationsApi} from "@/lib/notifications/client.ts";
+import {reconcileStoredDevice} from "@/lib/notifications/device-sync.ts";
 import {formatRelative} from "@/lib/notifications/format.ts";
 import {
   currentSubscription,
@@ -61,18 +62,42 @@ export const PushPanel = () => {
   const [notice, setNotice] = useState<Notice>(null);
   const [removing, setRemoving] = useState<PushDevice | null>(null);
 
-  /* Which registered row, if any, is the subscription this browser holds right now. */
+  /*
+   * Which registered row, if any, is the subscription this browser holds right now. Local storage
+   * alone is not enough: the row may have been removed from another device, in which case the list
+   * no longer carries it and the local subscription is dropped rather than shown as enabled.
+   */
+  const list = devices.data;
   const detect = useCallback(async () => {
     const stored = readStoredDevice();
     const subscription = await currentSubscription();
-    setThisDevice(
-      subscription && stored && stored.sub === sub && stored.endpoint === subscription.endpoint ? stored.id : null,
-    );
-  }, [sub]);
+    const held = subscription && stored && sub && stored.sub === sub && stored.endpoint === subscription.endpoint;
+    if (!held) {
+      setThisDevice(null);
+      return;
+    }
+    if (list && !list.some((device) => device.id === stored.id)) {
+      /* Confirmed against a fresh list, so a list fetched before this browser registered cannot undo it. */
+      const registered = await reconcileStoredDevice(sub);
+      setThisDevice(registered === false ? null : stored.id);
+      return;
+    }
+    setThisDevice(stored.id);
+  }, [sub, list]);
 
   useEffect(() => {
     void detect();
-  }, [detect, devices.data]);
+  }, [detect]);
+
+  /* Coming back to this tab after removing it elsewhere should not need a manual refresh. */
+  const reloadDevices = devices.reload;
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") reloadDevices();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [reloadDevices]);
 
   const enable = async () => {
     if (!vapidKey || !sub) return;
@@ -186,7 +211,7 @@ export const PushPanel = () => {
     );
   };
 
-  const list = devices.data ?? [];
+  const rows = list ?? [];
 
   return (
     <Panel
@@ -197,7 +222,7 @@ export const PushPanel = () => {
           <Button variant="ghost" size="sm" onClick={devices.reload}>
             <ArrowClockwise size={14}/> {t("auth:common.refresh")}
           </Button>
-          {list.length > 0 && (
+          {rows.length > 0 && (
             <Button variant="ghost" size="sm" onClick={() => void sendTest()} disabled={test.pending}>
               {test.pending ? <Spinner size={14}/> : <PaperPlaneTilt size={14}/>} {t("notifications:push.test")}
             </Button>
@@ -213,12 +238,12 @@ export const PushPanel = () => {
           <PanelState
             loading={devices.loading && !devices.data}
             error={devices.error}
-            empty={list.length === 0}
+            empty={rows.length === 0}
             emptyLabel={t("notifications:push.devices_empty")}
             onRetry={devices.reload}
           >
             <ul className="flex flex-col divide-y divide-neutral-800">
-              {list.map((device) => (
+              {rows.map((device) => (
                 <li key={device.id} className="flex flex-wrap items-center gap-4 py-3 first:pt-0 last:pb-0">
                   <DeviceMobile size={20} className="shrink-0 text-neutral-500"/>
                   <div className="min-w-0 flex-1">
