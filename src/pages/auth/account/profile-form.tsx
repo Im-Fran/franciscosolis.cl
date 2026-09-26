@@ -4,8 +4,10 @@ import {useTranslation} from "react-i18next";
 import {FloppyDisk} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
-import {Field, Input} from "@/components/ui/input.tsx";
+import {Field, Input, Select} from "@/components/ui/input.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {LANGUAGES, useA11y} from "@/lib/a11y";
+import type {Language} from "@/lib/a11y";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {authApi} from "@/lib/auth/api.ts";
@@ -17,11 +19,22 @@ import type {ProfileUpdate, User} from "@/lib/auth/types.ts";
 const EDITABLE = ["name", "given_name", "family_name", "locale"] as const;
 type EditableField = (typeof EDITABLE)[number];
 
+/**
+ * The language the account's `locale` names, if it is one the site is written in.
+ *
+ * Older accounts can hold a full BCP 47 tag (`es-CL`) typed in by hand; the picker only offers the
+ * languages there are translations for, so the region is dropped and anything else reads as unset.
+ */
+const toLanguage = (locale: string | null | undefined): Language | "" => {
+  const base = (locale ?? "").toLowerCase().split(/[-_]/)[0];
+  return (LANGUAGES as readonly string[]).includes(base) ? (base as Language) : "";
+};
+
 const toForm = (user: User): Record<EditableField, string> => ({
   name: user.name ?? "",
   given_name: user.given_name ?? "",
   family_name: user.family_name ?? "",
-  locale: user.locale ?? "",
+  locale: toLanguage(user.locale),
 });
 
 /**
@@ -35,6 +48,7 @@ export const ProfileForm = ({user}: {user: User}) => {
   const {t} = useTranslation();
   const {reload} = useAuth();
   const {notify} = useToast();
+  const {setPreference} = useA11y();
   const [form, setForm] = useState(() => toForm(user));
   const save = useMutation(useCallback((changes: ProfileUpdate) => authApi.updateMe(changes), []));
 
@@ -57,6 +71,10 @@ export const ProfileForm = ({user}: {user: User}) => {
 
     const result = await save.run(changes);
     if (!result.ok) return;
+
+    /* The site follows the account's language, otherwise the language sync would put the old one back. */
+    const language = toLanguage(changes.locale);
+    if (language) setPreference("language", language);
 
     await reload();
     notify(t("auth:account.saved"));
@@ -104,7 +122,12 @@ export const ProfileForm = ({user}: {user: User}) => {
         </div>
 
         <Field label={t("auth:account.locale_label")} htmlFor="profile-locale" hint={t("auth:account.locale_hint")}>
-          <Input id="profile-locale" value={form.locale} onChange={set("locale")} maxLength={20} placeholder="es-CL"/>
+          <Select id="profile-locale" value={form.locale} onChange={set("locale")}>
+            {form.locale === "" && <option value="" disabled>{t("auth:account.locale_placeholder")}</option>}
+            {LANGUAGES.map((language) => (
+              <option key={language} value={language}>{t(`a11y:settings.language.options.${language}`)}</option>
+            ))}
+          </Select>
         </Field>
 
         {save.error && <Alert tone="error">{t(`auth:errors.${save.error}`, {defaultValue: save.error})}</Alert>}
