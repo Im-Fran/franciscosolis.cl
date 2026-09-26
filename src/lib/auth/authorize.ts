@@ -30,10 +30,18 @@ export const loadAuthorizationRequest = (handle: string, signal?: AbortSignal) =
  * check is required — a deployment with no Turnstile keypair has no widget to solve and asks for
  * nothing. The service verifies it against Cloudflare before it writes or sends anything, so a
  * refused token costs exactly one round trip and leaves no trace.
+ *
+ * `locale` is the language this screen is showing, so the email arrives in the same one — the
+ * account may not have a language stored yet, and an address nobody has seen never does.
  */
-export const requestParkedMagicLink = (handle: string, email: string, turnstileToken?: string | null) =>
+export const requestParkedMagicLink = (
+  handle: string,
+  email: string,
+  turnstileToken?: string | null,
+  locale?: string,
+) =>
   webHttp.request<MagicLinkAccepted>(`${parked(handle)}/magic-link`, {
     auth: false,
     method: "POST",
-    json: turnstileToken ? {email, turnstile_token: turnstileToken} : {email},
+    json: {email, ...(turnstileToken ? {turnstile_token: turnstileToken} : {}), ...(locale ? {locale} : {})},
   });

@@ -86,7 +86,7 @@ export const Authorize = () => {
 
     setBusy("magic_link");
     try {
-      const {expires_in} = await requestParkedMagicLink(handle, recipient, turnstileToken);
+      const {expires_in} = await requestParkedMagicLink(handle, recipient, turnstileToken, i18n.language);
       setPhase({kind: "sent", email: recipient, expiresIn: expires_in});
     } catch (cause) {
       setError(describeError(cause).message);
