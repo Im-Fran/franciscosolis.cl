@@ -9,10 +9,10 @@ import {marked} from "marked";
  * design. Rendering it unsanitized would make an editor the one place on the site where a stored
  * script actually runs.
  *
- * It lives here, outside every section, because four of them render markdown now — the CMS's
- * entries and legal documents, an application page's prose, a help article, and the preview inside
- * the editor all of them share. A second copy in the section that needed it next is how two
- * sanitizer configurations end up on one site.
+ * It lives here, outside every section, because several of them render markdown now — the CMS's
+ * entries and legal documents, a product page's prose, and the preview inside the editor all of
+ * them share. A second copy in the section that needed it next is how two sanitizer configurations
+ * end up on one site.
  */
 export const renderMarkdown = (source: string) =>
   DOMPurify.sanitize(marked.parse(source, {async: false, gfm: true, breaks: false}), {

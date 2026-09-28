@@ -38,7 +38,7 @@ export const PAGE_SIZE = 20;
  */
 export const SERVICE_WORKER_URL = "/sw.js";
 
-export const NOTIFICATION_CATEGORIES = ["account", "support", "marketplace"] as const;
+export const NOTIFICATION_CATEGORIES = ["account", "marketplace"] as const;
 
 export const EMAIL_FREQUENCIES = ["immediate", "daily", "weekly", "never"] as const;
 

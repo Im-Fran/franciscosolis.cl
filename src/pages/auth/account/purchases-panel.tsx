@@ -21,8 +21,8 @@ import {Panel, PanelState} from "@/pages/auth/components/panel.tsx";
  *
  * Everything here is read-only, as the service is. A payment's status belongs to the payment
  * provider and arrives over its webhook, so there is nothing on this screen to change; a purchase
- * that went wrong is a support conversation, and the reference shown on each row is what that
- * conversation quotes.
+ * that went wrong is an email to soporte@franciscosolis.cl, and the reference shown on each row is
+ * what that email quotes.
  */
 export const PurchasesPanel = () => (
   <div className="flex flex-col gap-6">

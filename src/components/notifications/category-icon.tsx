@@ -1,10 +1,9 @@
-import {Bell, Lifebuoy, Storefront, UserCircle} from "@phosphor-icons/react";
+import {Bell, Storefront, UserCircle} from "@phosphor-icons/react";
 import type {Icon, IconProps} from "@phosphor-icons/react";
 import type {NotificationCategory} from "@/lib/notifications/types.ts";
 
 const ICONS: Record<NotificationCategory, Icon> = {
   account: UserCircle,
-  support: Lifebuoy,
   marketplace: Storefront,
 };
 

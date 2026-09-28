@@ -251,10 +251,10 @@ src/pages/cms/
   lazy-screens.tsx every screen, split out of the main bundle and fetched on demand
   components/      the shell, its navigation, the gate and the CMS's wiring of the shared
                    translation controls — what is specific to the CMS. The prose editors themselves
-                   are in `src/components/prose/`, shared with the marketplace and the
-                   support console: a component that reaches into one section's context is that
-                   section's component, and the help article editor throwing
-                   `useCms must be used inside <CmsProvider>` is what that costs. The primitives
+                   are in `src/components/prose/`, shared with the marketplace console: a
+                   component that reaches into one section's context is that section's component,
+                   and an editor throwing `useCms must be used inside <CmsProvider>` is what that
+                   costs. The primitives
                    the sections are built from live in
                    `src/components/admin/` and `src/lib/admin/`, shared with the auth console:
                    data table, paging, confirm dialog, JSON editor, tag input, sortable list,

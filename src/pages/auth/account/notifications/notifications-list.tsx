@@ -32,7 +32,7 @@ const isCategory = (value: string | null): value is NotificationCategory =>
 /**
  * Every notification the account has, newest first, paged by the service's cursor.
  *
- * The filters live in the query string, the way the console's do, so "my unread support
+ * The filters live in the query string, the way the console's do, so "my unread marketplace
  * notifications" is an address somebody can come back to. Paging is a "load more" rather than
  * numbered pages because the service pages by cursor and knows no totals — a page number would be
  * a promise this screen could not keep.
