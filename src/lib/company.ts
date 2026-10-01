@@ -58,6 +58,14 @@ export const ADDRESS_LINE = `${ADDRESS.street}, ${ADDRESS.district}, ${ADDRESS.c
 /** El correo por el que se ejercen los derechos y se responden las consultas legales. */
 export const CONTACT_EMAIL = "fsolism@franciscosolis.cl";
 
+/**
+ * El correo de soporte: un grupo de Google, no una casilla personal ni un sistema de tickets.
+ *
+ * Es el único canal de soporte del sitio. Quien necesita ayuda con una app, una compra o una
+ * descarga escribe aquí, y la respuesta llega por el mismo hilo de correo.
+ */
+export const SUPPORT_EMAIL = "soporte@franciscosolis.cl";
+
 export const WEBSITE = "https://franciscosolis.cl";
 
 /** El dominio de los correos de la empresa — la puerta de la firma corporativa. */
@@ -86,6 +94,7 @@ export const COMPANY = {
   address: ADDRESS,
   addressLine: ADDRESS_LINE,
   email: CONTACT_EMAIL,
+  supportEmail: SUPPORT_EMAIL,
   website: WEBSITE,
   emailDomain: EMAIL_DOMAIN,
   socials: SOCIALS,

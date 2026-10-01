@@ -3,11 +3,11 @@ import {createContext, useContext} from "react";
 /**
  * What a section tells its translation controls about the service behind them.
  *
- * Three services on this site store translations — the CMS, the standalone app pages and the
- * support help centre — and each publishes its own languages, holds its own caps and is called with
- * its own client. A control that reached into one section's context was a component of that section
- * (the mistake that made the help-centre editor throw inside `<CmsProvider>`'s hook), so the shared
- * controls read *this* context and each section provides it once, at the top of its editor.
+ * Two services on this site store translations — the CMS and the marketplace — and each publishes
+ * its own languages, holds its own caps and is called with its own client. A control that reached
+ * into one section's context would be a component of that section (and throw inside the other's
+ * editor, outside `<CmsProvider>`), so the shared controls read *this* context and each section
+ * provides it once, at the top of its editor.
  */
 export type TranslationRequest = {
   /** The source text, in the record's default locale. */

@@ -1,7 +1,6 @@
 {
   "categories": {
     "account": "Account",
-    "support": "Support",
     "marketplace": "Marketplace"
   },
   "menu": {
@@ -24,7 +23,7 @@
   },
   "list": {
     "title": "Notifications",
-    "description": "Everything the site has told you about your account, your tickets and what you bought. They are kept until you delete them.",
+    "description": "Everything the site has told you about your account and what you bought. They are kept until you delete them.",
     "filter_label": "Show",
     "filter_all": "All",
     "filter_unread": "Unread",
@@ -66,7 +65,7 @@
     },
     "toggle": "{{channel}} for {{category}}",
     "in_site_note": "Notifications always appear on this site; these switches only decide what also reaches your devices and your inbox.",
-    "always_sent_note": "Some emails are always sent, whatever you choose here, because they are the thing you asked for or a record you need: sign-in links, invitations, purchase receipts, refund notices and replies to your support tickets.",
+    "always_sent_note": "Some emails are always sent, whatever you choose here, because they are the thing you asked for or a record you need: sign-in links, invitations, purchase receipts, and refund notices.",
     "saved": "Preferences saved.",
     "failed": "Your preferences could not be loaded."
   },

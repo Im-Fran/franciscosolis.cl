@@ -13,7 +13,7 @@ edits it is at `/marketplace`, and is a client application of its own.
 | `/product/:slug/wiki`                             | **Wiki** — redirects to the first page                  |
 | `/product/:slug/wiki/:page`                       | One wiki page, with the sidebar beside it               |
 | `/product/:slug/reviews`                          | **Reviews** — what the people who obtained it thought   |
-| `/product/:slug/contact`                          | **Contact** — how to reach support                      |
+| `/product/:slug/contact`                          | **Contact** — its own text, then the support email      |
 
 `/application/:slug/*` is where this section lived before it was a store, and it redirects here
 rather than 404-ing — a published README or somebody's bookmark still lands. The one renamed

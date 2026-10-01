@@ -36,6 +36,7 @@
     "updated": "Updated {{date}}"
   },
   "contact": {
+    "support": "For help with this product, write to",
     "empty": "No contact details have been published yet."
   },
   "payment": {

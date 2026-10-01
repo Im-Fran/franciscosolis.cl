@@ -5,7 +5,6 @@ import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {RequireAuth} from "@/components/auth/require-auth.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {AccountLegacyRedirect} from "@/pages/auth/account/legacy-redirect.tsx";
-import {MyTickets} from "@/pages/help/lazy-screens.tsx";
 import {
   Account,
   AccountAccess,
@@ -135,12 +134,6 @@ export const accountRoutes: RouteObject = {
         {path: "purchases", element: <AccountPurchases/>},
         /* What the notifications service holds for this account, how it reaches them, and where. */
         {path: "notifications", element: <AccountNotifications/>},
-        /*
-         * Support tickets belonging to this account. A section of the account rather than of the
-         * help centre, because that is what it is to a visitor: the page behind their own avatar,
-         * not a corner of the documentation.
-         */
-        {path: "tickets", element: <MyTickets/>},
       ],
     },
     {path: "*", element: <NotFound/>},

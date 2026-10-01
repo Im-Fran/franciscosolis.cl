@@ -32,7 +32,7 @@ session on load and otherwise reports `anonymous` without redirecting anywhere. 
   `/auth?return_to=/`, which explains and retries;
 - `authenticated` — the bell and the avatar menu (*My account*, *Notifications*, *Sign out*).
 
-The CMS, support and marketplace consoles nest their own providers over their own routes, so none
+The CMS and marketplace consoles nest their own providers over their own routes, so none
 of this touches their sessions.
 
 ## Keeping the badge honest
@@ -80,7 +80,7 @@ backslash.
   on Mondays at 09:00, or never) and a push/email switch per category. Each control writes straight
   through with a partial `PUT` and shows what the service answers, like the console's settings. The
   copy states that in-site notifications cannot be switched off and that some mail — sign-in links,
-  invitations, receipts, refunds, support replies — is sent by its producer whatever is chosen.
+  invitations, receipts, refunds — is sent by its producer whatever is chosen.
 - **Push.** The switch for this browser, the devices the account registered, and *Send a test*.
 
 ## Web Push

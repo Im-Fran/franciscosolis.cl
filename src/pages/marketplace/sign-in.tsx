@@ -13,7 +13,7 @@ import {describeError} from "@/lib/auth/useResource.ts";
 /**
  * Entry point of the marketplace console — a hand-off, not a form.
  *
- * Same shape as the CMS's and the support console's, and for the same reason: this application asks
+ * Same shape as the CMS's, and for the same reason: this application asks
  * the auth service for access and lets the service's own hosted screen collect whatever it collects.
  * A second credential form served by the thing asking for the credentials is exactly what single
  * sign-on exists to avoid.

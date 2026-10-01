@@ -56,7 +56,7 @@ const Nav = ({onNavigate}: {onNavigate?: () => void}) => {
 /**
  * The frame every signed-in console screen sits in.
  *
- * Same shape as the CMS's shell and the support console's — a drawer below `lg`, a column beside
+ * Same shape as the CMS's shell — a drawer below `lg`, a column beside
  * the content above it, both rendering the same `<Nav>` so a section cannot exist on one and be
  * missing from the other.
  */

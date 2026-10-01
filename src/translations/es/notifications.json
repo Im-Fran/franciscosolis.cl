@@ -1,7 +1,6 @@
 {
   "categories": {
     "account": "Cuenta",
-    "support": "Soporte",
     "marketplace": "Tienda"
   },
   "menu": {
@@ -24,7 +23,7 @@
   },
   "list": {
     "title": "Notificaciones",
-    "description": "Todo lo que el sitio te ha avisado sobre tu cuenta, tus tickets y tus compras. Se guardan hasta que las elimines.",
+    "description": "Todo lo que el sitio te ha avisado sobre tu cuenta y tus compras. Se guardan hasta que las elimines.",
     "filter_label": "Mostrar",
     "filter_all": "Todas",
     "filter_unread": "Sin leer",
@@ -66,7 +65,7 @@
     },
     "toggle": "{{channel}} para {{category}}",
     "in_site_note": "Las notificaciones siempre aparecen en este sitio; estos interruptores solo deciden qué llega además a tus dispositivos y a tu correo.",
-    "always_sent_note": "Algunos correos se envían siempre, elijas lo que elijas, porque son lo que pediste o un comprobante que necesitas: enlaces de acceso, invitaciones, comprobantes de compra, avisos de reembolso y respuestas a tus tickets de soporte.",
+    "always_sent_note": "Algunos correos se envían siempre, elijas lo que elijas, porque son lo que pediste o un comprobante que necesitas: enlaces de acceso, invitaciones, comprobantes de compra y avisos de reembolso.",
     "saved": "Preferencias guardadas.",
     "failed": "No se pudieron cargar tus preferencias."
   },

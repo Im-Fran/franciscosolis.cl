@@ -3,5 +3,10 @@
   "title": "¿Construyamos algo juntos?",
   "download_cv": "Descargar CV",
   "coming_soon": "Próximamente",
-  "location": "Santiago, Chile"
+  "location": "Santiago, Chile",
+  "support": {
+    "title": "¿Necesitas ayuda con alguna de mis apps?",
+    "body": "El soporte es por correo. Escribe a la dirección de abajo indicando el nombre de la app y, si es por una compra, su referencia de pago: la respuesta te llega en el mismo hilo.",
+    "subject": "Solicitud de soporte"
+  }
 }
