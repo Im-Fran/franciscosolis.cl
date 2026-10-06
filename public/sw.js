@@ -13,8 +13,12 @@
  */
 
 const ICON = "/icon-192.png";
-/* Android draws the badge as a silhouette from its alpha channel, so the mono mark is the one. */
-const BADGE = "/brand/png/fs-mark-mono-white.png";
+/*
+ * Android draws the badge as a silhouette from its alpha channel, so the mono mark is the one. It is
+ * the one brand file in here that is not a root icon, so it comes from the CDN (cdn/brand/ in the
+ * repository) — the worker is outside the bundle and cannot import src/lib/cdn.ts.
+ */
+const BADGE = "https://cdn.franciscosolis.cl/brand/png/fs-mark-mono-white.png";
 
 self.addEventListener("install", () => {
   /* Nothing to precache, so nothing is gained by waiting behind an older worker. */

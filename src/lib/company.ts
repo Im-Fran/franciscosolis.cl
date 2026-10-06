@@ -14,6 +14,8 @@
  * documento legal sin titular identificado.
  */
 
+import {cdn} from "@/lib/cdn.ts";
+
 /**
  * La razón social completa, tal como está inscrita.
  *
@@ -76,9 +78,11 @@ export const SOCIALS = ["https://www.linkedin.com/company/franciscosolis"] as co
 
 /**
  * El logo en absoluto, porque se lee fuera de este origen: en un correo pegado en otra casilla o
- * en el resultado enriquecido de un buscador, una ruta relativa es una imagen rota.
+ * en el resultado enriquecido de un buscador, una ruta relativa es una imagen rota. Vive en el
+ * CDN (`cdn/brand/` en este repositorio); las firmas antiguas que apuntan a franciscosolis.cl
+ * siguen funcionando por la redirección de `public/_redirects`.
  */
-export const LOGO_URL = `${WEBSITE}/brand/png/fs-avatar-circle.png`;
+export const LOGO_URL = cdn("brand/png/fs-avatar-circle.png");
 
 /** Chile: el país cuya ley rige los términos y ante cuyos tribunales se someten las controversias. */
 export const JURISDICTION_CITY = "Santiago";

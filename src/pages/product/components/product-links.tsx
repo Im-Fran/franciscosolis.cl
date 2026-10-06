@@ -15,6 +15,7 @@ import type {Icon} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {cn} from "@/lib/utils.ts";
 import type {ProductLink} from "@/lib/marketplace/types.ts";
+import {cdn} from "@/lib/cdn.ts";
 
 /**
  * The buttons under a banner, and the ones on a release note.
@@ -47,16 +48,16 @@ const STORE_KINDS = new Set(["app_store", "play_store"]);
 /**
  * Apple does not let anyone draw their own App Store button: the badge is artwork they publish, per
  * language, and the identity guidelines ask that it be used as-is rather than redrawn with a local
- * icon and label. The files are served from `public/` rather than hotlinked so the badge keeps
- * working — and stops being a third party's view of who visits these pages.
+ * icon and label. The files are served from our own CDN (`cdn/badges/`) rather than hotlinked from
+ * Apple, so the badge keeps working — and stops being a third party's view of who visits these pages.
  *
  * Only `en` and `es` are shipped because those are the only two languages this site speaks; a
  * language that is neither falls back to the English badge, which is what Apple distributes as the
  * default anyway.
  */
 const APP_STORE_BADGES: Record<string, string> = {
-  en: "/badges/mac-app-store-en.svg",
-  es: "/badges/mac-app-store-es.svg",
+  en: cdn("badges/mac-app-store-en.svg"),
+  es: cdn("badges/mac-app-store-es.svg"),
 };
 
 /*

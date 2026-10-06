@@ -33,8 +33,8 @@
     <meta property="og:title" content="Francisco Solís - Full Stack & Mobile Developer">
     <meta property="og:description" content="FranciscoSolis E.I.R.L. — development and maintenance of IT services from Santiago, Chile. Web, mobile, APIs and microservices.">
     <meta property="og:site_name" content="FranciscoSolis">
-    <meta property="og:image" content="https://franciscosolis.cl/profile-picture-full.webp">
-    <meta property="og:logo" content="https://franciscosolis.cl/brand/png/fs-mark.png">
+    <meta property="og:image" content="https://cdn.franciscosolis.cl/profile-picture-full.webp">
+    <meta property="og:logo" content="https://cdn.franciscosolis.cl/brand/png/fs-mark.png">
 
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
@@ -42,7 +42,7 @@
     <meta property="twitter:url" content="https://franciscosolis.cl">
     <meta name="twitter:title" content="Francisco Solís - Full Stack & Mobile Developer">
     <meta name="twitter:description" content="FranciscoSolis E.I.R.L. — development and maintenance of IT services from Santiago, Chile. Web, mobile, APIs and microservices.">
-    <meta name="twitter:image" content="https://franciscosolis.cl/profile-picture-full.webp">
+    <meta name="twitter:image" content="https://cdn.franciscosolis.cl/profile-picture-full.webp">
 
     <!--
       Who operates this site, in the form a crawler reads.
@@ -61,8 +61,8 @@
         "legalName": "DESARROLLO Y MANTENCION DE SERVICIOS INFORMATICOS FRANCISCO SOLIS MATURANA E.I.R.L.",
         "taxID": "78.473.345-9",
         "url": "https://franciscosolis.cl",
-        "logo": "https://franciscosolis.cl/brand/png/fs-mark.png",
-        "image": "https://franciscosolis.cl/brand/png/fs-avatar-circle.png",
+        "logo": "https://cdn.franciscosolis.cl/brand/png/fs-mark.png",
+        "image": "https://cdn.franciscosolis.cl/brand/png/fs-avatar-circle.png",
         "email": "fsolism@franciscosolis.cl",
         "description": "Development and maintenance of IT services: web, mobile, APIs and microservices.",
         "foundingLocation": "Santiago, Chile",
@@ -84,7 +84,13 @@
       }
     </script>
 
-    <link rel="preload" as="image" href="/profile-picture.webp">
+    <!--
+      Images other than the root icons come from cdn.franciscosolis.cl (the `cdn/` directory, see
+      src/lib/cdn.ts). The URLs here are written out rather than read from VITE_CDN_BASE_URL because
+      the crawler-facing tags above have to be absolute either way.
+    -->
+    <link rel="preconnect" href="https://cdn.franciscosolis.cl">
+    <link rel="preload" as="image" href="https://cdn.franciscosolis.cl/profile-picture.webp">
 
     <!--
       Applies the stored accessibility preferences before the first paint, so a visitor who chose

@@ -5,6 +5,7 @@ import {ArrowLeft, Check, Copy, DownloadSimple, FileMd, GlobeSimple, Prohibit} f
 import {Button} from "@/components/ui/button/button.tsx";
 import {BRAND_MARK_MIN_SIZE, BrandLockup, BrandMark} from "@/components/brand";
 import {useLanguageToggle} from "@/hooks/useLanguageToggle.ts";
+import {cdn} from "@/lib/cdn.ts";
 
 type Surface = "dark" | "light";
 
@@ -58,7 +59,7 @@ const MARK_SIZES = [BRAND_MARK_MIN_SIZE, 24, 32, 64];
 type Download = { label: string; href: string };
 
 const pack = (name: string, formats: Array<"svg" | "png" | "webp">): Download[] =>
-  formats.map((format) => ({label: format.toUpperCase(), href: `/brand/${format}/${name}.${format}`}));
+  formats.map((format) => ({label: format.toUpperCase(), href: cdn(`brand/${format}/${name}.${format}`)}));
 
 const ASSETS: Array<{ useKey: string; name: string; downloads: Download[] }> = [
   {useKey: "horizontal", name: "fs-lockup-horizontal", downloads: pack("fs-lockup-horizontal", ["svg", "png", "webp"])},
@@ -83,7 +84,7 @@ const ASSETS: Array<{ useKey: string; name: string; downloads: Download[] }> = [
     name: "favicon-16…512",
     downloads: [16, 32, 64, 192, 512].map((size) => ({
       label: String(size),
-      href: `/brand/png/favicon-${size}.png`,
+      href: cdn(`brand/png/favicon-${size}.png`),
     })),
   },
 ];
@@ -91,13 +92,12 @@ const ASSETS: Array<{ useKey: string; name: string; downloads: Download[] }> = [
 const CLEAR_SPACE_MARK = 64;
 
 /**
- * The kit is packed on demand by scripts/brand-kit.mjs — served in dev, emitted into the bundle on
- * build — so it is never a committed binary that can drift from the assets. Keep these in step with
- * BRAND_KIT_URL there; the agent-facing guide is a plain file under public/, readable without
- * unzipping anything.
+ * The kit is packed by scripts/brand-kit.mjs when `cdn/` is uploaded, so it is never a committed
+ * binary that can drift from the assets. Keep this in step with BRAND_KIT_KEY there; the
+ * agent-facing guide is a plain file on the CDN, readable without unzipping anything.
  */
-const KIT_URL = "/brand/franciscosolis-brand-kit.zip";
-const KIT_GUIDE_URL = "/brand/BRAND.md";
+const KIT_URL = cdn("brand/franciscosolis-brand-kit.zip");
+const KIT_GUIDE_URL = cdn("brand/BRAND.md");
 
 const Section = ({title, body, children}: { title: string; body?: string; children?: ReactNode }) => (
   <section className="mt-16">
