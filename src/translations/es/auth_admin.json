@@ -20,7 +20,9 @@
     "audit": "Registro de auditoría",
     "account": "Mi cuenta",
     "site_link": "Volver al sitio",
-    "sign_out": "Cerrar sesión"
+    "sign_out": "Cerrar sesión",
+    "service": "Servicio",
+    "settings": "Configuración"
   },
   "status": {
     "active": "Activa",
@@ -387,5 +389,17 @@
     "permission.created": "Permiso creado",
     "permission.updated": "Permiso actualizado",
     "permission.deleted": "Permiso eliminado"
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Cómo se comporta este servicio de autenticación. Los cambios se aplican en el siguiente inicio de sesión; nada de esto afecta a una cuenta que ya existe.",
+    "registration_label": "Registro abierto",
+    "registration_open": "Cualquiera que pueda recibir correo en una dirección, o que entre con Google, obtiene una cuenta en su primer inicio de sesión.",
+    "registration_closed": "Solo una dirección invitada puede crear una cuenta. Al resto se le rechaza, sin decirle si la dirección existe.",
+    "registration_hint": "Las invitaciones siguen funcionando en ambos casos. Volver a cerrarlo rechaza el siguiente registro, incluido un enlace de acceso enviado mientras estaba abierto.",
+    "opened": "El registro quedó abierto.",
+    "closed": "El registro quedó cerrado. Solo las direcciones invitadas pueden crear una cuenta.",
+    "read_only": "Puedes leer esta configuración, pero no cambiarla. Para eso hace falta el permiso settings:write.",
+    "turnstile_note": "La pantalla de inicio de sesión está protegida con Cloudflare Turnstile donde el despliegue tenga configurado un par de claves, que es lo que evita que un registro abierto sea una invitación para un script. Eso es configuración del despliegue y no un ajuste, así que no se cambia desde aquí."
   }
 }

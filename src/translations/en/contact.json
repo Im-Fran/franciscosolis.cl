@@ -3,5 +3,10 @@
   "title": "Let's build something together?",
   "download_cv": "Download CV",
   "coming_soon": "Coming soon",
-  "location": "Santiago, Chile"
+  "location": "Santiago, Chile",
+  "support": {
+    "title": "Need help with one of my apps?",
+    "body": "Support is by email. Write to the address below with the app's name and, if it is about a purchase, its payment reference — the reply comes back in the same thread.",
+    "subject": "Support request"
+  }
 }

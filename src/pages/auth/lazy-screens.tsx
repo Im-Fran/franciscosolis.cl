@@ -43,6 +43,11 @@ export const AccountDetails = lazy(() =>
 export const AccountPurchases = lazy(() =>
   import("@/pages/auth/account/purchases-panel.tsx").then((m) => ({default: m.PurchasesPanel})),
 );
+export const AccountNotifications = lazy(() =>
+  import("@/pages/auth/account/notifications/notifications-section.tsx").then((m) => ({
+    default: m.NotificationsSection,
+  })),
+);
 
 /*
  * The console is one screen per section rather than one screen with tabs, so each section is its
@@ -83,6 +88,9 @@ export const RoleEditor = lazy(() =>
 );
 export const PermissionsList = lazy(() =>
   import("@/pages/auth/admin/permissions/permissions-list.tsx").then((m) => ({default: m.PermissionsList})),
+);
+export const AuthSettings = lazy(() =>
+  import("@/pages/auth/admin/settings/settings-panel.tsx").then((m) => ({default: m.SettingsPanel})),
 );
 export const AuditLog = lazy(() =>
   import("@/pages/auth/admin/audit/audit-log.tsx").then((m) => ({default: m.AuditLog})),

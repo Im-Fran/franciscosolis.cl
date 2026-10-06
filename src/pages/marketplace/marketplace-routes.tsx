@@ -26,21 +26,19 @@ import {
 /**
  * The marketplace console, at `/marketplace`.
  *
- * The same shape as the CMS's and the support team's: its own `AuthProvider` over the subtree so
+ * The same shape as the CMS's: its own `AuthProvider` over the subtree so
  * the session lives in its own storage namespace, `sign-in` and `callback` outside the gate, and
  * then a **pathless** layout route holding everything else — one gate, one provider, one shell for
  * every screen the console grows.
  *
- * It is a client application of its own, and unlike the support console that is not a design
- * preference — it is what the service requires. `apps/marketplace` accepts only its own audience,
+ * It is a client application of its own, and that is not a design preference — it is what the service requires. `apps/marketplace` accepts only its own audience,
  * so a console signing in under the CMS's client id gets a 401 on every call *before* the
  * permission is ever read, which this side cannot tell apart from an expired session. The console
  * lived at `/cms/marketplace` for exactly one release and did precisely that, looping through the
  * CMS's sign-in screen forever.
  *
  * `/marketplace` does not compete with the public `/product/:slug`: it is a static segment and a
- * different one. The storefront and the console are deliberately separate addresses, the same way
- * `/help` and `/support` are.
+ * different one. The storefront and the console are deliberately separate addresses.
  */
 export const marketplaceRoutes: RouteObject = {
   path: "marketplace",

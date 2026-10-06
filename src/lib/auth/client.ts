@@ -23,8 +23,8 @@ export class AuthNetworkError extends Error {
 }
 
 export type RequestOptions = {
-  /* PUT is here for the support console, whose assignee endpoint replaces a value rather
-     than merging into one. */
+  /* PUT is here for the endpoints that replace a value rather than merging into one: a release
+     build's bytes, a review, the notification preferences. */
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   /** JSON request body. */
   json?: unknown;
@@ -46,21 +46,28 @@ export type RequestOptions = {
   /**
    * Send an access token. `true` (the default) requires one and fails fast without it; `false`
    * is for the handful of fully public endpoints. `"optional"` attaches one when the caller
-   * happens to have a live session but does not require it — for the support ticket endpoints,
-   * reachable either by a signed-in visitor's session or by the per-ticket secret carried in
-   * `headers`, and entitled to neither is a question for the service to answer, not this client.
+   * happens to have a live session but does not require it — for the public marketplace reads that
+   * answer a signed-in visitor a little more (their own review, whether they paid), where entitled
+   * to neither is a question for the service to answer, not this client.
    */
   auth?: boolean | "optional";
   /**
    * Extra request headers.
    *
-   * Added for the support section, which carries a per-ticket access secret. That secret has to
-   * travel in a header rather than in the query string: a query string lands in browser history, in
-   * `Referer` on every outbound link the page renders, and in every access log along the way.
+   * Used by the release build upload, whose body is the file itself and whose declared type
+   * therefore has nowhere to travel but a `Content-Type` header.
    *
    * Merged *before* the headers below, so a caller cannot overwrite the bearer token by accident.
    */
   headers?: Record<string, string>;
+  /**
+   * Hand back the whole `{ code, data, … }` body instead of unwrapping `data`.
+   *
+   * Added for the notifications service, whose list answers its paging cursor and the unread count
+   * *beside* `data` rather than inside it — unwrapping would drop exactly the two fields the list
+   * needs to page and to keep the bell honest.
+   */
+  envelope?: boolean;
   signal?: AbortSignal;
 };
 
@@ -184,8 +191,7 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
      * in, so the failure read as a broken client instead of as a session that had ended.
      *
      * `"optional"` skips this: a visitor with no session is the expected case there, not a stale
-     * one, and the request still goes out — carrying whatever `options.headers` supplied instead
-     * (the support ticket screens use it for the per-ticket secret).
+     * one, and the request still goes out without a token.
      */
     if (required && !token) throw new AuthApiError(401, "session-expired");
 
@@ -212,6 +218,7 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
     if (!text) return undefined as T;
 
     const body = parseJson<ApiEnvelope<T> | T>(text);
+    if (options.envelope) return body as T;
     return body && typeof body === "object" && "code" in body && "data" in body
       ? (body as ApiEnvelope<T>).data
       : (body as T);

@@ -1,9 +1,9 @@
 import {lazy} from "react";
 
 /*
- * Every console screen, split out of the main bundle. The same reasoning as the CMS's and the
- * support console's: these carry a Markdown editor, a sortable list and a data table that a visitor
- * reading a product page has no use for.
+ * Every console screen, split out of the main bundle. The same reasoning as the CMS's: these carry
+ * a Markdown editor, a sortable list and a data table that a visitor reading a product page has no
+ * use for.
  *
  * The layout is in here too, for the same reason: the shell, its navigation and the no-access screen
  * are console furniture, and the landing page should not carry them either.

@@ -45,10 +45,10 @@ export type MarkdownEditorProps = {
 
 /**
  * The editor behind every long-form field on this site — a content body, a legal document, the text
- * of an email template, the body of a help article.
+ * of an email template, a product's overview.
  *
- * It is shared rather than owned by the section that wrote it first. The support console needed the
- * same editor, and importing the CMS's copy of it is what made a help article's editor throw inside
+ * It is shared rather than owned by the section that wrote it first. The marketplace console needs
+ * the same editor as the CMS, and importing the CMS's copy of it would make it throw inside
  * `<CmsProvider>`'s hook: a component that reaches for another section's context is that section's
  * component, wherever the file happens to sit.
  *

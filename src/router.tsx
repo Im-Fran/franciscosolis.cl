@@ -7,8 +7,6 @@ import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {accountRoutes, authRoutes, authorizeRoutes} from "@/pages/auth/auth-routes.tsx";
 import {cmsRoutes} from "@/pages/cms/cms-routes.tsx";
-import {helpRoutes, ticketRoutes} from "@/pages/help/help-routes.tsx";
-import {supportRoutes} from "@/pages/support/support-routes.tsx";
 import {marketplaceRoutes} from "@/pages/marketplace/marketplace-routes.tsx";
 import {legacyProductRoutes, productRoutes} from "@/pages/product/product-routes.tsx";
 import {CmsLegacyRedirect} from "@/pages/cms/components/legacy-redirect.tsx";
@@ -46,11 +44,6 @@ const routes = [
       authorizeRoutes,
       /* CMS — its own client application, signed in under its own client id */
       cmsRoutes,
-      /* The public help centre, and the ticket a support email links to. Both outside every gate. */
-      helpRoutes,
-      ticketRoutes,
-      /* The support team's console — its own client application, signed in under its own client id */
-      supportRoutes,
       /*
        * The marketplace console. Its own client application too, and here that is what the service
        * requires rather than a preference: `apps/marketplace` accepts only its own audience, so an

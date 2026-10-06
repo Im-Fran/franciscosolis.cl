@@ -89,6 +89,7 @@ export const accountRoute = {
   sessions: `${ACCOUNT_ROUTE}/sessions`,
   details: `${ACCOUNT_ROUTE}/details`,
   purchases: `${ACCOUNT_ROUTE}/purchases`,
+  notifications: `${ACCOUNT_ROUTE}/notifications`,
 } as const;
 
 /**
@@ -115,6 +116,7 @@ export const adminRoute = {
   role: (id: string) => `${ADMIN_ROUTE}/roles/${encodeURIComponent(id)}`,
   permissions: `${ADMIN_ROUTE}/permissions`,
   audit: `${ADMIN_ROUTE}/audit`,
+  settings: `${ADMIN_ROUTE}/settings`,
 } as const;
 
 /**

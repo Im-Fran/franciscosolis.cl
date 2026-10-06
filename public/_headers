@@ -25,3 +25,12 @@
 /apps/*
   X-Frame-Options: DENY
   Content-Security-Policy: frame-ancestors 'none'
+
+# The service worker. Browsers already revalidate it on every update check, but an edge or proxy
+# cache in between would still hand out a stale copy — and a stale worker is the one asset whose
+# fix cannot reach anybody until it expires. It sits at the root, so its default scope is already
+# the whole site and it needs no Service-Worker-Allowed header.
+/sw.js
+  Cache-Control: no-cache
+/site.webmanifest
+  Cache-Control: no-cache
