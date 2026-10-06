@@ -5,6 +5,7 @@ import {ScrollTrigger} from "gsap/ScrollTrigger";
 import {GithubLogoIcon, MouseIcon} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {useA11y} from "@/lib/a11y";
+import {cdn} from "@/lib/cdn.ts";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -61,7 +62,7 @@ export const Hero = () => {
 
       <div className="container mx-auto px-4 pb-24 pt-32 relative z-10">
         <img
-          src="/profile-picture.webp"
+          src={cdn("profile-picture.webp")}
           alt={t("hero:name")}
           className="pointer-events-none absolute right-4 -top-16 h-24 w-24 rounded-full border border-neutral-700 object-cover shadow-lg sm:h-32 sm:w-32 md:h-40 md:w-40 lg:h-48 lg:w-48 xl:h-56 xl:w-56"
         />

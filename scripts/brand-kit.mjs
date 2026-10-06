@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 /**
- * Packs the brand kit — every handoff asset under public/brand/ plus the agent-facing BRAND.md —
+ * Packs the brand kit — every handoff asset under cdn/brand/ plus the agent-facing BRAND.md —
  * into the single ZIP the /brand page offers for download.
  *
- * The archive is built from the files on disk at request/build time rather than committed as a
- * binary, so it can never go stale against the assets `pnpm brand:icons` regenerates. Writing the
- * container by hand is cheaper than a dependency: ZIP is a length-prefixed format over deflate,
- * and node:zlib already ships the only hard part.
+ * The archive is built from the files on disk whenever cdn/ is uploaded (scripts/cdn-sync.mjs)
+ * rather than committed as a binary, so it can never go stale against the assets
+ * `pnpm brand:icons` regenerates. Writing the container by hand is cheaper than a dependency: ZIP
+ * is a length-prefixed format over deflate, and node:zlib already ships the only hard part.
  *
- * Run directly (`pnpm brand:kit`) to write a copy to disk for inspection; the site gets it from the
- * Vite plugin below, which serves it in dev and emits it into the bundle on build.
+ * Run directly (`pnpm brand:kit`) to write a copy to disk for inspection.
  */
 import {deflateRawSync} from "node:zlib";
 import {readFileSync, readdirSync, statSync, writeFileSync} from "node:fs";
@@ -17,15 +16,14 @@ import {dirname, join, posix} from "node:path";
 import {fileURLToPath} from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const BRAND_DIR = join(ROOT, "public", "brand");
+const BRAND_DIR = join(ROOT, "cdn", "brand");
 
 /** Asset folders that go into the kit, in the order they should read in a file listing. */
 const ASSET_DIRS = ["svg", "png", "webp"];
 
-/** The kit's file name, and the path the site serves it from. Both are shared with the UI. */
+/** The kit's file name, and its key in the CDN bucket. The key is mirrored in src/pages/brand/brand.tsx. */
 export const BRAND_KIT_FILE_NAME = "franciscosolis-brand-kit.zip";
-export const BRAND_KIT_PATH = `brand/${BRAND_KIT_FILE_NAME}`;
-export const BRAND_KIT_URL = `/${BRAND_KIT_PATH}`;
+export const BRAND_KIT_KEY = `brand/${BRAND_KIT_FILE_NAME}`;
 
 /** Extracting the kit should produce one folder, not scatter files into the user's Downloads. */
 const KIT_ROOT = "franciscosolis-brand-kit";
@@ -137,36 +135,6 @@ const collect = () => {
 
 /** Packs the kit and returns the archive as a Buffer. */
 export const buildBrandKit = () => zip(collect());
-
-/**
- * Serves the kit at {@link BRAND_KIT_URL} in dev and preview, and emits it into the client bundle
- * on build. The archive is never written into public/, so it always reflects the assets on disk.
- */
-export const brandKit = () => {
-  const serve = (server) => {
-    server.middlewares.use((req, res, next) => {
-      const path = (req.url ?? "").split("?")[0];
-      if (path !== BRAND_KIT_URL) return next();
-
-      const archive = buildBrandKit();
-      res.setHeader("Content-Type", "application/zip");
-      res.setHeader("Content-Length", archive.length);
-      res.setHeader("Content-Disposition", `attachment; filename="${BRAND_KIT_FILE_NAME}"`);
-      res.end(archive);
-    });
-  };
-
-  return {
-    name: "franciscosolis:brand-kit",
-    configureServer: serve,
-    configurePreviewServer: serve,
-    /* Client-only: the worker build shares these hooks and has no use for a download. */
-    applyToEnvironment: (environment) => environment.name === "client",
-    generateBundle() {
-      this.emitFile({type: "asset", fileName: BRAND_KIT_PATH, source: buildBrandKit()});
-    },
-  };
-};
 
 /* `pnpm brand:kit` — writes the archive next to the assets it packs, for a look inside. */
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

@@ -4,7 +4,7 @@ import {BRAND_MARK_MIN_SIZE, BrandMark} from "@/components/brand/brand-mark.tsx"
 
 /**
  * Lockup proportions, expressed as ratios of the mark's height so the lockup scales as one unit.
- * Values are read off the reference SVGs in public/brand/svg/.
+ * Values are read off the reference SVGs in cdn/brand/svg/.
  */
 const HORIZONTAL_FONT_RATIO = 0.594;
 const HORIZONTAL_GAP_RATIO = 0.281;

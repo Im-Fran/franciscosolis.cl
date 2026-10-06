@@ -1,0 +1,82 @@
+name: CDN
+
+# Uploads `cdn/` to the `franciscosolis` R2 bucket, which cdn.franciscosolis.cl serves: the brand
+# kit, the store badges and the profile pictures, plus the brand kit archive packed from them. See
+# scripts/cdn-sync.mjs for what is uploaded and how, and src/lib/cdn.ts for how the site reads it.
+#
+# Both stacks share the bucket, so this runs on the push to `dev` that ships them. When the `prd`
+# branch arrives, this should move behind it with production, the way deploy-dev.yml stays on `dev`.
+#
+# The upload and the site's deploy start from the same push and race. That is harmless for an asset
+# that only changed — the old copy keeps answering for the minute it takes — but a *new* file the
+# site links to is a broken image until this finishes. For a first upload, run this by hand (the
+# dispatch below, or `pnpm run cdn:sync` locally) before merging the change that links to it.
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - cdn/**
+      - scripts/brand-kit.mjs
+      - scripts/cdn-sync.mjs
+      - .github/workflows/cdn.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cdn
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: sync cdn.franciscosolis.cl
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+    steps:
+      # A token without R2 access fails with an authentication error that never names the
+      # permission, so the requirement is spelled out here instead.
+      - name: Check credentials
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must be set as repository secrets. The token needs Workers R2 Storage:Edit on this account."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Same pin as deploy-dev.yml, for the same reason: this repository has no `packageManager`.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # For Wrangler, at the version the lockfile pins.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Upload
+        run: pnpm run cdn:sync
+
+      - name: Record what is published
+        run: |
+          {
+            echo '## CDN'
+            echo
+            echo '- Bucket: `franciscosolis`'
+            echo '- Served at: https://cdn.franciscosolis.cl'
+            echo "- Objects: $(find cdn -type f | wc -l) from \`cdn/\`, plus the brand kit archive"
+          } >> "$GITHUB_STEP_SUMMARY"

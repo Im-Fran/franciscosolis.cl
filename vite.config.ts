@@ -5,8 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 import {cloudflare} from '@cloudflare/vite-plugin'
 
-import {brandKit} from './scripts/brand-kit.mjs'
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -14,7 +12,6 @@ export default defineConfig({
     tailwindcss(),
     babel({ presets: [reactCompilerPreset()] }),
     cloudflare(),
-    brandKit(),
   ],
   resolve: { 
     tsconfigPaths: true,

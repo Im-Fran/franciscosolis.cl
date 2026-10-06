@@ -12,6 +12,7 @@
     "deploy:dev": "wrangler deploy --env dev",
     "brand:icons": "node scripts/generate-brand-icons.mjs",
     "brand:kit": "node scripts/brand-kit.mjs",
+    "cdn:sync": "node scripts/cdn-sync.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
