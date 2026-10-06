@@ -1,0 +1,15 @@
+# The images and documents that used to be served from this site and now live on the CDN
+# (cdn.franciscosolis.cl, built from the `cdn/` directory — see src/lib/cdn.ts).
+#
+# They stay because these URLs were published where this repository cannot reach them: email
+# signatures pasted into other mailboxes, link previews and search results that cached the old
+# og:image, and copies of the brand guide that point at /brand/BRAND.md. A 301 sends each one to
+# the same path on the CDN. `/brand` itself is a page of the site and is deliberately not matched.
+/brand/svg/*                          https://cdn.franciscosolis.cl/brand/svg/:splat                    301
+/brand/png/*                          https://cdn.franciscosolis.cl/brand/png/:splat                    301
+/brand/webp/*                         https://cdn.franciscosolis.cl/brand/webp/:splat                   301
+/brand/BRAND.md                       https://cdn.franciscosolis.cl/brand/BRAND.md                      301
+/brand/franciscosolis-brand-kit.zip   https://cdn.franciscosolis.cl/brand/franciscosolis-brand-kit.zip  301
+/badges/*                             https://cdn.franciscosolis.cl/badges/:splat                       301
+/profile-picture.webp                 https://cdn.franciscosolis.cl/profile-picture.webp                301
+/profile-picture-full.webp            https://cdn.franciscosolis.cl/profile-picture-full.webp           301

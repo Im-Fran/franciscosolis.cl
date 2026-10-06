@@ -6,7 +6,7 @@ This document is written for AI assistants and coding agents (and for the humans
 output). It is deliberately literal: every rule below is a rule you can check mechanically against
 the file you are about to ship. The live, rendered version of this guide is
 <https://franciscosolis.cl/brand>; the canonical machine copy is
-<https://franciscosolis.cl/brand/BRAND.md>.
+<https://cdn.franciscosolis.cl/brand/BRAND.md>.
 
 Owner: Francisco Solís — <https://franciscosolis.cl>. The assets in this kit may be used to
 reference or link to FranciscoSolis. They may not be used to imply endorsement, to brand a product

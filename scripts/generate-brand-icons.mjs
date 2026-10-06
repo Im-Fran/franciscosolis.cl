@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Rasterizes the FranciscoSolis mark into every generated brand asset: the favicon / app-icon set
- * under public/, and the mark's own SVG + PNG handoff files under public/brand/.
+ * under public/, and the mark's own SVG + PNG handoff files under cdn/brand/ (served from the CDN).
  *
  * The mark is two shapes on a 64×64 grid, so rendering it exactly is cheaper than pulling in a
  * rasterizer: this samples the geometry directly and writes PNGs with zlib. Keeping every mark
@@ -17,10 +17,10 @@ import {fileURLToPath} from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT_DIR = join(ROOT, "public");
-const BRAND_SVG_DIR = join(OUT_DIR, "brand", "svg");
-const BRAND_PNG_DIR = join(OUT_DIR, "brand", "png");
+const BRAND_SVG_DIR = join(ROOT, "cdn", "brand", "svg");
+const BRAND_PNG_DIR = join(ROOT, "cdn", "brand", "png");
 
-/* Geometry, on the 64×64 grid used by public/brand/svg/fs-mark.svg. */
+/* Geometry, on the 64×64 grid used by cdn/brand/svg/fs-mark.svg. */
 const GRID = 64;
 /**
  * Tile corner radius as a ratio of the tile's edge — 20%, uniform on all four corners and at every

@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_CMS_BASE_URL?: string;
   /** Client ID the CMS interface is registered under on the auth service. */
   readonly VITE_CMS_CLIENT_ID?: string;
+  /** Base URL of the asset CDN (the `franciscosolis` R2 bucket), without a trailing slash. */
+  readonly VITE_CDN_BASE_URL?: string;
 }
 
 interface ImportMeta {

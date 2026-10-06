@@ -19,15 +19,15 @@ platform rounds or crops the artwork itself, ship `fs-mark-square` — the full-
 rounding — rather than letting it re-cut corners that are already rounded, which is what leaves the
 mark looking clipped.
 
-![Horizontal lockup](../public/brand/png/fs-lockup-horizontal.png)
+![Horizontal lockup](../cdn/brand/png/fs-lockup-horizontal.png)
 
 On dark surfaces:
 
-![Horizontal lockup, dark](../public/brand/png/fs-lockup-horizontal-dark.png)
+![Horizontal lockup, dark](../cdn/brand/png/fs-lockup-horizontal-dark.png)
 
 Vertical, for square placements and splash screens:
 
-![Vertical lockup](../public/brand/png/fs-lockup-vertical.png)
+![Vertical lockup](../cdn/brand/png/fs-lockup-vertical.png)
 
 ## Lockups & assets
 
@@ -43,26 +43,40 @@ Vertical, for square placements and splash screens:
 | `fs-avatar-circle` | Platforms that force circular crops, with no square option |
 | `favicon-16/32/64/192/512` | Favicon + PWA icon set |
 
-Formats: SVG (source of truth) in `public/brand/svg/`, PNG 4× (universal) in `public/brand/png/`,
-WEBP (web-optimized) in `public/brand/webp/`. Lockup SVGs require the Sora font installed;
+Formats: SVG (source of truth) in `cdn/brand/svg/`, PNG 4× (universal) in `cdn/brand/png/`,
+WEBP (web-optimized) in `cdn/brand/webp/`. Lockup SVGs require the Sora font installed;
 PNGs/WEBPs have it baked in.
+
+## Where the files are served from
+
+Everything under `cdn/` is served from **cdn.franciscosolis.cl** — the `franciscosolis` R2 bucket —
+at the same path it has under `cdn/`: `cdn/brand/png/fs-mark.png` is
+<https://cdn.franciscosolis.cl/brand/png/fs-mark.png>. The site builds those URLs with `cdn()` from
+`src/lib/cdn.ts`, and `.github/workflows/cdn.yml` uploads the directory (through
+`scripts/cdn-sync.mjs`, also `pnpm run cdn:sync`) on every push to `dev` that changes it.
+
+The root icons — `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` and the manifest's
+`icon-*.png` — stay in `public/` and are served by the site itself, because browsers and operating
+systems ask the page's own origin for them by convention. The old `/brand/{svg,png,webp}/*`,
+`/badges/*` and profile picture paths on franciscosolis.cl answer with a 301 to the CDN
+(`public/_redirects`), since email signatures and cached link previews still point at them.
 
 ## The downloadable kit
 
-The `/brand` page offers the whole set as one archive, `/brand/franciscosolis-brand-kit.zip`:
-`public/brand/{svg,png,webp}/` plus `public/brand/BRAND.md`, under a single
+The `/brand` page offers the whole set as one archive,
+<https://cdn.franciscosolis.cl/brand/franciscosolis-brand-kit.zip>: `cdn/brand/{svg,png,webp}/` plus
+`cdn/brand/BRAND.md`, under a single
 `franciscosolis-brand-kit/` folder.
 
-`public/brand/BRAND.md` is the third-party, agent-facing guide — written for AI assistants and
+`cdn/brand/BRAND.md` is the third-party, agent-facing guide — written for AI assistants and
 coding agents that place the marks without a designer in the loop, so it is literal and
 checkable: a decision table for picking a file, minimum sizes, clear space, the token and contrast
 tables, the lockup-SVG font trap, and a pre-ship checklist. It ships inside the kit and is also
-served on its own at `/brand/BRAND.md`. This file, `docs/BRAND.md`, stays the internal source —
+served on its own at <https://cdn.franciscosolis.cl/brand/BRAND.md>. This file, `docs/BRAND.md`, stays the internal source —
 rationale, generation pipeline, how the site itself uses the components. Keep the two in step.
 
-`scripts/brand-kit.mjs` packs the archive: a Vite plugin serves it in dev and preview and emits it
-into the client bundle on build, so it is built from the files on disk every time rather than
-committed as a binary that could drift from what `pnpm brand:icons` last wrote. Timestamps inside
+`scripts/brand-kit.mjs` packs the archive, and `scripts/cdn-sync.mjs` packs it again on every
+upload of `cdn/`, so it is built from the files being published rather than committed as a binary that could drift from what `pnpm brand:icons` last wrote. Timestamps inside
 the archive are fixed, so identical assets always pack to identical bytes. Run `pnpm brand:kit` to
 write a copy to the repo root and look inside; that copy is gitignored.
 
@@ -145,8 +159,8 @@ files and the app. Re-run `pnpm brand:icons` after any change to the mark. It wr
 
 - `public/favicon.svg`, `public/favicon.ico`, `public/apple-touch-icon.png`, `public/icon-192.png`,
   `public/icon-512.png`, `public/icon-maskable-512.png`
-- `public/brand/svg/fs-mark.svg`, `fs-mark-square.svg`, `fs-avatar-circle.svg`
-- `public/brand/png/fs-mark.png`, `fs-mark-square.png`, `fs-avatar-circle.png` and the
+- `cdn/brand/svg/fs-mark.svg`, `fs-mark-square.svg`, `fs-avatar-circle.svg`
+- `cdn/brand/png/fs-mark.png`, `fs-mark-square.png`, `fs-avatar-circle.png` and the
   `favicon-16/32/64/192/512.png` set
 
 `apple-touch-icon.png` is the square variant on purpose: iOS flattens the icon's transparency and
