@@ -1,0 +1,42 @@
+{
+  "back_home": "Volver al inicio",
+  "eyebrow": "Donaciones",
+  "title": "Apoya los proyectos",
+  "body": "Todo lo que se publica aquí — las apps, los plugins, el código abierto — se construye en horas libres y se mantiene con recursos propios. Si algo de esto te ha servido, una donación del monto que quieras ayuda a que siga adelante.",
+  "points": {
+    "free": "Sin mínimo ni máximo: tú eliges cuánto.",
+    "currency": "Paga en la moneda que prefieras: pesos, dólares, euros y más.",
+    "receipt": "Recibes un comprobante por correo y la donación queda registrada en tu cuenta."
+  },
+  "currency_label": "Moneda",
+  "currencies_unavailable": "Algunas monedas no están disponibles en este momento porque no hay tipo de cambio para ellas. Los pesos siempre funcionan.",
+  "amount_label": "Monto ({{currency}})",
+  "amount_placeholder": "¿Cuánto quieres aportar?",
+  "no_limits": "Cualquier monto: no hay mínimo ni máximo.",
+  "presets_label": "Montos sugeridos",
+  "problems": {
+    "not_positive": "El monto tiene que ser mayor que cero.",
+    "decimals": "Esta moneda se escribe con un máximo de {{decimals}} decimales.",
+    "decimals_zero": "Esta moneda se escribe sin decimales.",
+    "below_one_peso": "Convertido, eso es menos de un peso chileno."
+  },
+  "preview": "Se te cobrarán {{charge}}.",
+  "preview_converted": "Los pagos se cobran en pesos chilenos, así que se te cobrarán aprox. {{charge}} al tipo de cambio de hoy (1 {{code}} ≈ {{rate}}). En el checkout verás la cifra exacta, y tu banco la convierte a tu moneda.",
+  "donate": "Donar",
+  "sign_in_and_donate": "Inicia sesión y dona",
+  "sign_in_hint": "La donación queda asociada a una cuenta para poder enviarte el comprobante. Iniciar sesión solo requiere tu correo, y volverás a este mismo formulario.",
+  "account_hint": "El comprobante llega al correo de la cuenta con la que iniciaste sesión.",
+  "provider": "Los pagos se procesan de forma segura con MercadoPago.",
+  "checkout_failed": "No se pudo iniciar la donación: {{reason}}",
+  "return": {
+    "confirming": "Confirmando tu donación…",
+    "thanks_title": "¡Muchas gracias!",
+    "thanks_body": "Recibimos tu donación de {{amount}}. El comprobante va en camino a tu correo.",
+    "failed_title": "El pago no se completó",
+    "failed_body": "No se te cobró nada. Puedes intentarlo de nuevo con otro medio de pago cuando quieras.",
+    "pending": "Tu pago aún se está procesando. Te llegará el comprobante por correo apenas se confirme.",
+    "signed_out_title": "Inicia sesión para ver tu donación",
+    "signed_out_body": "El estado de una donación solo se muestra a la cuenta que la hizo.",
+    "sign_in": "Iniciar sesión"
+  }
+}

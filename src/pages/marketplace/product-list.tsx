@@ -5,6 +5,7 @@ import {
   ArrowClockwise,
   ArrowSquareOut,
   ArrowsDownUp,
+  HandHeart,
   MagnifyingGlass,
   PencilSimple,
   Plus,
@@ -20,7 +21,7 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {marketplaceApi} from "@/lib/marketplace/client.ts";
-import {productRoute, marketplaceRoute} from "@/lib/marketplace/config.ts";
+import {GENERAL_FUND_ID, productRoute, marketplaceRoute} from "@/lib/marketplace/config.ts";
 import type {Product} from "@/lib/marketplace/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {DataTable} from "@/components/admin/data-table.tsx";
@@ -205,6 +206,12 @@ export const ProductList = () => {
                   <ArrowsDownUp size={16}/> {t("marketplace_admin:list.reorder")}
                 </Button>
               ))}
+            {/* The donation link's takings, which belong to no product and so have no row below. */}
+            <Button variant="secondary" asChild>
+              <Link to={marketplaceRoute.sales(GENERAL_FUND_ID)}>
+                <HandHeart size={16}/> {t("marketplace_admin:general_fund.open")}
+              </Link>
+            </Button>
             <Button asChild>
               <Link to={marketplaceRoute.new}>
                 <Plus size={16}/> {t("marketplace_admin:list.new")}

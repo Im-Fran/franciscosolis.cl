@@ -6,7 +6,7 @@ import {Badge} from "@/components/ui/badge/badge.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
 import {formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
-import {productRoute} from "@/lib/marketplace/config.ts";
+import {DONATE_ROUTE, isGeneralFund, productRoute} from "@/lib/marketplace/config.ts";
 import {marketplaceContent} from "@/lib/marketplace/content.ts";
 import {formatAmount} from "@/lib/marketplace/store.ts";
 import type {Purchase} from "@/lib/marketplace/types.ts";
@@ -69,11 +69,13 @@ const Payments = () => {
               <Receipt size={18} className="shrink-0 text-neutral-400"/>
 
               <span className="min-w-0 flex-1">
+                {/* A donation to the projects in general has no product page to link to; it was made on
+                    the donation page, and that is where it leads back to. */}
                 <Link
-                  to={productRoute.overview(purchase.product_slug)}
+                  to={isGeneralFund(purchase.product_id) ? DONATE_ROUTE : productRoute.overview(purchase.product_slug)}
                   className="block truncate text-sm text-text underline-offset-2 hover:underline"
                 >
-                  {purchase.product_slug}
+                  {isGeneralFund(purchase.product_id) ? t("auth:account.purchases.general_fund") : purchase.product_slug}
                 </Link>
                 <span className="block text-[12px] text-neutral-500">
                   {t(`auth:account.purchases.kind.${purchase.kind}`, {defaultValue: purchase.kind})}
@@ -81,7 +83,15 @@ const Payments = () => {
                 </span>
               </span>
 
-              <span className="text-sm text-text">{formatAmount(purchase.amount, purchase.currency, locale)}</span>
+              <span className="flex flex-col items-end text-sm text-text">
+                {formatAmount(purchase.amount, purchase.currency, locale)}
+                {/* What the donor chose, when that was not the pesos they were charged. */}
+                {purchase.pledged && (
+                  <span className="text-[12px] text-neutral-500">
+                    {formatAmount(purchase.pledged.amount, purchase.pledged.currency, locale)}
+                  </span>
+                )}
+              </span>
 
               <Badge variant={statusTone(purchase)} size="sm">
                 {t(`auth:account.purchases.status.${purchase.status}`, {defaultValue: purchase.status})}

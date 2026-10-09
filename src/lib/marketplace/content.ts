@@ -7,6 +7,8 @@ import type {Language} from "@/lib/a11y";
 import {MARKETPLACE_BASE_URL} from "@/lib/marketplace/config.ts";
 import type {
   Checkout,
+  DonationCheckout,
+  DonationOptions,
   DownloadRecord,
   DownloadTicket,
   MarketplaceStatus,
@@ -228,6 +230,23 @@ export const marketplaceContent = {
 
   /** What this account has downloaded, newest first. */
   downloads: (signal?: AbortSignal) => http.request<DownloadRecord[]>("/me/downloads", {signal}),
+
+  /* ── The donation link ──────────────────────────────────────────────────── */
+
+  /**
+   * What the donation link accepts: each currency, its decimals and what one unit is worth in pesos
+   * today. Public and cacheable, like a product's pricing — it is the same answer for everybody.
+   */
+  donationOptions: (signal?: AbortSignal) => http.request<DonationOptions>("/donations", {auth: false, signal}),
+
+  /**
+   * Opens a donation to the projects in general and answers where to send the browser.
+   *
+   * Requires a session, like every payment: it is what gives the donation a receipt and a place in
+   * the account's history. The amount is in `currency`'s major unit — `10.5` dollars, not cents.
+   */
+  donate: (body: {amount: number; currency: string; locale?: string; return_path?: string}) =>
+    http.request<DonationCheckout>("/donations/checkout", {method: "POST", json: body}),
 };
 
 /**

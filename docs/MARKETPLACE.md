@@ -201,6 +201,39 @@ charges a real card. Production is paired with the live one. Nothing here reads 
 setting — a page that displayed which account it was talking to would be a page that can say the
 wrong thing.
 
+## The donation link
+
+`/donate` (and `/donar`, which redirects to it) is the one payment page that is not a product page:
+support for the projects in general, linked from the header of the home page and from the footer of
+every page. The service is `GET /donations` and `POST /donations/checkout`, and five things about it
+are deliberate:
+
+- **No minimum and no maximum.** The form checks only what the service would refuse anyway — an
+  amount above zero, written with no more decimals than its currency has. The preset amounts are
+  suggestions, not a floor: a blank box is the hardest part of donating to get past.
+- **The donor picks the currency, MercadoPago charges pesos.** The account settles in CLP, so a
+  donation in dollars or euros is converted by the service at the day's rate and the checkout shows
+  pesos. The page says so *before* the redirect, with the figure it will become, because a checkout
+  in a currency you did not pick reads like a mistake. The preview is computed here from the rates
+  `GET /donations` answers; the charge is computed again by the service, which is the one that counts.
+- **A currency with no rate is not offered.** The service still lists it, with `clp_per_unit: null`,
+  and the picker leaves it out — pesos never need a rate, so an outage of the rate source costs a
+  currency, never the page.
+- **It needs an account, like every payment.** That is what gives the donation a receipt and a place
+  in `/account/purchases`. A signed-out visitor is sent through the site's own sign-in with what they
+  typed in the return address (`/donate?amount=10&currency=USD`), so they land back on the same form —
+  and the same query string makes a prefilled link somebody can share.
+- **Coming back from MercadoPago is read from our own service**, exactly as on a product page. The
+  service puts `?donation=<purchase id>` on the return URL rather than this page keeping it in storage,
+  because the payment may finish in MercadoPago's app or on another device; the page polls
+  `GET /me/purchases/:id` until the webhook settles it, and cleans the query string either way.
+
+A general donation is filed under the product id `general`, and that is how the rest of the site
+meets it: `/account/purchases` links it to `/donate` rather than to a product page that does not
+exist, and shows the amount the donor chose beside the pesos charged. In the console it is reached
+from the **Donations** button on the product list, at `/marketplace/general/sales`, where only Sales
+and Receipts are offered — it has no page, releases or wiki to edit.
+
 ## Downloads
 
 The builds live on the **Releases** tab and on each version's own page, because a build belongs to
@@ -278,6 +311,7 @@ while you are signed in changes nothing until a fresh token carries it.
 | `…/wiki/new`, `…/wiki/:pageId`            | One wiki page                                        |
 | `/marketplace/:id/sales`                  | Its sales, with the totals, and where one is recorded by hand |
 | `…/sales/:saleId`                         | One sale: its facts, its receipts, its refund        |
+| `/marketplace/general/sales`              | The donation link's takings — see *The donation link* |
 | `/marketplace/:id/vouchers`               | Every receipt it ever issued, void ones included     |
 
 **Not built yet**, and deliberately left for a second pass: review moderation and the owner's reply,

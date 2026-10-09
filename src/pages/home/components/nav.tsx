@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useNavigate} from "react-router-dom";
-import {SignIn, UserCircle} from "@phosphor-icons/react";
+import {Link, useNavigate} from "react-router-dom";
+import {HandHeart, SignIn, UserCircle} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {BrandLockup} from "@/components/brand";
@@ -10,6 +10,7 @@ import {UserMenu} from "@/components/notifications/user-menu.tsx";
 import {useLanguageToggle} from "@/hooks/useLanguageToggle.ts";
 import {useAuth} from "@/lib/auth/auth-context.ts";
 import {AUTH_ROUTE} from "@/lib/auth/config.ts";
+import {DONATE_ROUTE} from "@/lib/marketplace/config.ts";
 
 const links: Array<{ href: string; labelKey: string }> = [
   {href: "#home", labelKey: "nav:home"},
@@ -93,6 +94,14 @@ export const Nav = () => {
             </a>
           ))}
           <div className="flex items-center gap-2">
+            {/* The donation link, on every width: it is the one item here that leaves the page, and
+                the label folds into the icon on a phone rather than the link disappearing. */}
+            <Button variant="ghost" size="sm" asChild>
+              <Link to={DONATE_ROUTE} aria-label={t("nav:donate")}>
+                <HandHeart size={16}/>
+                <span className="hidden sm:inline">{t("nav:donate")}</span>
+              </Link>
+            </Button>
             <Button
               variant="ghost"
               size="sm"

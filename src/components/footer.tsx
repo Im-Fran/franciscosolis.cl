@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {MapPin} from "@phosphor-icons/react";
 import {BrandLockup} from "@/components/brand";
 import {AccessibilityLauncher} from "@/components/a11y";
+import {DONATE_ROUTE} from "@/lib/marketplace/config.ts";
 import {ADDRESS_LINE, BUSINESS_ACTIVITY, CONTACT_EMAIL, LEGAL_NAME, RUT} from "@/lib/company.ts";
 
 /**
@@ -51,6 +52,9 @@ const Footer = () => {
         </span>
         <span className="flex flex-col items-center gap-1 sm:flex-row sm:gap-4">
           <span>{t("common:footer_credit")}</span>
+          <Link to={DONATE_ROUTE} className="text-neutral-500 hover:text-text transition-colors">
+            {t("common:donate_link")}
+          </Link>
           <Link to="/brand" className="text-neutral-500 hover:text-text transition-colors">
             {t("common:brand_link")}
           </Link>
