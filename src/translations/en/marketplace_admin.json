@@ -13,6 +13,10 @@
     "sales": "Sales",
     "vouchers": "Receipts"
   },
+  "general_fund": {
+    "name": "the donation link",
+    "open": "Donations"
+  },
   "sign_in": {
     "title": "Marketplace console",
     "subtitle": "Signing you in…",

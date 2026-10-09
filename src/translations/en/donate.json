@@ -1,0 +1,42 @@
+{
+  "back_home": "Back to home",
+  "eyebrow": "Donations",
+  "title": "Support the projects",
+  "body": "Everything published here — the apps, the plugins, the open-source code — is built in spare hours and kept running out of pocket. If any of it has been useful to you, a donation of whatever you like helps keep it going.",
+  "points": {
+    "free": "No minimum and no maximum: you choose how much.",
+    "currency": "Pay in the currency you think in — pesos, dollars, euros and more.",
+    "receipt": "You get a receipt by email, and the donation appears in your account."
+  },
+  "currency_label": "Currency",
+  "currencies_unavailable": "Some currencies are unavailable right now because there is no exchange rate for them. Pesos always work.",
+  "amount_label": "Amount ({{currency}})",
+  "amount_placeholder": "How much would you like to give?",
+  "no_limits": "Any amount — there is no minimum and no maximum.",
+  "presets_label": "Suggested amounts",
+  "problems": {
+    "not_positive": "The amount has to be more than zero.",
+    "decimals": "This currency is written with at most {{decimals}} decimals.",
+    "decimals_zero": "This currency is written without decimals.",
+    "below_one_peso": "That is less than one Chilean peso once converted."
+  },
+  "preview": "You will be charged {{charge}}.",
+  "preview_converted": "Payments are taken in Chilean pesos, so you will be charged about {{charge}} at today's rate (1 {{code}} ≈ {{rate}}). The checkout shows the exact figure, and your bank converts it back to your currency.",
+  "donate": "Donate",
+  "sign_in_and_donate": "Sign in and donate",
+  "sign_in_hint": "A donation is tied to an account so it can come with a receipt. Signing in only takes your email, and you will come back to this form.",
+  "account_hint": "The receipt goes to the email of the account you are signed in with.",
+  "provider": "Payments are processed securely by MercadoPago.",
+  "checkout_failed": "The donation could not be started: {{reason}}",
+  "return": {
+    "confirming": "Confirming your donation…",
+    "thanks_title": "Thank you!",
+    "thanks_body": "Your donation of {{amount}} arrived. The receipt is on its way to your email.",
+    "failed_title": "The payment did not go through",
+    "failed_body": "Nothing was charged. You can try again with another payment method whenever you like.",
+    "pending": "Your payment is still being processed. You will get the receipt by email as soon as it is confirmed.",
+    "signed_out_title": "Sign in to see your donation",
+    "signed_out_body": "The status of a donation is only shown to the account that made it.",
+    "sign_in": "Sign in"
+  }
+}

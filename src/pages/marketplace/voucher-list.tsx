@@ -10,7 +10,7 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {marketplaceApi} from "@/lib/marketplace/client.ts";
-import {marketplaceRoute} from "@/lib/marketplace/config.ts";
+import {isGeneralFund, marketplaceRoute} from "@/lib/marketplace/config.ts";
 import {formatAmount} from "@/lib/marketplace/money.ts";
 import type {Voucher} from "@/lib/marketplace/types.ts";
 import {DataTable} from "@/components/admin/data-table.tsx";
@@ -44,9 +44,14 @@ export const VoucherList = () => {
 
   const filters = useMemo(() => ({status: status || undefined, email: email || undefined}), [status, email]);
 
+  /* The general fund has no product row to read; its name comes from the translations instead. */
   const product = useResource(
-    useCallback((signal: AbortSignal) => marketplaceApi.products.get(id, signal), [id]),
+    useCallback(
+      (signal: AbortSignal) => (isGeneralFund(id) ? Promise.resolve(null) : marketplaceApi.products.get(id, signal)),
+      [id],
+    ),
   );
+  const name = isGeneralFund(id) ? t("marketplace_admin:general_fund.name") : (product.data?.name ?? "");
   const vouchers = useResource(
     useCallback((signal: AbortSignal) => marketplaceApi.vouchers.list(id, filters, signal), [id, filters]),
   );
@@ -130,7 +135,7 @@ export const VoucherList = () => {
     <>
       <PageHeader
         title={t("marketplace_admin:vouchers.title")}
-        description={t("marketplace_admin:vouchers.description", {name: product.data?.name ?? ""})}
+        description={t("marketplace_admin:vouchers.description", {name})}
         back={{to: marketplaceRoute.list, label: t("marketplace_admin:editor.back")}}
       />
 

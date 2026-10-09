@@ -2,7 +2,7 @@ import {useTranslation} from "react-i18next";
 import {NavLink} from "react-router-dom";
 import {BookOpen, CurrencyDollar, Note, Receipt, SquaresFour} from "@phosphor-icons/react";
 import {cn} from "@/lib/utils.ts";
-import {marketplaceRoute} from "@/lib/marketplace/config.ts";
+import {isGeneralFund, marketplaceRoute} from "@/lib/marketplace/config.ts";
 
 /**
  * Moving between the sections of one product, once it exists.
@@ -17,17 +17,24 @@ import {marketplaceRoute} from "@/lib/marketplace/config.ts";
  * the service (`apps/pages/src/lib/tabs.ts`), and a visitor has no business reading the takings.
  * They are shown for every product, including the free ones, because "did anybody donate" is a
  * question about a free product too — and because a product's mode changes.
+ *
+ * The general fund — the donation link's sales, at `general` — gets only those two. It has no page,
+ * no releases and no wiki: the service files its sales as if it were a product so the back office
+ * works on it unchanged, and that is all it borrows.
  */
 export const ProductNav = ({id}: {id: string}) => {
   const {t} = useTranslation(["marketplace_admin"]);
 
-  const items = [
+  const content = [
     {to: marketplaceRoute.item(id), label: t("marketplace_admin:nav.page"), icon: SquaresFour, end: true},
     {to: marketplaceRoute.releases(id), label: t("marketplace_admin:nav.releases"), icon: Note, end: false},
     {to: marketplaceRoute.wiki(id), label: t("marketplace_admin:nav.wiki"), icon: BookOpen, end: false},
+  ];
+  const money = [
     {to: marketplaceRoute.sales(id), label: t("marketplace_admin:nav.sales"), icon: CurrencyDollar, end: false},
     {to: marketplaceRoute.vouchers(id), label: t("marketplace_admin:nav.vouchers"), icon: Receipt, end: false},
   ];
+  const items = isGeneralFund(id) ? money : [...content, ...money];
 
   return (
     <nav aria-label={t("marketplace_admin:nav.label")} className="mb-6 flex flex-wrap gap-1">

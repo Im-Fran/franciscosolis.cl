@@ -13,6 +13,10 @@
     "sales": "Ventas",
     "vouchers": "Comprobantes"
   },
+  "general_fund": {
+    "name": "el link de donación",
+    "open": "Donaciones"
+  },
   "sign_in": {
     "title": "Consola del marketplace",
     "subtitle": "Iniciando tu sesión…",
