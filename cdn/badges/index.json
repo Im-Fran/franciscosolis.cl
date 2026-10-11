@@ -1,0 +1,225 @@
+{
+  "baseUrl": "https://cdn.franciscosolis.cl",
+  "badges": [
+    {
+      "path": "badges/download/app-store/en/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/app-store/en/dark.svg",
+      "action": "download",
+      "store": "app-store",
+      "locale": "en",
+      "theme": "dark",
+      "format": "svg",
+      "width": 119.66,
+      "height": 40
+    },
+    {
+      "path": "badges/download/app-store/en/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/app-store/en/light.svg",
+      "action": "download",
+      "store": "app-store",
+      "locale": "en",
+      "theme": "light",
+      "format": "svg",
+      "width": 119.66,
+      "height": 40
+    },
+    {
+      "path": "badges/download/app-store/es/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/app-store/es/dark.svg",
+      "action": "download",
+      "store": "app-store",
+      "locale": "es",
+      "theme": "dark",
+      "format": "svg",
+      "width": 119.66,
+      "height": 40
+    },
+    {
+      "path": "badges/download/app-store/es/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/app-store/es/light.svg",
+      "action": "download",
+      "store": "app-store",
+      "locale": "es",
+      "theme": "light",
+      "format": "svg",
+      "width": 119.66,
+      "height": 40
+    },
+    {
+      "path": "badges/download/google-play/en/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/google-play/en/dark.svg",
+      "action": "download",
+      "store": "google-play",
+      "locale": "en",
+      "theme": "dark",
+      "format": "svg",
+      "width": 238.96,
+      "height": 70.87
+    },
+    {
+      "path": "badges/download/google-play/es/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/google-play/es/dark.svg",
+      "action": "download",
+      "store": "google-play",
+      "locale": "es",
+      "theme": "dark",
+      "format": "svg",
+      "width": 238.96,
+      "height": 70.87
+    },
+    {
+      "path": "badges/download/mac-app-store/en/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/mac-app-store/en/dark.svg",
+      "action": "download",
+      "store": "mac-app-store",
+      "locale": "en",
+      "theme": "dark",
+      "format": "svg",
+      "width": 156.1,
+      "height": 40
+    },
+    {
+      "path": "badges/download/mac-app-store/en/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/mac-app-store/en/light.svg",
+      "action": "download",
+      "store": "mac-app-store",
+      "locale": "en",
+      "theme": "light",
+      "format": "svg",
+      "width": 156.1,
+      "height": 40
+    },
+    {
+      "path": "badges/download/mac-app-store/es/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/mac-app-store/es/dark.svg",
+      "action": "download",
+      "store": "mac-app-store",
+      "locale": "es",
+      "theme": "dark",
+      "format": "svg",
+      "width": 156.1,
+      "height": 40
+    },
+    {
+      "path": "badges/download/mac-app-store/es/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/download/mac-app-store/es/light.svg",
+      "action": "download",
+      "store": "mac-app-store",
+      "locale": "es",
+      "theme": "light",
+      "format": "svg",
+      "width": 156.1,
+      "height": 40
+    },
+    {
+      "path": "badges/pre-order/app-store/en/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/app-store/en/dark.svg",
+      "action": "pre-order",
+      "store": "app-store",
+      "locale": "en",
+      "theme": "dark",
+      "format": "svg",
+      "width": 120.66,
+      "height": 41
+    },
+    {
+      "path": "badges/pre-order/app-store/en/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/app-store/en/light.svg",
+      "action": "pre-order",
+      "store": "app-store",
+      "locale": "en",
+      "theme": "light",
+      "format": "svg",
+      "width": 120.66,
+      "height": 41
+    },
+    {
+      "path": "badges/pre-order/app-store/es/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/app-store/es/dark.svg",
+      "action": "pre-order",
+      "store": "app-store",
+      "locale": "es",
+      "theme": "dark",
+      "format": "svg",
+      "width": 143.34,
+      "height": 41
+    },
+    {
+      "path": "badges/pre-order/app-store/es/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/app-store/es/light.svg",
+      "action": "pre-order",
+      "store": "app-store",
+      "locale": "es",
+      "theme": "light",
+      "format": "svg",
+      "width": 143.36,
+      "height": 41
+    },
+    {
+      "path": "badges/pre-order/google-play/en/dark.png",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/google-play/en/dark.png",
+      "action": "pre-order",
+      "store": "google-play",
+      "locale": "en",
+      "theme": "dark",
+      "format": "png",
+      "width": 270,
+      "height": 80
+    },
+    {
+      "path": "badges/pre-order/google-play/es/dark.png",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/google-play/es/dark.png",
+      "action": "pre-order",
+      "store": "google-play",
+      "locale": "es",
+      "theme": "dark",
+      "format": "png",
+      "width": 270,
+      "height": 80
+    },
+    {
+      "path": "badges/pre-order/mac-app-store/en/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/mac-app-store/en/dark.svg",
+      "action": "pre-order",
+      "store": "mac-app-store",
+      "locale": "en",
+      "theme": "dark",
+      "format": "svg",
+      "width": 157.11,
+      "height": 41
+    },
+    {
+      "path": "badges/pre-order/mac-app-store/en/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/mac-app-store/en/light.svg",
+      "action": "pre-order",
+      "store": "mac-app-store",
+      "locale": "en",
+      "theme": "light",
+      "format": "svg",
+      "width": 157.12,
+      "height": 41
+    },
+    {
+      "path": "badges/pre-order/mac-app-store/es/dark.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/mac-app-store/es/dark.svg",
+      "action": "pre-order",
+      "store": "mac-app-store",
+      "locale": "es",
+      "theme": "dark",
+      "format": "svg",
+      "width": 157.11,
+      "height": 41
+    },
+    {
+      "path": "badges/pre-order/mac-app-store/es/light.svg",
+      "url": "https://cdn.franciscosolis.cl/badges/pre-order/mac-app-store/es/light.svg",
+      "action": "pre-order",
+      "store": "mac-app-store",
+      "locale": "es",
+      "theme": "light",
+      "format": "svg",
+      "width": 157.11,
+      "height": 41
+    }
+  ]
+}

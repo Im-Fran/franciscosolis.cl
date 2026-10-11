@@ -3,6 +3,9 @@
  * Uploads everything under cdn/ to the `franciscosolis` R2 bucket, which cdn.franciscosolis.cl
  * serves, plus the brand kit packed from cdn/brand/ by scripts/brand-kit.mjs.
  *
+ * cdn/badges/index.json is committed rather than built here, so it can be read in the repository
+ * too; the sync refuses to run while it disagrees with the badges on disk (scripts/badges-index.mjs).
+ *
  * Every file keeps its path: `cdn/brand/png/fs-mark.png` becomes the object
  * `brand/png/fs-mark.png`, so the URLs in src/lib/cdn.ts are just the paths under cdn/. Each object
  * is written with its own Content-Type and Cache-Control, because R2 serves exactly what it was
@@ -18,10 +21,11 @@
  * CI runs it from .github/workflows/cdn.yml on every push to `dev` that changes cdn/.
  */
 import {spawn} from "node:child_process";
-import {mkdtempSync, readdirSync, rmSync, statSync, writeFileSync} from "node:fs";
+import {mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {dirname, extname, join, posix, relative, sep} from "node:path";
 import {fileURLToPath} from "node:url";
+import {BADGES_INDEX_FILE, buildBadgesIndex} from "./badges-index.mjs";
 import {BRAND_KIT_FILE_NAME, BRAND_KIT_KEY, buildBrandKit} from "./brand-kit.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -54,7 +58,10 @@ const CONTENT_TYPES = {
  */
 const ASSET_CACHE_CONTROL = "public, max-age=604800";
 
-/** The guide and the kit are documents that change with every edit to the brand, so an hour. */
+/**
+ * The guide and the kit are documents that change with every edit to the brand, and the badge index
+ * with every badge added, so an hour.
+ */
 const DOCUMENT_CACHE_CONTROL = "public, max-age=3600";
 
 const dryRun = process.argv.includes("--dry-run");
@@ -73,7 +80,7 @@ const describe = (key, file) => {
   if (!contentType) {
     throw new Error(`cdn/${key}: no content type for "${extension}" — add it to CONTENT_TYPES in scripts/cdn-sync.mjs`);
   }
-  const document = extension === ".md" || extension === ".zip";
+  const document = extension === ".md" || extension === ".zip" || extension === ".json";
   return {
     key,
     file,
@@ -106,6 +113,10 @@ const put = ({key, file, contentType, cacheControl, contentDisposition}) =>
   });
 
 const main = async () => {
+  if (readFileSync(BADGES_INDEX_FILE, "utf8") !== buildBadgesIndex()) {
+    throw new Error("cdn/badges/index.json is out of date — run `pnpm badges:index` and commit the result");
+  }
+
   const objects = walk(CDN_DIR).map((file) => describe(relative(CDN_DIR, file).split(sep).join("/"), file));
 
   /* The kit is packed now, from the same files being uploaded, so the two can never disagree. */

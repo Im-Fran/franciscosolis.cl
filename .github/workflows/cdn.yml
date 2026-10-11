@@ -17,6 +17,7 @@ on:
     branches: [dev]
     paths:
       - cdn/**
+      - scripts/badges-index.mjs
       - scripts/brand-kit.mjs
       - scripts/cdn-sync.mjs
       - .github/workflows/cdn.yml
