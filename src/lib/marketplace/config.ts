@@ -142,4 +142,9 @@ export const marketplaceRoute = {
   sales: (id: string) => `${MARKETPLACE_ADMIN_ROUTE}/${id}/sales`,
   saleItem: (id: string, saleId: string) => `${MARKETPLACE_ADMIN_ROUTE}/${id}/sales/${saleId}`,
   vouchers: (id: string) => `${MARKETPLACE_ADMIN_ROUTE}/${id}/vouchers`,
+  /**
+   * The donation link's own switches. A static segment, so it wins over `:id` whatever the order of
+   * the routes; its takings are `sales(GENERAL_FUND_ID)`, the general fund's money sections.
+   */
+  donations: `${MARKETPLACE_ADMIN_ROUTE}/donations`,
 } as const;

@@ -90,6 +90,10 @@ export const SalesList = () => {
           <span className="flex flex-col">
             <span className="text-sm text-text">{row.email}</span>
             {row.note && <span className="text-[12px] text-neutral-500">{row.note}</span>}
+            {/* A donor's own words, quoted so they never read as the editor's note. */}
+            {row.message && (
+              <span className="line-clamp-2 text-[12px] text-accent-200/80">“{row.message}”</span>
+            )}
           </span>
         ),
       },
@@ -100,6 +104,11 @@ export const SalesList = () => {
         cell: (row) => (
           <span className="flex flex-col">
             <span className="font-mono text-[13px] text-text">{formatAmount(row.amount, row.currency, locale)}</span>
+            {row.pledged && (
+              <span className="font-mono text-[12px] text-neutral-500">
+                {formatAmount(row.pledged.amount, row.pledged.currency, locale)}
+              </span>
+            )}
             {/* Shown only when something went back, so a clean sale stays one line. */}
             {row.refunded_amount != null && (
               <span className="font-mono text-[12px] text-red-300">

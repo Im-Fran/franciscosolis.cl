@@ -1,6 +1,6 @@
 import {useTranslation} from "react-i18next";
 import {NavLink} from "react-router-dom";
-import {BookOpen, CurrencyDollar, Note, Receipt, SquaresFour} from "@phosphor-icons/react";
+import {BookOpen, CurrencyDollar, GearSix, Note, Receipt, SquaresFour} from "@phosphor-icons/react";
 import {cn} from "@/lib/utils.ts";
 import {isGeneralFund, marketplaceRoute} from "@/lib/marketplace/config.ts";
 
@@ -18,9 +18,9 @@ import {isGeneralFund, marketplaceRoute} from "@/lib/marketplace/config.ts";
  * They are shown for every product, including the free ones, because "did anybody donate" is a
  * question about a free product too — and because a product's mode changes.
  *
- * The general fund — the donation link's sales, at `general` — gets only those two. It has no page,
- * no releases and no wiki: the service files its sales as if it were a product so the back office
- * works on it unchanged, and that is all it borrows.
+ * The general fund — the donation link's sales, at `general` — gets those two plus its own Settings
+ * (`/marketplace/donations`). It has no page, no releases and no wiki: the service files its sales as
+ * if it were a product so the back office works on it unchanged, and that is all it borrows.
  */
 export const ProductNav = ({id}: {id: string}) => {
   const {t} = useTranslation(["marketplace_admin"]);
@@ -34,7 +34,13 @@ export const ProductNav = ({id}: {id: string}) => {
     {to: marketplaceRoute.sales(id), label: t("marketplace_admin:nav.sales"), icon: CurrencyDollar, end: false},
     {to: marketplaceRoute.vouchers(id), label: t("marketplace_admin:nav.vouchers"), icon: Receipt, end: false},
   ];
-  const items = isGeneralFund(id) ? money : [...content, ...money];
+  const donationSettings = {
+    to: marketplaceRoute.donations,
+    label: t("marketplace_admin:nav.donation_settings"),
+    icon: GearSix,
+    end: true,
+  };
+  const items = isGeneralFund(id) ? [donationSettings, ...money] : [...content, ...money];
 
   return (
     <nav aria-label={t("marketplace_admin:nav.label")} className="mb-6 flex flex-wrap gap-1">

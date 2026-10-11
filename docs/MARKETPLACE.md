@@ -205,17 +205,28 @@ wrong thing.
 
 `/donate` (and `/donar`, which redirects to it) is the one payment page that is not a product page:
 support for the projects in general, linked from the header of the home page and from the footer of
-every page. The service is `GET /donations` and `POST /donations/checkout`, and five things about it
-are deliberate:
+every page. The service is `GET /donations` and `POST /donations/checkout`, and these things about
+it are deliberate:
 
-- **No minimum and no maximum.** The form checks only what the service would refuse anyway — an
-  amount above zero, written with no more decimals than its currency has. The preset amounts are
-  suggestions, not a floor: a blank box is the hardest part of donating to get past.
+- **It says it is voluntary and entitles to nothing**, in the list beside the form and again under the
+  button — and the receipt says it too. A donation here is not a purchase of anything.
+- **The bounds are the console's, and in pesos.** By default there is no minimum and no maximum; the
+  console can set either (see below). The service compares them with the *converted* charge, and the
+  form applies the same rule so the button is never pressed for something the service will refuse.
+  The preset amounts are suggestions — the ones outside the bounds are not offered — because a blank
+  box is the hardest part of donating to get past. Amounts are read in either convention: `10.000` is
+  ten thousand pesos and `10,50` ten and a half.
 - **The donor picks the currency, MercadoPago charges pesos.** The account settles in CLP, so a
-  donation in dollars or euros is converted by the service at the day's rate and the checkout shows
-  pesos. The page says so *before* the redirect, with the figure it will become, because a checkout
-  in a currency you did not pick reads like a mistake. The preview is computed here from the rates
-  `GET /donations` answers; the charge is computed again by the service, which is the one that counts.
+  donation in dollars or euros is converted by the service with the **Banco Central de Chile**'s rate —
+  the observed dollar for USD, the bank's nominal exchange rate for the rest — and the checkout shows
+  pesos. The page says so *before* the redirect: the rate (`1 USD = $978,61`), the day it was published
+  for, and the pesos it becomes, because a checkout in a currency you did not pick reads like a
+  mistake. The preview is computed here from the rates `GET /donations` answers; the charge is computed
+  again by the service, which is the one that counts.
+- **A message, when the console allows one.** It is read only in the console and by the donor, never
+  published, and the form says so. It survives the sign-in round trip in the tab's session storage
+  rather than in the address.
+- **A closed link says it is closed** instead of showing a form.
 - **A currency with no rate is not offered.** The service still lists it, with `clp_per_unit: null`,
   and the picker leaves it out — pesos never need a rate, so an outage of the rate source costs a
   currency, never the page.
@@ -230,9 +241,12 @@ are deliberate:
 
 A general donation is filed under the product id `general`, and that is how the rest of the site
 meets it: `/account/purchases` links it to `/donate` rather than to a product page that does not
-exist, and shows the amount the donor chose beside the pesos charged. In the console it is reached
-from the **Donations** button on the product list, at `/marketplace/general/sales`, where only Sales
-and Receipts are offered — it has no page, releases or wiki to edit.
+exist, and shows the amount the donor chose beside the pesos charged. In the console the
+**Donations** button on the product list opens `/marketplace/donations`, the link's own settings —
+open or closed, a minimum, a maximum that can be switched off without losing its figure, and whether
+donors may leave a message — beside its Sales and Receipts (`/marketplace/general/…`), where the
+pledged amount and the donor's message are shown on each sale. It has no page, releases or wiki to
+edit, so those tabs are not offered.
 
 ## Downloads
 
@@ -311,6 +325,7 @@ while you are signed in changes nothing until a fresh token carries it.
 | `…/wiki/new`, `…/wiki/:pageId`            | One wiki page                                        |
 | `/marketplace/:id/sales`                  | Its sales, with the totals, and where one is recorded by hand |
 | `…/sales/:saleId`                         | One sale: its facts, its receipts, its refund        |
+| `/marketplace/donations`                  | The donation link's settings — see *The donation link* |
 | `/marketplace/general/sales`              | The donation link's takings — see *The donation link* |
 | `/marketplace/:id/vouchers`               | Every receipt it ever issued, void ones included     |
 

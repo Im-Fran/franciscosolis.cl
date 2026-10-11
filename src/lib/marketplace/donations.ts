@@ -47,21 +47,65 @@ export const presetAmounts = (currency: DonationCurrency): number[] => {
 };
 
 /** Why an amount cannot be donated, as a key the page translates. Null when it can. */
-export type AmountProblem = "empty" | "not_positive" | "decimals" | "below_one_peso" | null;
+export type AmountProblem =
+  | "empty"
+  | "not_positive"
+  | "decimals"
+  | "below_one_peso"
+  | "below_minimum"
+  | "above_maximum"
+  | null;
 
 /**
- * Parses what was typed, accepting a comma as the decimal separator — `10,50` is how half the people
- * this page is for write ten and a half.
+ * Parses what was typed, in either convention: `10.000` is ten thousand pesos to a Chilean and
+ * `10,50` is ten and a half to half the people this page is for, while `1,234.56` is how the other
+ * half write it.
+ *
+ * The rule: when both separators appear, the last one is the decimal point; a separator that appears
+ * more than once, or once followed by exactly three digits, is grouping thousands; anything else is
+ * the decimal point. A three-decimal amount is never valid here — no listed currency has more than
+ * two — so reading `1.000` as a thousand loses nothing.
  */
 export const parseAmount = (raw: string): number | null => {
-  const normalized = raw.trim().replace(/\s/g, "").replace(",", ".");
-  if (normalized === "") return null;
-  const value = Number(normalized);
+  let text = raw.trim().replace(/[\s'’]/g, "");
+  if (text === "") return null;
+  if (!/^\d[\d.,]*$/.test(text)) {
+    /* Not a plain figure — a sign, a letter. `Number` decides, and the checks after it refuse it. */
+    const value = Number(text);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  const lastDot = text.lastIndexOf(".");
+  const lastComma = text.lastIndexOf(",");
+  if (lastDot !== -1 && lastComma !== -1) {
+    const decimal = lastDot > lastComma ? "." : ",";
+    const grouping = decimal === "." ? "," : ".";
+    text = text.split(grouping).join("").replace(decimal, ".");
+  } else {
+    const separator = lastDot !== -1 ? "." : lastComma !== -1 ? "," : null;
+    if (separator) {
+      const parts = text.split(separator);
+      const grouping = parts.length > 2 || (parts.length === 2 && parts[1].length === 3);
+      text = grouping ? parts.join("") : `${parts[0]}.${parts[1]}`;
+    }
+  }
+
+  const value = Number(text);
   return Number.isFinite(value) ? value : null;
 };
 
-/** The same rule the service applies: more than zero, written with no more decimals than the currency. */
-export const checkAmount = (raw: string, currency: DonationCurrency | undefined): AmountProblem => {
+/** The bounds the console set, in CLP, compared with the converted charge as the service does. */
+export type DonationBounds = {minimum: number | null; maximum: number | null};
+
+/**
+ * The same rules the service applies: more than zero, written with no more decimals than the
+ * currency, and — once converted to pesos — inside the bounds the console set.
+ */
+export const checkAmount = (
+  raw: string,
+  currency: DonationCurrency | undefined,
+  bounds: DonationBounds = {minimum: null, maximum: null},
+): AmountProblem => {
   const value = parseAmount(raw);
   if (value === null || !currency) return "empty";
   if (value <= 0) return "not_positive";
@@ -71,6 +115,8 @@ export const checkAmount = (raw: string, currency: DonationCurrency | undefined)
 
   const charged = estimateCharge(value, currency);
   if (charged !== null && charged < 1) return "below_one_peso";
+  if (charged !== null && bounds.minimum !== null && charged < bounds.minimum) return "below_minimum";
+  if (charged !== null && bounds.maximum !== null && charged > bounds.maximum) return "above_maximum";
   return null;
 };
 

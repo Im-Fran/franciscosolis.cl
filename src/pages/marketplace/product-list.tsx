@@ -21,7 +21,7 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {marketplaceApi} from "@/lib/marketplace/client.ts";
-import {GENERAL_FUND_ID, productRoute, marketplaceRoute} from "@/lib/marketplace/config.ts";
+import {productRoute, marketplaceRoute} from "@/lib/marketplace/config.ts";
 import type {Product} from "@/lib/marketplace/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {DataTable} from "@/components/admin/data-table.tsx";
@@ -206,9 +206,9 @@ export const ProductList = () => {
                   <ArrowsDownUp size={16}/> {t("marketplace_admin:list.reorder")}
                 </Button>
               ))}
-            {/* The donation link's takings, which belong to no product and so have no row below. */}
+            {/* The donation link: its switches, then its takings, which belong to no product below. */}
             <Button variant="secondary" asChild>
-              <Link to={marketplaceRoute.sales(GENERAL_FUND_ID)}>
+              <Link to={marketplaceRoute.donations}>
                 <HandHeart size={16}/> {t("marketplace_admin:general_fund.open")}
               </Link>
             </Button>

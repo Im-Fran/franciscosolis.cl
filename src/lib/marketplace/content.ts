@@ -245,7 +245,7 @@ export const marketplaceContent = {
    * Requires a session, like every payment: it is what gives the donation a receipt and a place in
    * the account's history. The amount is in `currency`'s major unit — `10.5` dollars, not cents.
    */
-  donate: (body: {amount: number; currency: string; locale?: string; return_path?: string}) =>
+  donate: (body: {amount: number; currency: string; message?: string; locale?: string; return_path?: string}) =>
     http.request<DonationCheckout>("/donations/checkout", {method: "POST", json: body}),
 };
 

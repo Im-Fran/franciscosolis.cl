@@ -2,25 +2,26 @@ import {createAuthClient} from "@/lib/auth/auth-client.ts";
 import {createHttpClient} from "@/lib/auth/client.ts";
 import {MARKETPLACE_AUTH_CONFIG, MARKETPLACE_BASE_URL} from "@/lib/marketplace/config.ts";
 import type {
+  ContentStatus,
+  DonationSettings,
+  DownloadRecord,
+  MarketplaceStatus,
+  NewProduct,
+  NewRelease,
+  NewReleaseFile,
+  NewWikiPage,
   Product,
   ProductPayload,
   ProductRelease,
-  ContentStatus,
-  DownloadRecord,
-  NewProduct,
-  NewReleaseFile,
-  NewRelease,
-  NewWikiPage,
-  MarketplaceStatus,
   Purchase,
   RefundReason,
   ReleaseFile,
   ReleaseFilePayload,
+  ReleasePayload,
   ReorderItem,
   Sale,
   SaleDetail,
   SalesSummary,
-  ReleasePayload,
   Voucher,
   WikiNode,
   WikiPage,
@@ -304,6 +305,22 @@ export const marketplaceApi = {
         `/admin/products/${seg(productId)}/downloads${query({...params})}`,
         {signal},
       ),
+  },
+
+  /* ── The donation link ──────────────────────────────────────────────────── */
+
+  /**
+   * The donation link's switches: open or closed, a minimum, an optional maximum and whether a donor
+   * may leave a message. Its takings are not here — they are the `general` fund's sales, reached
+   * through `sales` above like any product's.
+   */
+  donations: {
+    settings: (signal?: AbortSignal) => http.request<DonationSettings>("/admin/donations/settings", {signal}),
+
+    /** Changes the fields sent and keeps the rest. Amounts are whole pesos, or null for none. */
+    updateSettings: (
+      body: Partial<Pick<DonationSettings, "enabled" | "minimum_amount" | "maximum_enabled" | "maximum_amount" | "messages_enabled">>,
+    ) => http.request<DonationSettings>("/admin/donations/settings", {method: "PATCH", json: body}),
   },
 
   /* ── Vouchers ───────────────────────────────────────────────────────────── */

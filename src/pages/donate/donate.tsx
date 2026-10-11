@@ -1,11 +1,12 @@
 import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
+import type {TFunction} from "i18next";
 import {Link} from "react-router-dom";
-import {ArrowLeft, ArrowSquareOut, GlobeSimple, HandHeart, Heart, SignIn} from "@phosphor-icons/react";
+import {ArrowLeft, ArrowSquareOut, Bank, GlobeSimple, HandHeart, Heart, LockKey, SignIn} from "@phosphor-icons/react";
 import {BrandLockup} from "@/components/brand";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
-import {Input, Select} from "@/components/ui/input.tsx";
+import {Input, Select, Textarea} from "@/components/ui/input.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useLanguageToggle} from "@/hooks/useLanguageToggle.ts";
 import {useAuth} from "@/lib/auth/auth-context.ts";
@@ -14,6 +15,7 @@ import {marketplaceContent} from "@/lib/marketplace/content.ts";
 import {
   checkAmount,
   DONATE_ROUTE,
+  type DonationBounds,
   estimateCharge,
   parseAmount,
   presetAmounts,
@@ -21,7 +23,7 @@ import {
   useDonationOptions,
   useDonationReturn,
 } from "@/lib/marketplace/donations.ts";
-import {formatAmount} from "@/lib/marketplace/money.ts";
+import {formatAmount, formatAmountWithCode} from "@/lib/marketplace/money.ts";
 import type {DonationCurrency} from "@/lib/marketplace/types.ts";
 import {cn} from "@/lib/utils.ts";
 
@@ -32,10 +34,19 @@ import {cn} from "@/lib/utils.ts";
  * the form survives the sign-in a donation needs: the page sends the visitor through the site's own
  * sign-in with what they typed in the return address, and they land back on the same form.
  *
- * What it asks is deliberately small: a currency, an amount, a button. There is no minimum and no
- * maximum, the currency is the donor's choice, and the one thing the page has to say out loud is
- * that MercadoPago charges in Chilean pesos — so a donation in dollars shows the pesos it becomes
- * before anybody leaves for the checkout.
+ * What it asks is deliberately small: a currency, an amount, a button — and a message, when the
+ * console has turned messages on. Three things it has to say out loud, because each is the kind of
+ * thing somebody finds out too late otherwise:
+ *
+ * - **It is voluntary and entitles to nothing.** A donation here is not a purchase of anything.
+ * - **It is charged in Chilean pesos.** MercadoPago settles this account in CLP, so a donation in
+ *   dollars is converted with the Banco Central de Chile's rate, and the page shows that rate, its date
+ *   and the pesos it becomes before anybody leaves for the checkout.
+ * - **The bounds, when there are any.** The console may set a minimum and a maximum, in pesos, which
+ *   the service checks against the converted charge; the page applies the same rule so the button
+ *   is never pressed for something the service will refuse.
+ *
+ * When the console closes the link the page says so instead of showing a form.
  */
 export const Donate = () => {
   const {t, i18n} = useTranslation(["donate", "common"]);
@@ -57,6 +68,18 @@ export const Donate = () => {
     () => initial.get("currency")?.toUpperCase() ?? (language === "es" ? "CLP" : "USD"),
   );
   const [amount, setAmount] = useState(() => initial.get("amount") ?? "");
+  /*
+   * The message survives the sign-in round trip in this tab's storage rather than in the address, where
+   * a paragraph of somebody's words has no business being. Storage can be unavailable; then it is
+   * simply not kept.
+   */
+  const [message, setMessage] = useState(() => {
+    try {
+      return sessionStorage.getItem(MESSAGE_KEY) ?? "";
+    } catch {
+      return "";
+    }
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,7 +90,11 @@ export const Donate = () => {
     currencies.find((entry) => entry.code === currencyCode) ?? currencies.find((entry) => entry.code === settlement);
   const unavailable = (options.data?.currencies.length ?? 0) - currencies.length;
 
-  const problem = checkAmount(amount, currency);
+  const enabled = options.data?.enabled ?? true;
+  const bounds = {minimum: options.data?.minimum_amount ?? null, maximum: options.data?.maximum_amount ?? null};
+  const messagesEnabled = options.data?.messages_enabled ?? false;
+  const messageMax = options.data?.message_max_length ?? 500;
+  const problem = checkAmount(amount, currency, bounds);
   const value = parseAmount(amount);
   const charge = value !== null && currency && problem === null ? estimateCharge(value, currency) : null;
   const converted = currency !== undefined && currency.code !== settlement;
@@ -78,6 +105,11 @@ export const Donate = () => {
 
     /* No account yet: the donation has nowhere to live. Sign in and come back to this same form. */
     if (status !== "authenticated") {
+      try {
+        if (message.trim()) sessionStorage.setItem(MESSAGE_KEY, message);
+      } catch {
+        /* Not kept, then. The amount and the currency still ride on the return address. */
+      }
       const prefill = new URLSearchParams({amount, currency: currency.code});
       await client.flow.startAuthorization(`${DONATE_ROUTE}?${prefill}`);
       return;
@@ -88,9 +120,15 @@ export const Donate = () => {
       const checkout = await marketplaceContent.donate({
         amount: value,
         currency: currency.code,
+        ...(messagesEnabled && message.trim() ? {message: message.trim()} : {}),
         locale: language,
         return_path: DONATE_ROUTE,
       });
+      try {
+        sessionStorage.removeItem(MESSAGE_KEY);
+      } catch {
+        /* Nothing was kept. */
+      }
       /* Off to the provider. Nothing after this line runs — the tab is theirs now. */
       window.location.assign(checkout.checkout_url);
     } catch (cause) {
@@ -134,7 +172,7 @@ export const Donate = () => {
             <h1 className="text-[clamp(36px,6vw,64px)] leading-[1.02] text-text">{t("donate:title")}</h1>
             <p className="max-w-xl text-[16px] leading-[1.6] text-neutral-300">{t("donate:body")}</p>
             <ul className="flex max-w-xl flex-col gap-2 text-[14px] text-neutral-400">
-              {(["free", "currency", "receipt"] as const).map((key) => (
+              {(["voluntary", "free", "pesos", "receipt"] as const).map((key) => (
                 <li key={key} className="flex items-start gap-2">
                   <Heart size={14} weight="fill" className="mt-1 shrink-0 text-accent-400"/>
                   <span>{t(`donate:points.${key}`)}</span>
@@ -156,6 +194,10 @@ export const Donate = () => {
                 <Button variant="ghost" size="sm" className="mt-3" onClick={options.reload}>
                   {t("common:retry")}
                 </Button>
+              </Alert>
+            ) : !enabled ? (
+              <Alert tone="info" title={t("donate:closed_title")}>
+                {t("donate:closed_body")}
               </Alert>
             ) : (
               <form
@@ -207,13 +249,15 @@ export const Donate = () => {
                             : `donate:problems.${problem}`,
                           {decimals: currency?.minor_units ?? 0},
                         )
-                      : t("donate:no_limits")}
+                      : boundsHint(t, bounds, settlement, locale)}
                   </span>
                 </div>
 
                 {currency && (
                   <div className="flex flex-wrap gap-2" role="group" aria-label={t("donate:presets_label")}>
-                    {presetAmounts(currency).map((preset) => (
+                    {presetAmounts(currency)
+                      .filter((preset) => withinBounds(estimateCharge(preset, currency), bounds))
+                      .map((preset) => (
                       <button
                         key={preset}
                         type="button"
@@ -231,16 +275,62 @@ export const Donate = () => {
                   </div>
                 )}
 
-                {charge !== null && currency && (
-                  <p className="rounded-[var(--radius-md)] bg-bg/50 px-4 py-3 text-[13px] leading-relaxed text-neutral-300">
-                    {converted
-                      ? t("donate:preview_converted", {
-                          charge: formatAmount(charge, settlement, locale),
-                          rate: formatAmount(currency.clp_per_unit ?? 0, settlement, locale),
+                {/*
+                  * The charge, said before anybody leaves for the checkout: always pesos, and for another
+                  * currency the Banco Central de Chile rate it was converted with and the day it is for.
+                  */}
+                {currency && (
+                  <div className="flex flex-col gap-2 rounded-[var(--radius-md)] bg-bg/50 px-4 py-3 text-[13px] leading-relaxed text-neutral-300">
+                    <p className="flex items-start gap-2">
+                      <Bank size={16} className="mt-0.5 shrink-0 text-accent-300"/>
+                      <span>
+                        {converted
+                          ? t("donate:clp_notice_converted", {
+                              code: currency.code,
+                              source: options.data?.rate_source ?? "Banco Central de Chile",
+                            })
+                          : t("donate:clp_notice")}
+                      </span>
+                    </p>
+                    {converted && currency.clp_per_unit !== null && (
+                      <p className="text-neutral-400">
+                        {t("donate:rate_line", {
                           code: currency.code,
-                        })
-                      : t("donate:preview", {charge: formatAmount(charge, settlement, locale)})}
-                  </p>
+                          rate: formatRate(currency.clp_per_unit, locale),
+                          date: formatRateDate(currency.rate_date, locale),
+                        })}
+                      </p>
+                    )}
+                    {charge !== null && (
+                      <p className="flex items-baseline justify-between gap-3 border-t border-neutral-800 pt-2">
+                        <span className="text-neutral-400">{t("donate:charge_label")}</span>
+                        <span className="font-display text-xl text-text">
+                          {formatAmountWithCode(charge, settlement, locale)}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {messagesEnabled && (
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="donation-message" className="text-sm font-medium text-neutral-300">
+                      {t("donate:message_label")}
+                    </label>
+                    <Textarea
+                      id="donation-message"
+                      rows={3}
+                      maxLength={messageMax}
+                      placeholder={t("donate:message_placeholder")}
+                      value={message}
+                      onChange={(event) => setMessage(event.target.value)}
+                      aria-describedby="donation-message-hint"
+                    />
+                    <span id="donation-message-hint" className="flex justify-between gap-3 text-[12px] text-neutral-500">
+                      <span>{t("donate:message_hint")}</span>
+                      <span>{message.length}/{messageMax}</span>
+                    </span>
+                  </div>
                 )}
 
                 {error && (
@@ -258,6 +348,9 @@ export const Donate = () => {
                   {status === "authenticated" ? t("donate:donate") : t("donate:sign_in_and_donate")}
                 </Button>
 
+                <p className="flex items-start gap-2 text-[12px] leading-relaxed text-neutral-400">
+                  <LockKey size={14} className="mt-0.5 shrink-0"/> {t("donate:voluntary_notice")}
+                </p>
                 <p className="text-[12px] leading-relaxed text-neutral-500">
                   {status === "authenticated" ? t("donate:account_hint") : t("donate:sign_in_hint")}
                 </p>
@@ -269,6 +362,39 @@ export const Donate = () => {
       </section>
     </div>
   );
+};
+
+/** Where the message waits while the donor signs in. Per tab, and removed once the checkout opens. */
+const MESSAGE_KEY = "fs.donate.message";
+
+/** Whether a charge in pesos sits inside the console's bounds. An unknown charge is not filtered out. */
+const withinBounds = (charge: number | null, bounds: DonationBounds) =>
+  charge === null ||
+  ((bounds.minimum === null || charge >= bounds.minimum) && (bounds.maximum === null || charge <= bounds.maximum));
+
+/** The line under the amount: the bounds in pesos, or that there are none. */
+const boundsHint = (t: TFunction, bounds: DonationBounds, settlement: string, locale: string) => {
+  const money = (value: number) => formatAmountWithCode(value, settlement, locale);
+  if (bounds.minimum !== null && bounds.maximum !== null) {
+    return t("donate:bounds.between", {minimum: money(bounds.minimum), maximum: money(bounds.maximum)});
+  }
+  if (bounds.minimum !== null) return t("donate:bounds.from", {minimum: money(bounds.minimum)});
+  if (bounds.maximum !== null) return t("donate:bounds.up_to", {maximum: money(bounds.maximum)});
+  return t("donate:no_limits");
+};
+
+/** A rate as the bank publishes it: pesos with two decimals, `$978,61`. */
+const formatRate = (rate: number, locale: string) =>
+  new Intl.NumberFormat(locale, {style: "currency", currency: "CLP", minimumFractionDigits: 2, maximumFractionDigits: 2}).format(rate);
+
+/** The day a rate is for. Formatted in UTC because it is a calendar day, not a moment. */
+const formatRateDate = (date: string | null, locale: string) => {
+  if (!date) return "—";
+  try {
+    return new Intl.DateTimeFormat(locale, {dateStyle: "long", timeZone: "UTC"}).format(new Date(`${date}T00:00:00Z`));
+  } catch {
+    return date;
+  }
 };
 
 /** The currency's name in the reader's language, from `Intl` rather than from a list of our own. */
