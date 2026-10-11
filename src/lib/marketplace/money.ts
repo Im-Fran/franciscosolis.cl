@@ -26,3 +26,13 @@ export const formatAmount = (amount: number, currency: string, locale: string): 
     return `${amount} ${currency}`;
   }
 };
+
+/**
+ * An amount with its currency code beside it, said once: `$9.786 CLP` in Chilean Spanish, where the
+ * sign alone is ambiguous with the dollar, and `CLP 9,786` in English, where `Intl` already writes the
+ * code — appending it there would read `CLP 9,786 CLP`.
+ */
+export const formatAmountWithCode = (amount: number, currency: string, locale: string): string => {
+  const formatted = formatAmount(amount, currency, locale);
+  return formatted.includes(currency) ? formatted : `${formatted} ${currency}`;
+};

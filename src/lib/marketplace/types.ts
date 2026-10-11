@@ -201,6 +201,13 @@ export type Purchase = {
   source?: SaleSource | string;
   /** What went back, when something did. */
   refunded_amount?: number | null;
+  /**
+   * What the donor chose, for a donation named in another currency than the pesos it was charged in.
+   * `amount`/`currency` are the charge; this is the figure the donor typed. Null otherwise.
+   */
+  pledged?: {amount: number; currency: string} | null;
+  /** What the donor wrote with a general donation. Only ever shown to them and to the back office. */
+  message?: string | null;
   payment_id?: string | null;
   reference?: string;
   approved_at?: string | null;
@@ -438,6 +445,58 @@ export type Checkout = {
   amount: number;
   currency: string;
   checkout_url: string;
+};
+
+/** One currency the donation link accepts, and what one unit of it is worth in pesos today. */
+export type DonationCurrency = {
+  code: string;
+  name: string;
+  /** How many decimals it is written with: 0 for CLP and JPY, 2 for the rest. */
+  minor_units: number;
+  /** Pesos per unit. Null when the service has no rate for it right now — it cannot be offered then. */
+  clp_per_unit: number | null;
+  /** The day the Banco Central de Chile published that rate for, `YYYY-MM-DD`. Null for the peso. */
+  rate_date: string | null;
+};
+
+/** `GET /donations`: what the donation link accepts. */
+export type DonationOptions = {
+  /** Whether the link takes donations at all right now. The console switches it. */
+  enabled: boolean;
+  /** What every donation is actually charged in. Always CLP: MercadoPago settles the account in pesos. */
+  settlement_currency: string;
+  /** Smallest charge accepted, in CLP, compared with the converted amount. Null: anything. */
+  minimum_amount: number | null;
+  /** Largest charge accepted, in CLP. Null: no ceiling. */
+  maximum_amount: number | null;
+  /** Whether a donor may leave a message, and how long it may be. */
+  messages_enabled: boolean;
+  message_max_length: number;
+  /** Where the rates come from — the Banco Central de Chile. */
+  rate_source: string;
+  currencies: DonationCurrency[];
+};
+
+/** The donation link's switches, as the console reads and writes them. Amounts in whole CLP. */
+export type DonationSettings = {
+  enabled: boolean;
+  minimum_amount: number | null;
+  maximum_enabled: boolean;
+  /** Kept while the maximum is switched off, so switching it back on does not lose the figure. */
+  maximum_amount: number | null;
+  messages_enabled: boolean;
+  message_max_length: number;
+  updated_at: string | null;
+  updated_by: string | null;
+};
+
+/** `POST /donations/checkout`: a donation opened, and where to send the browser. */
+export type DonationCheckout = Checkout & {
+  /** What the donor chose, when it was not pesos. */
+  pledged: {amount: number; currency: string} | null;
+  /** Pesos per unit the charge was computed with. Null for a donation in pesos. */
+  exchange_rate: number | null;
+  rate_date: string | null;
 };
 
 /** One served download, as the account that made it reads it back. */

@@ -11,7 +11,40 @@
     "releases": "Versiones",
     "wiki": "Wiki",
     "sales": "Ventas",
-    "vouchers": "Comprobantes"
+    "vouchers": "Comprobantes",
+    "donation_settings": "Ajustes"
+  },
+  "general_fund": {
+    "name": "el link de donación",
+    "open": "Donaciones"
+  },
+  "donations": {
+    "title": "Donaciones",
+    "description": "El link de donación en /donate: apoyo a los proyectos en general. Sus pagos están en Ventas y Comprobantes.",
+    "open_page": "Abrir la página de donación",
+    "panel_title": "Ajustes",
+    "updated": "Último cambio: {{when}}, por {{who}}.",
+    "never_updated": "Sigue con los valores por defecto: abierto, sin mínimo, sin máximo y sin mensajes.",
+    "enabled_label": "Aceptar donaciones",
+    "enabled_on": "La página de donación recibe donaciones.",
+    "enabled_off": "La página de donación indica que las donaciones están cerradas y no recibe ninguna.",
+    "minimum_label": "Mínimo (CLP)",
+    "no_minimum": "Sin mínimo",
+    "minimum_hint_none": "Déjalo vacío para no tener mínimo. Se compara con el monto cobrado en pesos, después de convertir otras monedas.",
+    "minimum_hint_set": "Se rechazan donaciones bajo {{amount}}, después de convertir otras monedas a pesos.",
+    "maximum_enabled_label": "Limitar la donación máxima",
+    "maximum_enabled_hint": "Al desactivarlo se conserva el monto de abajo, así que al reactivarlo no se pierde.",
+    "maximum_label": "Máximo (CLP)",
+    "maximum_hint_off": "No aplica mientras el límite esté desactivado.",
+    "maximum_hint_set": "Se rechazan donaciones sobre {{amount}}, después de convertir otras monedas a pesos.",
+    "messages_label": "Permitir que los donantes dejen un mensaje",
+    "messages_hint": "Hasta {{count}} caracteres, visibles solo aquí, en la venta. Nunca se publican.",
+    "save": "Guardar ajustes",
+    "saved": "Ajustes de donaciones guardados.",
+    "cache_note": "La página de donación toma los cambios en menos de un minuto.",
+    "invalid_amount": "Los montos son pesos enteros, escritos solo con dígitos.",
+    "maximum_needed": "Un máximo activado necesita un monto.",
+    "minimum_above_maximum": "El mínimo no puede ser mayor que el máximo."
   },
   "sign_in": {
     "title": "Consola del marketplace",
@@ -444,7 +477,9 @@
         "account": "Cuenta",
         "recorded_by": "Registrada por",
         "email": "Correo del comprador",
-        "note": "Nota"
+        "note": "Nota",
+        "pledged": "Monto elegido",
+        "message": "Mensaje del donante"
       }
     },
     "refund": {

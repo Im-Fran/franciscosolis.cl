@@ -64,6 +64,23 @@ export const productRoute = {
   contact: (slug: string) => `${PRODUCT_ROUTE}/${slug}/contact`,
 } as const;
 
+/**
+ * The donation link, for supporting the projects in general rather than one product.
+ *
+ * Here rather than beside its hooks in `donations.ts` because the header and the footer of every page
+ * link to it, and importing that module would put the store client in the landing page's bundle.
+ */
+export const DONATE_ROUTE = "/donate";
+
+/**
+ * The scope the service files general donations under, in place of a product id: what a purchase
+ * row, a receipt and the console's sales screens carry for them. The console addresses the fund's
+ * sales as if it were a product (`/marketplace/general/sales`), because that is how the service does.
+ */
+export const GENERAL_FUND_ID = "general";
+
+export const isGeneralFund = (productId: string | null | undefined) => productId === GENERAL_FUND_ID;
+
 export const MARKETPLACE_CLIENT_ID =
   import.meta.env.VITE_MARKETPLACE_CLIENT_ID ?? "franciscosolis-marketplace";
 
@@ -125,4 +142,9 @@ export const marketplaceRoute = {
   sales: (id: string) => `${MARKETPLACE_ADMIN_ROUTE}/${id}/sales`,
   saleItem: (id: string, saleId: string) => `${MARKETPLACE_ADMIN_ROUTE}/${id}/sales/${saleId}`,
   vouchers: (id: string) => `${MARKETPLACE_ADMIN_ROUTE}/${id}/vouchers`,
+  /**
+   * The donation link's own switches. A static segment, so it wins over `:id` whatever the order of
+   * the routes; its takings are `sales(GENERAL_FUND_ID)`, the general fund's money sections.
+   */
+  donations: `${MARKETPLACE_ADMIN_ROUTE}/donations`,
 } as const;

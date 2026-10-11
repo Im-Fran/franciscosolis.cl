@@ -5,6 +5,7 @@ import {
   ArrowClockwise,
   ArrowSquareOut,
   ArrowsDownUp,
+  HandHeart,
   MagnifyingGlass,
   PencilSimple,
   Plus,
@@ -205,6 +206,12 @@ export const ProductList = () => {
                   <ArrowsDownUp size={16}/> {t("marketplace_admin:list.reorder")}
                 </Button>
               ))}
+            {/* The donation link: its switches, then its takings, which belong to no product below. */}
+            <Button variant="secondary" asChild>
+              <Link to={marketplaceRoute.donations}>
+                <HandHeart size={16}/> {t("marketplace_admin:general_fund.open")}
+              </Link>
+            </Button>
             <Button asChild>
               <Link to={marketplaceRoute.new}>
                 <Plus size={16}/> {t("marketplace_admin:list.new")}

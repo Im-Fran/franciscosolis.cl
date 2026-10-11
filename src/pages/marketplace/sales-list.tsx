@@ -10,7 +10,7 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {marketplaceApi} from "@/lib/marketplace/client.ts";
-import {marketplaceRoute} from "@/lib/marketplace/config.ts";
+import {isGeneralFund, marketplaceRoute} from "@/lib/marketplace/config.ts";
 import {formatAmount} from "@/lib/marketplace/money.ts";
 import {PURCHASE_STATUSES, SALE_SOURCES} from "@/lib/marketplace/types.ts";
 import type {Sale} from "@/lib/marketplace/types.ts";
@@ -53,9 +53,14 @@ export const SalesList = () => {
     email,
   ]);
 
+  /* The general fund has no product row to read; its name comes from the translations instead. */
   const product = useResource(
-    useCallback((signal: AbortSignal) => marketplaceApi.products.get(id, signal), [id]),
+    useCallback(
+      (signal: AbortSignal) => (isGeneralFund(id) ? Promise.resolve(null) : marketplaceApi.products.get(id, signal)),
+      [id],
+    ),
   );
+  const name = isGeneralFund(id) ? t("marketplace_admin:general_fund.name") : (product.data?.name ?? "");
   const sales = useResource(
     useCallback((signal: AbortSignal) => marketplaceApi.sales.list(id, filters, signal), [id, filters]),
   );
@@ -85,6 +90,10 @@ export const SalesList = () => {
           <span className="flex flex-col">
             <span className="text-sm text-text">{row.email}</span>
             {row.note && <span className="text-[12px] text-neutral-500">{row.note}</span>}
+            {/* A donor's own words, quoted so they never read as the editor's note. */}
+            {row.message && (
+              <span className="line-clamp-2 text-[12px] text-accent-200/80">“{row.message}”</span>
+            )}
           </span>
         ),
       },
@@ -95,6 +104,11 @@ export const SalesList = () => {
         cell: (row) => (
           <span className="flex flex-col">
             <span className="font-mono text-[13px] text-text">{formatAmount(row.amount, row.currency, locale)}</span>
+            {row.pledged && (
+              <span className="font-mono text-[12px] text-neutral-500">
+                {formatAmount(row.pledged.amount, row.pledged.currency, locale)}
+              </span>
+            )}
             {/* Shown only when something went back, so a clean sale stays one line. */}
             {row.refunded_amount != null && (
               <span className="font-mono text-[12px] text-red-300">
@@ -171,7 +185,7 @@ export const SalesList = () => {
     <>
       <PageHeader
         title={t("marketplace_admin:sales.title")}
-        description={t("marketplace_admin:sales.description", {name: product.data?.name ?? ""})}
+        description={t("marketplace_admin:sales.description", {name})}
         back={{to: marketplaceRoute.list, label: t("marketplace_admin:editor.back")}}
         actions={
           <Button onClick={() => setRecording(true)}>

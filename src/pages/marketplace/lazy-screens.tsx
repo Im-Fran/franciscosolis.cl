@@ -49,3 +49,6 @@ export const SaleDetail = lazy(() =>
 export const VoucherList = lazy(() =>
   import("@/pages/marketplace/voucher-list.tsx").then((m) => ({default: m.VoucherList})),
 );
+export const DonationSettingsScreen = lazy(() =>
+  import("@/pages/marketplace/donation-settings.tsx").then((m) => ({default: m.DonationSettingsScreen})),
+);
