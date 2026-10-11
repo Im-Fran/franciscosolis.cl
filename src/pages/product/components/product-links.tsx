@@ -56,8 +56,8 @@ const STORE_KINDS = new Set(["app_store", "play_store"]);
  * default anyway.
  */
 const APP_STORE_BADGES: Record<string, string> = {
-  en: cdn("badges/mac-app-store-en.svg"),
-  es: cdn("badges/mac-app-store-es.svg"),
+  en: cdn("badges/download/mac-app-store/en/dark.svg"),
+  es: cdn("badges/download/mac-app-store/es/dark.svg"),
 };
 
 /*
