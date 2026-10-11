@@ -61,6 +61,19 @@ systems ask the page's own origin for them by convention. The old `/brand/{svg,p
 `/badges/*` and profile picture paths on franciscosolis.cl answer with a 301 to the CDN
 (`public/_redirects`), since email signatures and cached link previews still point at them.
 
+### Store badges
+
+The App Store, Mac App Store and Google Play badges live in
+`cdn/badges/{action}/{store}/{locale}/{theme}.{svg,png}` — `download` or `pre-order`; `app-store`,
+`mac-app-store` or `google-play`; `en` or `es`; `dark` or `light` — exactly as each store publishes
+them. Not every combination exists: Google Play only publishes black badges, so it has no `light`,
+and its "Pre-register" badge (filed under `pre-order`) only comes as a 270 × 80 PNG.
+
+<https://cdn.franciscosolis.cl/badges/index.json> lists every badge with its path, URL and size, so
+nobody has to guess which combinations exist. It is generated from the folder by
+`pnpm badges:index` (`scripts/badges-index.mjs`) and committed; `pnpm cdn:sync` refuses to upload
+while it is out of date, so run it after adding or removing a badge.
+
 ## The downloadable kit
 
 The `/brand` page offers the whole set as one archive,
