@@ -1,0 +1,692 @@
+{
+  "app_name": "Custom apps",
+  "shell": {
+    "label": "Custom apps sections",
+    "overview": "Overview",
+    "companies": "Companies",
+    "contacts": "Contacts",
+    "apps": "Apps",
+    "audit": "Audit log",
+    "sign_out": "Sign out"
+  },
+  "sign_in": {
+    "title": "Custom apps",
+    "subtitle": "Signing you in…",
+    "working": "Taking you to the sign-in screen.",
+    "owner_only": "Private panel.",
+    "back_home": "Back to the site",
+    "retry": "Try again",
+    "error_title": "We could not start the sign-in",
+    "error_subtitle": "Nothing was handed over, so it is safe to try again."
+  },
+  "callback": {
+    "title": "Signing you in",
+    "subtitle": "One moment.",
+    "working": "Finishing the sign-in…",
+    "error_title": "We could not finish the sign-in",
+    "error_subtitle": "Nothing was granted, so it is safe to start again.",
+    "retry": "Start again",
+    "back_home": "Back to the site"
+  },
+  "errors": {
+    "network": "The service could not be reached. Check your connection and try again.",
+    "session-expired": "Your session has ended. Sign in again to continue.",
+    "missing-code": "This address is missing the authorization code the provider should have sent.",
+    "missing-transaction": "This browser has no record of the sign-in that started this link. Start again from the sign-in page.",
+    "state-mismatch": "The sign-in could not be verified. Start again from the sign-in page.",
+    "unexpected": "Something went wrong on our side. Try again in a moment."
+  },
+  "no_access": {
+    "title": "This panel is not open to you",
+    "subtitle": "This account is signed in, but the custom-apps service does not let it in.",
+    "subtitle_email": "{{email}} is signed in, but the custom-apps service does not let it in.",
+    "alert_title": "What is missing",
+    "alert_body": "The account needs the custom-apps:admin permission and a verified @franciscosolis.cl address. Sign in again afterwards so a fresh token carries it — a permission granted while you were signed in changes nothing until then.",
+    "sign_out": "Sign out",
+    "back_home": "Back to the site"
+  },
+  "copy_aria": "Copy {{label}}",
+  "copy_failed": "The clipboard is not available here. Select the value and copy it by hand.",
+  "no_matches": "Nothing matches “{{search}}”.",
+  "updated_at": "Last saved {{date}}",
+  "fields": {
+    "address": "Address",
+    "notes": "Notes"
+  },
+  "validation": {
+    "required": "This field is required.",
+    "too_long": "Keep it under {{max}} characters."
+  },
+  "rut": {
+    "format": "Enter a RUT like 12.345.678-5.",
+    "check_digit": "The check digit does not match. Check the number for a typo."
+  },
+  "states": {
+    "active": "Active",
+    "grace": "Grace",
+    "maintenance": "Maintenance",
+    "suspended": "Suspended"
+  },
+  "lifecycle": {
+    "active": "Active",
+    "revoked": "Revoked"
+  },
+  "kinds": {
+    "web": "Web",
+    "desktop": "Desktop",
+    "android": "Android",
+    "kiosk": "Kiosk"
+  },
+  "kinds_hint": {
+    "web": "Runs in a browser and loads the SDK with a script tag.",
+    "desktop": "Installed on Windows, macOS or Linux.",
+    "android": "An Android app.",
+    "kiosk": "A dedicated device, usually on all day."
+  },
+  "platforms": {
+    "windows": "Windows",
+    "macos": "macOS",
+    "linux": "Linux",
+    "android": "Android",
+    "web": "Web"
+  },
+  "channels": {
+    "stable": "Stable",
+    "beta": "Beta"
+  },
+  "presence": {
+    "ping": "Heartbeat (ping)",
+    "socket": "Live connection (socket)"
+  },
+  "modules": {
+    "metrics": "Metrics",
+    "events": "Usage events"
+  },
+  "modules_hint": {
+    "metrics": "CPU, memory, disk, network, battery and power samples.",
+    "events": "Sessions, screens and actions the app reports."
+  },
+  "roles": {
+    "owner": "Owner",
+    "technical": "Technical",
+    "billing": "Billing",
+    "maintenance_approver": "Approves maintenance",
+    "none": "No role"
+  },
+  "roles_hint": {
+    "owner": "Decides about the app.",
+    "technical": "Talks about the code, the servers and the devices.",
+    "billing": "Receives invoices and payment matters.",
+    "maintenance_approver": "Signs off maintenance windows."
+  },
+  "weekdays": {
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday",
+    "sun": "Sunday"
+  },
+  "weekdays_short": {
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "overview": {
+    "title": "Overview",
+    "description": "Every client app at a glance. Refreshes on its own every 30 seconds.",
+    "connected": "Connected now",
+    "connected_detail": "of the active installations · {{total}} enrolled in total",
+    "needs_review": "Needs review",
+    "needs_review_detail": "New devices nobody has looked at yet.",
+    "revoked": "Revoked",
+    "revoked_detail": "Installations cut off for good.",
+    "apps": "Apps",
+    "companies": "Companies",
+    "contacts": "Contacts",
+    "review_title": "Waiting for review",
+    "review_description": "Oldest first. Check that each one is a device you expected.",
+    "review_empty": "Nothing waiting for review.",
+    "recent_title": "Recently enrolled",
+    "recent_description": "The last installations to sign up, newest first.",
+    "recent_empty": "No installation has enrolled yet."
+  },
+  "companies": {
+    "title": "Companies",
+    "description": "The clients apps are built for — companies and natural persons alike.",
+    "panel_title": "All clients",
+    "count_one": "{{count}} client",
+    "count_other": "{{count}} clients",
+    "search": "Search by name, trade name or RUT",
+    "new": "New client",
+    "new_title": "New client",
+    "new_description": "A company or a natural person. Contacts and apps are added once it exists.",
+    "edit_title": "Client",
+    "back": "All clients",
+    "details": "Details",
+    "details_hint": "How the client is identified, on paper and in conversation.",
+    "company": "Company",
+    "person": "Natural person",
+    "empty_title": "No clients yet",
+    "empty_description": "Add the first company or person you built an app for.",
+    "columns": {
+      "name": "Name",
+      "rut": "RUT",
+      "kind": "Type",
+      "apps": "Apps",
+      "contacts": "Contacts",
+      "updated": "Updated"
+    },
+    "fields": {
+      "kind": "Type of client",
+      "legal_name": "Legal name",
+      "full_name": "Full name",
+      "trade_name": "Trade name",
+      "rut": "RUT",
+      "business_activity": "Business activity"
+    },
+    "hints": {
+      "legal_name": "The razón social, as it appears on invoices.",
+      "trade_name": "The name people actually use. Optional.",
+      "rut": "Dots and dashes are fine; it is checked and stored as 12345678-5.",
+      "business_activity": "The giro registered with the SII."
+    },
+    "apps_title": "Apps",
+    "apps_description": "Everything built for this client.",
+    "apps_empty": "No apps for this client yet.",
+    "new_app": "New app",
+    "delete_title": "Delete this client?",
+    "delete_body": "“{{name}}” and its links to contacts will be removed. The contacts themselves stay. A client that still has apps cannot be deleted — delete or move the apps first."
+  },
+  "company_contacts": {
+    "title": "Contacts",
+    "description": "The people at this client and what each of them is there for.",
+    "add": "Link a contact",
+    "create": "New contact",
+    "add_title": "Link a contact",
+    "edit_title": "Roles of {{name}}",
+    "pick": "Contacts",
+    "no_candidates": "No contact matches. Create one first, then link it here.",
+    "already": "Already linked",
+    "roles_for": "What {{name}} does at this client",
+    "primary": "Primary",
+    "primary_label": "Primary contact — the first person to call. Replaces the current one.",
+    "link": "Link",
+    "linked": "Contact linked.",
+    "unlink": "Unlink",
+    "unlinked": "Contact unlinked.",
+    "unlink_title": "Unlink this contact?",
+    "unlink_body": "{{name}} will no longer be listed at this client. The contact itself is kept.",
+    "edit_aria": "Edit the roles of {{name}}",
+    "unlink_aria": "Unlink {{name}}",
+    "empty_title": "Nobody linked yet",
+    "empty_description": "Link the people you deal with at this client, with their roles."
+  },
+  "contacts": {
+    "title": "Contacts",
+    "description": "The people at the clients. One person can be linked to several clients, with different roles at each.",
+    "panel_title": "All contacts",
+    "count_one": "{{count}} contact",
+    "count_other": "{{count}} contacts",
+    "search": "Search by name, email or phone",
+    "new": "New contact",
+    "new_title": "New contact",
+    "new_description": "Link it to a client afterwards, from the client's page.",
+    "edit_title": "Contact",
+    "back": "All contacts",
+    "details": "Details",
+    "details_hint": "How to reach this person.",
+    "no_channels": "No email or phone",
+    "invalid_email": "“{{value}}” does not look like an email address.",
+    "invalid_phone": "“{{value}}” does not look like a phone number.",
+    "empty_title": "No contacts yet",
+    "empty_description": "Add the people you deal with at your clients.",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "companies": "Clients",
+      "updated": "Updated"
+    },
+    "fields": {
+      "name": "Name",
+      "emails": "Emails",
+      "phones": "Phones"
+    },
+    "hints": {
+      "list": "Press Enter or a comma after each one."
+    },
+    "companies_title": "Clients",
+    "companies_description": "Where this person is a contact, and as what. Roles are edited from the client's page.",
+    "companies_empty": "Not linked to any client",
+    "companies_empty_description": "Open a client and use “Link a contact”.",
+    "delete_title": "Delete this contact?",
+    "delete_body": "“{{name}}” will be removed and unlinked from every client."
+  },
+  "apps": {
+    "title": "Apps",
+    "description": "Every app built for a client, with its state and its installations.",
+    "panel_title": "All apps",
+    "count_one": "{{count}} app",
+    "count_other": "{{count}} apps",
+    "search": "Search by name",
+    "new": "New app",
+    "new_title": "New app",
+    "new_description": "Register an app for a client. Its first key is created with it.",
+    "back": "All apps",
+    "loading_title": "App",
+    "details": "The app",
+    "details_hint": "What it is, where it runs and what it reports.",
+    "pick_company": "Pick a client",
+    "connected_of": "{{connected}} of {{total}} connected",
+    "no_matches": "No app matches these filters.",
+    "empty_title": "No apps yet",
+    "empty_description": "Register the first app you built for a client.",
+    "invalid_domain": "Just the hostname, like app.client.cl — no https:// and no path.",
+    "invalid_url": "Enter a full address starting with https://.",
+    "heartbeat_range": "Between {{min}} and {{max}} seconds.",
+    "created_title": "The app is ready",
+    "created_description": "Created. This is what the client app needs to start reporting.",
+    "created_hint": "Put the key and the ingest address in the client app's configuration.",
+    "created_alert": "Its first key was created",
+    "created_alert_body": "The key is public by design — it ships inside the app — and it is always listed under Settings, where it can be rotated or revoked.",
+    "created_open": "Open the app",
+    "created_settings": "Go to settings",
+    "columns": {
+      "name": "App",
+      "kind": "Kind",
+      "state": "State",
+      "installations": "Connected / total",
+      "updated": "Updated"
+    },
+    "filters": {
+      "state": "State",
+      "any_state": "Any state",
+      "kind": "Kind",
+      "any_kind": "Any kind",
+      "any_company": "Any client"
+    },
+    "fields": {
+      "company": "Client",
+      "name": "Name",
+      "kind": "Kind",
+      "description": "Description",
+      "domain": "Domain",
+      "repository": "Repository",
+      "presence": "Presence",
+      "heartbeat": "Heartbeat interval (seconds)",
+      "modules": "Modules",
+      "hours": "Operating hours"
+    },
+    "hints": {
+      "domain": "For web apps: the hostname it is served from.",
+      "presence": "How installations say they are alive. A live connection arrives with remote control.",
+      "heartbeat": "Between {{min}} and {{max}}. An installation counts as connected until {{intervals}} heartbeats are missed.",
+      "modules": "The heartbeat is always on; these are what the app reports on top of it."
+    }
+  },
+  "app_nav": {
+    "label": "Sections of this app",
+    "summary": "Summary",
+    "installations": "Installations",
+    "usage": "Usage",
+    "status": "Status",
+    "settings": "Settings",
+    "needs_review_aria_one": "{{count}} installation needs review",
+    "needs_review_aria_other": "{{count}} installations need review"
+  },
+  "summary": {
+    "connected": "Connected now",
+    "connected_detail": "Heartbeat every {{interval}}",
+    "installations": "Installations",
+    "needs_review": "Needs review",
+    "details": "Details",
+    "every": "every {{interval}}",
+    "heartbeat_only": "Heartbeat only",
+    "created": "Created",
+    "updated": "Updated"
+  },
+  "ingest": {
+    "title": "Ingest",
+    "description": "The addresses the client app talks to. Only the client apps call them; this panel never does.",
+    "base": "Base URL",
+    "openapi": "OpenAPI document",
+    "sdk": "SDK script"
+  },
+  "sdk": {
+    "title": "Script tag",
+    "description": "For web apps: paste this into the page. The integrity hash pins the exact file, so a changed SDK means a new tag.",
+    "modules": "Reports: {{modules}}.",
+    "unavailable_title": "No active key",
+    "unavailable_body": "The SDK enrolls with one of the app's keys, and every key is revoked.",
+    "unavailable_link": "Create one in Settings."
+  },
+  "hours": {
+    "enabled": "This client works on a schedule",
+    "none": "No operating hours. Usage is not compared against a schedule.",
+    "none_short": "Not set",
+    "closed": "Closed",
+    "closed_all": "Closed every day",
+    "timezone": "Time zone",
+    "timezone_hint": "IANA name, like America/Santiago.",
+    "add_window": "Add",
+    "remove_window": "Remove this window",
+    "copy_weekdays": "Copy to weekdays",
+    "copy_weekdays_hint": "Use Monday's windows for Tuesday to Friday as well.",
+    "start_aria": "{{day}}, from",
+    "end_aria": "{{day}}, until",
+    "invalid": "Fix the highlighted days first.",
+    "problems": {
+      "format": "Use 24-hour times, like 09:00.",
+      "order": "A window has to end after it starts. Split overnight shifts into two days.",
+      "overlap": "Two windows overlap."
+    }
+  },
+  "installations": {
+    "title": "Installations",
+    "description": "Every device this app is installed on. Refreshes every 15 seconds.",
+    "count_one": "{{count}} installation · refreshes every 15 seconds",
+    "count_other": "{{count}} installations · refreshes every 15 seconds",
+    "search": "Search by alias, hostname or device",
+    "connected": "Connected",
+    "offline": "Offline",
+    "needs_review": "Needs review",
+    "reviewed": "Reviewed",
+    "seen_ago": "seen {{when}}",
+    "enrolled_ago": "enrolled {{when}}",
+    "never_seen": "Never seen",
+    "no_matches": "No installation matches these filters.",
+    "empty_title": "Not installed anywhere yet",
+    "empty_description": "Installations appear here as soon as the client app enrolls with one of this app's keys.",
+    "filters": {
+      "connection": "Any connection",
+      "review": "Any review state",
+      "status": "Any status"
+    },
+    "columns": {
+      "connected": "Connected",
+      "device": "Device",
+      "platform": "Platform",
+      "version": "Version",
+      "last_seen": "Last seen"
+    }
+  },
+  "usage": {
+    "daily_title": "Daily usage",
+    "daily_description": "Online and active time per day, over the last {{days}} days.",
+    "daily_totals": "{{active}} active and {{online}} online over the last {{days}} days, across every installation.",
+    "active": "Active",
+    "online": "Online",
+    "installations_that_day_one": "{{count}} installation reported",
+    "installations_that_day_other": "{{count}} installations reported",
+    "events_that_day_one": "{{count}} event",
+    "events_that_day_other": "{{count}} events",
+    "empty": "No usage reported in this period.",
+    "heatmap_title": "When it is used",
+    "heatmap_description": "Average active time in each hour of the week, over the last {{days}} days, in {{timezone}}. The quiet cells are where maintenance fits.",
+    "heatmap_hint": "Point at a cell to read it.",
+    "scope": "Installation",
+    "all_installations": "Every installation",
+    "cell": "{{day}} {{from}}–{{to}}: {{active}} active on average, {{online}} online",
+    "legend_low": "Idle",
+    "legend_hours": "Operating hours"
+  },
+  "status": {
+    "title": "Kill switch",
+    "description": "What every installation of this app is told on its next heartbeat — within about {{interval}} seconds.",
+    "state": "State",
+    "explain": {
+      "active": "Works normally.",
+      "grace": "Keeps working, but warns that it will stop. Use it for an overdue payment or a contract ending.",
+      "maintenance": "Shows a maintenance screen until you set it back.",
+      "suspended": "Stops working. People using it are locked out."
+    },
+    "banner": {
+      "grace": "In grace",
+      "maintenance": "Under maintenance",
+      "suspended": "Suspended"
+    },
+    "message": "Message shown in the app",
+    "message_hint": "{{count}}/{{max}} · in the language the client's users read.",
+    "message_placeholder": {
+      "grace": "This service will be suspended soon. Please contact your administrator.",
+      "maintenance": "We are doing some maintenance. We will be back shortly.",
+      "suspended": "This service is suspended. Please contact your administrator."
+    },
+    "until": "Until",
+    "until_grace": "Grace ends",
+    "until_hint": "Optional. Shown to the user; nothing changes on its own when it passes.",
+    "until_value": "until {{date}}",
+    "no_message": "No message set.",
+    "apply": "Apply",
+    "saved": "State applied. Installations pick it up on their next heartbeat.",
+    "suspend_title": "Suspend this app?",
+    "suspend_body_one": "“{{name}}” will stop working on its {{count}} installation as soon as it next checks in. Anyone using it will be locked out until you lift it.",
+    "suspend_body_other": "“{{name}}” will stop working on all {{count}} installations as soon as each one next checks in. Anyone using it will be locked out until you lift it.",
+    "suspend_confirm": "Suspend"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Only what you change is saved.",
+    "danger_title": "Delete",
+    "danger_description": "Deleting an app cannot be undone.",
+    "delete": "Delete app",
+    "delete_hint": "This app has no installations, so it can be deleted.",
+    "delete_blocked_one": "This app still has {{count}} installation. Revoked ones count too, so the service will refuse while any remain.",
+    "delete_blocked_other": "This app still has {{count}} installations. Revoked ones count too, so the service will refuse while any remain.",
+    "delete_title": "Delete this app?",
+    "delete_body": "“{{name}}”, its keys and its settings will be removed for good."
+  },
+  "keys": {
+    "title": "App keys",
+    "description": "What a client app enrolls with. Public by design: revoking one stops new enrollments only — installations already enrolled keep working.",
+    "key": "App key",
+    "create": "New key",
+    "create_title": "New app key",
+    "created": "Key created.",
+    "label": "Label",
+    "label_hint": "Which build or which client this key is for. Optional.",
+    "label_placeholder": "Windows installer 2.x",
+    "unlabelled": "Unlabelled key",
+    "created_at": "Created {{date}}",
+    "last_used": "Last used {{when}}",
+    "never_used": "Never used",
+    "revoked_at": "Revoked {{date}}",
+    "replaced": "Replaced by a rotation",
+    "rotate": "Rotate",
+    "rotated": "Key rotated. Update the client app with the new one.",
+    "rotate_title": "Rotate this key?",
+    "rotate_body": "A new key replaces “{{key}}”, which is revoked at once. Builds that still carry the old key cannot enroll new devices; devices already enrolled are not affected.",
+    "revoke": "Revoke",
+    "revoked": "Key revoked.",
+    "revoke_title": "Revoke this key?",
+    "revoke_body": "“{{key}}” will stop enrolling new devices. Devices already enrolled are not affected. This cannot be undone.",
+    "empty": "This app has no keys.",
+    "none_active_title": "No active key",
+    "none_active_body": "No new device can enroll until a key is created."
+  },
+  "installation": {
+    "loading_title": "Installation",
+    "back": "Installations of this app",
+    "rename": "Rename",
+    "rename_title": "Rename this installation",
+    "renamed": "Installation renamed.",
+    "alias": "Alias",
+    "alias_hint": "A name you will recognise, like “Front desk PC”. Empty goes back to the hostname.",
+    "details": "Device",
+    "platform": "Platform",
+    "arch": "Architecture",
+    "hostname": "Hostname",
+    "version": "App version",
+    "version_upgraded": "{{version}} (was {{previous}})",
+    "device_id": "Device id",
+    "heartbeat": "Heartbeat",
+    "enrolled": "Enrolled",
+    "last_ip": "Last IP",
+    "user_agent": "Client",
+    "reviewed_at": "Reviewed",
+    "access_expires": "Access token expires",
+    "refresh_expires": "Refresh token expires",
+    "controls": "Controls",
+    "controls_hint": "For this device only, on top of the app's own state.",
+    "channel": "Update channel",
+    "channel_hint": "Which releases this device is offered.",
+    "override": "State override",
+    "override_hint": "Put this one device in a different state from the rest of the app.",
+    "override_none": "Follow the app",
+    "review_title": "New device",
+    "review_body": "This installation enrolled on its own. Check that it is a device you expected, then mark it reviewed — or revoke it.",
+    "mark_reviewed": "Mark as reviewed",
+    "reviewed": "Marked as reviewed.",
+    "revoke": "Revoke",
+    "revoking": "Revoking…",
+    "revoked": "Installation revoked.",
+    "revoke_title": "Revoke this installation?",
+    "revoke_body": "“{{name}}” loses access immediately: its token stops working on the next request, and this device can never enroll again with the same device id. Its history stays. This cannot be undone.",
+    "revoked_title": "Revoked",
+    "revoked_body": "Revoked {{date}} by {{by}}. The device can no longer report or enroll again."
+  },
+  "snapshot": {
+    "title": "Right now",
+    "description": "From the last heartbeat, {{when}}. Refreshes every 15 seconds.",
+    "never": "This installation has not sent a heartbeat yet.",
+    "na": "N/A",
+    "cpu": "CPU",
+    "memory": "Memory",
+    "gpu": "GPU",
+    "disk": "Disk",
+    "network": "Network",
+    "network_detail": "received · sent",
+    "battery": "Battery",
+    "charging": "Charging",
+    "discharging": "On battery",
+    "power": "Power",
+    "uptime": "Uptime"
+  },
+  "metrics": {
+    "title": "Telemetry",
+    "description": "Samples over time.",
+    "bucket": "Each point averages {{bucket}} of samples.",
+    "range": "Time range",
+    "ranges": {
+      "1h": "1 h",
+      "6h": "6 h",
+      "24h": "24 h",
+      "7d": "7 d",
+      "30d": "30 d"
+    },
+    "cpu": "CPU",
+    "cpu_gpu": "CPU and GPU",
+    "memory": "Memory in use",
+    "network": "Network, per {{bucket}}",
+    "received": "Received",
+    "sent": "Sent",
+    "empty": "No samples in this range."
+  },
+  "daily": {
+    "title": "Day by day",
+    "description": "The last 30 days, today included. CPU and memory read average / p95 / max, in percent.",
+    "day": "Day",
+    "active": "Active",
+    "online": "Online",
+    "cpu": "CPU %",
+    "memory": "Memory %",
+    "network": "Network",
+    "battery": "Battery min.",
+    "events": "Events",
+    "empty": "No daily figures yet."
+  },
+  "events": {
+    "title": "Recent events",
+    "description": "What the app reported, newest first.",
+    "type": "Event type",
+    "any_type": "Every type",
+    "session": "session {{id}}",
+    "show_properties": "Show properties",
+    "hide_properties": "Hide properties",
+    "empty": "No events",
+    "empty_description": "Events appear here when the app has the events module on and reports them.",
+    "types": {
+      "session_start": "Session start",
+      "session_end": "Session end",
+      "screen": "Screen",
+      "action": "Action",
+      "custom": "Custom"
+    }
+  },
+  "audit": {
+    "title": "Audit log",
+    "description": "Every change made through this panel, newest first, with who made it. Nothing here can be edited or deleted.",
+    "panel_title": "Entries",
+    "count_one": "{{count}} entry",
+    "count_other": "{{count}} entries",
+    "empty": "Nothing has been recorded yet.",
+    "no_matches": "No entry matches these filters.",
+    "system": "System",
+    "view": "Changes",
+    "view_aria": "See the changes of {{event}}",
+    "field": "Field",
+    "before": "Before",
+    "after": "After",
+    "changed": "Changed",
+    "other_metadata": "Also recorded",
+    "filters": {
+      "event": "Event",
+      "resource": "Resource type",
+      "actor": "Actor",
+      "from": "From",
+      "to": "To"
+    },
+    "columns": {
+      "when": "When",
+      "event": "Event",
+      "actor": "Actor",
+      "resource": "Resource",
+      "origin": "Origin",
+      "details": "Details"
+    },
+    "resources": {
+      "company": "Client",
+      "contact": "Contact",
+      "app": "App",
+      "app_key": "App key",
+      "installation": "Installation"
+    },
+    "events": {
+      "company": {
+        "created": "Client created",
+        "updated": "Client updated",
+        "deleted": "Client deleted"
+      },
+      "contact": {
+        "created": "Contact created",
+        "updated": "Contact updated",
+        "deleted": "Contact deleted",
+        "linked": "Contact linked to a client",
+        "unlinked": "Contact unlinked from a client"
+      },
+      "app": {
+        "created": "App created",
+        "updated": "App updated",
+        "deleted": "App deleted",
+        "status_changed": "App state changed"
+      },
+      "app_key": {
+        "created": "App key created",
+        "rotated": "App key rotated",
+        "revoked": "App key revoked"
+      },
+      "installation": {
+        "enrolled": "Installation enrolled",
+        "updated": "Installation updated",
+        "reviewed": "Installation reviewed",
+        "revoked": "Installation revoked"
+      }
+    }
+  }
+}

@@ -1,0 +1,692 @@
+{
+  "app_name": "Apps a medida",
+  "shell": {
+    "label": "Secciones de apps a medida",
+    "overview": "Resumen",
+    "companies": "Clientes",
+    "contacts": "Contactos",
+    "apps": "Apps",
+    "audit": "Registro de auditoría",
+    "sign_out": "Cerrar sesión"
+  },
+  "sign_in": {
+    "title": "Apps a medida",
+    "subtitle": "Iniciando tu sesión…",
+    "working": "Te estamos llevando a la pantalla de inicio de sesión.",
+    "owner_only": "Panel privado.",
+    "back_home": "Volver al sitio",
+    "retry": "Reintentar",
+    "error_title": "No pudimos iniciar la sesión",
+    "error_subtitle": "No se entregó nada, así que puedes intentarlo de nuevo sin riesgo."
+  },
+  "callback": {
+    "title": "Iniciando tu sesión",
+    "subtitle": "Un momento.",
+    "working": "Terminando el inicio de sesión…",
+    "error_title": "No pudimos terminar el inicio de sesión",
+    "error_subtitle": "No se otorgó nada, así que puedes empezar de nuevo sin riesgo.",
+    "retry": "Empezar de nuevo",
+    "back_home": "Volver al sitio"
+  },
+  "errors": {
+    "network": "No se pudo contactar al servicio. Revisa tu conexión e inténtalo de nuevo.",
+    "session-expired": "Tu sesión terminó. Vuelve a iniciar sesión para continuar.",
+    "missing-code": "A esta dirección le falta el código de autorización que debió enviar el proveedor.",
+    "missing-transaction": "Este navegador no tiene registro del inicio de sesión que originó este enlace. Empieza de nuevo desde la página de inicio de sesión.",
+    "state-mismatch": "No se pudo verificar el inicio de sesión. Empieza de nuevo desde la página de inicio de sesión.",
+    "unexpected": "Algo salió mal de nuestro lado. Inténtalo de nuevo en un momento."
+  },
+  "no_access": {
+    "title": "Este panel no está abierto para ti",
+    "subtitle": "Esta cuenta tiene sesión iniciada, pero el servicio de apps a medida no la deja entrar.",
+    "subtitle_email": "{{email}} tiene sesión iniciada, pero el servicio de apps a medida no la deja entrar.",
+    "alert_title": "Qué falta",
+    "alert_body": "La cuenta necesita el permiso custom-apps:admin y una dirección @franciscosolis.cl verificada. Después hay que volver a iniciar sesión para que un token nuevo lo lleve: un permiso otorgado mientras tenías sesión abierta no cambia nada hasta entonces.",
+    "sign_out": "Cerrar sesión",
+    "back_home": "Volver al sitio"
+  },
+  "copy_aria": "Copiar {{label}}",
+  "copy_failed": "El portapapeles no está disponible aquí. Selecciona el valor y cópialo a mano.",
+  "no_matches": "Nada coincide con «{{search}}».",
+  "updated_at": "Guardado por última vez el {{date}}",
+  "fields": {
+    "address": "Dirección",
+    "notes": "Notas"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio.",
+    "too_long": "Usa menos de {{max}} caracteres."
+  },
+  "rut": {
+    "format": "Ingresa un RUT como 12.345.678-5.",
+    "check_digit": "El dígito verificador no coincide. Revisa si hay un error de tipeo."
+  },
+  "states": {
+    "active": "Activa",
+    "grace": "En gracia",
+    "maintenance": "Mantenimiento",
+    "suspended": "Suspendida"
+  },
+  "lifecycle": {
+    "active": "Activa",
+    "revoked": "Revocada"
+  },
+  "kinds": {
+    "web": "Web",
+    "desktop": "Escritorio",
+    "android": "Android",
+    "kiosk": "Kiosco"
+  },
+  "kinds_hint": {
+    "web": "Corre en un navegador y carga el SDK con una etiqueta script.",
+    "desktop": "Instalada en Windows, macOS o Linux.",
+    "android": "Una app de Android.",
+    "kiosk": "Un equipo dedicado, normalmente encendido todo el día."
+  },
+  "platforms": {
+    "windows": "Windows",
+    "macos": "macOS",
+    "linux": "Linux",
+    "android": "Android",
+    "web": "Web"
+  },
+  "channels": {
+    "stable": "Estable",
+    "beta": "Beta"
+  },
+  "presence": {
+    "ping": "Latido (ping)",
+    "socket": "Conexión en vivo (socket)"
+  },
+  "modules": {
+    "metrics": "Métricas",
+    "events": "Eventos de uso"
+  },
+  "modules_hint": {
+    "metrics": "Muestras de CPU, memoria, disco, red, batería y consumo.",
+    "events": "Sesiones, pantallas y acciones que reporta la app."
+  },
+  "roles": {
+    "owner": "Dueño",
+    "technical": "Técnico",
+    "billing": "Facturación",
+    "maintenance_approver": "Aprueba mantenciones",
+    "none": "Sin rol"
+  },
+  "roles_hint": {
+    "owner": "Toma las decisiones sobre la app.",
+    "technical": "Ve el código, los servidores y los equipos.",
+    "billing": "Recibe facturas y temas de pago.",
+    "maintenance_approver": "Autoriza las ventanas de mantención."
+  },
+  "weekdays": {
+    "mon": "Lunes",
+    "tue": "Martes",
+    "wed": "Miércoles",
+    "thu": "Jueves",
+    "fri": "Viernes",
+    "sat": "Sábado",
+    "sun": "Domingo"
+  },
+  "weekdays_short": {
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb",
+    "sun": "Dom"
+  },
+  "overview": {
+    "title": "Resumen",
+    "description": "Todas las apps de clientes de un vistazo. Se actualiza sola cada 30 segundos.",
+    "connected": "Conectadas ahora",
+    "connected_detail": "de las instalaciones activas · {{total}} inscritas en total",
+    "needs_review": "Por revisar",
+    "needs_review_detail": "Equipos nuevos que nadie ha revisado todavía.",
+    "revoked": "Revocadas",
+    "revoked_detail": "Instalaciones cortadas para siempre.",
+    "apps": "Apps",
+    "companies": "Clientes",
+    "contacts": "Contactos",
+    "review_title": "Esperando revisión",
+    "review_description": "Las más antiguas primero. Confirma que cada una sea un equipo esperado.",
+    "review_empty": "No hay nada esperando revisión.",
+    "recent_title": "Inscritas recientemente",
+    "recent_description": "Las últimas instalaciones en inscribirse, de la más nueva a la más antigua.",
+    "recent_empty": "Todavía no se ha inscrito ninguna instalación."
+  },
+  "companies": {
+    "title": "Clientes",
+    "description": "Para quienes se construyen las apps: empresas y personas naturales por igual.",
+    "panel_title": "Todos los clientes",
+    "count_one": "{{count}} cliente",
+    "count_other": "{{count}} clientes",
+    "search": "Buscar por razón social, nombre de fantasía o RUT",
+    "new": "Nuevo cliente",
+    "new_title": "Nuevo cliente",
+    "new_description": "Una empresa o una persona natural. Los contactos y las apps se agregan una vez creado.",
+    "edit_title": "Cliente",
+    "back": "Todos los clientes",
+    "details": "Datos",
+    "details_hint": "Cómo se identifica al cliente, en papel y en conversación.",
+    "company": "Empresa",
+    "person": "Persona natural",
+    "empty_title": "Aún no hay clientes",
+    "empty_description": "Agrega la primera empresa o persona para la que construiste una app.",
+    "columns": {
+      "name": "Nombre",
+      "rut": "RUT",
+      "kind": "Tipo",
+      "apps": "Apps",
+      "contacts": "Contactos",
+      "updated": "Actualizado"
+    },
+    "fields": {
+      "kind": "Tipo de cliente",
+      "legal_name": "Razón social",
+      "full_name": "Nombre completo",
+      "trade_name": "Nombre de fantasía",
+      "rut": "RUT",
+      "business_activity": "Giro"
+    },
+    "hints": {
+      "legal_name": "Tal como aparece en las facturas.",
+      "trade_name": "El nombre que la gente usa de verdad. Opcional.",
+      "rut": "Puedes escribirlo con puntos y guion; se valida y se guarda como 12345678-5.",
+      "business_activity": "El giro registrado en el SII."
+    },
+    "apps_title": "Apps",
+    "apps_description": "Todo lo construido para este cliente.",
+    "apps_empty": "Este cliente todavía no tiene apps.",
+    "new_app": "Nueva app",
+    "delete_title": "¿Eliminar este cliente?",
+    "delete_body": "Se eliminará «{{name}}» y sus vínculos con contactos. Los contactos se mantienen. Un cliente que todavía tiene apps no se puede eliminar: elimina o mueve las apps primero."
+  },
+  "company_contacts": {
+    "title": "Contactos",
+    "description": "Las personas de este cliente y para qué está cada una.",
+    "add": "Vincular un contacto",
+    "create": "Nuevo contacto",
+    "add_title": "Vincular un contacto",
+    "edit_title": "Roles de {{name}}",
+    "pick": "Contactos",
+    "no_candidates": "Ningún contacto coincide. Créalo primero y después vincúlalo aquí.",
+    "already": "Ya vinculado",
+    "roles_for": "Qué hace {{name}} en este cliente",
+    "primary": "Principal",
+    "primary_label": "Contacto principal: la primera persona a quien llamar. Reemplaza al actual.",
+    "link": "Vincular",
+    "linked": "Contacto vinculado.",
+    "unlink": "Desvincular",
+    "unlinked": "Contacto desvinculado.",
+    "unlink_title": "¿Desvincular este contacto?",
+    "unlink_body": "{{name}} ya no aparecerá en este cliente. El contacto en sí se mantiene.",
+    "edit_aria": "Editar los roles de {{name}}",
+    "unlink_aria": "Desvincular a {{name}}",
+    "empty_title": "Nadie vinculado todavía",
+    "empty_description": "Vincula a las personas con las que tratas en este cliente, con sus roles."
+  },
+  "contacts": {
+    "title": "Contactos",
+    "description": "Las personas de los clientes. Una persona puede estar vinculada a varios clientes, con roles distintos en cada uno.",
+    "panel_title": "Todos los contactos",
+    "count_one": "{{count}} contacto",
+    "count_other": "{{count}} contactos",
+    "search": "Buscar por nombre, correo o teléfono",
+    "new": "Nuevo contacto",
+    "new_title": "Nuevo contacto",
+    "new_description": "Vincúlalo a un cliente después, desde la página del cliente.",
+    "edit_title": "Contacto",
+    "back": "Todos los contactos",
+    "details": "Datos",
+    "details_hint": "Cómo ubicar a esta persona.",
+    "no_channels": "Sin correo ni teléfono",
+    "invalid_email": "«{{value}}» no parece una dirección de correo.",
+    "invalid_phone": "«{{value}}» no parece un número de teléfono.",
+    "empty_title": "Aún no hay contactos",
+    "empty_description": "Agrega a las personas con las que tratas en tus clientes.",
+    "columns": {
+      "name": "Nombre",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "companies": "Clientes",
+      "updated": "Actualizado"
+    },
+    "fields": {
+      "name": "Nombre",
+      "emails": "Correos",
+      "phones": "Teléfonos"
+    },
+    "hints": {
+      "list": "Presiona Enter o una coma después de cada uno."
+    },
+    "companies_title": "Clientes",
+    "companies_description": "Dónde es contacto esta persona y en qué calidad. Los roles se editan desde la página del cliente.",
+    "companies_empty": "No está vinculado a ningún cliente",
+    "companies_empty_description": "Abre un cliente y usa «Vincular un contacto».",
+    "delete_title": "¿Eliminar este contacto?",
+    "delete_body": "Se eliminará «{{name}}» y se desvinculará de todos los clientes."
+  },
+  "apps": {
+    "title": "Apps",
+    "description": "Todas las apps construidas para clientes, con su estado y sus instalaciones.",
+    "panel_title": "Todas las apps",
+    "count_one": "{{count}} app",
+    "count_other": "{{count}} apps",
+    "search": "Buscar por nombre",
+    "new": "Nueva app",
+    "new_title": "Nueva app",
+    "new_description": "Registra una app para un cliente. Su primera llave se crea junto con ella.",
+    "back": "Todas las apps",
+    "loading_title": "App",
+    "details": "La app",
+    "details_hint": "Qué es, dónde corre y qué reporta.",
+    "pick_company": "Elige un cliente",
+    "connected_of": "{{connected}} de {{total}} conectadas",
+    "no_matches": "Ninguna app coincide con estos filtros.",
+    "empty_title": "Aún no hay apps",
+    "empty_description": "Registra la primera app que construiste para un cliente.",
+    "invalid_domain": "Solo el nombre de host, como app.cliente.cl: sin https:// y sin ruta.",
+    "invalid_url": "Ingresa una dirección completa que empiece con https://.",
+    "heartbeat_range": "Entre {{min}} y {{max}} segundos.",
+    "created_title": "La app está lista",
+    "created_description": "Creada. Esto es lo que necesita la app del cliente para empezar a reportar.",
+    "created_hint": "Pon la llave y la dirección de ingesta en la configuración de la app del cliente.",
+    "created_alert": "Se creó su primera llave",
+    "created_alert_body": "La llave es pública por diseño (va dentro de la app) y siempre aparece en Configuración, donde se puede rotar o revocar.",
+    "created_open": "Abrir la app",
+    "created_settings": "Ir a configuración",
+    "columns": {
+      "name": "App",
+      "kind": "Tipo",
+      "state": "Estado",
+      "installations": "Conectadas / total",
+      "updated": "Actualizada"
+    },
+    "filters": {
+      "state": "Estado",
+      "any_state": "Cualquier estado",
+      "kind": "Tipo",
+      "any_kind": "Cualquier tipo",
+      "any_company": "Cualquier cliente"
+    },
+    "fields": {
+      "company": "Cliente",
+      "name": "Nombre",
+      "kind": "Tipo",
+      "description": "Descripción",
+      "domain": "Dominio",
+      "repository": "Repositorio",
+      "presence": "Presencia",
+      "heartbeat": "Intervalo de latido (segundos)",
+      "modules": "Módulos",
+      "hours": "Horario de operación"
+    },
+    "hints": {
+      "domain": "Para apps web: el nombre de host desde el que se sirve.",
+      "presence": "Cómo avisan las instalaciones que siguen vivas. La conexión en vivo llega con el control remoto.",
+      "heartbeat": "Entre {{min}} y {{max}}. Una instalación cuenta como conectada hasta que se pierden {{intervals}} latidos.",
+      "modules": "El latido siempre está activo; esto es lo que la app reporta además de él."
+    }
+  },
+  "app_nav": {
+    "label": "Secciones de esta app",
+    "summary": "Resumen",
+    "installations": "Instalaciones",
+    "usage": "Uso",
+    "status": "Estado",
+    "settings": "Configuración",
+    "needs_review_aria_one": "{{count}} instalación por revisar",
+    "needs_review_aria_other": "{{count}} instalaciones por revisar"
+  },
+  "summary": {
+    "connected": "Conectadas ahora",
+    "connected_detail": "Latido cada {{interval}}",
+    "installations": "Instalaciones",
+    "needs_review": "Por revisar",
+    "details": "Datos",
+    "every": "cada {{interval}}",
+    "heartbeat_only": "Solo latido",
+    "created": "Creada",
+    "updated": "Actualizada"
+  },
+  "ingest": {
+    "title": "Ingesta",
+    "description": "Las direcciones con las que habla la app del cliente. Solo las llaman las apps de los clientes; este panel nunca.",
+    "base": "URL base",
+    "openapi": "Documento OpenAPI",
+    "sdk": "Script del SDK"
+  },
+  "sdk": {
+    "title": "Etiqueta script",
+    "description": "Para apps web: pega esto en la página. El hash de integridad fija el archivo exacto, así que un SDK distinto significa una etiqueta nueva.",
+    "modules": "Reporta: {{modules}}.",
+    "unavailable_title": "No hay ninguna llave activa",
+    "unavailable_body": "El SDK se inscribe con una de las llaves de la app, y todas están revocadas.",
+    "unavailable_link": "Crea una en Configuración."
+  },
+  "hours": {
+    "enabled": "Este cliente trabaja con horario",
+    "none": "Sin horario de operación. El uso no se compara contra un horario.",
+    "none_short": "Sin definir",
+    "closed": "Cerrado",
+    "closed_all": "Cerrado todos los días",
+    "timezone": "Zona horaria",
+    "timezone_hint": "Nombre IANA, como America/Santiago.",
+    "add_window": "Agregar",
+    "remove_window": "Quitar este tramo",
+    "copy_weekdays": "Copiar a días hábiles",
+    "copy_weekdays_hint": "Usar los tramos del lunes también de martes a viernes.",
+    "start_aria": "{{day}}, desde",
+    "end_aria": "{{day}}, hasta",
+    "invalid": "Corrige primero los días marcados.",
+    "problems": {
+      "format": "Usa horas en formato de 24 horas, como 09:00.",
+      "order": "Un tramo tiene que terminar después de empezar. Divide los turnos de noche en dos días.",
+      "overlap": "Hay dos tramos que se superponen."
+    }
+  },
+  "installations": {
+    "title": "Instalaciones",
+    "description": "Todos los equipos donde está instalada esta app. Se actualiza cada 15 segundos.",
+    "count_one": "{{count}} instalación · se actualiza cada 15 segundos",
+    "count_other": "{{count}} instalaciones · se actualiza cada 15 segundos",
+    "search": "Buscar por alias, nombre de host o equipo",
+    "connected": "Conectada",
+    "offline": "Desconectada",
+    "needs_review": "Por revisar",
+    "reviewed": "Revisada",
+    "seen_ago": "vista {{when}}",
+    "enrolled_ago": "inscrita {{when}}",
+    "never_seen": "Nunca vista",
+    "no_matches": "Ninguna instalación coincide con estos filtros.",
+    "empty_title": "Todavía no está instalada en ningún lado",
+    "empty_description": "Las instalaciones aparecen aquí apenas la app del cliente se inscribe con una de las llaves de esta app.",
+    "filters": {
+      "connection": "Cualquier conexión",
+      "review": "Cualquier revisión",
+      "status": "Cualquier estado"
+    },
+    "columns": {
+      "connected": "Conectada",
+      "device": "Equipo",
+      "platform": "Plataforma",
+      "version": "Versión",
+      "last_seen": "Vista por última vez"
+    }
+  },
+  "usage": {
+    "daily_title": "Uso diario",
+    "daily_description": "Tiempo en línea y activo por día, durante los últimos {{days}} días.",
+    "daily_totals": "{{active}} activo y {{online}} en línea en los últimos {{days}} días, sumando todas las instalaciones.",
+    "active": "Activo",
+    "online": "En línea",
+    "installations_that_day_one": "{{count}} instalación reportó",
+    "installations_that_day_other": "{{count}} instalaciones reportaron",
+    "events_that_day_one": "{{count}} evento",
+    "events_that_day_other": "{{count}} eventos",
+    "empty": "No se reportó uso en este período.",
+    "heatmap_title": "Cuándo se usa",
+    "heatmap_description": "Tiempo activo promedio en cada hora de la semana, durante los últimos {{days}} días, en {{timezone}}. Las celdas tranquilas son donde cabe una mantención.",
+    "heatmap_hint": "Apunta a una celda para leerla.",
+    "scope": "Instalación",
+    "all_installations": "Todas las instalaciones",
+    "cell": "{{day}} {{from}}–{{to}}: {{active}} activo en promedio, {{online}} en línea",
+    "legend_low": "Sin uso",
+    "legend_hours": "Horario de operación"
+  },
+  "status": {
+    "title": "Interruptor de corte",
+    "description": "Lo que se le informa a cada instalación de esta app en su próximo latido: en unos {{interval}} segundos.",
+    "state": "Estado",
+    "explain": {
+      "active": "Funciona con normalidad.",
+      "grace": "Sigue funcionando, pero avisa que se va a detener. Úsalo para un pago atrasado o un contrato que termina.",
+      "maintenance": "Muestra una pantalla de mantención hasta que la vuelvas a activar.",
+      "suspended": "Deja de funcionar. Quienes la estén usando quedan fuera."
+    },
+    "banner": {
+      "grace": "En período de gracia",
+      "maintenance": "En mantención",
+      "suspended": "Suspendida"
+    },
+    "message": "Mensaje que muestra la app",
+    "message_hint": "{{count}}/{{max}} · en el idioma que leen los usuarios del cliente.",
+    "message_placeholder": {
+      "grace": "Este servicio se suspenderá pronto. Contacta a tu administrador.",
+      "maintenance": "Estamos haciendo una mantención. Volvemos en breve.",
+      "suspended": "Este servicio está suspendido. Contacta a tu administrador."
+    },
+    "until": "Hasta",
+    "until_grace": "Fin del período de gracia",
+    "until_hint": "Opcional. Se le muestra al usuario; nada cambia solo cuando se cumple.",
+    "until_value": "hasta el {{date}}",
+    "no_message": "Sin mensaje.",
+    "apply": "Aplicar",
+    "saved": "Estado aplicado. Las instalaciones lo toman en su próximo latido.",
+    "suspend_title": "¿Suspender esta app?",
+    "suspend_body_one": "«{{name}}» dejará de funcionar en su {{count}} instalación apenas vuelva a reportarse. Quien la esté usando quedará fuera hasta que la reactives.",
+    "suspend_body_other": "«{{name}}» dejará de funcionar en sus {{count}} instalaciones a medida que cada una vuelva a reportarse. Quien la esté usando quedará fuera hasta que la reactives.",
+    "suspend_confirm": "Suspender"
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Solo se guarda lo que cambias.",
+    "danger_title": "Eliminar",
+    "danger_description": "Eliminar una app no se puede deshacer.",
+    "delete": "Eliminar app",
+    "delete_hint": "Esta app no tiene instalaciones, así que se puede eliminar.",
+    "delete_blocked_one": "Esta app todavía tiene {{count}} instalación. Las revocadas también cuentan, así que el servicio lo rechazará mientras quede alguna.",
+    "delete_blocked_other": "Esta app todavía tiene {{count}} instalaciones. Las revocadas también cuentan, así que el servicio lo rechazará mientras quede alguna.",
+    "delete_title": "¿Eliminar esta app?",
+    "delete_body": "«{{name}}», sus llaves y su configuración se eliminarán para siempre."
+  },
+  "keys": {
+    "title": "Llaves de la app",
+    "description": "Con lo que se inscribe la app de un cliente. Son públicas por diseño: revocar una solo detiene las inscripciones nuevas; las instalaciones ya inscritas siguen funcionando.",
+    "key": "Llave de la app",
+    "create": "Nueva llave",
+    "create_title": "Nueva llave de la app",
+    "created": "Llave creada.",
+    "label": "Etiqueta",
+    "label_hint": "Para qué compilación o qué cliente es esta llave. Opcional.",
+    "label_placeholder": "Instalador de Windows 2.x",
+    "unlabelled": "Llave sin etiqueta",
+    "created_at": "Creada el {{date}}",
+    "last_used": "Usada por última vez {{when}}",
+    "never_used": "Nunca usada",
+    "revoked_at": "Revocada el {{date}}",
+    "replaced": "Reemplazada por una rotación",
+    "rotate": "Rotar",
+    "rotated": "Llave rotada. Actualiza la app del cliente con la nueva.",
+    "rotate_title": "¿Rotar esta llave?",
+    "rotate_body": "Una llave nueva reemplaza a «{{key}}», que queda revocada de inmediato. Las compilaciones que aún lleven la llave antigua no podrán inscribir equipos nuevos; los equipos ya inscritos no se ven afectados.",
+    "revoke": "Revocar",
+    "revoked": "Llave revocada.",
+    "revoke_title": "¿Revocar esta llave?",
+    "revoke_body": "«{{key}}» dejará de inscribir equipos nuevos. Los equipos ya inscritos no se ven afectados. Esto no se puede deshacer.",
+    "empty": "Esta app no tiene llaves.",
+    "none_active_title": "No hay ninguna llave activa",
+    "none_active_body": "Ningún equipo nuevo se puede inscribir hasta que crees una llave."
+  },
+  "installation": {
+    "loading_title": "Instalación",
+    "back": "Instalaciones de esta app",
+    "rename": "Renombrar",
+    "rename_title": "Renombrar esta instalación",
+    "renamed": "Instalación renombrada.",
+    "alias": "Alias",
+    "alias_hint": "Un nombre que reconozcas, como «PC de recepción». Vacío vuelve al nombre de host.",
+    "details": "Equipo",
+    "platform": "Plataforma",
+    "arch": "Arquitectura",
+    "hostname": "Nombre de host",
+    "version": "Versión de la app",
+    "version_upgraded": "{{version}} (antes {{previous}})",
+    "device_id": "ID del equipo",
+    "heartbeat": "Latido",
+    "enrolled": "Inscrita",
+    "last_ip": "Última IP",
+    "user_agent": "Cliente",
+    "reviewed_at": "Revisada",
+    "access_expires": "Vence el token de acceso",
+    "refresh_expires": "Vence el token de renovación",
+    "controls": "Controles",
+    "controls_hint": "Solo para este equipo, por encima del estado de la app.",
+    "channel": "Canal de actualizaciones",
+    "channel_hint": "Qué versiones se le ofrecen a este equipo.",
+    "override": "Estado propio",
+    "override_hint": "Deja este equipo en un estado distinto al del resto de la app.",
+    "override_none": "Seguir a la app",
+    "review_title": "Equipo nuevo",
+    "review_body": "Esta instalación se inscribió por su cuenta. Confirma que sea un equipo esperado y márcala como revisada, o revócala.",
+    "mark_reviewed": "Marcar como revisada",
+    "reviewed": "Marcada como revisada.",
+    "revoke": "Revocar",
+    "revoking": "Revocando…",
+    "revoked": "Instalación revocada.",
+    "revoke_title": "¿Revocar esta instalación?",
+    "revoke_body": "«{{name}}» pierde el acceso de inmediato: su token deja de funcionar en la siguiente solicitud, y este equipo nunca podrá volver a inscribirse con el mismo ID. Su historial se conserva. Esto no se puede deshacer.",
+    "revoked_title": "Revocada",
+    "revoked_body": "Revocada el {{date}} por {{by}}. El equipo ya no puede reportar ni volver a inscribirse."
+  },
+  "snapshot": {
+    "title": "En este momento",
+    "description": "Del último latido, el {{when}}. Se actualiza cada 15 segundos.",
+    "never": "Esta instalación todavía no envía ningún latido.",
+    "na": "N/D",
+    "cpu": "CPU",
+    "memory": "Memoria",
+    "gpu": "GPU",
+    "disk": "Disco",
+    "network": "Red",
+    "network_detail": "recibido · enviado",
+    "battery": "Batería",
+    "charging": "Cargando",
+    "discharging": "Con batería",
+    "power": "Consumo",
+    "uptime": "Tiempo encendido"
+  },
+  "metrics": {
+    "title": "Telemetría",
+    "description": "Muestras en el tiempo.",
+    "bucket": "Cada punto promedia {{bucket}} de muestras.",
+    "range": "Rango de tiempo",
+    "ranges": {
+      "1h": "1 h",
+      "6h": "6 h",
+      "24h": "24 h",
+      "7d": "7 d",
+      "30d": "30 d"
+    },
+    "cpu": "CPU",
+    "cpu_gpu": "CPU y GPU",
+    "memory": "Memoria en uso",
+    "network": "Red, cada {{bucket}}",
+    "received": "Recibido",
+    "sent": "Enviado",
+    "empty": "No hay muestras en este rango."
+  },
+  "daily": {
+    "title": "Día a día",
+    "description": "Los últimos 30 días, hoy incluido. CPU y memoria se leen promedio / p95 / máximo, en porcentaje.",
+    "day": "Día",
+    "active": "Activo",
+    "online": "En línea",
+    "cpu": "CPU %",
+    "memory": "Memoria %",
+    "network": "Red",
+    "battery": "Batería mín.",
+    "events": "Eventos",
+    "empty": "Todavía no hay cifras diarias."
+  },
+  "events": {
+    "title": "Eventos recientes",
+    "description": "Lo que reportó la app, del más nuevo al más antiguo.",
+    "type": "Tipo de evento",
+    "any_type": "Todos los tipos",
+    "session": "sesión {{id}}",
+    "show_properties": "Ver propiedades",
+    "hide_properties": "Ocultar propiedades",
+    "empty": "Sin eventos",
+    "empty_description": "Los eventos aparecen aquí cuando la app tiene activo el módulo de eventos y los reporta.",
+    "types": {
+      "session_start": "Inicio de sesión",
+      "session_end": "Fin de sesión",
+      "screen": "Pantalla",
+      "action": "Acción",
+      "custom": "Personalizado"
+    }
+  },
+  "audit": {
+    "title": "Registro de auditoría",
+    "description": "Cada cambio hecho desde este panel, del más nuevo al más antiguo, con quién lo hizo. Nada de esto se puede editar ni borrar.",
+    "panel_title": "Entradas",
+    "count_one": "{{count}} entrada",
+    "count_other": "{{count}} entradas",
+    "empty": "Todavía no se ha registrado nada.",
+    "no_matches": "Ninguna entrada coincide con estos filtros.",
+    "system": "Sistema",
+    "view": "Cambios",
+    "view_aria": "Ver los cambios de {{event}}",
+    "field": "Campo",
+    "before": "Antes",
+    "after": "Después",
+    "changed": "Cambió",
+    "other_metadata": "También se registró",
+    "filters": {
+      "event": "Evento",
+      "resource": "Tipo de recurso",
+      "actor": "Autor",
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "columns": {
+      "when": "Cuándo",
+      "event": "Evento",
+      "actor": "Autor",
+      "resource": "Recurso",
+      "origin": "Origen",
+      "details": "Detalle"
+    },
+    "resources": {
+      "company": "Cliente",
+      "contact": "Contacto",
+      "app": "App",
+      "app_key": "Llave de la app",
+      "installation": "Instalación"
+    },
+    "events": {
+      "company": {
+        "created": "Cliente creado",
+        "updated": "Cliente actualizado",
+        "deleted": "Cliente eliminado"
+      },
+      "contact": {
+        "created": "Contacto creado",
+        "updated": "Contacto actualizado",
+        "deleted": "Contacto eliminado",
+        "linked": "Contacto vinculado a un cliente",
+        "unlinked": "Contacto desvinculado de un cliente"
+      },
+      "app": {
+        "created": "App creada",
+        "updated": "App actualizada",
+        "deleted": "App eliminada",
+        "status_changed": "Cambió el estado de la app"
+      },
+      "app_key": {
+        "created": "Llave creada",
+        "rotated": "Llave rotada",
+        "revoked": "Llave revocada"
+      },
+      "installation": {
+        "enrolled": "Instalación inscrita",
+        "updated": "Instalación actualizada",
+        "reviewed": "Instalación revisada",
+        "revoked": "Instalación revocada"
+      }
+    }
+  }
+}
