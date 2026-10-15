@@ -666,15 +666,13 @@
       "contact": {
         "created": "Contact created",
         "updated": "Contact updated",
-        "deleted": "Contact deleted",
-        "linked": "Contact linked to a client",
-        "unlinked": "Contact unlinked from a client"
+        "deleted": "Contact deleted"
       },
       "app": {
         "created": "App created",
         "updated": "App updated",
         "deleted": "App deleted",
-        "status_changed": "App state changed"
+        "state_changed": "App state changed"
       },
       "app_key": {
         "created": "App key created",
@@ -683,9 +681,14 @@
       },
       "installation": {
         "enrolled": "Installation enrolled",
+        "reenrolled": "Installation enrolled again",
         "updated": "Installation updated",
         "reviewed": "Installation reviewed",
         "revoked": "Installation revoked"
+      },
+      "company_contact": {
+        "linked": "Contact linked to a client",
+        "unlinked": "Contact unlinked from a client"
       }
     }
   }

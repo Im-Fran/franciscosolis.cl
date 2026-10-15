@@ -666,15 +666,13 @@
       "contact": {
         "created": "Contacto creado",
         "updated": "Contacto actualizado",
-        "deleted": "Contacto eliminado",
-        "linked": "Contacto vinculado a un cliente",
-        "unlinked": "Contacto desvinculado de un cliente"
+        "deleted": "Contacto eliminado"
       },
       "app": {
         "created": "App creada",
         "updated": "App actualizada",
         "deleted": "App eliminada",
-        "status_changed": "Cambió el estado de la app"
+        "state_changed": "Cambió el estado de la app"
       },
       "app_key": {
         "created": "Llave creada",
@@ -683,9 +681,14 @@
       },
       "installation": {
         "enrolled": "Instalación inscrita",
+        "reenrolled": "Instalación registrada de nuevo",
         "updated": "Instalación actualizada",
         "reviewed": "Instalación revisada",
         "revoked": "Instalación revocada"
+      },
+      "company_contact": {
+        "linked": "Contacto vinculado a un cliente",
+        "unlinked": "Contacto desvinculado de un cliente"
       }
     }
   }
