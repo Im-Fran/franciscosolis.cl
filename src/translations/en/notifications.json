@@ -1,7 +1,8 @@
 {
   "categories": {
     "account": "Account",
-    "marketplace": "Marketplace"
+    "marketplace": "Marketplace",
+    "custom_apps": "Custom apps"
   },
   "menu": {
     "label": "Account menu",
