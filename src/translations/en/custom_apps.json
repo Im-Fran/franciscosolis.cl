@@ -7,7 +7,8 @@
     "contacts": "Contacts",
     "apps": "Apps",
     "audit": "Audit log",
-    "sign_out": "Sign out"
+    "sign_out": "Sign out",
+    "alerts": "Alerts"
   },
   "sign_in": {
     "title": "Custom apps",
@@ -100,11 +101,21 @@
   },
   "modules": {
     "metrics": "Metrics",
-    "events": "Usage events"
+    "events": "Usage events",
+    "logs": "Logs",
+    "crashes": "Crash reports",
+    "config": "Flags and remote config",
+    "messages": "In-app messages",
+    "commands": "Remote commands"
   },
   "modules_hint": {
     "metrics": "CPU, memory, disk, network, battery and power samples.",
-    "events": "Sessions, screens and actions the app reports."
+    "events": "Sessions, screens and actions the app reports.",
+    "logs": "Log entries from each device, filtered by level. Kept 30 days.",
+    "crashes": "Crashes grouped by signature and version, with their stacks. Kept 30 days.",
+    "config": "Feature flags and a versioned JSON configuration, picked up without a release.",
+    "messages": "Banners and dialogs shown to the people using the app.",
+    "commands": "Restart, reload, clear the cache, take a screenshot and more, one device at a time."
   },
   "roles": {
     "owner": "Owner",
@@ -154,7 +165,9 @@
     "review_empty": "Nothing waiting for review.",
     "recent_title": "Recently enrolled",
     "recent_description": "The last installations to sign up, newest first.",
-    "recent_empty": "No installation has enrolled yet."
+    "recent_empty": "No installation has enrolled yet.",
+    "alerts": "Open alerts",
+    "alerts_detail": "Unresolved alerts across every app."
   },
   "companies": {
     "title": "Companies",
@@ -321,13 +334,19 @@
       "presence": "Presence",
       "heartbeat": "Heartbeat interval (seconds)",
       "modules": "Modules",
-      "hours": "Operating hours"
+      "hours": "Operating hours",
+      "log_level": "Log level",
+      "screenshots_title": "Screenshots",
+      "screenshots": "Allow screenshots"
     },
     "hints": {
       "domain": "For web apps: the hostname it is served from.",
-      "presence": "How installations say they are alive. A live connection arrives with remote control.",
+      "presence": "How installations say they are alive. Socket is for kiosks and points of sale: the native app holds a live connection, so commands reach it at once. Websites always ping.",
       "heartbeat": "Between {{min}} and {{max}}. An installation counts as connected until {{intervals}} heartbeats are missed.",
-      "modules": "The heartbeat is always on; these are what the app reports on top of it."
+      "modules": "The heartbeat is always on; these are what the app reports on top of it.",
+      "presence_web": "Websites always ping: a page cannot hold the live connection, so socket changes nothing for a web app.",
+      "log_level": "The least severe entry installations send. A device can override it from its own page.",
+      "screenshots": "Off by default. A screenshot can show the client's own customers, which makes it personal data (ley 21.719): turn it on only where the contract allows it. Each device has to allow them too."
     }
   },
   "app_nav": {
@@ -338,7 +357,10 @@
     "status": "Status",
     "settings": "Settings",
     "needs_review_aria_one": "{{count}} installation needs review",
-    "needs_review_aria_other": "{{count}} installations need review"
+    "needs_review_aria_other": "{{count}} installations need review",
+    "config": "Flags & config",
+    "messages": "Messages",
+    "diagnostics": "Crashes & logs"
   },
   "summary": {
     "connected": "Connected now",
@@ -349,7 +371,9 @@
     "every": "every {{interval}}",
     "heartbeat_only": "Heartbeat only",
     "created": "Created",
-    "updated": "Updated"
+    "updated": "Updated",
+    "screenshots_on": "Allowed, where each device allows them too",
+    "screenshots_off": "Off"
   },
   "ingest": {
     "title": "Ingest",
@@ -414,7 +438,9 @@
       "platform": "Platform",
       "version": "Version",
       "last_seen": "Last seen"
-    }
+    },
+    "socket": "Socket",
+    "socket_title": "Holding the live connection: commands reach it at once."
   },
   "usage": {
     "daily_title": "Daily usage",
@@ -442,7 +468,7 @@
     "state": "State",
     "explain": {
       "active": "Works normally.",
-      "grace": "Keeps working, but warns that it will stop. Use it for an overdue payment or a contract ending.",
+      "grace": "Keeps working, but warns that it will stop, and is suspended automatically when the grace period ends. Use it for an overdue payment or a contract ending.",
       "maintenance": "Shows a maintenance screen until you set it back.",
       "suspended": "Stops working. People using it are locked out."
     },
@@ -468,7 +494,14 @@
     "suspend_title": "Suspend this app?",
     "suspend_body_one": "“{{name}}” will stop working on its {{count}} installation as soon as it next checks in. Anyone using it will be locked out until you lift it.",
     "suspend_body_other": "“{{name}}” will stop working on all {{count}} installations as soon as each one next checks in. Anyone using it will be locked out until you lift it.",
-    "suspend_confirm": "Suspend"
+    "suspend_confirm": "Suspend",
+    "until_hint_grace_one": "Required, at most {{count}} day ahead. When it passes, the app is suspended automatically.",
+    "until_hint_grace_other": "Required, at most {{count}} days ahead. When it passes, the app is suspended automatically.",
+    "grace_required": "A grace period needs an end date.",
+    "grace_past": "The end of the grace period has to be in the future.",
+    "grace_too_far_one": "At most {{count}} day ahead.",
+    "grace_too_far_other": "At most {{count}} days ahead.",
+    "grace_until_value": "suspended automatically on {{date}}"
   },
   "settings": {
     "title": "Settings",
@@ -549,7 +582,14 @@
     "revoke_title": "Revoke this installation?",
     "revoke_body": "“{{name}}” loses access immediately: its token stops working on the next request, and this device can never enroll again with the same device id. Its history stays. This cannot be undone.",
     "revoked_title": "Revoked",
-    "revoked_body": "Revoked {{date}} by {{by}}. The device can no longer report or enroll again."
+    "revoked_body": "Revoked {{date}} by {{by}}. The device can no longer report or enroll again.",
+    "log_level": "Log level",
+    "log_level_hint": "In effect now: {{level}}.",
+    "log_level_follow": "Follow the app",
+    "log_level_follow_value": "Follow the app ({{level}})",
+    "screenshots": "Allow screenshots on this device",
+    "screenshots_hint": "Needed on top of the app's own switch. A screenshot can show whoever is using the device.",
+    "screenshots_app_off": "The app has screenshots off, so this alone does not allow them."
   },
   "snapshot": {
     "title": "Right now",
@@ -671,7 +711,15 @@
       "contact": "Contact",
       "app": "App",
       "app_key": "App key",
-      "installation": "Installation"
+      "installation": "Installation",
+      "command": "Command",
+      "screenshot": "Screenshot",
+      "flag": "Flag",
+      "config": "Configuration",
+      "message": "Message",
+      "crash": "Crash",
+      "alert_rule": "Alert rule",
+      "alert": "Alert"
     },
     "events": {
       "company": {
@@ -705,7 +753,506 @@
       "company_contact": {
         "linked": "Contact linked to a client",
         "unlinked": "Contact unlinked from a client"
+      },
+      "command": {
+        "created": "Command sent",
+        "cancelled": "Command cancelled"
+      },
+      "screenshot": {
+        "deleted": "Screenshot deleted"
+      },
+      "flag": {
+        "created": "Flag created",
+        "updated": "Flag updated",
+        "deleted": "Flag deleted"
+      },
+      "config": {
+        "published": "Configuration published"
+      },
+      "message": {
+        "created": "Message created",
+        "updated": "Message updated",
+        "deleted": "Message deleted"
+      },
+      "crash": {
+        "status_changed": "Crash status changed"
+      },
+      "alert_rule": {
+        "created": "Alert rule created",
+        "updated": "Alert rule updated",
+        "deleted": "Alert rule deleted"
+      },
+      "alert": {
+        "acknowledged": "Alert acknowledged",
+        "resolved": "Alert resolved"
       }
+    },
+    "automatic": "Automatic",
+    "reasons": {
+      "grace_period_ended": "The grace period ended"
     }
+  },
+  "module_off": {
+    "title": "{{modules}}: off for this app",
+    "body": "Turn the module on in Settings and the client app starts reporting it on its next heartbeat.",
+    "link": "Open Settings"
+  },
+  "log_levels": {
+    "debug": "Debug",
+    "info": "Info",
+    "warning": "Warning",
+    "error": "Error",
+    "fatal": "Fatal"
+  },
+  "command_statuses": {
+    "pending": "Pending",
+    "delivered": "Delivered",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+    "expired": "Expired",
+    "cancelled": "Cancelled"
+  },
+  "severities": {
+    "info": "Info",
+    "warning": "Warning",
+    "critical": "Critical"
+  },
+  "displays": {
+    "banner": "Banner",
+    "modal": "Dialog"
+  },
+  "message_statuses": {
+    "active": "Active",
+    "scheduled": "Scheduled",
+    "ended": "Ended"
+  },
+  "crash_statuses": {
+    "open": "Open",
+    "resolved": "Resolved",
+    "ignored": "Ignored"
+  },
+  "alert_statuses": {
+    "open": "Open",
+    "acknowledged": "Acknowledged",
+    "resolved": "Resolved"
+  },
+  "alert_kinds": {
+    "installation_offline": "Installation offline",
+    "cpu_high": "High CPU",
+    "memory_high": "High memory",
+    "crash_spike": "Crash spike",
+    "error_log_spike": "Error log spike",
+    "enrollment_spike": "Enrollment spike"
+  },
+  "alert_kinds_hint": {
+    "installation_offline": "A device has not sent a heartbeat for longer than the threshold.",
+    "cpu_high": "A device's average CPU over the window is above the threshold.",
+    "memory_high": "A device's average memory use over the window is above the threshold.",
+    "crash_spike": "At least as many crash reports as the threshold within the window.",
+    "error_log_spike": "At least as many error and fatal log entries as the threshold within the window.",
+    "enrollment_spike": "At least as many new installations as the threshold within the window. A leaked key looks like this."
+  },
+  "json": {
+    "format": "Format",
+    "invalid": "Not valid JSON: {{message}}",
+    "not_an_object": "It has to be a JSON object, between { and }."
+  },
+  "scope": {
+    "label": "Applies to",
+    "app": "The whole app",
+    "channel": "One channel",
+    "installation": "One installation",
+    "hint": {
+      "app": "Every installation of the app.",
+      "channel": "The installations on that update channel.",
+      "installation": "A single device."
+    },
+    "channel_value": "Channel",
+    "installation_value": "Installation",
+    "pick_channel": "Pick a channel",
+    "pick_installation": "Pick an installation",
+    "app_short": "Whole app",
+    "channel_short": "Channel · {{channel}}",
+    "installation_short": "Device ·"
+  },
+  "logs": {
+    "title": "Logs",
+    "description": "Newest first. Kept for 30 days.",
+    "filters": {
+      "level": "Level",
+      "any_level": "Every level",
+      "at_least": "{{level}} and above",
+      "search": "Search",
+      "search_placeholder": "Text in the message",
+      "installation": "Installation"
+    },
+    "show_context": "Show context",
+    "hide_context": "Hide context",
+    "no_matches": "No entry matches these filters.",
+    "empty": "No log entries",
+    "empty_description": "Entries appear here once the app sends them, at or above its log level."
+  },
+  "commands": {
+    "title": "Commands",
+    "description": "Collected by the device on its next heartbeat (every {{interval}}), or at once while it holds the live socket.",
+    "description_socket": "This device holds the live socket, so a command reaches it at once.",
+    "type": "Command",
+    "types": {
+      "restart_app": "Restart the app",
+      "restart_device": "Restart the device",
+      "reload_config": "Reload the configuration",
+      "clear_cache": "Clear the cache",
+      "screenshot": "Take a screenshot",
+      "upload_logs": "Upload logs",
+      "check_update": "Check for updates"
+    },
+    "types_hint": {
+      "restart_app": "Closes and reopens the app. Whoever is using it loses what they had not saved.",
+      "restart_device": "Reboots the whole machine. Kiosks only.",
+      "reload_config": "Fetches the flags and the configuration again, without restarting.",
+      "clear_cache": "Deletes the app's local cache; it is rebuilt as the app is used.",
+      "screenshot": "Captures the screen once. It appears under Screenshots when it arrives.",
+      "upload_logs": "Sends the device's recent logs now, whatever the log level.",
+      "check_update": "Looks for a newer release on the device's channel."
+    },
+    "unavailable": {
+      "restart_device": "Only kiosk apps can restart the device.",
+      "screenshot": "Screenshots are off for this app or this device. Turn them on first."
+    },
+    "expires": "Expires after",
+    "expires_hint": "If the device has not collected it by then.",
+    "payload_toggle": "Add a payload",
+    "payload_hint": "Optional JSON object handed to the app with the command.",
+    "payload": "Payload",
+    "result": "Result",
+    "send": "Send",
+    "sending": "Sending…",
+    "sent": "“{{type}}” queued.",
+    "revoked_title": "Revoked",
+    "revoked_body": "A revoked installation cannot receive commands.",
+    "history": "History",
+    "filter": "Filter by status",
+    "any_status": "Every status",
+    "live_hint": "Refreshing every 5 seconds while a command is on its way.",
+    "live": "On its way",
+    "created": "Sent {{when}} by {{by}}",
+    "delivered": "collected {{when}}",
+    "completed": "finished {{when}}",
+    "expires_at": "expires {{when}}",
+    "cancelled_by": "cancelled by {{by}}",
+    "show_result": "Show the result",
+    "show_payload": "Show the payload",
+    "hide_details": "Hide details",
+    "cancel": "Cancel",
+    "cancelled": "Command cancelled.",
+    "empty": "No commands yet",
+    "empty_description": "Commands sent to this device appear here, with what it answered.",
+    "no_matches": "No command with this status."
+  },
+  "screenshots": {
+    "title": "Screenshots",
+    "description": "What the screen showed each time a screenshot was taken. Off by default: a screenshot can show the client's customers.",
+    "off_title": "Screenshots are off",
+    "off_app": "The app does not allow screenshots. Turn them on in the app's Settings, and only where the client's contract allows it (ley 21.719).",
+    "off_device": "This device does not allow screenshots. Turn them on under Controls, above.",
+    "off_generic": "Screenshots are not allowed on this device right now.",
+    "empty": "No screenshots",
+    "empty_description": "Send a “Take a screenshot” command and the image appears here.",
+    "alt": "Screenshot taken {{date}}",
+    "open": "Open the screenshot from {{date}}",
+    "loading": "Loading the screenshot…",
+    "load_failed": "Could not be loaded",
+    "delete": "Delete screenshot",
+    "delete_aria": "Delete the screenshot from {{date}}",
+    "delete_title": "Delete this screenshot?",
+    "delete_body": "The image is removed for good. The command that took it stays in the history.",
+    "deleted": "Screenshot deleted."
+  },
+  "flags": {
+    "title": "Feature flags",
+    "description_panel": "Values the app reads while it runs. For each device the most specific one wins: its own installation, then its channel, then the whole app.",
+    "create": "New flag",
+    "create_title": "New flag",
+    "override_title": "Override “{{key}}”",
+    "edit_title": "Edit “{{key}}”",
+    "add_override": "Add override",
+    "key": "Key",
+    "key_hint": "Lowercase letters, digits, “_”, “.” and “-”, up to 64 characters.",
+    "invalid_key": "Use lowercase letters, digits, “_”, “.” and “-”, starting with a letter or a digit.",
+    "kind": "Type",
+    "kinds": {
+      "boolean": "Yes / no",
+      "string": "Text",
+      "number": "Number"
+    },
+    "value": "Value",
+    "invalid_number": "Enter a number.",
+    "description": "Description",
+    "description_hint": "What the flag does, for whoever reads this next. Optional.",
+    "conflict": "This key is already set at that scope. Edit that row instead.",
+    "empty": "No flags yet",
+    "empty_description": "Create one, then add overrides for a channel or a single device.",
+    "edit_aria": "Edit {{key}}",
+    "delete_aria": "Delete {{key}}",
+    "delete_title": "Delete this flag?",
+    "delete_body_app": "“{{key}}” stops being set for the whole app. Overrides for channels or devices stay.",
+    "delete_body_override": "This override of “{{key}}” is removed; the devices it covered fall back to the next value up."
+  },
+  "config": {
+    "title": "Remote configuration",
+    "never_saved": "Nothing published yet. Installations receive an empty document until the first version is published.",
+    "current": "Version {{version}}, published {{date}} by {{by}}.",
+    "publish": "Publish",
+    "saved": "Version {{version}} published.",
+    "document": "Document",
+    "document_hint": "The JSON object every installation receives.",
+    "document_required": "The document is required. Use {} for an empty one.",
+    "schema": "Schema (optional)",
+    "schema_hint": "A JSON Schema the document must satisfy. Emptying it removes it. Supported keywords:",
+    "note": "Note",
+    "note_hint": "What changed and why, for the history. Optional.",
+    "conflict_title": "Someone published a newer version",
+    "conflict_body": "Your edit started from an older version. Loading the latest discards the changes here, so copy them first if you need them.",
+    "load_latest": "Load the latest",
+    "invalid_title": "The service refused this version",
+    "history_title": "History",
+    "history_description": "Every published version, newest first. Restoring one publishes it again as a new version.",
+    "history_empty": "No versions yet.",
+    "version": "Version {{version}}",
+    "current_badge": "Current",
+    "view": "View",
+    "restore": "Restore",
+    "restore_title": "Restore version {{version}}?",
+    "restore_body": "Version {{version}} is published again as the newest version. Nothing is lost: the current one stays in the history.",
+    "restored": "Version {{from}} restored as version {{version}}."
+  },
+  "messages": {
+    "title": "In-app messages",
+    "description": "Banners and dialogs shown inside the app — to everybody, one channel or one device — for as long as you choose.",
+    "filter": "Filter messages",
+    "filters": {
+      "all": "Every message",
+      "active": "Active",
+      "scheduled": "Scheduled",
+      "ended": "Ended"
+    },
+    "create": "New message",
+    "create_title": "New message",
+    "edit_title": "Edit message",
+    "publish": "Publish",
+    "published": "Message published.",
+    "fields": {
+      "title": "Title",
+      "body": "Message",
+      "severity": "Severity",
+      "display": "Shown as",
+      "starts_at": "Starts",
+      "ends_at": "Ends"
+    },
+    "count": "{{count}}/{{max}}",
+    "body_hint": "{{count}}/{{max}} · in the language the client's users read.",
+    "display_hint": {
+      "banner": "A strip at the top of the app; work carries on.",
+      "modal": "A dialog that has to be dismissed before carrying on."
+    },
+    "starts_hint": "Empty starts it now.",
+    "ends_hint": "Empty keeps it until you end it.",
+    "ends_before_start": "It has to end after it starts.",
+    "window": "{{from}} → {{to}}",
+    "window_open": "From {{from}}, until ended",
+    "seen_one": "Seen on {{count}} device",
+    "seen_other": "Seen on {{count}} devices",
+    "end_now": "End now",
+    "ended": "Message ended.",
+    "edit_aria": "Edit “{{title}}”",
+    "delete_aria": "Delete “{{title}}”",
+    "delete_title": "Delete this message?",
+    "delete_body": "“{{title}}” and its read receipts are removed for good. To stop showing it, end it instead.",
+    "receipts_title": "Seen: {{title}}",
+    "receipts_empty": "No device has shown it yet.",
+    "empty": "No messages yet",
+    "empty_description": "Write one to warn about a maintenance, announce a change or ask the people using the app to do something.",
+    "empty_filtered": {
+      "active": "No active message.",
+      "scheduled": "No scheduled message.",
+      "ended": "No ended message."
+    }
+  },
+  "crashes": {
+    "title": "Crashes",
+    "description": "Grouped by signature and version. Reports are kept 30 days.",
+    "count_one": "{{count}} crash group · reports kept 30 days",
+    "count_other": "{{count}} crash groups · reports kept 30 days",
+    "search": "Search by title or signature",
+    "version_filter": "Version",
+    "status_filter": "Status",
+    "any_status": "Any status",
+    "no_matches": "No crash matches these filters.",
+    "empty": "No open crashes",
+    "empty_description": "Crash reports appear here, grouped, when the app sends them.",
+    "columns": {
+      "crash": "Crash",
+      "version": "Version",
+      "status": "Status",
+      "occurrences": "Occurrences",
+      "last_seen": "Last seen"
+    },
+    "affected_one": "On {{count}} device",
+    "affected_other": "On {{count}} devices",
+    "devices_one": "{{count}} device",
+    "devices_other": "{{count}} devices",
+    "back": "Crashes of this app",
+    "loading_title": "Crash",
+    "details": "Details",
+    "signature": "Signature",
+    "affected_label": "Devices affected",
+    "first_seen": "First seen",
+    "resolved_at": "Resolved",
+    "resolve": "Resolve",
+    "ignore": "Ignore",
+    "reopen": "Reopen",
+    "status_changed": {
+      "resolved": "Marked as resolved.",
+      "ignored": "Marked as ignored.",
+      "open": "Reopened."
+    },
+    "status_help": "Resolve it once a fix has shipped: if it happens again, it opens itself. Ignore it when it is known and not worth fixing: it stays ignored.",
+    "reports_title": "Reports",
+    "reports_description": "Every occurrence, newest first.",
+    "reports_empty": "No reports in the last 30 days.",
+    "show_stack": "Show the stack",
+    "hide_stack": "Hide the stack",
+    "show_context": "Show context",
+    "hide_context": "Hide context"
+  },
+  "alerts": {
+    "title": "Alerts",
+    "description": "What the service noticed across every app. Refreshes every 30 seconds.",
+    "tabs": {
+      "label": "Alert sections",
+      "inbox": "Inbox",
+      "rules": "Rules"
+    },
+    "inbox_title": "Inbox",
+    "count_one": "{{count}} alert",
+    "count_other": "{{count}} alerts",
+    "filters": {
+      "status": "Status",
+      "unresolved": "Unresolved",
+      "all": "Every status",
+      "any_app": "Every app",
+      "one_rule": "One rule only",
+      "one_rule_named": "Rule: {{name}}",
+      "one_installation": "One installation only"
+    },
+    "columns": {
+      "alert": "Alert",
+      "value": "Value",
+      "status": "Status",
+      "occurrences": "Times",
+      "last_triggered": "Last triggered"
+    },
+    "threshold_short": "threshold {{threshold}}",
+    "empty": "Nothing needs attention",
+    "empty_description": "Open and acknowledged alerts appear here. Rules decide what raises one.",
+    "no_matches": "No alert matches these filters.",
+    "open_hint_one": "{{count}} open alert",
+    "open_hint_other": "{{count}} open alerts",
+    "open_hint_link": "See alerts",
+    "back": "Alert inbox",
+    "loading_title": "Alert",
+    "details": "Details",
+    "value": "Value",
+    "subject": "About",
+    "rule": "Rule",
+    "opened": "Opened",
+    "acknowledged_at": "Acknowledged",
+    "resolved_at": "Resolved",
+    "notified_at": "Notified",
+    "not_notified": "Not notified",
+    "details_raw": "Details recorded",
+    "acknowledge": "Acknowledge",
+    "acknowledged": "Alert acknowledged.",
+    "resolve": "Resolve",
+    "resolved": "Alert resolved.",
+    "resolve_title": "Resolve this alert?",
+    "resolve_body": "It leaves the inbox. If the condition still holds at the next evaluation, the service opens it again.",
+    "note": "Note",
+    "note_hint": "What was done about it. Optional; kept with the alert.",
+    "resolved_title": "Resolved",
+    "resolved_body": "Resolved {{date}} by {{by}}."
+  },
+  "rules": {
+    "title": "Rules",
+    "description": "What the service watches for. Whoever creates a rule is notified through the site's notification centre: the bell, push and email, per their own preferences.",
+    "count_one": "{{count}} rule",
+    "count_other": "{{count}} rules",
+    "create": "New rule",
+    "create_title": "New alert rule",
+    "edit_title": "Edit alert rule",
+    "created": "Rule created. You will be notified when it fires.",
+    "every_app": "Every app",
+    "fields": {
+      "app": "App",
+      "kind": "Watches for",
+      "name": "Name",
+      "window": "Window (minutes)",
+      "enabled": "Enabled"
+    },
+    "hints": {
+      "app": "Empty watches every app, including the ones created later.",
+      "window": "Between {{min}} and {{max}} minutes.",
+      "notify": "You will be the one notified, through the site's notification centre. Someone else can take it over with “Notify me”."
+    },
+    "threshold": {
+      "minutes": "Minutes offline",
+      "percent": "Threshold (%)",
+      "count": "Threshold (count)"
+    },
+    "threshold_hint": {
+      "installation_offline": "Between 1 and 10,080 minutes (a week).",
+      "cpu_high": "Average CPU percentage, from 1 to 100.",
+      "memory_high": "Average memory percentage, from 1 to 100.",
+      "crash_spike": "Crash reports within the window.",
+      "error_log_spike": "Error and fatal entries within the window.",
+      "enrollment_spike": "New installations within the window."
+    },
+    "range": "Between {{min}} and {{max}}.",
+    "condition": {
+      "installation_offline": "A device silent for {{threshold}}",
+      "cpu_high": "CPU above {{threshold}} on average over {{window}}",
+      "memory_high": "Memory above {{threshold}} on average over {{window}}",
+      "crash_spike": "At least {{threshold}} crashes in {{window}}",
+      "error_log_spike": "At least {{threshold}} error log entries in {{window}}",
+      "enrollment_spike": "At least {{threshold}} new installations in {{window}}"
+    },
+    "window_value": "window {{window}}",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "silenced": "Silenced",
+    "silenced_until": "silenced until {{date}}",
+    "notifies": "notifies {{email}}",
+    "open_alerts_one": "{{count}} open alert",
+    "open_alerts_other": "{{count}} open alerts",
+    "silence": "Silence…",
+    "silence_for": "For {{duration}}",
+    "silenced_toast": "Silenced for {{duration}}.",
+    "unsilence": "Unsilence",
+    "unsilenced": "Silence lifted.",
+    "disable": "Disable",
+    "enable": "Enable",
+    "disabled_toast": "Rule disabled.",
+    "enabled_toast": "Rule enabled.",
+    "notify_me": "Notify me",
+    "notify_me_hint": "Make your account the one this rule notifies.",
+    "notify_me_toast": "This rule now notifies you.",
+    "edit_aria": "Edit {{name}}",
+    "delete_aria": "Delete {{name}}",
+    "delete_title": "Delete this rule?",
+    "delete_body_one": "“{{name}}” and every alert it raised are deleted for good ({{count}} still open). To stop it for a while, silence or disable it instead.",
+    "delete_body_other": "“{{name}}” and every alert it raised are deleted for good ({{count}} still open). To stop it for a while, silence or disable it instead.",
+    "empty": "No rules yet",
+    "empty_app": "No rule watches this app",
+    "empty_description": "Create one to be told when a device goes quiet, runs hot or crashes more than usual."
   }
 }

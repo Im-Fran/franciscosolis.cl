@@ -1,5 +1,5 @@
 import {orNull} from "@/lib/admin/format.ts";
-import type {App, AppKind, AppModule, AppPayload, NewApp, OperatingHours, PresenceMode} from "@/lib/custom-apps/types.ts";
+import type {App, AppKind, AppModule, AppPayload, LogLevel, NewApp, OperatingHours, PresenceMode} from "@/lib/custom-apps/types.ts";
 import {tidyHours, validateHours} from "@/pages/custom-apps/components/operating-hours.ts";
 
 /**
@@ -21,6 +21,9 @@ export type AppForm = {
   heartbeat: string;
   modules: AppModule[];
   hours: OperatingHours | null;
+  logLevel: LogLevel;
+  /** Off until the client's contract allows them (ley 21.719). */
+  screenshots: boolean;
 };
 
 export type AppFormField = keyof AppForm;
@@ -37,6 +40,8 @@ export const emptyAppForm = (heartbeat: number, companyId = ""): AppForm => ({
   heartbeat: String(heartbeat),
   modules: ["metrics", "events"],
   hours: null,
+  logLevel: "info",
+  screenshots: false,
 });
 
 export const appToForm = (app: App): AppForm => ({
@@ -50,6 +55,8 @@ export const appToForm = (app: App): AppForm => ({
   heartbeat: String(app.heartbeat_interval_seconds),
   modules: app.modules ?? [],
   hours: tidyHours(app.operating_hours),
+  logLevel: app.log_level ?? "info",
+  screenshots: app.screenshots_enabled ?? false,
 });
 
 /** A bare hostname: no scheme, no path, no port. The service compares it against `Origin`. */
@@ -106,6 +113,8 @@ export const appFormPayload = (form: AppForm) => ({
   heartbeat_interval_seconds: Number(form.heartbeat),
   modules: form.modules,
   operating_hours: tidyHours(form.hours),
+  log_level: form.logLevel,
+  screenshots_enabled: form.screenshots,
 });
 
 /**
@@ -126,10 +135,11 @@ export const appFormChanges = (form: AppForm, baseline: AppForm): AppPayload => 
 };
 
 /**
- * A new app's body. The presence mode is left out: a new app takes the service's default, and the
- * mode is chosen later, in Settings, once there is more than one to choose from.
+ * A new app's body. The presence mode, the log level and the screenshot switch are left out: a new
+ * app takes the service's defaults — pings, `info`, and no screenshots — and each is a decision made
+ * later, in Settings, once the app and its contract exist.
  */
 export const newAppPayload = (form: AppForm): NewApp => {
-  const {presence_mode: _omitted, ...body} = appFormPayload(form);
+  const {presence_mode: _presence, log_level: _level, screenshots_enabled: _screenshots, ...body} = appFormPayload(form);
   return body;
 };

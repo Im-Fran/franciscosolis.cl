@@ -9,10 +9,16 @@ import {customAppsAuth} from "@/lib/custom-apps/client.ts";
 import {CustomAppsProvider} from "@/lib/custom-apps/custom-apps-provider.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {
+  AlertDetail,
+  AlertRules,
+  Alerts,
+  AppConfig,
   AppCreate,
+  AppDiagnostics,
   AppInstallations,
   AppLayout,
   AppList,
+  AppMessages,
   AppSettings,
   AppStatus,
   AppSummary,
@@ -23,6 +29,7 @@ import {
   CompanyList,
   ContactEditor,
   ContactList,
+  CrashDetail,
   CustomAppsLayout,
   InstallationDetail,
   Overview,
@@ -40,9 +47,14 @@ import {
  * It is a client application of its own because the service accepts nothing else (see
  * `src/lib/custom-apps/config.ts`).
  *
- * One app is a layout route of its own (`AppLayout`), unlike a marketplace product: its five tabs
- * share one record, a header and a state badge, and five screens each fetching the same app would
- * reload the header on every tab change.
+ * One app is a layout route of its own (`AppLayout`), unlike a marketplace product: its tabs share
+ * one record, a header and a state badge, and each screen fetching the same app would reload the
+ * header on every tab change. The remote-operation tabs (config, messages, diagnostics) are routes
+ * whatever the app's modules; the tab bar hides the ones that are off, and each screen explains
+ * itself if reached anyway.
+ *
+ * `alerts/:alertId` is a contract rather than a choice: the notification centre links each alert
+ * there.
  */
 export const customAppsRoutes: RouteObject = {
   path: "custom-apps",
@@ -85,10 +97,18 @@ export const customAppsRoutes: RouteObject = {
             {path: "installations", element: <AppInstallations />},
             {path: "usage", element: <AppUsage />},
             {path: "status", element: <AppStatus />},
+            {path: "config", element: <AppConfig />},
+            {path: "messages", element: <AppMessages />},
+            {path: "diagnostics", element: <AppDiagnostics />},
             {path: "settings", element: <AppSettings />},
           ],
         },
         {path: "installations/:installationId", element: <InstallationDetail />},
+        {path: "crashes/:crashId", element: <CrashDetail />},
+        /* `rules` is literal and must stay ahead of `:alertId`. */
+        {path: "alerts", element: <Alerts />},
+        {path: "alerts/rules", element: <AlertRules />},
+        {path: "alerts/:alertId", element: <AlertDetail />},
         {path: "audit-log", element: <AuditLog />},
         {path: "*", element: <NotFound />},
       ],

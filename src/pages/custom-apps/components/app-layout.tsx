@@ -13,7 +13,7 @@ import {AppNav} from "@/pages/custom-apps/components/app-nav.tsx";
 import {StateBadge} from "@/pages/custom-apps/components/badges.tsx";
 
 /**
- * One app, above its five tabs: loads the record once, draws the header and the tab bar, and hands
+ * One app, above its tabs: loads the record once, draws the header and the tab bar, and hands
  * the app to whichever tab is open.
  *
  * A write that answers with the updated app (the kill switch, a settings save) puts it straight
@@ -82,7 +82,7 @@ export const AppLayout = () => {
         }
         back={{to: customAppsRoute.apps, label: t("custom_apps:apps.back")}}
       />
-      <AppNav id={value.app.id} needsReview={value.app.needs_review_count} />
+      <AppNav id={value.app.id} needsReview={value.app.needs_review_count} modules={value.app.modules ?? []} />
       <Suspense fallback={<AuthLoading label={t("admin:common.loading")} />}>
         <Outlet />
       </Suspense>

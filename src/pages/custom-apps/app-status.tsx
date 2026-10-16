@@ -29,24 +29,45 @@ const MESSAGE_MAX = 500;
  * app can say why and until when. Suspending is the one that stops somebody's work, so it is the one
  * that asks first; lifting it does not, because getting people back to work should not need a
  * second click.
+ *
+ * Grace is the one state with a deadline the service enforces: it needs an end in the future, at
+ * most `grace_max_days` ahead, and when that passes the service suspends the app by itself. The form
+ * checks the same bounds before sending so the refusal is a sentence beside the field rather than a
+ * 400 above the form.
  */
 export const AppStatus = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const {app, replace} = useApp();
   const {notify} = useToast();
-  const {states, heartbeat} = useServiceVocabulary();
+  const {states, heartbeat, graceMaxDays} = useServiceVocabulary();
 
   const [state, setState] = useState<AppState>(app.state);
   const [message, setMessage] = useState(app.state_message ?? "");
   const [until, setUntil] = useState(toDateTimeLocal(app.state_until));
   const [confirming, setConfirming] = useState(false);
+  const [untilError, setUntilError] = useState<string | null>(null);
 
   /* A save elsewhere (or this one) resets the form to what the service now holds. */
   useEffect(() => {
     setState(app.state);
     setMessage(app.state_message ?? "");
     setUntil(toDateTimeLocal(app.state_until));
+    setUntilError(null);
   }, [app.state, app.state_message, app.state_until]);
+
+  /* Recomputed on every render, which is often enough: the bounds move by the minute. */
+  const now = new Date();
+  const graceLimit = new Date(now.getTime() + graceMaxDays * 86_400_000);
+
+  const checkUntil = () => {
+    if (state !== "grace") return null;
+    const end = fromDateTimeLocal(until);
+    if (!end) return t("custom_apps:status.grace_required");
+    const time = new Date(end).getTime();
+    if (time <= Date.now()) return t("custom_apps:status.grace_past");
+    if (time > Date.now() + graceMaxDays * 86_400_000) return t("custom_apps:status.grace_too_far", {count: graceMaxDays});
+    return null;
+  };
 
   const save = useMutation(useCallback((body: AppStatusPayload) => customAppsApi.apps.setStatus(app.id, body), [app.id]));
 
@@ -69,6 +90,9 @@ export const AppStatus = () => {
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    const problem = checkUntil();
+    setUntilError(problem);
+    if (problem) return;
     if (state === "suspended" && app.state !== "suspended") {
       save.reset();
       setConfirming(true);
@@ -112,7 +136,10 @@ export const AppStatus = () => {
                       name="app-state"
                       value={option}
                       checked={state === option}
-                      onChange={() => setState(option)}
+                      onChange={() => {
+                        setState(option);
+                        setUntilError(null);
+                      }}
                       disabled={save.pending}
                       className="mt-1 accent-[var(--color-accent)]"
                     />
@@ -150,13 +177,25 @@ export const AppStatus = () => {
                 <Field
                   label={state === "grace" ? t("custom_apps:status.until_grace") : t("custom_apps:status.until")}
                   htmlFor="status-until"
-                  hint={t("custom_apps:status.until_hint")}
+                  hint={
+                    state === "grace"
+                      ? t("custom_apps:status.until_hint_grace", {count: graceMaxDays})
+                      : t("custom_apps:status.until_hint")
+                  }
+                  error={untilError}
                 >
                   <Input
                     id="status-until"
                     type="datetime-local"
                     value={until}
-                    onChange={(event) => setUntil(event.target.value)}
+                    min={state === "grace" ? toDateTimeLocal(now.toISOString()) : undefined}
+                    max={state === "grace" ? toDateTimeLocal(graceLimit.toISOString()) : undefined}
+                    required={state === "grace"}
+                    aria-invalid={Boolean(untilError)}
+                    onChange={(event) => {
+                      setUntil(event.target.value);
+                      setUntilError(null);
+                    }}
                     disabled={save.pending}
                   />
                 </Field>

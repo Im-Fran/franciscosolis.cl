@@ -7,7 +7,8 @@
     "contacts": "Contactos",
     "apps": "Apps",
     "audit": "Registro de auditoría",
-    "sign_out": "Cerrar sesión"
+    "sign_out": "Cerrar sesión",
+    "alerts": "Alertas"
   },
   "sign_in": {
     "title": "Apps a medida",
@@ -100,11 +101,21 @@
   },
   "modules": {
     "metrics": "Métricas",
-    "events": "Eventos de uso"
+    "events": "Eventos de uso",
+    "logs": "Logs",
+    "crashes": "Reportes de fallos",
+    "config": "Flags y configuración remota",
+    "messages": "Mensajes en la app",
+    "commands": "Comandos remotos"
   },
   "modules_hint": {
     "metrics": "Muestras de CPU, memoria, disco, red, batería y consumo.",
-    "events": "Sesiones, pantallas y acciones que reporta la app."
+    "events": "Sesiones, pantallas y acciones que reporta la app.",
+    "logs": "Entradas de log de cada equipo, filtradas por nivel. Se guardan 30 días.",
+    "crashes": "Fallos agrupados por firma y versión, con su stack. Se guardan 30 días.",
+    "config": "Feature flags y una configuración JSON versionada, que se aplican sin publicar una versión nueva.",
+    "messages": "Banners y diálogos que ven las personas que usan la app.",
+    "commands": "Reiniciar, recargar, limpiar la caché, tomar una captura y más, equipo por equipo."
   },
   "roles": {
     "owner": "Dueño",
@@ -154,7 +165,9 @@
     "review_empty": "No hay nada esperando revisión.",
     "recent_title": "Inscritas recientemente",
     "recent_description": "Las últimas instalaciones en inscribirse, de la más nueva a la más antigua.",
-    "recent_empty": "Todavía no se ha inscrito ninguna instalación."
+    "recent_empty": "Todavía no se ha inscrito ninguna instalación.",
+    "alerts": "Alertas abiertas",
+    "alerts_detail": "Alertas sin resolver en todas las apps."
   },
   "companies": {
     "title": "Clientes",
@@ -321,13 +334,19 @@
       "presence": "Presencia",
       "heartbeat": "Intervalo de latido (segundos)",
       "modules": "Módulos",
-      "hours": "Horario de operación"
+      "hours": "Horario de operación",
+      "log_level": "Nivel de log",
+      "screenshots_title": "Capturas de pantalla",
+      "screenshots": "Permitir capturas de pantalla"
     },
     "hints": {
       "domain": "Para apps web: el nombre de host desde el que se sirve.",
-      "presence": "Cómo avisan las instalaciones que siguen vivas. La conexión en vivo llega con el control remoto.",
+      "presence": "Cómo avisan las instalaciones que siguen vivas. Socket es para kioscos y puntos de venta: la app nativa mantiene una conexión en vivo, así que los comandos le llegan al instante. Los sitios web siempre usan ping.",
       "heartbeat": "Entre {{min}} y {{max}}. Una instalación cuenta como conectada hasta que se pierden {{intervals}} latidos.",
-      "modules": "El latido siempre está activo; esto es lo que la app reporta además de él."
+      "modules": "El latido siempre está activo; esto es lo que la app reporta además de él.",
+      "presence_web": "Los sitios web siempre usan ping: una página no puede mantener la conexión en vivo, así que socket no cambia nada en una app web.",
+      "log_level": "La entrada menos grave que envían las instalaciones. Cada equipo puede cambiarlo desde su propia página.",
+      "screenshots": "Desactivadas por defecto. Una captura puede mostrar a los propios clientes del cliente, lo que la convierte en un dato personal (ley 21.719): actívalas solo donde el contrato lo permita. Además, cada equipo tiene que permitirlas."
     }
   },
   "app_nav": {
@@ -338,7 +357,10 @@
     "status": "Estado",
     "settings": "Configuración",
     "needs_review_aria_one": "{{count}} instalación por revisar",
-    "needs_review_aria_other": "{{count}} instalaciones por revisar"
+    "needs_review_aria_other": "{{count}} instalaciones por revisar",
+    "config": "Flags y configuración",
+    "messages": "Mensajes",
+    "diagnostics": "Fallos y logs"
   },
   "summary": {
     "connected": "Conectadas ahora",
@@ -349,7 +371,9 @@
     "every": "cada {{interval}}",
     "heartbeat_only": "Solo latido",
     "created": "Creada",
-    "updated": "Actualizada"
+    "updated": "Actualizada",
+    "screenshots_on": "Permitidas, donde cada equipo también las permita",
+    "screenshots_off": "Desactivadas"
   },
   "ingest": {
     "title": "Ingesta",
@@ -414,7 +438,9 @@
       "platform": "Plataforma",
       "version": "Versión",
       "last_seen": "Vista por última vez"
-    }
+    },
+    "socket": "Socket",
+    "socket_title": "Mantiene la conexión en vivo: los comandos le llegan al instante."
   },
   "usage": {
     "daily_title": "Uso diario",
@@ -442,7 +468,7 @@
     "state": "Estado",
     "explain": {
       "active": "Funciona con normalidad.",
-      "grace": "Sigue funcionando, pero avisa que se va a detener. Úsalo para un pago atrasado o un contrato que termina.",
+      "grace": "Sigue funcionando, pero avisa que se va a detener, y se suspende sola cuando termina el período de gracia. Úsalo para un pago atrasado o un contrato que termina.",
       "maintenance": "Muestra una pantalla de mantención hasta que la vuelvas a activar.",
       "suspended": "Deja de funcionar. Quienes la estén usando quedan fuera."
     },
@@ -468,7 +494,14 @@
     "suspend_title": "¿Suspender esta app?",
     "suspend_body_one": "«{{name}}» dejará de funcionar en su {{count}} instalación apenas vuelva a reportarse. Quien la esté usando quedará fuera hasta que la reactives.",
     "suspend_body_other": "«{{name}}» dejará de funcionar en sus {{count}} instalaciones a medida que cada una vuelva a reportarse. Quien la esté usando quedará fuera hasta que la reactives.",
-    "suspend_confirm": "Suspender"
+    "suspend_confirm": "Suspender",
+    "until_hint_grace_one": "Obligatorio, como máximo {{count}} día hacia adelante. Cuando se cumple, la app se suspende automáticamente.",
+    "until_hint_grace_other": "Obligatorio, como máximo {{count}} días hacia adelante. Cuando se cumple, la app se suspende automáticamente.",
+    "grace_required": "El período de gracia necesita una fecha de término.",
+    "grace_past": "El fin del período de gracia tiene que estar en el futuro.",
+    "grace_too_far_one": "Como máximo {{count}} día hacia adelante.",
+    "grace_too_far_other": "Como máximo {{count}} días hacia adelante.",
+    "grace_until_value": "se suspende automáticamente el {{date}}"
   },
   "settings": {
     "title": "Configuración",
@@ -549,7 +582,14 @@
     "revoke_title": "¿Revocar esta instalación?",
     "revoke_body": "«{{name}}» pierde el acceso de inmediato: su token deja de funcionar en la siguiente solicitud, y este equipo nunca podrá volver a inscribirse con el mismo ID. Su historial se conserva. Esto no se puede deshacer.",
     "revoked_title": "Revocada",
-    "revoked_body": "Revocada el {{date}} por {{by}}. El equipo ya no puede reportar ni volver a inscribirse."
+    "revoked_body": "Revocada el {{date}} por {{by}}. El equipo ya no puede reportar ni volver a inscribirse.",
+    "log_level": "Nivel de log",
+    "log_level_hint": "Vigente ahora: {{level}}.",
+    "log_level_follow": "Seguir a la app",
+    "log_level_follow_value": "Seguir a la app ({{level}})",
+    "screenshots": "Permitir capturas en este equipo",
+    "screenshots_hint": "Se necesita además del interruptor de la app. Una captura puede mostrar a quien esté usando el equipo.",
+    "screenshots_app_off": "La app tiene las capturas desactivadas, así que esto por sí solo no las permite."
   },
   "snapshot": {
     "title": "En este momento",
@@ -671,7 +711,15 @@
       "contact": "Contacto",
       "app": "App",
       "app_key": "Llave de la app",
-      "installation": "Instalación"
+      "installation": "Instalación",
+      "command": "Comando",
+      "screenshot": "Captura",
+      "flag": "Flag",
+      "config": "Configuración",
+      "message": "Mensaje",
+      "crash": "Fallo",
+      "alert_rule": "Regla de alerta",
+      "alert": "Alerta"
     },
     "events": {
       "company": {
@@ -705,7 +753,506 @@
       "company_contact": {
         "linked": "Contacto vinculado a un cliente",
         "unlinked": "Contacto desvinculado de un cliente"
+      },
+      "command": {
+        "created": "Comando enviado",
+        "cancelled": "Comando cancelado"
+      },
+      "screenshot": {
+        "deleted": "Captura eliminada"
+      },
+      "flag": {
+        "created": "Flag creado",
+        "updated": "Flag actualizado",
+        "deleted": "Flag eliminado"
+      },
+      "config": {
+        "published": "Configuración publicada"
+      },
+      "message": {
+        "created": "Mensaje creado",
+        "updated": "Mensaje actualizado",
+        "deleted": "Mensaje eliminado"
+      },
+      "crash": {
+        "status_changed": "Cambió el estado de un fallo"
+      },
+      "alert_rule": {
+        "created": "Regla de alerta creada",
+        "updated": "Regla de alerta actualizada",
+        "deleted": "Regla de alerta eliminada"
+      },
+      "alert": {
+        "acknowledged": "Alerta reconocida",
+        "resolved": "Alerta resuelta"
       }
+    },
+    "automatic": "Automático",
+    "reasons": {
+      "grace_period_ended": "Terminó el período de gracia"
     }
+  },
+  "module_off": {
+    "title": "{{modules}}: desactivado en esta app",
+    "body": "Activa el módulo en Configuración y la app del cliente empieza a reportarlo en su próximo latido.",
+    "link": "Abrir Configuración"
+  },
+  "log_levels": {
+    "debug": "Depuración",
+    "info": "Información",
+    "warning": "Advertencia",
+    "error": "Error",
+    "fatal": "Fatal"
+  },
+  "command_statuses": {
+    "pending": "Pendiente",
+    "delivered": "Entregado",
+    "succeeded": "Completado",
+    "failed": "Falló",
+    "expired": "Expirado",
+    "cancelled": "Cancelado"
+  },
+  "severities": {
+    "info": "Información",
+    "warning": "Advertencia",
+    "critical": "Crítico"
+  },
+  "displays": {
+    "banner": "Banner",
+    "modal": "Diálogo"
+  },
+  "message_statuses": {
+    "active": "Activo",
+    "scheduled": "Programado",
+    "ended": "Terminado"
+  },
+  "crash_statuses": {
+    "open": "Abierto",
+    "resolved": "Resuelto",
+    "ignored": "Ignorado"
+  },
+  "alert_statuses": {
+    "open": "Abierta",
+    "acknowledged": "Reconocida",
+    "resolved": "Resuelta"
+  },
+  "alert_kinds": {
+    "installation_offline": "Instalación desconectada",
+    "cpu_high": "CPU alta",
+    "memory_high": "Memoria alta",
+    "crash_spike": "Alza de fallos",
+    "error_log_spike": "Alza de logs de error",
+    "enrollment_spike": "Alza de inscripciones"
+  },
+  "alert_kinds_hint": {
+    "installation_offline": "Un equipo lleva más tiempo que el umbral sin enviar un latido.",
+    "cpu_high": "El promedio de CPU de un equipo en la ventana supera el umbral.",
+    "memory_high": "El promedio de memoria usada por un equipo en la ventana supera el umbral.",
+    "crash_spike": "Al menos tantos reportes de fallos como el umbral dentro de la ventana.",
+    "error_log_spike": "Al menos tantas entradas de log de error o fatales como el umbral dentro de la ventana.",
+    "enrollment_spike": "Al menos tantas instalaciones nuevas como el umbral dentro de la ventana. Así se ve una llave filtrada."
+  },
+  "json": {
+    "format": "Formatear",
+    "invalid": "No es un JSON válido: {{message}}",
+    "not_an_object": "Tiene que ser un objeto JSON, entre { y }."
+  },
+  "scope": {
+    "label": "Se aplica a",
+    "app": "Toda la app",
+    "channel": "Un canal",
+    "installation": "Una instalación",
+    "hint": {
+      "app": "Todas las instalaciones de la app.",
+      "channel": "Las instalaciones de ese canal de actualizaciones.",
+      "installation": "Un solo equipo."
+    },
+    "channel_value": "Canal",
+    "installation_value": "Instalación",
+    "pick_channel": "Elige un canal",
+    "pick_installation": "Elige una instalación",
+    "app_short": "Toda la app",
+    "channel_short": "Canal · {{channel}}",
+    "installation_short": "Equipo ·"
+  },
+  "logs": {
+    "title": "Logs",
+    "description": "Del más nuevo al más antiguo. Se guardan 30 días.",
+    "filters": {
+      "level": "Nivel",
+      "any_level": "Todos los niveles",
+      "at_least": "{{level}} o más grave",
+      "search": "Buscar",
+      "search_placeholder": "Texto del mensaje",
+      "installation": "Instalación"
+    },
+    "show_context": "Ver contexto",
+    "hide_context": "Ocultar contexto",
+    "no_matches": "Ninguna entrada coincide con estos filtros.",
+    "empty": "Sin entradas de log",
+    "empty_description": "Las entradas aparecen aquí cuando la app las envía, desde su nivel de log hacia arriba."
+  },
+  "commands": {
+    "title": "Comandos",
+    "description": "El equipo los recoge en su próximo latido (cada {{interval}}), o al instante mientras mantiene el socket en vivo.",
+    "description_socket": "Este equipo mantiene el socket en vivo, así que un comando le llega al instante.",
+    "type": "Comando",
+    "types": {
+      "restart_app": "Reiniciar la app",
+      "restart_device": "Reiniciar el equipo",
+      "reload_config": "Recargar la configuración",
+      "clear_cache": "Limpiar la caché",
+      "screenshot": "Tomar una captura",
+      "upload_logs": "Subir los logs",
+      "check_update": "Buscar actualizaciones"
+    },
+    "types_hint": {
+      "restart_app": "Cierra y vuelve a abrir la app. Quien la esté usando pierde lo que no haya guardado.",
+      "restart_device": "Reinicia la máquina completa. Solo kioscos.",
+      "reload_config": "Vuelve a pedir los flags y la configuración, sin reiniciar.",
+      "clear_cache": "Borra la caché local de la app; se vuelve a llenar a medida que se usa.",
+      "screenshot": "Captura la pantalla una vez. Aparece en Capturas de pantalla cuando llega.",
+      "upload_logs": "Envía ahora los logs recientes del equipo, sin importar el nivel de log.",
+      "check_update": "Busca una versión más nueva en el canal del equipo."
+    },
+    "unavailable": {
+      "restart_device": "Solo las apps de kiosco pueden reiniciar el equipo.",
+      "screenshot": "Las capturas están desactivadas en esta app o en este equipo. Actívalas primero."
+    },
+    "expires": "Expira después de",
+    "expires_hint": "Si el equipo no lo ha recogido para entonces.",
+    "payload_toggle": "Agregar un payload",
+    "payload_hint": "Objeto JSON opcional que se le entrega a la app junto con el comando.",
+    "payload": "Payload",
+    "result": "Resultado",
+    "send": "Enviar",
+    "sending": "Enviando…",
+    "sent": "«{{type}}» quedó en cola.",
+    "revoked_title": "Revocada",
+    "revoked_body": "Una instalación revocada no puede recibir comandos.",
+    "history": "Historial",
+    "filter": "Filtrar por estado",
+    "any_status": "Todos los estados",
+    "live_hint": "Se actualiza cada 5 segundos mientras un comando va en camino.",
+    "live": "En camino",
+    "created": "Enviado el {{when}} por {{by}}",
+    "delivered": "recogido el {{when}}",
+    "completed": "terminado el {{when}}",
+    "expires_at": "expira {{when}}",
+    "cancelled_by": "cancelado por {{by}}",
+    "show_result": "Ver el resultado",
+    "show_payload": "Ver el payload",
+    "hide_details": "Ocultar detalle",
+    "cancel": "Cancelar",
+    "cancelled": "Comando cancelado.",
+    "empty": "Todavía no hay comandos",
+    "empty_description": "Los comandos enviados a este equipo aparecen aquí, con lo que respondió.",
+    "no_matches": "No hay comandos con este estado."
+  },
+  "screenshots": {
+    "title": "Capturas de pantalla",
+    "description": "Lo que mostraba la pantalla cada vez que se tomó una captura. Desactivadas por defecto: una captura puede mostrar a los clientes del cliente.",
+    "off_title": "Las capturas están desactivadas",
+    "off_app": "La app no permite capturas. Actívalas en la Configuración de la app, y solo donde el contrato del cliente lo permita (ley 21.719).",
+    "off_device": "Este equipo no permite capturas. Actívalas en Controles, más arriba.",
+    "off_generic": "Las capturas no están permitidas en este equipo por ahora.",
+    "empty": "Sin capturas",
+    "empty_description": "Envía el comando «Tomar una captura» y la imagen aparece aquí.",
+    "alt": "Captura tomada el {{date}}",
+    "open": "Abrir la captura del {{date}}",
+    "loading": "Cargando la captura…",
+    "load_failed": "No se pudo cargar",
+    "delete": "Eliminar captura",
+    "delete_aria": "Eliminar la captura del {{date}}",
+    "delete_title": "¿Eliminar esta captura?",
+    "delete_body": "La imagen se elimina para siempre. El comando que la tomó sigue en el historial.",
+    "deleted": "Captura eliminada."
+  },
+  "flags": {
+    "title": "Feature flags",
+    "description_panel": "Valores que la app lee mientras funciona. En cada equipo gana el más específico: su propia instalación, luego su canal y luego toda la app.",
+    "create": "Nuevo flag",
+    "create_title": "Nuevo flag",
+    "override_title": "Sobrescribir «{{key}}»",
+    "edit_title": "Editar «{{key}}»",
+    "add_override": "Agregar excepción",
+    "key": "Clave",
+    "key_hint": "Minúsculas, dígitos, «_», «.» y «-», hasta 64 caracteres.",
+    "invalid_key": "Usa minúsculas, dígitos, «_», «.» y «-», empezando por una letra o un dígito.",
+    "kind": "Tipo",
+    "kinds": {
+      "boolean": "Sí / no",
+      "string": "Texto",
+      "number": "Número"
+    },
+    "value": "Valor",
+    "invalid_number": "Ingresa un número.",
+    "description": "Descripción",
+    "description_hint": "Qué hace el flag, para quien lo lea después. Opcional.",
+    "conflict": "Esta clave ya está definida en ese alcance. Edita esa fila.",
+    "empty": "Todavía no hay flags",
+    "empty_description": "Crea uno y luego agrega excepciones para un canal o un solo equipo.",
+    "edit_aria": "Editar {{key}}",
+    "delete_aria": "Eliminar {{key}}",
+    "delete_title": "¿Eliminar este flag?",
+    "delete_body_app": "«{{key}}» deja de estar definido para toda la app. Las excepciones de canales o equipos se mantienen.",
+    "delete_body_override": "Se elimina esta excepción de «{{key}}»; los equipos que cubría vuelven al siguiente valor hacia arriba."
+  },
+  "config": {
+    "title": "Configuración remota",
+    "never_saved": "Todavía no se ha publicado nada. Las instalaciones reciben un documento vacío hasta que se publique la primera versión.",
+    "current": "Versión {{version}}, publicada el {{date}} por {{by}}.",
+    "publish": "Publicar",
+    "saved": "Versión {{version}} publicada.",
+    "document": "Documento",
+    "document_hint": "El objeto JSON que recibe cada instalación.",
+    "document_required": "El documento es obligatorio. Usa {} para uno vacío.",
+    "schema": "Esquema (opcional)",
+    "schema_hint": "Un JSON Schema que el documento debe cumplir. Si lo vacías, se elimina. Palabras clave admitidas:",
+    "note": "Nota",
+    "note_hint": "Qué cambió y por qué, para el historial. Opcional.",
+    "conflict_title": "Alguien publicó una versión más nueva",
+    "conflict_body": "Tu edición partió de una versión anterior. Cargar la más reciente descarta los cambios de aquí, así que cópialos antes si los necesitas.",
+    "load_latest": "Cargar la más reciente",
+    "invalid_title": "El servicio rechazó esta versión",
+    "history_title": "Historial",
+    "history_description": "Cada versión publicada, de la más nueva a la más antigua. Restaurar una la vuelve a publicar como una versión nueva.",
+    "history_empty": "Todavía no hay versiones.",
+    "version": "Versión {{version}}",
+    "current_badge": "Actual",
+    "view": "Ver",
+    "restore": "Restaurar",
+    "restore_title": "¿Restaurar la versión {{version}}?",
+    "restore_body": "La versión {{version}} se vuelve a publicar como la más nueva. No se pierde nada: la actual queda en el historial.",
+    "restored": "Versión {{from}} restaurada como versión {{version}}."
+  },
+  "messages": {
+    "title": "Mensajes en la app",
+    "description": "Banners y diálogos que se muestran dentro de la app, a todos, a un canal o a un equipo, durante el tiempo que elijas.",
+    "filter": "Filtrar mensajes",
+    "filters": {
+      "all": "Todos los mensajes",
+      "active": "Activos",
+      "scheduled": "Programados",
+      "ended": "Terminados"
+    },
+    "create": "Nuevo mensaje",
+    "create_title": "Nuevo mensaje",
+    "edit_title": "Editar mensaje",
+    "publish": "Publicar",
+    "published": "Mensaje publicado.",
+    "fields": {
+      "title": "Título",
+      "body": "Mensaje",
+      "severity": "Gravedad",
+      "display": "Se muestra como",
+      "starts_at": "Empieza",
+      "ends_at": "Termina"
+    },
+    "count": "{{count}}/{{max}}",
+    "body_hint": "{{count}}/{{max}} · en el idioma que leen los usuarios del cliente.",
+    "display_hint": {
+      "banner": "Una franja en la parte superior de la app; se puede seguir trabajando.",
+      "modal": "Un diálogo que hay que cerrar antes de continuar."
+    },
+    "starts_hint": "Vacío lo inicia ahora.",
+    "ends_hint": "Vacío lo mantiene hasta que lo termines.",
+    "ends_before_start": "Tiene que terminar después de empezar.",
+    "window": "{{from}} → {{to}}",
+    "window_open": "Desde el {{from}}, hasta que se termine",
+    "seen_one": "Visto en {{count}} equipo",
+    "seen_other": "Visto en {{count}} equipos",
+    "end_now": "Terminar ahora",
+    "ended": "Mensaje terminado.",
+    "edit_aria": "Editar «{{title}}»",
+    "delete_aria": "Eliminar «{{title}}»",
+    "delete_title": "¿Eliminar este mensaje?",
+    "delete_body": "«{{title}}» y sus confirmaciones de lectura se eliminan para siempre. Para dejar de mostrarlo, termínalo.",
+    "receipts_title": "Visto: {{title}}",
+    "receipts_empty": "Ningún equipo lo ha mostrado todavía.",
+    "empty": "Todavía no hay mensajes",
+    "empty_description": "Escribe uno para avisar de una mantención, anunciar un cambio o pedirles algo a las personas que usan la app.",
+    "empty_filtered": {
+      "active": "No hay mensajes activos.",
+      "scheduled": "No hay mensajes programados.",
+      "ended": "No hay mensajes terminados."
+    }
+  },
+  "crashes": {
+    "title": "Fallos",
+    "description": "Agrupados por firma y versión. Los reportes se guardan 30 días.",
+    "count_one": "{{count}} grupo de fallos · reportes guardados 30 días",
+    "count_other": "{{count}} grupos de fallos · reportes guardados 30 días",
+    "search": "Buscar por título o firma",
+    "version_filter": "Versión",
+    "status_filter": "Estado",
+    "any_status": "Cualquier estado",
+    "no_matches": "Ningún fallo coincide con estos filtros.",
+    "empty": "No hay fallos abiertos",
+    "empty_description": "Los reportes de fallos aparecen aquí, agrupados, cuando la app los envía.",
+    "columns": {
+      "crash": "Fallo",
+      "version": "Versión",
+      "status": "Estado",
+      "occurrences": "Ocurrencias",
+      "last_seen": "Visto por última vez"
+    },
+    "affected_one": "En {{count}} equipo",
+    "affected_other": "En {{count}} equipos",
+    "devices_one": "{{count}} equipo",
+    "devices_other": "{{count}} equipos",
+    "back": "Fallos de esta app",
+    "loading_title": "Fallo",
+    "details": "Datos",
+    "signature": "Firma",
+    "affected_label": "Equipos afectados",
+    "first_seen": "Visto por primera vez",
+    "resolved_at": "Resuelto",
+    "resolve": "Resolver",
+    "ignore": "Ignorar",
+    "reopen": "Reabrir",
+    "status_changed": {
+      "resolved": "Marcado como resuelto.",
+      "ignored": "Marcado como ignorado.",
+      "open": "Reabierto."
+    },
+    "status_help": "Resuélvelo cuando la corrección ya esté publicada: si vuelve a ocurrir, se reabre solo. Ignóralo cuando es conocido y no vale la pena corregirlo: se queda ignorado.",
+    "reports_title": "Reportes",
+    "reports_description": "Cada ocurrencia, de la más nueva a la más antigua.",
+    "reports_empty": "No hay reportes de los últimos 30 días.",
+    "show_stack": "Ver el stack",
+    "hide_stack": "Ocultar el stack",
+    "show_context": "Ver contexto",
+    "hide_context": "Ocultar contexto"
+  },
+  "alerts": {
+    "title": "Alertas",
+    "description": "Lo que el servicio detectó en todas las apps. Se actualiza cada 30 segundos.",
+    "tabs": {
+      "label": "Secciones de alertas",
+      "inbox": "Bandeja",
+      "rules": "Reglas"
+    },
+    "inbox_title": "Bandeja",
+    "count_one": "{{count}} alerta",
+    "count_other": "{{count}} alertas",
+    "filters": {
+      "status": "Estado",
+      "unresolved": "Sin resolver",
+      "all": "Todos los estados",
+      "any_app": "Todas las apps",
+      "one_rule": "Solo una regla",
+      "one_rule_named": "Regla: {{name}}",
+      "one_installation": "Solo una instalación"
+    },
+    "columns": {
+      "alert": "Alerta",
+      "value": "Valor",
+      "status": "Estado",
+      "occurrences": "Veces",
+      "last_triggered": "Última vez"
+    },
+    "threshold_short": "umbral {{threshold}}",
+    "empty": "Nada requiere atención",
+    "empty_description": "Las alertas abiertas y reconocidas aparecen aquí. Las reglas deciden qué genera una.",
+    "no_matches": "Ninguna alerta coincide con estos filtros.",
+    "open_hint_one": "{{count}} alerta abierta",
+    "open_hint_other": "{{count}} alertas abiertas",
+    "open_hint_link": "Ver alertas",
+    "back": "Bandeja de alertas",
+    "loading_title": "Alerta",
+    "details": "Datos",
+    "value": "Valor",
+    "subject": "Sobre",
+    "rule": "Regla",
+    "opened": "Abierta",
+    "acknowledged_at": "Reconocida",
+    "resolved_at": "Resuelta",
+    "notified_at": "Notificada",
+    "not_notified": "Sin notificar",
+    "details_raw": "Datos registrados",
+    "acknowledge": "Reconocer",
+    "acknowledged": "Alerta reconocida.",
+    "resolve": "Resolver",
+    "resolved": "Alerta resuelta.",
+    "resolve_title": "¿Resolver esta alerta?",
+    "resolve_body": "Sale de la bandeja. Si la condición se sigue cumpliendo en la próxima evaluación, el servicio la vuelve a abrir.",
+    "note": "Nota",
+    "note_hint": "Qué se hizo al respecto. Opcional; queda guardada con la alerta.",
+    "resolved_title": "Resuelta",
+    "resolved_body": "Resuelta el {{date}} por {{by}}."
+  },
+  "rules": {
+    "title": "Reglas",
+    "description": "Lo que vigila el servicio. Quien crea una regla recibe el aviso por el centro de notificaciones del sitio: la campana, push y correo, según sus propias preferencias.",
+    "count_one": "{{count}} regla",
+    "count_other": "{{count}} reglas",
+    "create": "Nueva regla",
+    "create_title": "Nueva regla de alerta",
+    "edit_title": "Editar regla de alerta",
+    "created": "Regla creada. Recibirás un aviso cuando se active.",
+    "every_app": "Todas las apps",
+    "fields": {
+      "app": "App",
+      "kind": "Vigila",
+      "name": "Nombre",
+      "window": "Ventana (minutos)",
+      "enabled": "Activa"
+    },
+    "hints": {
+      "app": "Vacío vigila todas las apps, incluidas las que se creen después.",
+      "window": "Entre {{min}} y {{max}} minutos.",
+      "notify": "Tú recibirás los avisos, por el centro de notificaciones del sitio. Otra persona puede tomarlos con «Avisarme a mí»."
+    },
+    "threshold": {
+      "minutes": "Minutos desconectada",
+      "percent": "Umbral (%)",
+      "count": "Umbral (cantidad)"
+    },
+    "threshold_hint": {
+      "installation_offline": "Entre 1 y 10.080 minutos (una semana).",
+      "cpu_high": "Porcentaje promedio de CPU, de 1 a 100.",
+      "memory_high": "Porcentaje promedio de memoria, de 1 a 100.",
+      "crash_spike": "Reportes de fallos dentro de la ventana.",
+      "error_log_spike": "Entradas de error o fatales dentro de la ventana.",
+      "enrollment_spike": "Instalaciones nuevas dentro de la ventana."
+    },
+    "range": "Entre {{min}} y {{max}}.",
+    "condition": {
+      "installation_offline": "Un equipo sin reportarse durante {{threshold}}",
+      "cpu_high": "CPU sobre {{threshold}} en promedio durante {{window}}",
+      "memory_high": "Memoria sobre {{threshold}} en promedio durante {{window}}",
+      "crash_spike": "Al menos {{threshold}} fallos en {{window}}",
+      "error_log_spike": "Al menos {{threshold}} entradas de log de error en {{window}}",
+      "enrollment_spike": "Al menos {{threshold}} instalaciones nuevas en {{window}}"
+    },
+    "window_value": "ventana de {{window}}",
+    "enabled": "Activa",
+    "disabled": "Desactivada",
+    "silenced": "Silenciada",
+    "silenced_until": "silenciada hasta el {{date}}",
+    "notifies": "avisa a {{email}}",
+    "open_alerts_one": "{{count}} alerta abierta",
+    "open_alerts_other": "{{count}} alertas abiertas",
+    "silence": "Silenciar…",
+    "silence_for": "Durante {{duration}}",
+    "silenced_toast": "Silenciada durante {{duration}}.",
+    "unsilence": "Quitar silencio",
+    "unsilenced": "Silencio quitado.",
+    "disable": "Desactivar",
+    "enable": "Activar",
+    "disabled_toast": "Regla desactivada.",
+    "enabled_toast": "Regla activada.",
+    "notify_me": "Avisarme a mí",
+    "notify_me_hint": "Haz que esta regla le avise a tu cuenta.",
+    "notify_me_toast": "Ahora esta regla te avisa a ti.",
+    "edit_aria": "Editar {{name}}",
+    "delete_aria": "Eliminar {{name}}",
+    "delete_title": "¿Eliminar esta regla?",
+    "delete_body_one": "«{{name}}» y todas las alertas que generó se eliminan para siempre ({{count}} sigue abierta). Para detenerla por un tiempo, silénciala o desactívala.",
+    "delete_body_other": "«{{name}}» y todas las alertas que generó se eliminan para siempre ({{count}} siguen abiertas). Para detenerla por un tiempo, silénciala o desactívala.",
+    "empty": "Todavía no hay reglas",
+    "empty_app": "Ninguna regla vigila esta app",
+    "empty_description": "Crea una para enterarte cuando un equipo deja de reportarse, se recalienta o falla más de lo normal."
   }
 }

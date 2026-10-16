@@ -10,6 +10,7 @@ import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {formatDuration} from "@/lib/custom-apps/format.ts";
 import {WEEKDAYS} from "@/lib/custom-apps/types.ts";
+import {OpenAlertsHint} from "@/pages/custom-apps/components/alerts/open-alerts-hint.tsx";
 import {useApp} from "@/pages/custom-apps/components/app-context.ts";
 import {CopyButton, CopyField} from "@/pages/custom-apps/components/copy-button.tsx";
 import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx";
@@ -42,11 +43,19 @@ export const AppSummary = () => {
     <div className="flex flex-col gap-6">
       {app.state !== "active" && (
         <Alert tone={app.state === "suspended" ? "error" : "info"} title={t(`custom_apps:status.banner.${app.state}`, {defaultValue: app.state})}>
-          {[app.state_message, app.state_until && t("custom_apps:status.until_value", {date: formatDateTime(app.state_until, i18n.language)})]
+          {[
+            app.state_message,
+            app.state_until &&
+              t(app.state === "grace" ? "custom_apps:status.grace_until_value" : "custom_apps:status.until_value", {
+                date: formatDateTime(app.state_until, i18n.language),
+              }),
+          ]
             .filter(Boolean)
             .join(" · ") || t("custom_apps:status.no_message")}
         </Alert>
       )}
+
+      <OpenAlertsHint appId={app.id} />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
@@ -94,6 +103,12 @@ export const AppSummary = () => {
           <Detail label={t("custom_apps:apps.fields.presence")}>
             {t(`custom_apps:presence.${app.presence_mode}`, {defaultValue: app.presence_mode})} ·{" "}
             {t("custom_apps:summary.every", {interval: formatDuration(app.heartbeat_interval_seconds)})}
+          </Detail>
+          <Detail label={t("custom_apps:apps.fields.log_level")}>
+            {t(`custom_apps:log_levels.${app.log_level}`, {defaultValue: app.log_level ?? ""})}
+          </Detail>
+          <Detail label={t("custom_apps:apps.fields.screenshots_title")}>
+            {app.screenshots_enabled ? t("custom_apps:summary.screenshots_on") : t("custom_apps:summary.screenshots_off")}
           </Detail>
           <Detail label={t("custom_apps:apps.fields.modules")}>
             {app.modules.length > 0

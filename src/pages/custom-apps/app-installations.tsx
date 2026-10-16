@@ -18,7 +18,7 @@ import type {Column} from "@/components/admin/data-table.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {Pagination} from "@/components/admin/pagination.tsx";
 import {useApp} from "@/pages/custom-apps/components/app-context.ts";
-import {ConnectedIndicator, LifecycleBadge, ReviewBadge} from "@/pages/custom-apps/components/badges.tsx";
+import {ConnectedIndicator, LifecycleBadge, ReviewBadge, SocketBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {describePlatform, installationLabel} from "@/pages/custom-apps/components/installation-label.ts";
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
 
@@ -93,6 +93,7 @@ export const AppInstallations = () => {
             <p className="flex items-center gap-2 text-sm text-text">
               <span className="truncate">{installationLabel(row)}</span>
               {row.status === "revoked" ? <LifecycleBadge status="revoked" /> : row.needs_review ? <ReviewBadge /> : null}
+              {row.socket_connected && row.status !== "revoked" && <SocketBadge />}
             </p>
             {row.alias && row.hostname && <p className="truncate text-[12px] text-neutral-500">{row.hostname}</p>}
           </div>

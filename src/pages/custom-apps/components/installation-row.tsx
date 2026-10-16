@@ -4,7 +4,7 @@ import {ArrowRight} from "@phosphor-icons/react";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {formatLastSeen} from "@/lib/custom-apps/format.ts";
 import type {InstallationSummary} from "@/lib/custom-apps/types.ts";
-import {ConnectedIndicator, LifecycleBadge, ReviewBadge} from "@/pages/custom-apps/components/badges.tsx";
+import {ConnectedIndicator, LifecycleBadge, ReviewBadge, SocketBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {describePlatform, installationLabel} from "@/pages/custom-apps/components/installation-label.ts";
 
 /**
@@ -31,6 +31,7 @@ export const InstallationRow = ({installation, when}: {installation: Installatio
               .join(" · ")}
           </span>
         </span>
+        {installation.socket_connected && installation.status !== "revoked" && <SocketBadge />}
         {installation.status === "revoked" ? (
           <LifecycleBadge status="revoked" />
         ) : installation.needs_review ? (

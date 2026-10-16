@@ -44,6 +44,24 @@ export const AppStatus = lazy(() => import("@/pages/custom-apps/app-status.tsx")
 export const AppSettings = lazy(() =>
   import("@/pages/custom-apps/app-settings.tsx").then((m) => ({default: m.AppSettings})),
 );
+export const AppConfig = lazy(() => import("@/pages/custom-apps/app-config.tsx").then((m) => ({default: m.AppConfig})));
+export const AppMessages = lazy(() =>
+  import("@/pages/custom-apps/app-messages.tsx").then((m) => ({default: m.AppMessages})),
+);
+export const AppDiagnostics = lazy(() =>
+  import("@/pages/custom-apps/app-diagnostics.tsx").then((m) => ({default: m.AppDiagnostics})),
+);
+export const CrashDetail = lazy(() =>
+  import("@/pages/custom-apps/crash-detail.tsx").then((m) => ({default: m.CrashDetail})),
+);
+
+export const Alerts = lazy(() => import("@/pages/custom-apps/alerts.tsx").then((m) => ({default: m.Alerts})));
+export const AlertRules = lazy(() =>
+  import("@/pages/custom-apps/alert-rules.tsx").then((m) => ({default: m.AlertRules})),
+);
+export const AlertDetail = lazy(() =>
+  import("@/pages/custom-apps/alert-detail.tsx").then((m) => ({default: m.AlertDetail})),
+);
 
 export const InstallationDetail = lazy(() =>
   import("@/pages/custom-apps/installation-detail.tsx").then((m) => ({default: m.InstallationDetail})),
