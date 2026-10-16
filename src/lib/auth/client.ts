@@ -6,11 +6,17 @@ import type {ApiEnvelope, ApiErrorBody} from "@/lib/auth/types.ts";
 /** An error answer from the API, carrying the status so callers can branch on 403 vs 404. */
 export class AuthApiError extends Error {
   readonly status: number;
+  /**
+   * The itemised reasons some services list beside the sentence — the custom-apps service answers a
+   * document that fails its schema with one line per problem. Empty for every other error.
+   */
+  readonly issues: string[];
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, issues: string[] = []) {
     super(message);
     this.name = "AuthApiError";
     this.status = status;
+    this.issues = issues;
   }
 }
 
@@ -61,6 +67,12 @@ export type RequestOptions = {
    */
   headers?: Record<string, string>;
   /**
+   * Hand back the response body as a `Blob` instead of reading it as JSON — for the one kind of
+   * resource that is bytes behind the bearer token, a screenshot, which an `<img src>` cannot fetch
+   * because it would send no `Authorization` header.
+   */
+  blob?: boolean;
+  /**
    * Hand back the whole `{ code, data, … }` body instead of unwrapping `data`.
    *
    * Added for the notifications service, whose list answers its paging cursor and the unread count
@@ -101,13 +113,28 @@ const messageFrom = (body: Partial<ApiErrorBody>): string | null => {
   return typeof body?.message === "string" && body.message ? body.message : null;
 };
 
+/** `issues` as a list of sentences, when the body carries one. */
+const issuesFrom = (body: Partial<ApiErrorBody>): string[] =>
+  Array.isArray(body?.issues)
+    ? body.issues
+        .map((issue) => (typeof issue === "string" ? issue : issue?.message))
+        .filter((issue): issue is string => typeof issue === "string" && issue.length > 0)
+    : [];
+
 const parseError = async (response: Response) => {
   try {
-    return messageFrom((await response.json()) as Partial<ApiErrorBody>) ?? fallbackMessage(response);
+    const body = (await response.json()) as Partial<ApiErrorBody>;
+    return {message: messageFrom(body) ?? fallbackMessage(response), issues: issuesFrom(body)};
   } catch {
     /* Empty or non-JSON error bodies fall back to the status text. */
-    return fallbackMessage(response);
+    return {message: fallbackMessage(response), issues: [] as string[]};
   }
+};
+
+/** The error a refused response stands for. */
+const apiError = async (response: Response) => {
+  const {message, issues} = await parseError(response);
+  return new AuthApiError(response.status, message, issues);
 };
 
 const fallbackMessage = (response: Response) => response.statusText || `HTTP ${response.status}`;
@@ -202,16 +229,18 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
 
       /* A refresh that never reached the service says nothing about the session; keep it and report. */
       if (outcome.status === "unavailable") throw new AuthNetworkError();
-      if (outcome.status === "revoked") throw new AuthApiError(401, await parseError(response));
+      if (outcome.status === "revoked") throw await apiError(response);
 
       response = await send(path, options, outcome.tokens.access_token);
       if (response.status === 401) {
         session.endSession();
-        throw new AuthApiError(401, await parseError(response));
+        throw await apiError(response);
       }
     }
 
-    if (!response.ok) throw new AuthApiError(response.status, await parseError(response));
+    if (!response.ok) throw await apiError(response);
+
+    if (options.blob) return (await response.blob()) as T;
 
     /* 204s and the bodiless 201s both arrive empty, so read as text before committing to JSON. */
     const text = response.status === 204 ? "" : await response.text();
@@ -236,7 +265,7 @@ export const createHttpClient = (baseUrl: string, session: SessionStore) => {
     } catch {
       throw new AuthNetworkError();
     }
-    if (!response.ok) throw new AuthApiError(response.status, await parseError(response));
+    if (!response.ok) throw await apiError(response);
     return parseJson<T>(await response.text());
   };
 

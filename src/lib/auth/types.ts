@@ -19,6 +19,8 @@ export type ApiErrorBody = {
   /** The sentence, when the code beside it is a machine token like `invalid_grant`. */
   error_description?: string;
   message?: string;
+  /** Itemised reasons, beside the sentence in `error` (the custom-apps service's 422s). */
+  issues?: Array<{message?: string} | string>;
 };
 
 /* ── Service metadata ─────────────────────────────────────────────────────── */

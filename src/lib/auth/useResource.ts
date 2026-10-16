@@ -20,10 +20,10 @@ export type Resource<T> = {
  * Those collapse to one translated line, and the detail goes where it is useful instead.
  */
 export const describeError = (cause: unknown) => {
-  if (cause instanceof AuthNetworkError) return {message: "network", status: null};
-  if (cause instanceof AuthApiError) return {message: cause.message, status: cause.status};
+  if (cause instanceof AuthNetworkError) return {message: "network", status: null, issues: [] as string[]};
+  if (cause instanceof AuthApiError) return {message: cause.message, status: cause.status, issues: cause.issues};
   console.error("Unexpected failure while talking to the auth service:", cause);
-  return {message: "unexpected", status: null};
+  return {message: "unexpected", status: null, issues: [] as string[]};
 };
 
 /**
