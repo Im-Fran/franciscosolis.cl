@@ -18,6 +18,7 @@ import type {
   Contact,
   ContactDetail,
   ContactPayload,
+  HeartbeatEntry,
   ContactRole,
   DailyStat,
   Deleted,
@@ -207,6 +208,9 @@ export const customAppsApi = {
 
     events: (id: string, params: {type?: string; limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
       page<UsageEvent>(`/v1/installations/${seg(id)}/events${query({...params})}`, signal),
+    /** Every heartbeat as it arrived, newest first. */
+    heartbeats: (id: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      page<HeartbeatEntry>(`/v1/installations/${seg(id)}/heartbeats${query({...params})}`, signal),
   },
 
   /* ── Audit log ──────────────────────────────────────────────────────── */

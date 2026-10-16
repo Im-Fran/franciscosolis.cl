@@ -619,6 +619,22 @@
       "custom": "Custom"
     }
   },
+  "heartbeats": {
+    "title": "Heartbeats",
+    "description": "Every heartbeat as it arrived, newest first. The charts keep only the last one of each minute; this is the full record.",
+    "empty": "No heartbeats",
+    "empty_description": "Heartbeats appear here as soon as the device starts reporting.",
+    "from_ip": "from {{ip}}",
+    "version": "v{{version}}",
+    "active": "{{active}} of use reported",
+    "credited": "{{credited}} counted online",
+    "not_credited": "nothing counted online — the previous heartbeat was too long ago",
+    "cpu": "CPU {{value}}",
+    "memory": "RAM {{used}} / {{total}}",
+    "show_snapshot": "Show snapshot",
+    "hide_snapshot": "Hide snapshot",
+    "no_snapshot": "no snapshot"
+  },
   "audit": {
     "title": "Audit log",
     "description": "Every change made through this panel, newest first, with who made it. Nothing here can be edited or deleted.",

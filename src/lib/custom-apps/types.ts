@@ -353,6 +353,22 @@ export type DailyStat = {
   events: number;
 };
 
+/**
+ * One heartbeat as the service received it — the audit record behind the charts, which only keep
+ * the last heartbeat of each minute.
+ */
+export type HeartbeatEntry = {
+  id: number;
+  received_at: string;
+  ip: string | null;
+  app_version: string | null;
+  /** What the device said it was used for since its previous heartbeat. */
+  active_seconds: number | null;
+  /** What the service actually counted as online: zero after a gap past the offline threshold. */
+  credited_seconds: number;
+  snapshot: Snapshot | null;
+};
+
 export type UsageEvent = {
   id: string;
   type: string;

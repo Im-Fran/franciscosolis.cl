@@ -26,6 +26,7 @@ import {ConnectedIndicator, LifecycleBadge, ReviewBadge, StateBadge} from "@/pag
 import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx";
 import {InstallationDaily} from "@/pages/custom-apps/components/installation-daily.tsx";
 import {InstallationEvents} from "@/pages/custom-apps/components/installation-events.tsx";
+import {InstallationHeartbeats} from "@/pages/custom-apps/components/installation-heartbeats.tsx";
 import {describePlatform, installationLabel} from "@/pages/custom-apps/components/installation-label.ts";
 import {InstallationMetrics} from "@/pages/custom-apps/components/installation-metrics.tsx";
 import {SnapshotCards} from "@/pages/custom-apps/components/snapshot-cards.tsx";
@@ -359,6 +360,7 @@ export const InstallationDetail = () => {
 
         <InstallationDaily installationId={current.id} />
         <InstallationEvents installationId={current.id} />
+        <InstallationHeartbeats installationId={current.id} />
       </div>
 
       <Modal
