@@ -8,6 +8,7 @@ import {AuthLoading} from "@/components/auth/auth-loading.tsx";
 import {accountRoutes, authRoutes, authorizeRoutes} from "@/pages/auth/auth-routes.tsx";
 import {cmsRoutes} from "@/pages/cms/cms-routes.tsx";
 import {marketplaceRoutes} from "@/pages/marketplace/marketplace-routes.tsx";
+import {customAppsRoutes} from "@/pages/custom-apps/custom-apps-routes.tsx";
 import {legacyProductRoutes, productRoutes} from "@/pages/product/product-routes.tsx";
 import {CmsLegacyRedirect} from "@/pages/cms/components/legacy-redirect.tsx";
 import {Legal} from "@/pages/legal/lazy-screens.tsx";
@@ -50,6 +51,12 @@ const routes = [
        * editor signing in under the CMS's client id is refused before the permission is ever read.
        */
       marketplaceRoutes,
+      /*
+       * The custom-apps panel: the apps built for clients, their installations and their telemetry.
+       * Its own client application, for the same reason as the marketplace console — the service
+       * accepts only its own audience.
+       */
+      customAppsRoutes,
       /*
        * The marketplace. Registered after the console routes deliberately: React Router ranks
        * a static segment above a dynamic one, so `/cms` and `/auth` win over `product/:slug`

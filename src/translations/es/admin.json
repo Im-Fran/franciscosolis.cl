@@ -30,6 +30,7 @@
     "notifications": "Notificaciones",
     "pagination": "Paginación",
     "page_range": "Mostrando {{from}}–{{to}}",
+    "page_range_total": "Mostrando {{from}}–{{to}} de {{total}}",
     "page_empty": "No hay filas en esta página",
     "previous": "Anterior",
     "next": "Siguiente",

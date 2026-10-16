@@ -9,18 +9,24 @@ export type PaginationProps = {
   count: number;
   onChange: (offset: number) => void;
   disabled?: boolean;
+  /**
+   * The size of the whole list, for the endpoints that report one. With it, "next" stops exactly at
+   * the last row instead of offering the empty page after a list that ended on a full one.
+   */
+  total?: number;
 };
 
 /**
- * Offset paging over a list endpoint that reports no total.
+ * Offset paging over a list endpoint.
  *
- * A full page is the only hint that more exists, so "next" is offered exactly when the page came
- * back full — which can leave one empty page at the end, and is still better than hiding rows.
+ * Most of them report no total, and there a full page is the only hint that more exists, so "next"
+ * is offered exactly when the page came back full — which can leave one empty page at the end, and
+ * is still better than hiding rows. When a `total` is known it decides instead.
  */
-export const Pagination = ({offset, limit, count, onChange, disabled}: PaginationProps) => {
+export const Pagination = ({offset, limit, count, onChange, disabled, total}: PaginationProps) => {
   const {t} = useTranslation();
   const hasPrevious = offset > 0;
-  const hasNext = count === limit;
+  const hasNext = total === undefined ? count === limit : offset + count < total;
 
   if (!hasPrevious && !hasNext) return null;
 
@@ -29,7 +35,9 @@ export const Pagination = ({offset, limit, count, onChange, disabled}: Paginatio
       <p className="text-[13px] text-neutral-500">
         {count === 0
           ? t("admin:common.page_empty")
-          : t("admin:common.page_range", {from: offset + 1, to: offset + count})}
+          : total === undefined
+            ? t("admin:common.page_range", {from: offset + 1, to: offset + count})
+            : t("admin:common.page_range_total", {from: offset + 1, to: offset + count, total})}
       </p>
       <div className="flex items-center gap-2">
         <Button
