@@ -3,7 +3,12 @@ import {createHttpClient} from "@/lib/auth/client.ts";
 import {CUSTOM_APPS_AUTH_CONFIG, CUSTOM_APPS_BASE_URL} from "@/lib/custom-apps/config.ts";
 import type {
   Account,
+  AlertEntry,
+  AlertQuery,
+  AlertRule,
+  AlertRulePayload,
   App,
+  AppMessage,
   AppKey,
   AppPayload,
   AppSdk,
@@ -15,9 +20,20 @@ import type {
   CompanyContact,
   CompanyDetail,
   CompanyPayload,
+  Command,
+  CommandStatus,
+  ConfigDocument,
+  ConfigPayload,
+  ConfigVersion,
   Contact,
   ContactDetail,
   ContactPayload,
+  CrashGroup,
+  CrashQuery,
+  CrashReport,
+  CrashStatus,
+  Flag,
+  FlagPayload,
   HeartbeatEntry,
   ContactRole,
   DailyStat,
@@ -26,10 +42,19 @@ import type {
   InstallationPayload,
   InstallationQuery,
   InstallationSummary,
+  LogEntry,
+  LogQuery,
+  MessagePayload,
+  MessageReceipt,
   MetricSeries,
+  NewAlertRule,
   NewApp,
+  NewCommand,
+  NewFlag,
+  NewMessage,
   Overview,
   Page,
+  Screenshot,
   ServiceStatus,
   UsageDay,
   UsageEvent,
@@ -163,6 +188,10 @@ export const customAppsApi = {
 
     installations: (id: string, params: InstallationQuery = {}, signal?: AbortSignal) =>
       page<InstallationSummary>(`/v1/apps/${seg(id)}/installations${query({...params})}`, signal),
+
+    /** Every installation's log entries, newest first. Kept 30 days. */
+    logs: (id: string, params: LogQuery = {}, signal?: AbortSignal) =>
+      page<LogEntry>(`/v1/apps/${seg(id)}/logs${query({...params})}`, signal),
   },
 
   /* ── App keys ───────────────────────────────────────────────────────── */
@@ -211,6 +240,147 @@ export const customAppsApi = {
     /** Every heartbeat as it arrived, newest first. */
     heartbeats: (id: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
       page<HeartbeatEntry>(`/v1/installations/${seg(id)}/heartbeats${query({...params})}`, signal),
+
+    /** This device's log entries, newest first. `level` means "at least this severe". */
+    logs: (id: string, params: Omit<LogQuery, "installation_id"> = {}, signal?: AbortSignal) =>
+      page<LogEntry>(`/v1/installations/${seg(id)}/logs${query({...params})}`, signal),
+  },
+
+  /* ── Commands and screenshots ───────────────────────────────────────── */
+
+  /**
+   * What the panel asks one device to do. A command waits as `pending` until the device picks it up
+   * — on its next heartbeat, or at once over the live socket — and expires if it never does.
+   */
+  commands: {
+    list: (
+      installationId: string,
+      params: {status?: CommandStatus; limit?: number; offset?: number} = {},
+      signal?: AbortSignal,
+    ) => page<Command>(`/v1/installations/${seg(installationId)}/commands${query({...params})}`, signal),
+
+    /**
+     * Refused with a 409 for a revoked installation, an app without the commands module, a device
+     * restart on anything but a kiosk, or a screenshot the app or the device does not allow.
+     */
+    create: (installationId: string, body: NewCommand) =>
+      http.request<Command>(`/v1/installations/${seg(installationId)}/commands`, {method: "POST", json: body}),
+
+    /** Refused with a 409 once the command has finished, one way or another. */
+    cancel: (id: string) => http.request<Command>(`/v1/commands/${seg(id)}/cancel`, {method: "POST"}),
+  },
+
+  screenshots: {
+    list: (installationId: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      page<Screenshot>(`/v1/installations/${seg(installationId)}/screenshots${query({...params})}`, signal),
+
+    /**
+     * The image itself, as bytes. `image_path` is relative to the service's base and needs the
+     * bearer token, so it is fetched here and shown through an object URL rather than handed to an
+     * `<img src>` that would arrive without one.
+     */
+    image: (imagePath: string, signal?: AbortSignal) => http.request<Blob>(imagePath, {signal, blob: true}),
+
+    remove: (id: string) => http.request<Deleted>(`/v1/screenshots/${seg(id)}`, {method: "DELETE"}),
+  },
+
+  /* ── Flags and remote configuration ─────────────────────────────────── */
+
+  /** Per device, the most specific flag wins: installation, then channel, then app. */
+  flags: {
+    list: (appId: string, signal?: AbortSignal) => page<Flag>(`/v1/apps/${seg(appId)}/flags`, signal),
+
+    /** 409 when the key is already set at that scope; 422 for an unknown channel or installation. */
+    create: (appId: string, body: NewFlag) =>
+      http.request<Flag>(`/v1/apps/${seg(appId)}/flags`, {method: "POST", json: body}),
+
+    update: (id: string, body: FlagPayload) =>
+      http.request<Flag>(`/v1/flags/${seg(id)}`, {method: "PATCH", json: body}),
+
+    remove: (id: string) => http.request<Deleted>(`/v1/flags/${seg(id)}`, {method: "DELETE"}),
+  },
+
+  config: {
+    get: (appId: string, signal?: AbortSignal) => http.request<ConfigDocument>(`/v1/apps/${seg(appId)}/config`, {signal}),
+
+    /**
+     * Publishes a new version. 409 when `base_version` is no longer the latest; 422, with `issues`,
+     * when the document fails the schema or the schema uses a keyword the service does not support.
+     */
+    save: (appId: string, body: ConfigPayload) =>
+      http.request<ConfigDocument>(`/v1/apps/${seg(appId)}/config`, {method: "PUT", json: body}),
+
+    history: (appId: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      page<ConfigVersion>(`/v1/apps/${seg(appId)}/config/history${query({...params})}`, signal),
+
+    /** Saves an old version again as the newest one. 422 when it fails the current schema. */
+    restore: (appId: string, version: number) =>
+      http.request<ConfigDocument>(`/v1/apps/${seg(appId)}/config/history/${version}/restore`, {method: "POST"}),
+  },
+
+  /* ── Messages ───────────────────────────────────────────────────────── */
+
+  messages: {
+    list: (
+      appId: string,
+      params: {status?: "active" | "scheduled" | "ended" | "all"; limit?: number; offset?: number} = {},
+      signal?: AbortSignal,
+    ) => page<AppMessage>(`/v1/apps/${seg(appId)}/messages${query({...params})}`, signal),
+
+    create: (appId: string, body: NewMessage) =>
+      http.request<AppMessage>(`/v1/apps/${seg(appId)}/messages`, {method: "POST", json: body}),
+
+    update: (id: string, body: MessagePayload) =>
+      http.request<AppMessage>(`/v1/messages/${seg(id)}`, {method: "PATCH", json: body}),
+
+    remove: (id: string) => http.request<Deleted>(`/v1/messages/${seg(id)}`, {method: "DELETE"}),
+
+    /** Which installations have shown it, and when. */
+    receipts: (id: string, signal?: AbortSignal) => page<MessageReceipt>(`/v1/messages/${seg(id)}/receipts`, signal),
+  },
+
+  /* ── Crashes ────────────────────────────────────────────────────────── */
+
+  /** Crash reports grouped by signature and version. Reports are kept 30 days. */
+  crashes: {
+    list: (appId: string, params: CrashQuery = {}, signal?: AbortSignal) =>
+      page<CrashGroup>(`/v1/apps/${seg(appId)}/crashes${query({...params})}`, signal),
+
+    get: (id: string, signal?: AbortSignal) => http.request<CrashGroup>(`/v1/crashes/${seg(id)}`, {signal}),
+
+    reports: (id: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      page<CrashReport>(`/v1/crashes/${seg(id)}/reports${query({...params})}`, signal),
+
+    setStatus: (id: string, status: CrashStatus) =>
+      http.request<CrashGroup>(`/v1/crashes/${seg(id)}`, {method: "PATCH", json: {status}}),
+  },
+
+  /* ── Alerts ─────────────────────────────────────────────────────────── */
+
+  /** The conditions the service watches for. Whoever creates a rule is the one notified. */
+  alertRules: {
+    list: (params: {app_id?: string} = {}, signal?: AbortSignal) =>
+      page<AlertRule>(`/v1/alert-rules${query({...params})}`, signal),
+
+    create: (body: NewAlertRule) => http.request<AlertRule>("/v1/alert-rules", {method: "POST", json: body}),
+
+    update: (id: string, body: AlertRulePayload) =>
+      http.request<AlertRule>(`/v1/alert-rules/${seg(id)}`, {method: "PATCH", json: body}),
+
+    /** Deletes the rule's alerts with it. */
+    remove: (id: string) => http.request<Deleted>(`/v1/alert-rules/${seg(id)}`, {method: "DELETE"}),
+  },
+
+  alerts: {
+    list: (params: AlertQuery = {}, signal?: AbortSignal) => page<AlertEntry>(`/v1/alerts${query({...params})}`, signal),
+
+    get: (id: string, signal?: AbortSignal) => http.request<AlertEntry>(`/v1/alerts/${seg(id)}`, {signal}),
+
+    acknowledge: (id: string) => http.request<AlertEntry>(`/v1/alerts/${seg(id)}/ack`, {method: "POST"}),
+
+    /** If the condition still holds, the next evaluation opens it again. */
+    resolve: (id: string, note?: string | null) =>
+      http.request<AlertEntry>(`/v1/alerts/${seg(id)}/resolve`, {method: "POST", json: note ? {note} : {}}),
   },
 
   /* ── Audit log ──────────────────────────────────────────────────────── */

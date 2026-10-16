@@ -86,3 +86,14 @@ export const lastDays = (days: number, timeZone: string) => {
     new Date(Date.UTC(year, month - 1, day - (days - 1 - index))).toISOString().slice(0, 10),
   );
 };
+
+/**
+ * A `YYYY-MM-DD` from a date input as the instant that day starts, here; `endOfDay` for the bound
+ * after it — so "to the 3rd" includes the whole of the 3rd.
+ */
+export const dayBound = (value: string, endOfDay: boolean) => {
+  if (!value) return undefined;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(year, month - 1, day + (endOfDay ? 1 : 0));
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+};
