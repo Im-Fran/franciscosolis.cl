@@ -619,6 +619,22 @@
       "custom": "Personalizado"
     }
   },
+  "heartbeats": {
+    "title": "Heartbeats",
+    "description": "Cada heartbeat tal como llegó, del más nuevo al más antiguo. Los gráficos guardan solo el último de cada minuto; este es el registro completo.",
+    "empty": "Sin heartbeats",
+    "empty_description": "Los heartbeats aparecen aquí en cuanto el dispositivo empieza a reportar.",
+    "from_ip": "desde {{ip}}",
+    "version": "v{{version}}",
+    "active": "{{active}} de uso reportado",
+    "credited": "{{credited}} contado como conectado",
+    "not_credited": "no se contó tiempo conectado: el heartbeat anterior fue hace demasiado",
+    "cpu": "CPU {{value}}",
+    "memory": "RAM {{used}} / {{total}}",
+    "show_snapshot": "Ver snapshot",
+    "hide_snapshot": "Ocultar snapshot",
+    "no_snapshot": "sin snapshot"
+  },
   "audit": {
     "title": "Registro de auditoría",
     "description": "Cada cambio hecho desde este panel, del más nuevo al más antiguo, con quién lo hizo. Nada de esto se puede editar ni borrar.",

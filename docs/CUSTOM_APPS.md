@@ -21,7 +21,7 @@ shows up in the Settings tab without a release here.
 | `/custom-apps/apps/:id/usage`                | Daily usage for 30 days, and the week-by-hour heatmap          |
 | `/custom-apps/apps/:id/status`               | The kill switch                                                |
 | `/custom-apps/apps/:id/settings`             | The app's fields, its keys, and deleting it                    |
-| `/custom-apps/installations/:id`             | One device: live snapshot, charts, daily table, events, controls |
+| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), daily table, events, the full heartbeat log, controls |
 | `/custom-apps/audit-log`                     | Every write made through the panel, with before/after diffs    |
 
 ## Its own client application
