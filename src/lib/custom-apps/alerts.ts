@@ -20,15 +20,16 @@ export const thresholdUnit = (kind: AlertKind | string): ThresholdUnit => {
   }
 };
 
-/** Inclusive bounds of a threshold. Counts have no ceiling worth stating; this one is generous. */
+/** Inclusive bounds of a threshold, as the service enforces them per kind. */
 export const thresholdBounds = (kind: AlertKind | string) => {
+  if (kind === "error_log_spike") return {min: 1, max: 1_000_000};
   switch (thresholdUnit(kind)) {
     case "minutes":
       return {min: 1, max: 10_080};
     case "percent":
       return {min: 1, max: 100};
     default:
-      return {min: 1, max: 1_000_000};
+      return {min: 1, max: 100_000};
   }
 };
 
