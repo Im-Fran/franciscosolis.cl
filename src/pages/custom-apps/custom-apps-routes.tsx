@@ -19,6 +19,7 @@ import {
   AppLayout,
   AppList,
   AppMessages,
+  AppReleases,
   AppSettings,
   AppStatus,
   AppSummary,
@@ -33,6 +34,7 @@ import {
   CustomAppsLayout,
   InstallationDetail,
   Overview,
+  ReleaseDetail,
   SignIn,
 } from "@/pages/custom-apps/lazy-screens.tsx";
 
@@ -49,8 +51,8 @@ import {
  *
  * One app is a layout route of its own (`AppLayout`), unlike a marketplace product: its tabs share
  * one record, a header and a state badge, and each screen fetching the same app would reload the
- * header on every tab change. The remote-operation tabs (config, messages, diagnostics) are routes
- * whatever the app's modules; the tab bar hides the ones that are off, and each screen explains
+ * header on every tab change. The remote-operation tabs (config, messages, diagnostics) and the
+ * releases tab are routes whatever the app's modules; the tab bar hides the ones that are off, and each screen explains
  * itself if reached anyway.
  *
  * `alerts/:alertId` is a contract rather than a choice: the notification centre links each alert
@@ -100,11 +102,13 @@ export const customAppsRoutes: RouteObject = {
             {path: "config", element: <AppConfig />},
             {path: "messages", element: <AppMessages />},
             {path: "diagnostics", element: <AppDiagnostics />},
+            {path: "releases", element: <AppReleases />},
             {path: "settings", element: <AppSettings />},
           ],
         },
         {path: "installations/:installationId", element: <InstallationDetail />},
         {path: "crashes/:crashId", element: <CrashDetail />},
+        {path: "releases/:releaseId", element: <ReleaseDetail />},
         /* `rules` is literal and must stay ahead of `:alertId`. */
         {path: "alerts", element: <Alerts />},
         {path: "alerts/rules", element: <AlertRules />},

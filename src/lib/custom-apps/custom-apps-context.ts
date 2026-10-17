@@ -5,6 +5,7 @@ import {
   APP_KINDS,
   APP_MODULES,
   APP_STATES,
+  ARCHES,
   CHANNELS,
   COMMAND_STATUSES,
   COMMAND_TYPES,
@@ -17,7 +18,10 @@ import {
   MESSAGE_SEVERITIES,
   PLATFORMS,
   PRESENCE_MODES,
+  RELEASE_MAX_BYTES,
+  RELEASE_STATUSES,
   TARGET_SCOPES,
+  UPDATE_REPORT_STATUSES,
 } from "@/lib/custom-apps/types.ts";
 import type {Account, ServiceStatus} from "@/lib/custom-apps/types.ts";
 
@@ -84,5 +88,11 @@ export const useServiceVocabulary = () => {
     alertStatuses: service?.alert_statuses?.length ? service.alert_statuses : [...ALERT_STATUSES],
     graceMaxDays: service?.grace_max_days ?? GRACE_MAX_DAYS,
     screenshotMaxBytes: service?.screenshot_max_bytes ?? null,
+    releaseStatuses: service?.release_statuses?.length ? service.release_statuses : [...RELEASE_STATUSES],
+    updateReportStatuses: service?.update_report_statuses?.length
+      ? service.update_report_statuses
+      : [...UPDATE_REPORT_STATUSES],
+    arches: service?.arches?.length ? service.arches : [...ARCHES],
+    releaseMaxBytes: service?.release_max_bytes ?? RELEASE_MAX_BYTES,
   };
 };

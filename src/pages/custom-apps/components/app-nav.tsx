@@ -1,6 +1,6 @@
 import {useTranslation} from "react-i18next";
 import {NavLink} from "react-router-dom";
-import {Bug, ChartBar, ChatCenteredText, Devices, GearSix, Power, SlidersHorizontal, SquaresFour} from "@phosphor-icons/react";
+import {Bug, ChartBar, ChatCenteredText, Devices, GearSix, Package, Power, SlidersHorizontal, SquaresFour} from "@phosphor-icons/react";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import type {AppModule} from "@/lib/custom-apps/types.ts";
 import {cn} from "@/lib/utils.ts";
@@ -51,6 +51,14 @@ export const AppNav = ({id, needsReview, modules}: {id: string; needsReview: num
       end: false,
       badge: 0,
       shown: has("crashes") || has("logs"),
+    },
+    {
+      to: customAppsRoute.appReleases(id),
+      label: t("app_nav.releases"),
+      icon: Package,
+      end: false,
+      badge: 0,
+      shown: has("updates"),
     },
     {to: customAppsRoute.appStatus(id), label: t("app_nav.status"), icon: Power, end: false, badge: 0, shown: true},
     {to: customAppsRoute.appSettings(id), label: t("app_nav.settings"), icon: GearSix, end: false, badge: 0, shown: true},

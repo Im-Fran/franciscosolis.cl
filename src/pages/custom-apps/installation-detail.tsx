@@ -33,6 +33,7 @@ import {InstallationMetrics} from "@/pages/custom-apps/components/installation-m
 import {LogsPanel} from "@/pages/custom-apps/components/logs/logs-panel.tsx";
 import {InstallationCommands} from "@/pages/custom-apps/components/remote/installation-commands.tsx";
 import {InstallationScreenshots} from "@/pages/custom-apps/components/remote/installation-screenshots.tsx";
+import {InstallationUpdates} from "@/pages/custom-apps/components/releases/installation-updates.tsx";
 import {SnapshotCards} from "@/pages/custom-apps/components/snapshot-cards.tsx";
 
 const REFRESH_MS = 15_000;
@@ -67,8 +68,9 @@ const controlsOf = (installation: Installation): Controls => ({
  * worse than a minute-old line.
  *
  * The app is loaded beside the installation, because the remote-operation panels follow its
- * modules — commands and screenshots only with `commands`, the log only with `logs` — and the
- * command catalogue depends on its kind (only a kiosk restarts the device).
+ * modules — commands and screenshots only with `commands`, the log only with `logs`, the updater
+ * only with `updates` — and the command catalogue depends on its kind (only a kiosk restarts the
+ * device).
  */
 export const InstallationDetail = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
@@ -453,6 +455,8 @@ export const InstallationDetail = () => {
             />
           </>
         )}
+
+        {modules.includes("updates") && <InstallationUpdates installation={current} />}
 
         {modules.includes("logs") && <LogsPanel scope={{kind: "installation", installationId: current.id}} />}
 

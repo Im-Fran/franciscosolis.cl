@@ -61,9 +61,17 @@ const resourceRoute = (type: string | null, id: string | null) => {
 };
 
 /**
+ * The release an entry is about, when it is about one. Release and CI-token events are filed under
+ * their app (that is what the resource column links to) and name the release in their metadata, so
+ * the row links there too.
+ */
+const releaseOf = (metadata: AuditEntry["metadata"]) =>
+  typeof metadata?.release_id === "string" && metadata.release_id ? metadata.release_id : null;
+
+/**
  * Who wrote an entry that has no actor: the service itself. An automatic change says why — a grace
- * period that ran out and suspended the app is the one today — so it does not read as an anonymous
- * edit.
+ * period that ran out and suspended the app, or a rollout paused on its rollback or crash rate — so
+ * it does not read as an anonymous edit.
  */
 const SystemActor = ({metadata}: {metadata: AuditEntry["metadata"]}) => {
   const {t} = useTranslation("custom_apps");
@@ -236,6 +244,7 @@ export const AuditLog = () => {
                   <tbody>
                     {rows.map((entry) => {
                       const route = resourceRoute(entry.resource_type, entry.resource_id);
+                      const releaseId = entry.event.startsWith("release.") && entry.event !== "release.deleted" ? releaseOf(entry.metadata) : null;
                       const resource = [entry.resource_type, entry.resource_id].filter(Boolean).join(" ");
                       return (
                         <tr key={entry.id} className="border-b border-neutral-800/70 align-top text-[13px] text-neutral-300 last:border-0">
@@ -263,6 +272,16 @@ export const AuditLog = () => {
                               )
                             ) : (
                               <span className="text-neutral-600">—</span>
+                            )}
+                            {releaseId && (
+                              <Link
+                                to={customAppsRoute.release(releaseId)}
+                                className="mt-1 block text-[12px] text-neutral-400 hover:text-text hover:underline"
+                              >
+                                {t("custom_apps:audit.open_release", {
+                                  version: typeof entry.metadata?.version === "string" ? entry.metadata.version : releaseId.slice(0, 8),
+                                })}
+                              </Link>
                             )}
                           </td>
                           <td className="py-3 pr-4 text-[12px] text-neutral-500">

@@ -51,6 +51,12 @@ export const AppMessages = lazy(() =>
 export const AppDiagnostics = lazy(() =>
   import("@/pages/custom-apps/app-diagnostics.tsx").then((m) => ({default: m.AppDiagnostics})),
 );
+export const AppReleases = lazy(() =>
+  import("@/pages/custom-apps/app-releases.tsx").then((m) => ({default: m.AppReleases})),
+);
+export const ReleaseDetail = lazy(() =>
+  import("@/pages/custom-apps/release-detail.tsx").then((m) => ({default: m.ReleaseDetail})),
+);
 export const CrashDetail = lazy(() =>
   import("@/pages/custom-apps/crash-detail.tsx").then((m) => ({default: m.CrashDetail})),
 );

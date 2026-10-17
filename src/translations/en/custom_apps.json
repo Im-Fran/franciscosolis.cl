@@ -91,6 +91,14 @@
     "android": "Android",
     "web": "Web"
   },
+  "arches": {
+    "x86_64": "x86_64",
+    "aarch64": "ARM64",
+    "x86": "x86 (32-bit)",
+    "armv7": "ARMv7",
+    "universal": "Universal",
+    "any": "Any"
+  },
   "channels": {
     "stable": "Stable",
     "beta": "Beta"
@@ -106,7 +114,8 @@
     "crashes": "Crash reports",
     "config": "Flags and remote config",
     "messages": "In-app messages",
-    "commands": "Remote commands"
+    "commands": "Remote commands",
+    "updates": "Remote updates"
   },
   "modules_hint": {
     "metrics": "CPU, memory, disk, network, battery and power samples.",
@@ -115,7 +124,8 @@
     "crashes": "Crashes grouped by signature and version, with their stacks. Kept 30 days.",
     "config": "Feature flags and a versioned JSON configuration, picked up without a release.",
     "messages": "Banners and dialogs shown to the people using the app.",
-    "commands": "Restart, reload, clear the cache, take a screenshot and more, one device at a time."
+    "commands": "Restart, reload, clear the cache, take a screenshot and more, one device at a time.",
+    "updates": "Signed releases uploaded from CI, with staged rollout, a minimum version, automatic pause and rollback."
   },
   "roles": {
     "owner": "Owner",
@@ -167,7 +177,9 @@
     "recent_description": "The last installations to sign up, newest first.",
     "recent_empty": "No installation has enrolled yet.",
     "alerts": "Open alerts",
-    "alerts_detail": "Unresolved alerts across every app."
+    "alerts_detail": "Unresolved alerts across every app.",
+    "releases": "Releases rolling out",
+    "releases_detail": "Published below 100 % · {{paused}} paused · {{drafts}} drafts"
   },
   "companies": {
     "title": "Companies",
@@ -360,7 +372,8 @@
     "needs_review_aria_other": "{{count}} installations need review",
     "config": "Flags & config",
     "messages": "Messages",
-    "diagnostics": "Crashes & logs"
+    "diagnostics": "Crashes & logs",
+    "releases": "Releases"
   },
   "summary": {
     "connected": "Connected now",
@@ -785,12 +798,30 @@
       "alert": {
         "acknowledged": "Alert acknowledged",
         "resolved": "Alert resolved"
+      },
+      "ci_token": {
+        "created": "CI token created",
+        "revoked": "CI token revoked"
+      },
+      "release": {
+        "uploaded": "Release uploaded",
+        "updated": "Release updated",
+        "published": "Release published",
+        "rollout_changed": "Release rollout changed",
+        "paused": "Release paused",
+        "resumed": "Release resumed",
+        "withdrawn": "Release withdrawn",
+        "rolled_back": "Line rolled back to a release",
+        "deleted": "Release deleted"
       }
     },
     "automatic": "Automatic",
     "reasons": {
-      "grace_period_ended": "The grace period ended"
-    }
+      "grace_period_ended": "The grace period ended",
+      "rollback_rate": "The rollback rate crossed the threshold",
+      "crash_rate": "The crash rate crossed the threshold"
+    },
+    "open_release": "Release {{version}}"
   },
   "module_off": {
     "title": "{{modules}}: off for this app",
@@ -836,13 +867,27 @@
     "acknowledged": "Acknowledged",
     "resolved": "Resolved"
   },
+  "release_statuses": {
+    "draft": "Draft",
+    "published": "Published",
+    "paused": "Paused",
+    "withdrawn": "Withdrawn"
+  },
+  "update_report_statuses": {
+    "downloaded": "Downloaded",
+    "installed": "Installed",
+    "health_ok": "Healthy",
+    "rolled_back": "Rolled back",
+    "failed": "Failed"
+  },
   "alert_kinds": {
     "installation_offline": "Installation offline",
     "cpu_high": "High CPU",
     "memory_high": "High memory",
     "crash_spike": "Crash spike",
     "error_log_spike": "Error log spike",
-    "enrollment_spike": "Enrollment spike"
+    "enrollment_spike": "Enrollment spike",
+    "release_rollbacks": "Release rollbacks"
   },
   "alert_kinds_hint": {
     "installation_offline": "A device has not sent a heartbeat for longer than the threshold.",
@@ -850,7 +895,8 @@
     "memory_high": "A device's average memory use over the window is above the threshold.",
     "crash_spike": "At least as many crash reports as the threshold within the window.",
     "error_log_spike": "At least as many error and fatal log entries as the threshold within the window.",
-    "enrollment_spike": "At least as many new installations as the threshold within the window. A leaked key looks like this."
+    "enrollment_spike": "At least as many new installations as the threshold within the window. A leaked key looks like this.",
+    "release_rollbacks": "At least as many update rollbacks as the threshold within the window, across the app's releases."
   },
   "json": {
     "format": "Format",
@@ -1215,7 +1261,8 @@
       "memory_high": "Average memory percentage, from 1 to 100.",
       "crash_spike": "Crash reports within the window.",
       "error_log_spike": "Error and fatal entries within the window.",
-      "enrollment_spike": "New installations within the window."
+      "enrollment_spike": "New installations within the window.",
+      "release_rollbacks": "Rollbacks reported within the window, 1 to 100,000."
     },
     "range": "Between {{min}} and {{max}}.",
     "condition": {
@@ -1224,7 +1271,8 @@
       "memory_high": "Memory above {{threshold}} on average over {{window}}",
       "crash_spike": "At least {{threshold}} crashes in {{window}}",
       "error_log_spike": "At least {{threshold}} error log entries in {{window}}",
-      "enrollment_spike": "At least {{threshold}} new installations in {{window}}"
+      "enrollment_spike": "At least {{threshold}} new installations in {{window}}",
+      "release_rollbacks": "At least {{threshold}} update rollbacks in {{window}}"
     },
     "window_value": "window {{window}}",
     "enabled": "Enabled",
@@ -1254,5 +1302,260 @@
     "empty": "No rules yet",
     "empty_app": "No rule watches this app",
     "empty_description": "Create one to be told when a device goes quiet, runs hot or crashes more than usual."
+  },
+  "releases": {
+    "title": "Releases",
+    "description": "The builds CI uploads, signed. They arrive as drafts and are published from here.",
+    "count_one": "{{count}} release · newest first",
+    "count_other": "{{count}} releases · newest first",
+    "empty": "No release has been uploaded yet",
+    "empty_description": "This panel never uploads releases: CI does, signing each build with the app's private key. Each one arrives as a draft and nobody is offered it until you publish it.",
+    "no_matches": "No release matches these filters.",
+    "auto_paused": "Paused automatically",
+    "named_short_one": "+ {{count}} device",
+    "named_short_other": "+ {{count}} devices",
+    "installed_one": "{{value}} installed",
+    "installed_other": "{{value}} installed",
+    "healthy_one": "{{value}} healthy",
+    "healthy_other": "{{value}} healthy",
+    "rolled_back_one": "{{value}} rolled back",
+    "rolled_back_other": "{{value}} rolled back",
+    "uploaded": "Uploaded {{when}}",
+    "published": "Published {{when}}",
+    "uploaded_by_ci": "CI (token {{id}}…)",
+    "setup_incomplete_title": "Uploads are not fully set up",
+    "setup_no_key": "This app has no release public key, so the service will refuse every upload.",
+    "setup_no_token": "This app has no active CI token, so nothing can upload a release.",
+    "columns": {
+      "version": "Version",
+      "line": "Line",
+      "status": "Status",
+      "rollout": "Rollout",
+      "devices": "Devices",
+      "dates": "Dates"
+    },
+    "filters": {
+      "channel": "Channel",
+      "platform": "Platform",
+      "arch": "Architecture",
+      "status": "Status",
+      "any_channel": "Any channel",
+      "any_platform": "Any platform",
+      "any_arch": "Any architecture",
+      "any_status": "Any status"
+    },
+    "help": {
+      "title": "How CI uploads a release",
+      "key_title": "1. Generate the Ed25519 key pair and save the public half on the app",
+      "key_body": "The private key stays a CI secret and the public one is pasted in Settings. The same public key ships inside the app, so its updater can verify what it downloads.",
+      "settings_link": "Open Settings",
+      "token_title": "2. Create a CI token",
+      "token_body": "It is shown once. Store it as a CI secret (for instance CUSTOM_APPS_CI_TOKEN).",
+      "upload_title": "3. Sign and upload each build",
+      "upload_body": "The signature is Ed25519 over the raw SHA-256 digest of the file, in base64. The body is the file itself, up to {{max}}. Replace version, platform, architecture and filename with each build's.",
+      "upload_after": "It arrives as a draft. Publish it from its page, starting with a small percentage."
+    }
+  },
+  "release": {
+    "title": "Version {{version}}",
+    "loading_title": "Release",
+    "back": "This app's releases",
+    "details": "File",
+    "download": "Download artifact",
+    "download_failed": "The artifact could not be downloaded.",
+    "publish": "Publish",
+    "publish_title": "Publish version {{version}}",
+    "publish_body": "Choose how much of the line gets it. Devices are bucketed by a fixed number, so the ones inside 10 % of this release are the ones inside 10 % of the next: always the same canaries. Start small and widen it once the first devices report healthy.",
+    "rollout_change": "Change rollout",
+    "rollout_title": "Change the rollout",
+    "rollout_body": "Widening it offers it to more of the line. Narrowing it stops offering it outside the new reach, but uninstalls it nowhere.",
+    "rollout_apply": "Apply",
+    "percent": "Share of the line",
+    "estimate_one": "≈ {{estimate}} of {{total}} device on the line",
+    "estimate_other": "≈ {{estimate}} of {{total}} devices on the line",
+    "named": "Named devices",
+    "named_count_one": "{{count}} selected",
+    "named_count_other": "{{count}} selected",
+    "named_hint": "Offered it whatever the percentage says: the canary kiosks. The list shows the active devices on the release's channel and platform.",
+    "named_search": "Search devices",
+    "named_empty": "No active device is on this release's channel and platform.",
+    "named_none": "None: only the percentage counts.",
+    "nobody_title": "It will reach nobody",
+    "nobody_body": "At 0 % and with no named devices it is published but offered to no device until you widen the rollout.",
+    "pause": "Pause",
+    "pause_title": "Pause this release?",
+    "pause_body": "It stops being offered to new devices. Devices that installed it keep it. You can resume it later at the same rollout.",
+    "resume": "Resume",
+    "resume_warning": "Resumed without fixing the cause, the service pauses it again at the next evaluation.",
+    "withdraw": "Withdraw",
+    "withdraw_title": "Withdraw version {{version}}?",
+    "withdraw_body": "Nobody else is offered it, and every device running it is offered the newest earlier version of its line as a mandatory rollback. A withdrawn release cannot be published again; going back to it means rolling the line back.",
+    "rollback": "Roll the line back to this",
+    "rollback_title": "Roll the line back to version {{version}}?",
+    "rollback_body": "Every published or paused release newer than {{version}} on the {{line}} line is withdrawn, and this one is published to 100 % of the line. Devices on a newer version are offered {{version}} as a mandatory rollback on their next heartbeat (at once, holding a socket).",
+    "delete": "Delete draft",
+    "delete_title": "Delete this draft?",
+    "delete_body": "Version {{version}} and its file “{{filename}}” are deleted for good. Getting it back means CI uploading it again.",
+    "reason": "Reason",
+    "reason_hint": "Optional. Kept on the release and in the audit log.",
+    "done": {
+      "publish": "Release published.",
+      "rollout": "Rollout updated.",
+      "pause": "Release paused.",
+      "resume": "Release resumed.",
+      "withdraw": "Release withdrawn. Devices running it will be offered a rollback.",
+      "rollback": "Line rolled back. Devices on newer versions will be offered this one as a rollback."
+    },
+    "draft_title": "Draft",
+    "draft_body": "Nobody is offered this release yet. Check the file and the notes, and publish it at a small percentage.",
+    "reach_title": "Reach",
+    "reach_description": "Who is offered it, and how many devices on the line already run it.",
+    "reach_draft": "Not published",
+    "reach_published": "of the line is offered it",
+    "reach_stopped": "of the line, but not offered",
+    "on_line": "Active devices on the line",
+    "on_version": "Already on this version",
+    "on_version_value_one": "{{value}} of {{total}}",
+    "on_version_value_other": "{{value}} of {{total}}",
+    "notes_title": "Notes and minimum version",
+    "notes_hint": "What changed. The updater can show them before installing.",
+    "no_notes": "No notes.",
+    "edit": "Edit",
+    "edit_title": "Edit version {{version}}",
+    "min_version": "Minimum version",
+    "min_version_hint": "Optional. Devices below it must update before they carry on. It cannot be above {{version}}.",
+    "min_version_invalid": "It has to be a semantic version, e.g. 1.4.0.",
+    "min_version_value": "Devices below {{min}} must update before they carry on: for them it is mandatory.",
+    "min_version_none": "No minimum version: the update is optional for everybody.",
+    "filename": "Filename",
+    "size": "Size",
+    "content_type": "Content type",
+    "uploaded_by": "Uploaded by",
+    "uploaded_at": "Uploaded",
+    "published_at": "Published",
+    "status_changed_at": "Last status change",
+    "sha256": "SHA-256",
+    "signature": "Ed25519 signature",
+    "signature_hint": "The service verified the signature against the app's public key before it stored the release. Devices verify it again over what they download.",
+    "stats": {
+      "downloaded": "Downloaded",
+      "downloaded_detail": "Devices that downloaded it.",
+      "installed": "Installed",
+      "installed_detail": "Devices that installed it.",
+      "health_ok": "Healthy",
+      "health_ok_detail": "Started, reached the API and passed their own checks.",
+      "rolled_back": "Rolled back",
+      "rolled_back_detail": "Went back to the previous version on their own.",
+      "failed": "Failed",
+      "failed_detail": "Could not download or install it.",
+      "crashed": "Crashed",
+      "crashed_detail": "Reported a crash on this version since it was published.",
+      "rollback_rate": "Rollback rate",
+      "rollback_rate_detail": "Pauses itself at {{threshold}}.",
+      "crash_rate": "Crash rate",
+      "crash_rate_detail": "Pauses itself at {{threshold}}."
+    },
+    "status_reason": {
+      "note": "Reason:",
+      "auto_title": "Paused automatically on {{date}}",
+      "auto_rollback_rate_one": "The rollback rate reached {{rate}}, past the {{threshold}} threshold, with {{sample}} device behind it.",
+      "auto_rollback_rate_other": "The rollback rate reached {{rate}}, past the {{threshold}} threshold, with {{sample}} devices behind it.",
+      "auto_crash_rate_one": "The crash rate reached {{rate}}, past the {{threshold}} threshold, with {{sample}} device behind it.",
+      "auto_crash_rate_other": "The crash rate reached {{rate}}, past the {{threshold}} threshold, with {{sample}} devices behind it.",
+      "auto_after": "Nobody new is offered it; devices that installed it keep it. Fix the cause and publish a new version, withdraw it, or resume it if it was a false alarm.",
+      "paused_title": "Paused by {{by}} on {{date}}",
+      "paused_body": "Nobody new is offered it; devices that installed it keep it.",
+      "withdrawn_title": "Withdrawn by {{by}} on {{date}}",
+      "withdrawn_body": "Nobody is offered it, and devices running it are offered the previous version of their line as a mandatory rollback.",
+      "withdrawn_by_rollback": "Withdrawn when the line was rolled back to version {{version}}. Devices running it are offered that version as a mandatory rollback.",
+      "rolled_back_title": "Line rolled back to this version by {{by}} on {{date}}",
+      "rolled_back_body": "It was published to 100 % of the line and the newer releases were withdrawn."
+    }
+  },
+  "release_settings": {
+    "title": "Updates",
+    "description": "The key every upload is verified against, and the numbers a rollout is run by.",
+    "no_key_title": "No release public key",
+    "no_key_body": "The service refuses every CI upload until you save one.",
+    "key": "Release public key",
+    "key_hint": "The raw 32 bytes of the Ed25519 public key, in base64 (44 characters). Empty removes it.",
+    "key_placeholder": "44 base64 characters",
+    "key_invalid": "Not an Ed25519 public key: it has to be 32 bytes in base64, not a PEM or hex.",
+    "key_how": "How to generate the key pair",
+    "key_how_body": "Do it once, wherever the private key will live. The private key stays a CI secret; the public one is pasted here and ships inside the app.",
+    "health_timeout": "Health timeout (seconds)",
+    "health_timeout_hint": "{{duration}} for the new version to report healthy before the device goes back.",
+    "max_failures": "Failed attempts",
+    "max_failures_hint": "How many times a device tries the same release before it stops trying.",
+    "pause_rollback": "Pause on rollbacks above (%)",
+    "pause_rollback_hint": "Of the devices that finished updating, the share that went back.",
+    "pause_crash": "Pause on crashes above (%)",
+    "pause_crash_hint": "Of the devices that installed it, the share that reported a crash on it.",
+    "pause_sample": "A rate needs at least three devices behind it before it pauses a rollout: one kiosk out of two is not a trend.",
+    "replace_title": "Replace the public key?",
+    "replace_body": "Builds already installed verify downloads with the old key, so they will refuse every release signed with the new one. Change the key only once a build carrying the new one is out.",
+    "replace_confirm": "Replace",
+    "clear_title": "Remove the public key?",
+    "clear_body": "The service will refuse every CI upload until you save another. Releases already uploaded do not change.",
+    "clear_confirm": "Remove"
+  },
+  "ci_tokens": {
+    "title": "CI tokens",
+    "description": "What CI uploads this app's releases with. They are secrets: a token is shown once and only its beginning afterwards. Revoking one stops the next upload; the releases it already uploaded do not change.",
+    "create": "New token",
+    "create_title": "New CI token",
+    "label": "Label",
+    "label_hint": "Which repository or workflow uses it. Optional.",
+    "label_placeholder": "GitHub Actions · main",
+    "token": "CI token",
+    "unlabelled": "Unlabelled token",
+    "created_title": "Token created",
+    "once_title": "Copy it now",
+    "once_body": "This is the only time it is shown. The service keeps only its hash: if you lose it, revoke it and create another.",
+    "created_hint": "Store it as a CI secret and upload with “Authorization: Bearer <token>”.",
+    "done": "Done, I saved it",
+    "created_at": "Created {{date}}",
+    "last_used": "Last used {{when}}",
+    "never_used": "Never used",
+    "revoked_at": "Revoked {{date}}",
+    "revoke": "Revoke",
+    "revoking": "Revoking…",
+    "revoked": "Token revoked.",
+    "revoke_title": "Revoke this token?",
+    "revoke_body": "“{{token}}” will no longer be able to upload releases. The releases it already uploaded do not change. This cannot be undone.",
+    "empty": "This app has no CI tokens",
+    "empty_description": "Create one so CI can upload releases."
+  },
+  "update_reports": {
+    "title": "Update reports",
+    "description": "Every step devices reported, newest first.",
+    "count_one": "{{count}} report · newest first",
+    "count_other": "{{count}} reports · newest first",
+    "empty": "No device has reported anything yet",
+    "empty_description": "Devices report when they download, install, come up healthy, roll back or fail.",
+    "columns": {
+      "device": "Device",
+      "version": "Version",
+      "status": "Step",
+      "from": "From",
+      "detail": "Detail",
+      "when": "When"
+    }
+  },
+  "installation_updates": {
+    "title": "Updates",
+    "description": "What this device would be offered right now, and every step it reported.",
+    "offer": "Offered version {{version}}",
+    "rollback": "Rollback",
+    "mandatory": "Mandatory",
+    "rollback_hint": "The version it runs was withdrawn, so it is being sent back to an earlier one. It is mandatory.",
+    "mandatory_hint": "It runs a version below the minimum ({{min}}), so it has to update before it carries on.",
+    "open_release": "Open the release",
+    "health": "Health",
+    "health_value_one": "{{duration}} to report healthy · {{count}} attempt",
+    "health_value_other": "{{duration}} to report healthy · up to {{count}} attempts",
+    "no_offer": "Nothing is offered: it runs {{version}} and its line has no newer release that reaches it, or the app is in grace or suspended.",
+    "reports_title": "Reports",
+    "reports_empty": "This device has not reported any update."
   }
 }

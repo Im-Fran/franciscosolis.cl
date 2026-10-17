@@ -43,6 +43,8 @@ export const defaultThreshold = (kind: AlertKind | string) => {
       return 90;
     case "enrollment_spike":
       return 10;
+    case "release_rollbacks":
+      return 3;
     default:
       return 5;
   }
