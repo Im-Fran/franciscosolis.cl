@@ -1,10 +1,11 @@
-import {Bell, Storefront, UserCircle} from "@phosphor-icons/react";
+import {AppWindow, Bell, Storefront, UserCircle} from "@phosphor-icons/react";
 import type {Icon, IconProps} from "@phosphor-icons/react";
 import type {NotificationCategory} from "@/lib/notifications/types.ts";
 
 const ICONS: Record<NotificationCategory, Icon> = {
   account: UserCircle,
   marketplace: Storefront,
+  custom_apps: AppWindow,
 };
 
 /** One glyph per category, so a list of mixed notifications can be scanned by what they are about. */

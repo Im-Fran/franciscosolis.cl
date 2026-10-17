@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 import {useTranslation} from "react-i18next";
-import {AddressBook, AppWindow, ArrowClockwise, Buildings, CheckCircle, Plugs, Prohibit, Warning} from "@phosphor-icons/react";
+import {AddressBook, AppWindow, ArrowClockwise, Bell, Buildings, CheckCircle, Plugs, Prohibit, Warning} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
@@ -53,7 +53,7 @@ export const Overview = () => {
       >
         {data && (
           <div className="flex flex-col gap-6">
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <StatCard
                 label={t("custom_apps:overview.connected")}
                 icon={<Plugs size={18} />}
@@ -73,11 +73,22 @@ export const Overview = () => {
                 detail={t("custom_apps:overview.needs_review_detail")}
               />
               <StatCard
+                label={t("custom_apps:overview.alerts")}
+                icon={<Bell size={18} />}
+                value={data.alerts?.unresolved ?? 0}
+                attention={(data.alerts?.unresolved ?? 0) > 0}
+                detail={t("custom_apps:overview.alerts_detail")}
+                to={customAppsRoute.alerts({status: "unresolved"})}
+              />
+              <StatCard
                 label={t("custom_apps:overview.revoked")}
                 icon={<Prohibit size={18} />}
                 value={data.installations.revoked}
                 detail={t("custom_apps:overview.revoked_detail")}
               />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               <StatCard
                 label={t("custom_apps:overview.apps")}
                 icon={<AppWindow size={18} />}

@@ -11,7 +11,7 @@ import {describeUserAgent, formatDateTime} from "@/lib/auth/format.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
-import {formatLastSeen} from "@/lib/custom-apps/format.ts";
+import {dayBound, formatLastSeen} from "@/lib/custom-apps/format.ts";
 import type {AuditEntry} from "@/lib/custom-apps/types.ts";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
@@ -21,7 +21,21 @@ import {AuditDiff} from "@/pages/custom-apps/components/audit-diff.tsx";
 const PAGE_SIZE = 50;
 
 /** The resource types worth suggesting in the filter. The service may write others; the field is free text. */
-const RESOURCE_TYPES = ["company", "contact", "app", "app_key", "installation"] as const;
+const RESOURCE_TYPES = [
+  "company",
+  "contact",
+  "app",
+  "app_key",
+  "installation",
+  "command",
+  "screenshot",
+  "flag",
+  "config",
+  "message",
+  "crash",
+  "alert_rule",
+  "alert",
+] as const;
 
 /** Where a resource lives in this panel, for the types that have a screen. */
 const resourceRoute = (type: string | null, id: string | null) => {
@@ -35,17 +49,38 @@ const resourceRoute = (type: string | null, id: string | null) => {
       return customAppsRoute.app(id);
     case "installation":
       return customAppsRoute.installation(id);
+    case "crash":
+      return customAppsRoute.crash(id);
+    case "alert":
+      return customAppsRoute.alert(id);
+    case "alert_rule":
+      return customAppsRoute.alertRules;
     default:
       return null;
   }
 };
 
-/** A `YYYY-MM-DD` from a date input as the instant that day starts, here; `endOfDay` for the bound after it. */
-const dayBound = (value: string, endOfDay: boolean) => {
-  if (!value) return undefined;
-  const [year, month, day] = value.split("-").map(Number);
-  const date = new Date(year, month - 1, day + (endOfDay ? 1 : 0));
-  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+/**
+ * Who wrote an entry that has no actor: the service itself. An automatic change says why — a grace
+ * period that ran out and suspended the app is the one today — so it does not read as an anonymous
+ * edit.
+ */
+const SystemActor = ({metadata}: {metadata: AuditEntry["metadata"]}) => {
+  const {t} = useTranslation("custom_apps");
+  if (metadata?.automatic === true) {
+    const reason = typeof metadata.reason === "string" ? metadata.reason : null;
+    return (
+      <span className="text-neutral-400 italic">
+        {t("audit.automatic")}
+        {reason && (
+          <span className="block text-[12px] text-neutral-600 not-italic">
+            {t(`audit.reasons.${reason}`, {defaultValue: reason})}
+          </span>
+        )}
+      </span>
+    );
+  }
+  return <span className="text-neutral-600 italic">{t("audit.system")}</span>;
 };
 
 /**
@@ -215,7 +250,7 @@ export const AuditLog = () => {
                             <span className="block font-mono text-[11px] text-neutral-600">{entry.event}</span>
                           </td>
                           <td className="py-3 pr-4 break-all">
-                            {entry.actor_email || entry.actor_id || <span className="text-neutral-600 italic">{t("custom_apps:audit.system")}</span>}
+                            {entry.actor_email || entry.actor_id || <SystemActor metadata={entry.metadata} />}
                           </td>
                           <td className="py-3 pr-4">
                             {resource ? (

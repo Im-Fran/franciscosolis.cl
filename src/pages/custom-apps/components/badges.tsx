@@ -101,3 +101,77 @@ export const RoleChips = ({roles}: {roles: string[]}) => {
     </span>
   );
 };
+
+/**
+ * The live connection a socket-mode device holds, beside the connected dot. It is what lets a
+ * command reach the device at once instead of on its next heartbeat.
+ */
+export const SocketBadge = () => {
+  const {t} = useTranslation("custom_apps");
+  return (
+    <span title={t("installations.socket_title")}>
+      <Pill tone="good">{t("installations.socket")}</Pill>
+    </span>
+  );
+};
+
+/**
+ * One badge per status vocabulary of phase two. Each maps its words onto the panel's tones and
+ * falls back to the word itself, so a status the service adds later still reads.
+ */
+const VocabularyPill = ({
+  prefix,
+  tones,
+  value,
+  className,
+}: {
+  prefix: string;
+  tones: Record<string, Tone>;
+  value: string;
+  className?: string;
+}) => {
+  const {t} = useTranslation("custom_apps");
+  return (
+    <Pill tone={tones[value] ?? "inert"} className={className}>
+      {t(`${prefix}.${value}`, {defaultValue: value})}
+    </Pill>
+  );
+};
+
+type VocabularyBadgeProps = {value: string; className?: string};
+
+const COMMAND_TONES: Record<string, Tone> = {
+  pending: "pending",
+  delivered: "planned",
+  succeeded: "good",
+  failed: "bad",
+  expired: "inert",
+  cancelled: "inert",
+};
+const LOG_TONES: Record<string, Tone> = {debug: "inert", info: "planned", warning: "pending", error: "bad", fatal: "bad"};
+const SEVERITY_TONES: Record<string, Tone> = {info: "planned", warning: "pending", critical: "bad"};
+const MESSAGE_TONES: Record<string, Tone> = {active: "good", scheduled: "planned", ended: "inert"};
+const CRASH_TONES: Record<string, Tone> = {open: "bad", resolved: "good", ignored: "inert"};
+const ALERT_TONES: Record<string, Tone> = {open: "bad", acknowledged: "pending", resolved: "good"};
+
+export const CommandStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="command_statuses" tones={COMMAND_TONES} {...props} />
+);
+
+export const LogLevelBadge = (props: VocabularyBadgeProps) => <VocabularyPill prefix="log_levels" tones={LOG_TONES} {...props} />;
+
+export const SeverityBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="severities" tones={SEVERITY_TONES} {...props} />
+);
+
+export const MessageStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="message_statuses" tones={MESSAGE_TONES} {...props} />
+);
+
+export const CrashStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="crash_statuses" tones={CRASH_TONES} {...props} />
+);
+
+export const AlertStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="alert_statuses" tones={ALERT_TONES} {...props} />
+);

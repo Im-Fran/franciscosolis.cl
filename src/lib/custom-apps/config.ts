@@ -70,10 +70,29 @@ export const customAppsRoute = {
   appUsage: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/usage`,
   appStatus: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/status`,
   appSettings: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/settings`,
+  /** Flags and the remote configuration document, for an app with the `config` module. */
+  appConfig: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/config`,
+  appMessages: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/messages`,
+  /** Crash groups and fleet logs, for an app with the `crashes` or `logs` module. */
+  appDiagnostics: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/diagnostics`,
+  /** One crash group, addressed on its own like an installation. */
+  crash: (id: string) => `${CUSTOM_APPS_ROUTE}/crashes/${encodeURIComponent(id)}`,
   /**
    * An installation is addressed on its own rather than under its app: the overview links to one
    * without knowing which app it belongs to, and the service answers it by id alone.
    */
   installation: (id: string) => `${CUSTOM_APPS_ROUTE}/installations/${encodeURIComponent(id)}`,
+  /**
+   * The alert inbox, optionally filtered. The notification centre links to one alert as
+   * `/custom-apps/alerts/<id>`, so that shape is a contract with the service, not a choice here.
+   */
+  alerts: (filters: {app_id?: string; rule_id?: string; installation_id?: string; status?: string} = {}) => {
+    const search = new URLSearchParams(
+      Object.entries(filters).filter((entry): entry is [string, string] => Boolean(entry[1])),
+    ).toString();
+    return `${CUSTOM_APPS_ROUTE}/alerts${search ? `?${search}` : ""}`;
+  },
+  alertRules: `${CUSTOM_APPS_ROUTE}/alerts/rules`,
+  alert: (id: string) => `${CUSTOM_APPS_ROUTE}/alerts/${encodeURIComponent(id)}`,
   audit: `${CUSTOM_APPS_ROUTE}/audit-log`,
 } as const;

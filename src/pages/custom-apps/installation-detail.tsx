@@ -19,28 +19,43 @@ import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {useServiceVocabulary} from "@/lib/custom-apps/custom-apps-context.ts";
 import {formatDuration, formatLastSeen} from "@/lib/custom-apps/format.ts";
 import {useAutoRefresh} from "@/lib/custom-apps/use-auto-refresh.ts";
-import type {AppState, Channel, Installation, InstallationPayload} from "@/lib/custom-apps/types.ts";
+import type {AppState, Channel, Installation, InstallationPayload, LogLevel} from "@/lib/custom-apps/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
-import {ConnectedIndicator, LifecycleBadge, ReviewBadge, StateBadge} from "@/pages/custom-apps/components/badges.tsx";
+import {OpenAlertsHint} from "@/pages/custom-apps/components/alerts/open-alerts-hint.tsx";
+import {ConnectedIndicator, LifecycleBadge, ReviewBadge, SocketBadge, StateBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx";
 import {InstallationDaily} from "@/pages/custom-apps/components/installation-daily.tsx";
 import {InstallationEvents} from "@/pages/custom-apps/components/installation-events.tsx";
 import {InstallationHeartbeats} from "@/pages/custom-apps/components/installation-heartbeats.tsx";
 import {describePlatform, installationLabel} from "@/pages/custom-apps/components/installation-label.ts";
 import {InstallationMetrics} from "@/pages/custom-apps/components/installation-metrics.tsx";
+import {LogsPanel} from "@/pages/custom-apps/components/logs/logs-panel.tsx";
+import {InstallationCommands} from "@/pages/custom-apps/components/remote/installation-commands.tsx";
+import {InstallationScreenshots} from "@/pages/custom-apps/components/remote/installation-screenshots.tsx";
 import {SnapshotCards} from "@/pages/custom-apps/components/snapshot-cards.tsx";
 
 const REFRESH_MS = 15_000;
 const ALIAS_MAX = 80;
 const MESSAGE_MAX = 500;
 
-type Controls = {channel: Channel; override: "" | AppState; message: string};
+type Controls = {
+  channel: Channel;
+  override: "" | AppState;
+  message: string;
+  /** Empty follows the app's level. */
+  logLevel: "" | LogLevel;
+  screenshots: boolean;
+};
+
+const EMPTY_CONTROLS: Controls = {channel: "stable", override: "", message: "", logLevel: "", screenshots: false};
 
 const controlsOf = (installation: Installation): Controls => ({
   channel: installation.channel,
   override: installation.state_override ?? "",
   message: installation.state_message ?? "",
+  logLevel: installation.log_level_override ?? "",
+  screenshots: installation.screenshots_enabled ?? false,
 });
 
 /**
@@ -50,12 +65,16 @@ const controlsOf = (installation: Installation): Controls => ({
  * seconds while the tab is visible; the charts and tables below it do not, because history does not
  * change under a reader the way "now" does, and redrawing a chart somebody is hovering would be
  * worse than a minute-old line.
+ *
+ * The app is loaded beside the installation, because the remote-operation panels follow its
+ * modules — commands and screenshots only with `commands`, the log only with `logs` — and the
+ * command catalogue depends on its kind (only a kiosk restarts the device).
  */
 export const InstallationDetail = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const {installationId = ""} = useParams<{installationId: string}>();
   const {notify} = useToast();
-  const {states, channels} = useServiceVocabulary();
+  const {states, channels, logLevels} = useServiceVocabulary();
   const language = i18n.language;
 
   const record = useResource(
@@ -68,8 +87,17 @@ export const InstallationDetail = () => {
     if (record.data) setInstallation(record.data);
   }, [record.data]);
 
-  const [controls, setControls] = useState<Controls>({channel: "stable", override: "", message: ""});
-  const [baseline, setBaseline] = useState<Controls>({channel: "stable", override: "", message: ""});
+  const [controls, setControls] = useState<Controls>(EMPTY_CONTROLS);
+  const [baseline, setBaseline] = useState<Controls>(EMPTY_CONTROLS);
+  const [screenshotVersion, setScreenshotVersion] = useState(0);
+  const onScreenshot = useCallback(() => setScreenshotVersion((value) => value + 1), []);
+
+  const appId = installation && installation.id === installationId ? installation.app_id : "";
+  const appRecord = useResource(
+    useCallback((signal: AbortSignal) => (appId ? customAppsApi.apps.get(appId, signal) : Promise.resolve(null)), [appId]),
+  );
+  const app = appRecord.data && appRecord.data.id === appId ? appRecord.data : null;
+  const modules = app?.modules ?? [];
   const [renaming, setRenaming] = useState(false);
   const [alias, setAlias] = useState("");
   const [askRevoke, setAskRevoke] = useState(false);
@@ -114,6 +142,8 @@ export const InstallationDetail = () => {
     event.preventDefault();
     const body: InstallationPayload = {};
     if (controls.channel !== baseline.channel) body.channel = controls.channel;
+    if (controls.logLevel !== baseline.logLevel) body.log_level_override = controls.logLevel || null;
+    if (controls.screenshots !== baseline.screenshots) body.screenshots_enabled = controls.screenshots;
     if (controls.override !== baseline.override || controls.message !== baseline.message) {
       body.state_override = controls.override || null;
       /* No override, nothing to explain: the app's own message is what the device shows then. */
@@ -166,6 +196,7 @@ export const InstallationDetail = () => {
         description={
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <ConnectedIndicator connected={current.connected && !revoked} />
+            {current.socket_connected && !revoked && <SocketBadge />}
             <span className="text-neutral-700" aria-hidden="true">·</span>
             <span>
               {current.last_seen_at
@@ -211,6 +242,8 @@ export const InstallationDetail = () => {
       />
 
       <div className="flex flex-col gap-6">
+        <OpenAlertsHint installationId={current.id} />
+
         {revoked && (
           <Alert tone="error" title={t("custom_apps:installation.revoked_title")}>
             {t("custom_apps:installation.revoked_body", {
@@ -332,6 +365,58 @@ export const InstallationDetail = () => {
                   </Select>
                 </Field>
 
+                <Field
+                  label={t("custom_apps:installation.log_level")}
+                  htmlFor="installation-log-level"
+                  hint={t("custom_apps:installation.log_level_hint", {
+                    level: t(`custom_apps:log_levels.${current.effective_log_level}`, {
+                      defaultValue: current.effective_log_level ?? "",
+                    }),
+                  })}
+                >
+                  <Select
+                    id="installation-log-level"
+                    value={controls.logLevel}
+                    disabled={revoked || update.pending}
+                    onChange={(event) => setControls((value) => ({...value, logLevel: event.target.value as "" | LogLevel}))}
+                  >
+                    <option value="">
+                      {app
+                        ? t("custom_apps:installation.log_level_follow_value", {
+                            level: t(`custom_apps:log_levels.${app.log_level}`, {defaultValue: app.log_level ?? ""}),
+                          })
+                        : t("custom_apps:installation.log_level_follow")}
+                    </option>
+                    {logLevels.map((level) => (
+                      <option key={level} value={level}>
+                        {t(`custom_apps:log_levels.${level}`, {defaultValue: level})}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+
+                <label
+                  htmlFor="installation-screenshots"
+                  className="flex cursor-pointer items-start gap-2.5 rounded-[var(--radius-md)] border border-neutral-800 px-3 py-2.5 transition-colors hover:border-neutral-700"
+                >
+                  <input
+                    id="installation-screenshots"
+                    type="checkbox"
+                    checked={controls.screenshots}
+                    disabled={revoked || update.pending}
+                    onChange={(event) => setControls((value) => ({...value, screenshots: event.target.checked}))}
+                    className="mt-0.5 size-4 shrink-0 accent-[var(--color-accent)]"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-sm text-text">{t("custom_apps:installation.screenshots")}</span>
+                    <span className="mt-0.5 block text-[12px] leading-relaxed text-neutral-500">
+                      {app && !app.screenshots_enabled
+                        ? t("custom_apps:installation.screenshots_app_off")
+                        : t("custom_apps:installation.screenshots_hint")}
+                    </span>
+                  </span>
+                </label>
+
                 {controls.override !== "" && (
                   <Field label={t("custom_apps:status.message")} htmlFor="installation-message">
                     <Textarea
@@ -357,6 +442,19 @@ export const InstallationDetail = () => {
             </Panel>
           </form>
         </div>
+
+        {modules.includes("commands") && (
+          <>
+            <InstallationCommands installation={current} app={app} onScreenshot={onScreenshot} />
+            <InstallationScreenshots
+              installation={current}
+              appAllows={app ? app.screenshots_enabled : null}
+              version={screenshotVersion}
+            />
+          </>
+        )}
+
+        {modules.includes("logs") && <LogsPanel scope={{kind: "installation", installationId: current.id}} />}
 
         <InstallationDaily installationId={current.id} />
         <InstallationEvents installationId={current.id} />

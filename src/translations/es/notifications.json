@@ -1,7 +1,8 @@
 {
   "categories": {
     "account": "Cuenta",
-    "marketplace": "Tienda"
+    "marketplace": "Tienda",
+    "custom_apps": "Apps a medida"
   },
   "menu": {
     "label": "Menú de la cuenta",

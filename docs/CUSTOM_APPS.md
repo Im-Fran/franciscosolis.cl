@@ -5,10 +5,11 @@ where they are installed, and what those installations are doing right now. It i
 tool and nobody else's — the service lets in one permission, on one domain, with a verified address.
 The data comes from the `custom-apps` module of the [API](https://api.franciscosolis.cl/openapi.json).
 
-This is phase one: a light CRM, the inventory of apps and their keys, the installations and their
-telemetry, the kill switch, and the audit log. Remote control and the live presence socket come
-later; the panel already reads the presence modes from the service, so the day `socket` is served it
-shows up in the Settings tab without a release here.
+Phase one brought a light CRM, the inventory of apps and their keys, the installations and their
+telemetry, the kill switch, and the audit log. Phase two — **remote operation** — adds what is done
+*to* a running app: commands and screenshots, feature flags and a versioned remote configuration,
+in-app messages, crash reports and logs, and alerts delivered through the site's notification
+centre. See [Remote operation](#remote-operation) below.
 
 | Route                                        | What it is                                                     |
 | -------------------------------------------- | -------------------------------------------------------------- |
@@ -19,10 +20,22 @@ shows up in the Settings tab without a release here.
 | `/custom-apps/apps/:id`                      | **Summary** — counts, details, the ingest addresses and the `<script>` tag |
 | `/custom-apps/apps/:id/installations`        | Every device the app is installed on                           |
 | `/custom-apps/apps/:id/usage`                | Daily usage for 30 days, and the week-by-hour heatmap          |
+| `/custom-apps/apps/:id/config`               | **Flags & config** — feature flags by scope, the remote configuration document and its history (`config` module) |
+| `/custom-apps/apps/:id/messages`             | **Messages** — banners and dialogs shown inside the app, with read receipts (`messages` module) |
+| `/custom-apps/apps/:id/diagnostics`          | **Crashes & logs** — crash groups and the fleet's logs (`crashes` and/or `logs` module) |
 | `/custom-apps/apps/:id/status`               | The kill switch                                                |
-| `/custom-apps/apps/:id/settings`             | The app's fields, its keys, and deleting it                    |
-| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), daily table, events, the full heartbeat log, controls |
+| `/custom-apps/apps/:id/settings`             | The app's fields (log level, screenshots, modules, presence…), its keys, and deleting it |
+| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), controls, commands and screenshots, logs, daily table, events, the full heartbeat log |
+| `/custom-apps/crashes/:id`                   | One crash group, its status and every report with its stack    |
+| `/custom-apps/alerts`                        | **Alert inbox**, filterable by status, app, rule and installation (in the address) |
+| `/custom-apps/alerts/rules`                  | The alert rules: create, tune, silence, disable, take over notifications |
+| `/custom-apps/alerts/:id`                    | One alert — where the notification centre's links land; acknowledge or resolve |
 | `/custom-apps/audit-log`                     | Every write made through the panel, with before/after diffs    |
+
+The app tabs for remote operation follow the app's **modules**: a tab whose module is off is hidden,
+and its route, if reached anyway, says which module to turn on instead of showing a screen the
+service would refuse. On an installation, the commands and screenshots panels need `commands` and
+the log panel needs `logs`; the page loads the app beside the installation to know.
 
 ## Its own client application
 
@@ -57,8 +70,9 @@ device off.
 
 ## Live screens
 
-Three screens refresh themselves while the tab is visible: the overview every 30 seconds, an app's
-installations and an installation's snapshot every 15. "Connected" is derived from the last heartbeat
+Several screens refresh themselves while the tab is visible: the overview and the alert inbox every
+30 seconds, an app's installations and an installation's snapshot every 15, and an installation's
+command list every 5 — but only while a command on the page is still pending or delivered. "Connected" is derived from the last heartbeat
 (`offline_after_intervals` × the app's interval), so an answer that was right when the page loaded
 stops being right within a couple of intervals. A hidden tab is skipped rather than throttled, and a
 refresh keeps the rows on screen instead of flashing a spinner. The charts and the daily table do not
@@ -74,6 +88,71 @@ CPU, memory and network are three charts rather than three lines because they ar
 The **heatmap** is what maintenance windows will be planned on, so it is drawn to be read: Monday
 first, one column per hour, linear single-hue shading, the client's operating hours outlined, and
 the exact figure for the pointed cell in words underneath.
+
+## Remote operation
+
+Phase two is all panel API (`/custom-apps/v1`); the ingest side — what the client apps collect and
+report — is the service's business. Every write here is audited like the rest, and the audit log
+labels the new events. One entry has no actor at all: when a grace period runs out the service
+suspends the app itself, and the log shows that change as **automatic**, with the reason.
+
+**Kill switch.** Grace now needs an end date, in the future and at most `grace_max_days` (31) ahead;
+when it passes, the service suspends the app on its own. The status form checks the same bounds
+before sending. Maintenance keeps an optional, informative end that changes nothing by itself.
+
+**Commands.** Sent to one installation from its page: restart the app, restart the device (kiosks
+only), reload the configuration, clear the cache, take a screenshot, upload logs, check for updates —
+with an optional JSON payload and an expiry (one hour by default). A command waits on the service as
+`pending` until the device collects it: on its next heartbeat, or at once when the app uses `socket`
+presence and the device holds the live connection (the panel shows a **Socket** badge beside the
+connected dot then). It ends `succeeded`, `failed`, `expired` or `cancelled`; pending and delivered
+ones can be cancelled. The service refuses (409) a revoked installation, an app without `commands`,
+a device restart on a non-kiosk app and a screenshot that is not allowed, and the form disables those
+options up front. `socket` presence is for kiosks and points of sale — native apps hold a WebSocket;
+websites always ping, whatever the setting says.
+
+**Screenshots are off by default**, twice over: the app has `screenshots_enabled` (Settings) and each
+device has its own (installation controls), and a screenshot needs both (`screenshots_allowed`). A
+screenshot can show the client's own customers, which makes it personal data under ley 21.719, so it
+is turned on only where the client's contract allows it. Images are served behind the same bearer
+token as everything else: the panel fetches each one as a blob and shows it through an object URL
+(revoked on unmount), because an `<img src>` would ask without the token. Deleting one asks first.
+
+**Flags.** Per app, a key (`^[a-z0-9][a-z0-9_.-]{0,63}$`) with a boolean, string or number value, set
+at the app scope, for a channel, or for one installation. For any one device the **most specific
+wins**: installation, then channel, then app. The panel groups rows by key in that order, so reading
+down a group is reading the precedence. Setting a key twice at the same scope is a 409.
+
+**Remote configuration.** One JSON document per app, saved as numbered versions (version 0 means
+nothing was published yet), with an optional JSON Schema. Every save sends `base_version`, so two
+people editing at once is a 409 for the second rather than a silent overwrite. The schema supports a
+subset of JSON Schema — `type`, `properties`, `required`, `additionalProperties`, `items`, `enum`,
+`const`, `minimum`, `maximum`, `minLength`, `maxLength`, `pattern`, `minItems`, `maxItems`, `title`,
+`description`, `default`, `examples`, `$schema` — and a document that fails it, or a schema using
+anything else, comes back as a 422 with `issues`, which the editor lists as written. The parse
+errors of either textarea are shown before anything is sent. Restoring a version publishes it again
+as the newest one; history only grows.
+
+**Messages.** A banner or a modal dialog with a severity, for the whole app, a channel or one device,
+between optional start and end dates. Ending one sets its end to now — it is not deleted, so its read
+receipts (which devices showed it, and when) survive. The scope is fixed once a message exists.
+
+**Crashes and logs.** Crash reports are grouped by signature and version; a group is resolved
+(reopens if it happens again), ignored, or reopened by hand, and its page shows every report with its
+stack. Logs are filtered on the service by minimum level ("warning" means warning and worse), text,
+dates and — across the fleet — installation. The app sets the log level; a device can override it.
+Both are kept **30 days**.
+
+**Alerts.** Rules watch for an installation offline for N minutes, CPU or memory above N % over a
+window, or a spike of crashes, error logs or enrollments within a window (5–1440 minutes), on one app
+or on every app. Alerts are open, acknowledged or resolved; resolving one whose condition still holds
+gets it reopened at the next evaluation, and the resolve dialog says so. Whoever creates a rule is
+notified — any admin can take a rule over with "Notify me" — through the site's **notification
+centre**, under the `custom_apps` category (bell, Web Push and email, per that account's own
+preferences). Each notification links to `/custom-apps/alerts/<id>`, which is why that route is a
+contract with the service rather than a choice. Silencing pauses a rule until a date; disabling
+pauses it indefinitely; deleting takes its alerts with it. The overview counts unresolved alerts,
+and an app summary or installation page with open alerts links to the inbox filtered to it.
 
 ## Configuration
 

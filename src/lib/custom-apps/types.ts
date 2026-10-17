@@ -1,5 +1,6 @@
 /**
- * The custom-apps service's vocabulary and shapes, as its phase-one contract describes them.
+ * The custom-apps service's vocabulary and shapes, as its phase-one and phase-two contracts describe
+ * them.
  *
  * The vocabularies are also served by `GET /`, and the panel prefers those when it has them (see
  * `useServiceVocabulary`). The constants here are the fallback for a service that did not answer —
@@ -18,13 +19,64 @@ export type AppState = (typeof APP_STATES)[number];
 export const CHANNELS = ["stable", "beta"] as const;
 export type Channel = (typeof CHANNELS)[number];
 
-/** `socket` arrives with remote control, in a later phase. */
-export const PRESENCE_MODES = ["ping"] as const;
+/**
+ * `socket` is for kiosks and points of sale: a native app holds a WebSocket open, which is how a
+ * command reaches it at once. A website always pings, whatever its app says.
+ */
+export const PRESENCE_MODES = ["ping", "socket"] as const;
 export type PresenceMode = (typeof PRESENCE_MODES)[number];
 
 /** Presence — the heartbeat — is always on, so it is not a module. */
-export const APP_MODULES = ["metrics", "events"] as const;
+export const APP_MODULES = ["metrics", "events", "logs", "crashes", "config", "messages", "commands"] as const;
 export type AppModule = (typeof APP_MODULES)[number];
+
+/* ── Phase two: remote operation ──────────────────────────────────────── */
+
+export const LOG_LEVELS = ["debug", "info", "warning", "error", "fatal"] as const;
+export type LogLevel = (typeof LOG_LEVELS)[number];
+
+export const COMMAND_TYPES = [
+  "restart_app",
+  "restart_device",
+  "reload_config",
+  "clear_cache",
+  "screenshot",
+  "upload_logs",
+  "check_update",
+] as const;
+export type CommandType = (typeof COMMAND_TYPES)[number];
+
+export const COMMAND_STATUSES = ["pending", "delivered", "succeeded", "failed", "expired", "cancelled"] as const;
+export type CommandStatus = (typeof COMMAND_STATUSES)[number];
+
+/** A flag or a message applies to the whole app, one channel of it, or one installation. */
+export const TARGET_SCOPES = ["app", "channel", "installation"] as const;
+export type TargetScope = (typeof TARGET_SCOPES)[number];
+
+export const MESSAGE_SEVERITIES = ["info", "warning", "critical"] as const;
+export type MessageSeverity = (typeof MESSAGE_SEVERITIES)[number];
+
+export const MESSAGE_DISPLAYS = ["banner", "modal"] as const;
+export type MessageDisplay = (typeof MESSAGE_DISPLAYS)[number];
+
+export const CRASH_STATUSES = ["open", "resolved", "ignored"] as const;
+export type CrashStatus = (typeof CRASH_STATUSES)[number];
+
+export const ALERT_KINDS = [
+  "installation_offline",
+  "cpu_high",
+  "memory_high",
+  "crash_spike",
+  "error_log_spike",
+  "enrollment_spike",
+] as const;
+export type AlertKind = (typeof ALERT_KINDS)[number];
+
+export const ALERT_STATUSES = ["open", "acknowledged", "resolved"] as const;
+export type AlertStatus = (typeof ALERT_STATUSES)[number];
+
+/** How far ahead a grace period may end, in days, until the service says otherwise. */
+export const GRACE_MAX_DAYS = 31;
 
 export const CONTACT_ROLES = ["owner", "technical", "billing", "maintenance_approver"] as const;
 export type ContactRole = (typeof CONTACT_ROLES)[number];
@@ -54,6 +106,19 @@ export type ServiceStatus = {
   offline_after_intervals: number;
   retention: {raw_days: number};
   timezone: string;
+  log_levels?: LogLevel[];
+  command_types?: CommandType[];
+  command_statuses?: CommandStatus[];
+  target_scopes?: TargetScope[];
+  message_severities?: MessageSeverity[];
+  message_displays?: MessageDisplay[];
+  crash_statuses?: CrashStatus[];
+  alert_kinds?: AlertKind[];
+  alert_statuses?: AlertStatus[];
+  /** The furthest a grace period may end from now, in days. */
+  grace_max_days?: number;
+  /** The largest screenshot the service keeps, in bytes. */
+  screenshot_max_bytes?: number;
 };
 
 export type Account = {
@@ -187,8 +252,18 @@ export type App = AppSummary & {
   modules: AppModule[];
   /** What the app shows while in grace, maintenance or suspended. */
   state_message: string | null;
-  /** End of the grace period, or the ETA of a maintenance. */
+  /**
+   * End of the grace period — required for grace, and the app is suspended automatically when it
+   * passes — or the ETA of a maintenance, which changes nothing on its own.
+   */
   state_until: string | null;
+  /** The least severe log entry the app's installations send, unless one overrides it. */
+  log_level: LogLevel;
+  /**
+   * Off until the client's contract allows them: a screenshot can show the client's own customers,
+   * which makes it personal data (ley 21.719).
+   */
+  screenshots_enabled: boolean;
   needs_review_count: number;
   company: CompanyRef;
   ingest: {base_url: string; sdk_url: string; openapi_url: string};
@@ -213,6 +288,8 @@ export type AppPayload = Partial<Omit<NewApp, "company_id" | "name" | "kind">> &
   name?: string;
   kind?: AppKind;
   presence_mode?: PresenceMode;
+  log_level?: LogLevel;
+  screenshots_enabled?: boolean;
 };
 
 export type AppStatusPayload = {state: AppState; message?: string | null; until?: string | null};
@@ -275,6 +352,8 @@ export type InstallationSummary = {
   needs_review: boolean;
   last_seen_at: string | null;
   enrolled_at: string;
+  /** Whether the device holds the live connection right now (socket presence only). */
+  socket_connected?: boolean;
   /** Present on the lists that cross apps (the overview). */
   app?: {id: string; name: string};
 };
@@ -295,6 +374,16 @@ export type Installation = InstallationSummary & {
   access_token_expires_at: string | null;
   refresh_token_expires_at: string | null;
   heartbeat_interval_seconds: number;
+  /** Null follows the app's `log_level`. */
+  log_level_override: LogLevel | null;
+  effective_log_level: LogLevel;
+  /** This device's own consent; a screenshot also needs the app's. */
+  screenshots_enabled: boolean;
+  /** The app's switch and this device's, both on. */
+  screenshots_allowed: boolean;
+  presence_mode: PresenceMode;
+  socket_connected_at: string | null;
+  socket_closed_at: string | null;
 };
 
 export type InstallationPayload = {
@@ -302,6 +391,8 @@ export type InstallationPayload = {
   channel?: Channel;
   state_override?: AppState | null;
   state_message?: string | null;
+  log_level_override?: LogLevel | null;
+  screenshots_enabled?: boolean;
 };
 
 export type InstallationQuery = {
@@ -398,6 +489,278 @@ export type UsageHeatmap = {
   max: number;
 };
 
+/* ── Remote operation ─────────────────────────────────────────────────── */
+
+export type Command = {
+  id: string;
+  type: CommandType;
+  payload: Record<string, unknown> | null;
+  status: CommandStatus;
+  created_at: string;
+  expires_at: string;
+  delivered_at: string | null;
+  completed_at: string | null;
+  /** What the device answered when it finished, as it sent it. */
+  result: unknown;
+  created_by: string | null;
+  cancelled_by: string | null;
+  installation_id: string;
+  app_id: string;
+};
+
+export type NewCommand = {
+  type: CommandType;
+  payload?: Record<string, unknown>;
+  /** 60 to 604 800; the service's default is an hour. */
+  expires_in_seconds?: number;
+};
+
+export type Screenshot = {
+  id: string;
+  content_type: string;
+  size_bytes: number;
+  created_at: string;
+  command_id: string | null;
+  /** Relative to the service's base, and behind the bearer token like everything else. */
+  image_path: string;
+};
+
+export type LogEntry = {
+  id: string;
+  level: LogLevel;
+  message: string;
+  /** The logger, module or component the entry came from. */
+  target: string | null;
+  context: Record<string, unknown> | null;
+  occurred_at: string;
+  received_at: string;
+  installation_id: string;
+  installation_alias: string | null;
+  installation_hostname: string | null;
+};
+
+export type LogQuery = {
+  /** "At least this severe". */
+  level?: LogLevel;
+  search?: string;
+  from?: string;
+  to?: string;
+  installation_id?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export type FlagValue = boolean | string | number;
+
+export type Flag = {
+  id: string;
+  key: string;
+  description: string | null;
+  scope: TargetScope;
+  /** The channel name, or the installation id; null for the app scope. */
+  scope_value: string | null;
+  value: FlagValue;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+};
+
+export type NewFlag = {
+  key: string;
+  value: FlagValue;
+  description?: string | null;
+  scope?: TargetScope;
+  scope_value?: string | null;
+};
+
+export type FlagPayload = {value?: FlagValue; description?: string | null};
+
+export type ConfigDocument = {
+  app_id: string;
+  /** 0 while nothing has been saved. */
+  version: number;
+  document: Record<string, unknown>;
+  schema: Record<string, unknown> | null;
+  note: string | null;
+  created_at: string | null;
+  created_by: string | null;
+};
+
+export type ConfigPayload = {
+  document: Record<string, unknown>;
+  /** An object replaces the schema, null removes it, and leaving it out keeps it. */
+  schema?: Record<string, unknown> | null;
+  note?: string | null;
+  /** The version this edit started from; a stale one is refused with a 409. */
+  base_version?: number;
+};
+
+export type ConfigVersion = {
+  version: number;
+  document: Record<string, unknown>;
+  note: string | null;
+  created_at: string;
+  created_by: string | null;
+};
+
+export type MessageStatus = "active" | "scheduled" | "ended";
+
+export type AppMessage = {
+  id: string;
+  app_id?: string;
+  title: string;
+  body: string;
+  severity: MessageSeverity;
+  display: MessageDisplay;
+  scope: TargetScope;
+  scope_value: string | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  status: MessageStatus;
+  /** How many installations have shown it. */
+  seen_count: number;
+  created_at: string;
+  updated_at?: string;
+  created_by?: string | null;
+  updated_by?: string | null;
+};
+
+export type NewMessage = {
+  title: string;
+  body: string;
+  severity?: MessageSeverity;
+  display?: MessageDisplay;
+  scope?: TargetScope;
+  scope_value?: string | null;
+  starts_at?: string | null;
+  ends_at?: string | null;
+};
+
+export type MessagePayload = Partial<Omit<NewMessage, "scope" | "scope_value">>;
+
+export type MessageReceipt = {
+  installation_id: string;
+  alias: string | null;
+  hostname: string | null;
+  device_id: string;
+  seen_at: string;
+};
+
+export type CrashGroup = {
+  id: string;
+  /** Present on the single record; the list is already scoped to one app. */
+  app_id?: string;
+  signature: string;
+  app_version: string | null;
+  title: string;
+  status: CrashStatus;
+  occurrences: number;
+  affected_installations: number;
+  first_seen_at: string;
+  last_seen_at: string;
+  resolved_at: string | null;
+  resolved_by: string | null;
+};
+
+export type CrashReport = {
+  id: string;
+  installation_id: string;
+  installation_alias: string | null;
+  installation_hostname: string | null;
+  app_version: string | null;
+  kind: string | null;
+  message: string | null;
+  stack: string | null;
+  context: Record<string, unknown> | null;
+  occurred_at: string;
+  received_at: string;
+};
+
+export type CrashQuery = {
+  status?: CrashStatus;
+  app_version?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export type AlertRule = {
+  id: string;
+  /** Null watches every app. */
+  app_id: string | null;
+  app_name: string | null;
+  name: string;
+  kind: AlertKind;
+  threshold: number;
+  /** Minutes. Unused by `installation_offline`, whose threshold is itself a duration. */
+  window_minutes: number;
+  enabled: boolean;
+  silenced_until: string | null;
+  /** Who the notification centre tells when it fires. */
+  notify_email: string | null;
+  open_alerts: number;
+  created_at: string;
+  updated_at?: string;
+  created_by?: string | null;
+  updated_by?: string | null;
+};
+
+export type NewAlertRule = {
+  app_id?: string | null;
+  name: string;
+  kind: AlertKind;
+  threshold: number;
+  window_minutes?: number;
+  enabled?: boolean;
+};
+
+export type AlertRulePayload = {
+  name?: string;
+  threshold?: number;
+  window_minutes?: number;
+  enabled?: boolean;
+  silenced_until?: string | null;
+  /** Makes the account saving it the one notified. */
+  notify_me?: true;
+};
+
+export type AlertQueryStatus = AlertStatus | "unresolved";
+
+export type AlertEntry = {
+  id: string;
+  rule_id: string;
+  rule_name: string | null;
+  kind: AlertKind;
+  app_id: string | null;
+  app_name: string | null;
+  installation_id: string | null;
+  /** What the alert is about — an installation, an app — as an id and a readable name. */
+  subject: string | null;
+  subject_name: string | null;
+  status: AlertStatus;
+  value: number | null;
+  threshold: number;
+  details: Record<string, unknown> | null;
+  occurrences: number;
+  opened_at: string;
+  last_triggered_at: string;
+  acknowledged_at: string | null;
+  acknowledged_by: string | null;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  notified_at: string | null;
+};
+
+export type AlertQuery = {
+  status?: AlertQueryStatus;
+  app_id?: string;
+  rule_id?: string;
+  installation_id?: string;
+  limit?: number;
+  offset?: number;
+};
+
 /* ── Overview and audit ───────────────────────────────────────────────── */
 
 export type Overview = {
@@ -409,6 +772,8 @@ export type Overview = {
   recent_installations: InstallationSummary[];
   /** Up to ten, oldest first. */
   needs_review: InstallationSummary[];
+  /** Optional so a service that predates alerts still renders. */
+  alerts?: {unresolved: number};
 };
 
 export type AuditEntry = {
