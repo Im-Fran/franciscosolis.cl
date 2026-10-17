@@ -28,6 +28,12 @@ import type {
   ConfigVersion,
   Contact,
   ContactDetail,
+  Contract,
+  ContractDetail,
+  ContractPayload,
+  ContractQuery,
+  Cycle,
+  CycleDetail,
   ContactPayload,
   CrashGroup,
   CrashQuery,
@@ -54,7 +60,9 @@ import type {
   NewCommand,
   NewFlag,
   NewCiToken,
+  NewContract,
   NewMessage,
+  NewWorkLog,
   Overview,
   Page,
   ReleaseDetail,
@@ -68,6 +76,10 @@ import type {
   UsageDay,
   UsageEvent,
   UsageHeatmap,
+  WorkLogEntry,
+  WorkLogPage,
+  WorkLogPayload,
+  WorkLogQuery,
 } from "@/lib/custom-apps/types.ts";
 
 /**
@@ -129,7 +141,7 @@ export const customAppsApi = {
     update: (id: string, body: CompanyPayload) =>
       http.request<Company>(`/v1/companies/${seg(id)}`, {method: "PATCH", json: body}),
 
-    /** Refused with a 409 while the company still owns an app. */
+    /** Refused with a 409 while the company still owns an app, a contract or work log entries. */
     remove: (id: string) => http.request<Deleted>(`/v1/companies/${seg(id)}`, {method: "DELETE"}),
 
     /**
@@ -469,6 +481,86 @@ export const customAppsApi = {
 
     reports: (id: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
       page<ReleaseReport>(`/v1/releases/${seg(id)}/reports${query({...params})}`, signal),
+  },
+
+  /* ── Contracts and hours cycles ─────────────────────────────────────── */
+
+  /**
+   * What each client pays for and how many hours of work it includes per cycle. Every read brings
+   * the contract's cycles up to today on the service, so a cycle whose period ended reads as closed
+   * before the cron has run. Hours are whole minutes on the wire.
+   */
+  contracts: {
+    /** Ending soonest first, open-ended last. */
+    list: (params: ContractQuery = {}, signal?: AbortSignal) => page<Contract>(`/v1/contracts${query({...params})}`, signal),
+
+    get: (id: string, signal?: AbortSignal) => http.request<ContractDetail>(`/v1/contracts/${seg(id)}`, {signal}),
+
+    /** 409 when an app is already covered by another contract in overlapping dates; 422 for an app of another company. */
+    create: (body: NewContract) => http.request<ContractDetail>("/v1/contracts", {method: "POST", json: body}),
+
+    /**
+     * `app_ids` replaces the covered apps. 409 when `starts_on` or `cycle_period` changes once a cycle
+     * exists (the cycles are anchored on them), and on a cancelled contract.
+     */
+    update: (id: string, body: ContractPayload) =>
+      http.request<ContractDetail>(`/v1/contracts/${seg(id)}`, {method: "PATCH", json: body}),
+
+    /**
+     * Extends the contract to `ends_on` (null for open-ended): later than its current end and no
+     * earlier than today. Reactivates the apps a lapse put in grace or suspended.
+     */
+    renew: (id: string, endsOn: string | null) =>
+      http.request<ContractDetail>(`/v1/contracts/${seg(id)}/renew`, {method: "POST", json: {ends_on: endsOn}}),
+
+    /** From today: no new cycles, no more notices. The apps are left as they are. */
+    cancel: (id: string, reason?: string | null) =>
+      http.request<ContractDetail>(`/v1/contracts/${seg(id)}/cancel`, {method: "POST", json: reason ? {reason} : {}}),
+
+    /** Refused with a 409 once it has closed cycles or logged work: cancel it instead. */
+    remove: (id: string) => http.request<Deleted>(`/v1/contracts/${seg(id)}`, {method: "DELETE"}),
+
+    cycles: (id: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      page<Cycle>(`/v1/contracts/${seg(id)}/cycles${query({...params})}`, signal),
+  },
+
+  cycles: {
+    /** The cycle, its contract's name, currency and rate, and every work log entry filed under it. */
+    get: (id: string, signal?: AbortSignal) => http.request<CycleDetail>(`/v1/cycles/${seg(id)}`, {signal}),
+
+    /** Freezes its balance. 409 while its period is still running. */
+    close: (id: string) => http.request<Cycle>(`/v1/cycles/${seg(id)}/close`, {method: "POST"}),
+
+    /** Closed cycles only. */
+    bill: (id: string, reference?: string | null) =>
+      http.request<Cycle>(`/v1/cycles/${seg(id)}/bill`, {method: "POST", json: reference ? {reference} : {}}),
+  },
+
+  /* ── Work log (bitácora) ────────────────────────────────────────────── */
+
+  /**
+   * Work done for a client. An entry is filed under the contract covering its app (or the company) on
+   * its day and the cycle the day falls in. 400 for a day in the future, 409 for a day inside a closed
+   * cycle, 422 when several contracts cover the day and `contract_id` has to choose.
+   */
+  workLogs: {
+    /** Read whole, like a page, because `totals` travels beside `data`. */
+    list: (params: WorkLogQuery = {}, signal?: AbortSignal) =>
+      http.request<WorkLogPage>(`/v1/work-logs${query({...params})}`, {signal, envelope: true}),
+
+    create: (body: NewWorkLog) => http.request<WorkLogEntry>("/v1/work-logs", {method: "POST", json: body}),
+
+    listForApp: (appId: string, params: Omit<WorkLogQuery, "app_id"> = {}, signal?: AbortSignal) =>
+      http.request<WorkLogPage>(`/v1/apps/${seg(appId)}/work-logs${query({...params})}`, {signal, envelope: true}),
+
+    createForApp: (appId: string, body: Omit<NewWorkLog, "app_id" | "company_id">) =>
+      http.request<WorkLogEntry>(`/v1/apps/${seg(appId)}/work-logs`, {method: "POST", json: body}),
+
+    /** Changing the day, the app or the contract files it again. 409 once its cycle is closed. */
+    update: (id: string, body: WorkLogPayload) =>
+      http.request<WorkLogEntry>(`/v1/work-logs/${seg(id)}`, {method: "PATCH", json: body}),
+
+    remove: (id: string) => http.request<Deleted>(`/v1/work-logs/${seg(id)}`, {method: "DELETE"}),
   },
 
   /* ── Audit log ──────────────────────────────────────────────────────── */

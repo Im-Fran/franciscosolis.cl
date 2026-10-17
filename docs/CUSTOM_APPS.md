@@ -12,13 +12,19 @@ in-app messages, crash reports and logs, and alerts delivered through the site's
 centre. See [Remote operation](#remote-operation) below. Phase three — **releases and the updater** —
 adds what reaches a running app as a new build: signed releases uploaded from CI, staged rollout,
 pause and rollback, and what each device reports while it updates. See
-[Releases and the updater](#releases-and-the-updater).
+[Releases and the updater](#releases-and-the-updater). Phase four — **contracts and hours** — adds
+what each client pays for: contracts with their renewal and grace period, the hours each cycle
+includes and what is left of them, the work log (bitácora) those hours are spent on, and the in-app
+support form. See [Contracts, hours and the work log](#contracts-hours-and-the-work-log).
 
 | Route                                        | What it is                                                     |
 | -------------------------------------------- | -------------------------------------------------------------- |
 | `/custom-apps`                               | **Overview** — connected vs. enrolled, what needs review, recent enrollments |
 | `/custom-apps/companies`, `…/new`, `…/:id`   | Clients (companies and natural persons), their contacts and their apps |
 | `/custom-apps/contacts`, `…/new`, `…/:id`    | The people at the clients, and which clients they belong to    |
+| `/custom-apps/contracts`                     | **Contracts**, ending soonest first, filtered by status and client (in the address), with the running cycle's usage |
+| `/custom-apps/contracts/new`, `…/:id/edit`   | Creating a contract (`?company_id=` preselects the client) or editing one |
+| `/custom-apps/contracts/:id`                 | One contract: status, renew / cancel / delete, the running cycle, every cycle (close, mark billed), its work log, lifecycle and history |
 | `/custom-apps/apps`, `…/apps/new`            | Every app, filtered by state, kind, client and name; registering one |
 | `/custom-apps/apps/:id`                      | **Summary** — counts, details, the ingest addresses and the `<script>` tag |
 | `/custom-apps/apps/:id/installations`        | Every device the app is installed on                           |
@@ -27,9 +33,10 @@ pause and rollback, and what each device reports while it updates. See
 | `/custom-apps/apps/:id/messages`             | **Messages** — banners and dialogs shown inside the app, with read receipts (`messages` module) |
 | `/custom-apps/apps/:id/diagnostics`          | **Crashes & logs** — crash groups and the fleet's logs (`crashes` and/or `logs` module) |
 | `/custom-apps/apps/:id/releases`             | **Releases** — every build CI uploaded, filtered by channel, platform, architecture and status; the upload instructions while there are none (`updates` module) |
+| `/custom-apps/apps/:id/work-log`             | **Work log** — the covering contract and the work done on the app (always shown: it is not a module) |
 | `/custom-apps/apps/:id/status`               | The kill switch                                                |
 | `/custom-apps/apps/:id/settings`             | The app's fields (log level, screenshots, modules, presence…), its keys, the updater's key, settings and CI tokens (`updates` module), and deleting it |
-| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), controls, commands and screenshots, its update offer and reports, logs, daily table, events, the full heartbeat log |
+| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), controls, commands and screenshots, its update offer and reports, logs, support requests, daily table, events, the full heartbeat log |
 | `/custom-apps/releases/:id`                  | One release: status and why, rollout figures and rates, reach, notes and minimum version, the artifact, and every device report |
 | `/custom-apps/crashes/:id`                   | One crash group, its status and every report with its stack    |
 | `/custom-apps/alerts`                        | **Alert inbox**, filterable by status, app, rule and installation (in the address) |
@@ -40,8 +47,9 @@ pause and rollback, and what each device reports while it updates. See
 The app tabs for remote operation follow the app's **modules**: a tab whose module is off is hidden,
 and its route, if reached anyway, says which module to turn on instead of showing a screen the
 service would refuse. On an installation, the commands and screenshots panels need `commands`, the
-log panel needs `logs` and the updates panel needs `updates`; the page loads the app beside the
-installation to know.
+log panel needs `logs`, the updates panel needs `updates` and the support requests need `support`; the
+page loads the app beside the installation to know. A company's page also lists its contracts and its
+whole work log, and an app's summary shows the contract covering it.
 
 ## Its own client application
 
@@ -206,6 +214,69 @@ exactly as the device would read it, flagged **mandatory** below the release's m
 **rollback** when the version it runs was withdrawn — and every step it reported. The overview counts
 releases rolling out (published below 100 %), paused and in draft, and a `release_rollbacks` alert
 rule watches for rollbacks reported within a window.
+
+## Contracts, hours and the work log
+
+Phase four is panel API too. **Hours are whole minutes on the wire** and the panel shows them as
+hours (`12 h 30 min`, or `12,5 h` beside a bar); the contract form takes hours, decimals included, and
+sends minutes. **Dates are calendar days** (`YYYY-MM-DD`) in the service's zone, never instants, so
+they are formatted without going through `new Date(day)` — which would read them as UTC midnight and
+show the day before in Santiago. A contract's `ends_on` is its **last day covered**; a cycle's
+`ends_on` is the **first day of the next one**, so a cycle reads as `starts_on – (ends_on − 1 day)`.
+Amounts are in the contract's currency: CLP in whole pesos, UF with up to two decimals. There is no
+CLP equivalent for UF — this site reads no UF indicator to convert with.
+
+**A contract** belongs to a client and covers some of its apps — never an app already covered by
+another contract in overlapping dates (409, with the app named). Its form is grouped as the plan
+reads: plan and price; term and renewal (last day inclusive or open-ended, renews itself for N
+months, days of notice); hours per cycle (daily, weekly or monthly cycles anchored on the first day,
+included hours, overage rate per hour, and rollover with an optional cap in hours and in cycles); end
+of contract and grace (0–30 days, what is still allowed — updates, support — and the message the apps
+show); and the covered apps. Once a cycle exists the first day and the cycle length are **fixed**,
+because the cycles are computed from them: both fields are disabled, and the service's 409 is
+explained if it is reached anyway. Only the fields that changed go on a PATCH.
+
+**Status** is `scheduled`, `active`, `grace` (ended without renewal, inside its grace days), `ended`
+or `cancelled`, and the list flags one **ending soon** — within its notice period without renewing
+itself — with its days left. Before the end the service emails the client and every covered app
+shows a notice; when it lapses the apps go into grace (or straight to suspension with no grace days),
+and the existing grace expiry suspends them. **Renewing** takes a new last day, later than the
+current one and no earlier than today, or none; it reactivates what the lapse switched off.
+**Cancelling** takes an optional reason (kept in the audit log, shown in the contract's history),
+starts no new cycles and leaves the apps as they are. **Deleting** is refused once a contract has a
+closed cycle or logged work: the dialog says to cancel instead.
+
+**The running cycle** shows included, carried (and from which cycles), available, used, remaining —
+negative once over — and the overage with what it would cost at the contract's rate: an estimate
+while the cycle is open, final once it closes. Usage is broken down by app. **Every cycle** is listed
+with its figures; one whose period ended can be **closed** by hand (the service closes it on its own
+anyway), and a closed one is **marked billed** with an optional invoice reference. A closed cycle's
+balance is final — the next cycle's carried hours derive from it.
+
+**The work log** is one panel shown in three places: an app's *Work log* tab (through the app's own
+routes, so the app is fixed), a company's page (where an entry may name one of its apps or none —
+work for the client as a whole), and a contract's page (where every entry is filed under that
+contract). An entry is a day (not in the future), hours and minutes (at most 24 h), a kind
+(maintenance, support, development, other), what was done and an optional link. The service files it
+under the contract covering its app — or the company — on that day and under the cycle the day falls
+in; the dialog says beforehand which contract that will be, and asks for one only when several cover
+the day (the service's 422). An entry inside a **closed cycle** is shown locked, and a day inside one
+is refused (409) in words. The panel's total is the service's sum over every entry the filters match.
+
+**Alerts.** `contract_expiring` fires N days before a contract's last day (1–365, 30 by default) and
+`cycle_hours_low` when a running cycle has less than N % of its available hours left (0–100, 20 by
+default). Neither reads a window. Their alerts name the contract and link to its page; a rule tied to
+an app watches only the contracts covering it. The overview counts active contracts, those ending
+soon and those in grace, and cycles over budget and closed cycles with overage not billed yet.
+
+**Support.** The `support` module is the in-app support form: `FSCustomApps.support({subject,
+message, name, email})` in the web SDK, `POST /support` on the ingest. The request is emailed to
+soporte@franciscosolis.cl with the device's context; there are **no tickets in the panel**, by
+decision. The panel labels the module in its pickers, mentions the call under a web app's script tag,
+and lists the `support.requested` entries the service audits on the installation's page.
+
+The audit log labels every new event, links contract and cycle events to the contract, and shows when
+an app's state changed because its contract lapsed or was renewed — with a link to the contract.
 
 ## Configuration
 

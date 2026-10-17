@@ -97,3 +97,60 @@ export const dayBound = (value: string, endOfDay: boolean) => {
   const date = new Date(year, month - 1, day + (endOfDay ? 1 : 0));
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 };
+
+/**
+ * Whole minutes as hours, the way work is spoken about: `12 h 30 min`, `45 min`, `0 h`. A negative
+ * figure (a cycle over budget) keeps its sign.
+ */
+export const formatMinutes = (minutes: number | null | undefined) => {
+  if (minutes === null || minutes === undefined || !Number.isFinite(minutes)) return null;
+  const total = Math.round(Math.abs(minutes));
+  const hours = Math.floor(total / 60);
+  const rest = total % 60;
+  const sign = minutes < 0 && total > 0 ? "−" : "";
+  if (hours === 0) return rest === 0 ? "0 h" : `${sign}${rest} min`;
+  return rest === 0 ? `${sign}${hours} h` : `${sign}${hours} h ${rest} min`;
+};
+
+/** Minutes as decimal hours — `12,5 h` — for a figure read beside others, like a usage bar. */
+export const formatHoursDecimal = (minutes: number | null | undefined, language: string) => {
+  if (minutes === null || minutes === undefined || !Number.isFinite(minutes)) return null;
+  return `${new Intl.NumberFormat(language, {maximumFractionDigits: 1}).format(minutes / 60)} h`;
+};
+
+/**
+ * An amount in a contract's currency. CLP has no decimals; UF carries up to two and is written after
+ * the number, the way it is on an invoice (`UF 12,50`).
+ */
+export const formatMoney = (amount: number | null | undefined, currency: string, language: string) => {
+  if (amount === null || amount === undefined || !Number.isFinite(amount)) return null;
+  if (currency === "CLP") {
+    return new Intl.NumberFormat(language, {style: "currency", currency: "CLP", maximumFractionDigits: 0}).format(amount);
+  }
+  const number = new Intl.NumberFormat(language, {minimumFractionDigits: 0, maximumFractionDigits: 2}).format(amount);
+  return `${currency} ${number}`;
+};
+
+/**
+ * A `YYYY-MM-DD` calendar day as a date, without the time-zone shift `new Date("2026-03-01")` would
+ * apply (it parses as UTC midnight, which is still February in Santiago).
+ */
+export const formatDay = (day: string | null | undefined, language: string) => {
+  if (!day) return null;
+  const [year, month, date] = day.split("-").map(Number);
+  if (!year || !month || !date) return day;
+  return new Intl.DateTimeFormat(language, {dateStyle: "medium", timeZone: "UTC"}).format(new Date(Date.UTC(year, month - 1, date)));
+};
+
+/** A calendar day moved by `days`, still as `YYYY-MM-DD`. */
+export const addDays = (day: string, days: number) => {
+  const [year, month, date] = day.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, date + days)).toISOString().slice(0, 10);
+};
+
+/** A calendar day moved by whole months, clamped to the end of a shorter month (31 Jan + 1 → 28 Feb). */
+export const addMonths = (day: string, months: number) => {
+  const [year, month, date] = day.split("-").map(Number);
+  const last = new Date(Date.UTC(year, month - 1 + months + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(year, month - 1 + months, Math.min(date, last))).toISOString().slice(0, 10);
+};

@@ -1,6 +1,6 @@
 /**
- * The custom-apps service's vocabulary and shapes, as its phase-one, phase-two and phase-three
- * contracts describe them.
+ * The custom-apps service's vocabulary and shapes, as its phase-one, phase-two, phase-three and
+ * phase-four contracts describe them.
  *
  * The vocabularies are also served by `GET /`, and the panel prefers those when it has them (see
  * `useServiceVocabulary`). The constants here are the fallback for a service that did not answer —
@@ -26,8 +26,22 @@ export type Channel = (typeof CHANNELS)[number];
 export const PRESENCE_MODES = ["ping", "socket"] as const;
 export type PresenceMode = (typeof PRESENCE_MODES)[number];
 
-/** Presence — the heartbeat — is always on, so it is not a module. */
-export const APP_MODULES = ["metrics", "events", "logs", "crashes", "config", "messages", "commands", "updates"] as const;
+/**
+ * Presence — the heartbeat — is always on, so it is not a module. `support` is the in-app support
+ * form: the request is emailed to soporte@ with the device's context, and the panel only sees that it
+ * was sent (there are no tickets here, by decision).
+ */
+export const APP_MODULES = [
+  "metrics",
+  "events",
+  "logs",
+  "crashes",
+  "config",
+  "messages",
+  "commands",
+  "updates",
+  "support",
+] as const;
 export type AppModule = (typeof APP_MODULES)[number];
 
 /* ── Phase two: remote operation ──────────────────────────────────────── */
@@ -70,6 +84,8 @@ export const ALERT_KINDS = [
   "error_log_spike",
   "enrollment_spike",
   "release_rollbacks",
+  "contract_expiring",
+  "cycle_hours_low",
 ] as const;
 export type AlertKind = (typeof ALERT_KINDS)[number];
 
@@ -107,6 +123,56 @@ export const UPDATE_SETTINGS = {
 
 /** How far ahead a grace period may end, in days, until the service says otherwise. */
 export const GRACE_MAX_DAYS = 31;
+
+/* ── Phase four: contracts, hours cycles and the work log ─────────────── */
+
+/** CLP is a whole number of pesos; UF carries up to two decimals. */
+export const CURRENCIES = ["CLP", "UF"] as const;
+export type Currency = (typeof CURRENCIES)[number];
+
+export const BILLING_PERIODS = ["monthly", "yearly", "one_time"] as const;
+export type BillingPeriod = (typeof BILLING_PERIODS)[number];
+
+/** How long one hours cycle lasts. Cycles are anchored on the contract's `starts_on`. */
+export const CYCLE_PERIODS = ["daily", "weekly", "monthly"] as const;
+export type CyclePeriod = (typeof CYCLE_PERIODS)[number];
+
+/** `open` while it runs (and until closed), `closed` with a final balance, `billed` once invoiced. */
+export const CYCLE_STATUSES = ["open", "closed", "billed"] as const;
+export type CycleStatus = (typeof CYCLE_STATUSES)[number];
+
+/**
+ * - `scheduled`: not started yet.
+ * - `active`: running (open-ended, or not past its last day).
+ * - `grace`: past its end without renewal, inside its grace days.
+ * - `ended`: past its end and its grace.
+ * - `cancelled`: cancelled by hand, whatever its dates say.
+ */
+export const CONTRACT_STATUSES = ["scheduled", "active", "grace", "ended", "cancelled"] as const;
+export type ContractStatus = (typeof CONTRACT_STATUSES)[number];
+
+/** What a lapsed contract still lets its apps do while in grace. */
+export const GRACE_ALLOWANCES = ["updates", "support"] as const;
+export type GraceAllowance = (typeof GRACE_ALLOWANCES)[number];
+
+export const WORK_KINDS = ["maintenance", "support", "development", "other"] as const;
+export type WorkKind = (typeof WORK_KINDS)[number];
+
+/** The service's bounds for contracts and the work log, until `GET /` says otherwise. */
+export const CONTRACT_LIMITS = {
+  max_grace_days: 30,
+  max_notice_days: 180,
+  default_notice_days: 30,
+  max_work_log_minutes: 1440,
+} as const;
+
+export type ContractLimits = {
+  max_grace_days: number;
+  max_notice_days: number;
+  default_notice_days: number;
+  /** The largest single work log entry, in minutes. */
+  max_work_log_minutes: number;
+};
 
 export const CONTACT_ROLES = ["owner", "technical", "billing", "maintenance_approver"] as const;
 export type ContactRole = (typeof CONTACT_ROLES)[number];
@@ -154,6 +220,14 @@ export type ServiceStatus = {
   arches?: Arch[];
   /** The largest release artifact the service accepts, in bytes. */
   release_max_bytes?: number;
+  currencies?: Currency[];
+  billing_periods?: BillingPeriod[];
+  cycle_periods?: CyclePeriod[];
+  cycle_statuses?: CycleStatus[];
+  contract_statuses?: ContractStatus[];
+  grace_allowances?: GraceAllowance[];
+  work_kinds?: WorkKind[];
+  contract_limits?: ContractLimits;
 };
 
 export type Account = {
@@ -975,6 +1049,197 @@ export type InstallationUpdates = {
   pagination: {limit: number; offset: number; total: number};
 };
 
+/* ── Contracts, cycles and the work log ───────────────────────────────── */
+
+/** Minutes carried into a cycle from an earlier one. */
+export type CarriedBucket = {
+  /** Start (`YYYY-MM-DD`) of the cycle these minutes were included in. */
+  from: string;
+  minutes: number;
+  /** Cycles they have been carried for: 1 in the cycle right after the one they came from. */
+  age: number;
+};
+
+/**
+ * One hours cycle of a contract. Every figure is whole minutes. `ends_on` is **exclusive** — the
+ * first day of the next cycle — so a cycle is shown as `starts_on – (ends_on − 1 day)`.
+ */
+export type Cycle = {
+  id: string;
+  contract_id: string;
+  starts_on: string;
+  ends_on: string;
+  status: CycleStatus;
+  included_minutes: number;
+  carried_minutes: number;
+  carried: CarriedBucket[];
+  available_minutes: number;
+  used_minutes: number;
+  /** Negative once the cycle is over budget. */
+  remaining_minutes: number;
+  overage_minutes: number;
+  /** In the contract's currency: an estimate at its rate while open, final once closed. */
+  overage_amount: number | null;
+  /** Unused minutes the rollover policy let go when the cycle closed. */
+  expired_minutes: number | null;
+  closed_at: string | null;
+  /** Null when the service closed it on its own. */
+  closed_by: string | null;
+  billed_at: string | null;
+  billed_by: string | null;
+  billing_reference: string | null;
+};
+
+export type CycleDetail = Cycle & {
+  contract: {id: string; name: string; currency: Currency; overage_rate: number};
+  work_logs: WorkLogEntry[];
+};
+
+export type ContractApp = {id: string; name: string; state: AppState};
+
+export type Contract = {
+  id: string;
+  company_id: string;
+  company: CompanyRef | null;
+  name: string;
+  amount: number;
+  currency: Currency;
+  billing_period: BillingPeriod;
+  /** `YYYY-MM-DD`, the first day covered. */
+  starts_on: string;
+  /** `YYYY-MM-DD`, the last day covered (inclusive); null for open-ended. */
+  ends_on: string | null;
+  auto_renew: boolean;
+  /** Months an auto-renewing contract is extended by when it reaches its end. */
+  renewal_months: number;
+  /** Days before the end the client is told. */
+  notice_days: number;
+  cycle_period: CyclePeriod;
+  included_minutes: number;
+  rollover_enabled: boolean;
+  rollover_max_minutes: number | null;
+  rollover_max_cycles: number | null;
+  /** Per hour over the cycle's budget, in `currency`. */
+  overage_rate: number;
+  grace_days: number;
+  grace_allows: GraceAllowance[];
+  grace_message: string | null;
+  status: ContractStatus;
+  /** Days from today to `ends_on`; null when open-ended or cancelled. */
+  days_left: number | null;
+  /** Ends within its notice period without renewing itself. */
+  expiring: boolean;
+  notice_sent_at: string | null;
+  lapsed_at: string | null;
+  cancelled_at: string | null;
+  cancelled_by: string | null;
+  notes: string | null;
+  apps: ContractApp[];
+  /** The cycle running today, or null before the contract starts. */
+  current_cycle: Cycle | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+};
+
+export type ContractDetail = Contract & {
+  /** Minutes of the current cycle per app; a null app is work about the company as a whole. */
+  current_cycle_usage_by_app: Array<{app_id: string | null; app_name: string | null; minutes: number}>;
+};
+
+export type ContractPayload = {
+  name?: string;
+  amount?: number;
+  currency?: Currency;
+  billing_period?: BillingPeriod;
+  starts_on?: string;
+  ends_on?: string | null;
+  auto_renew?: boolean;
+  renewal_months?: number;
+  notice_days?: number;
+  cycle_period?: CyclePeriod;
+  included_minutes?: number;
+  rollover_enabled?: boolean;
+  rollover_max_minutes?: number | null;
+  rollover_max_cycles?: number | null;
+  overage_rate?: number;
+  grace_days?: number;
+  grace_allows?: GraceAllowance[];
+  grace_message?: string | null;
+  notes?: string | null;
+  /** Replaces the covered apps. */
+  app_ids?: string[];
+};
+
+export type NewContract = ContractPayload & {company_id: string; name: string; starts_on: string};
+
+export type ContractQuery = {
+  company_id?: string;
+  app_id?: string;
+  status?: ContractStatus;
+  limit?: number;
+  offset?: number;
+};
+
+export type WorkLogEntry = {
+  id: string;
+  company_id: string;
+  company_name: string | null;
+  /** Null for work about the company as a whole. */
+  app_id: string | null;
+  app_name: string | null;
+  /** Null for work outside any contract. */
+  contract_id: string | null;
+  contract_name: string | null;
+  cycle_id: string | null;
+  /** False once its cycle is closed: its balance is final. */
+  editable: boolean;
+  occurred_on: string;
+  minutes: number;
+  kind: WorkKind;
+  description: string;
+  link_url: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+};
+
+export type WorkLogPayload = {
+  app_id?: string | null;
+  /** Chooses the contract when several cover the day; null lets the service pick. */
+  contract_id?: string | null;
+  occurred_on?: string;
+  minutes?: number;
+  kind?: WorkKind;
+  description?: string;
+  link_url?: string | null;
+};
+
+export type NewWorkLog = WorkLogPayload & {
+  company_id?: string;
+  occurred_on: string;
+  minutes: number;
+  kind: WorkKind;
+  description: string;
+};
+
+export type WorkLogQuery = {
+  company_id?: string;
+  app_id?: string;
+  contract_id?: string;
+  cycle_id?: string;
+  kind?: WorkKind;
+  from?: string;
+  to?: string;
+  limit?: number;
+  offset?: number;
+};
+
+/** A page of the work log, with the minutes of everything the filters match. */
+export type WorkLogPage = Page<WorkLogEntry> & {totals: {minutes: number}};
+
 /* ── Overview and audit ───────────────────────────────────────────────── */
 
 export type Overview = {
@@ -990,6 +1255,10 @@ export type Overview = {
   alerts?: {unresolved: number};
   /** Rolling out means published below 100 %. Optional for the same reason. */
   releases?: {rolling_out: number; paused: number; drafts: number};
+  /** Optional for the same reason. `expiring` ends within its notice period without renewing. */
+  contracts?: {active: number; expiring: number; in_grace: number};
+  /** Open cycles over budget, and closed cycles with overage not billed yet. */
+  cycles?: {exceeded: number; to_bill: number};
 };
 
 export type AuditEntry = {

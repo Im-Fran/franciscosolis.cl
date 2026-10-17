@@ -11,6 +11,7 @@ import {useMutation} from "@/lib/admin/useMutation.ts";
 import {
   WINDOW_BOUNDS,
   defaultThreshold,
+  isContractKind,
   thresholdBounds,
   thresholdUnit,
   usesWindow,
@@ -137,7 +138,7 @@ export const RuleFormModal = ({
       className="max-w-lg"
     >
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-        <Field label={t("custom_apps:rules.fields.app")} htmlFor="rule-app" hint={t("custom_apps:rules.hints.app")}>
+        <Field label={t("custom_apps:rules.fields.app")} htmlFor="rule-app" hint={isContractKind(form.kind) ? t("custom_apps:rules.hints.app_contracts") : t("custom_apps:rules.hints.app")}>
           <AppSelect
             id="rule-app"
             value={form.appId}

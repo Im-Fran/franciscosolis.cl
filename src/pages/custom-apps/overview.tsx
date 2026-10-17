@@ -1,6 +1,22 @@
 import {useCallback} from "react";
 import {useTranslation} from "react-i18next";
-import {AddressBook, AppWindow, ArrowClockwise, Bell, Buildings, CheckCircle, Package, Plugs, Prohibit, Warning} from "@phosphor-icons/react";
+import {
+  AddressBook,
+  AppWindow,
+  ArrowClockwise,
+  Bell,
+  Buildings,
+  CalendarX,
+  CheckCircle,
+  FileText,
+  HourglassLow,
+  Package,
+  Plugs,
+  Prohibit,
+  Receipt,
+  Timer,
+  Warning,
+} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
@@ -128,6 +144,59 @@ export const Overview = () => {
                 />
               )}
             </div>
+
+            {/* Contracts and cycles: optional, so a service that predates them still renders. */}
+            {(data.contracts || data.cycles) && (
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+                {data.contracts && (
+                  <>
+                    <StatCard
+                      label={t("custom_apps:overview.contracts_active")}
+                      icon={<FileText size={18} />}
+                      value={data.contracts.active}
+                      to={`${customAppsRoute.contracts}?status=active`}
+                      detail={t("custom_apps:overview.contracts_active_detail")}
+                    />
+                    <StatCard
+                      label={t("custom_apps:overview.contracts_expiring")}
+                      icon={<CalendarX size={18} />}
+                      value={data.contracts.expiring}
+                      attention={data.contracts.expiring > 0}
+                      to={`${customAppsRoute.contracts}?status=active`}
+                      detail={t("custom_apps:overview.contracts_expiring_detail")}
+                    />
+                    <StatCard
+                      label={t("custom_apps:overview.contracts_grace")}
+                      icon={<Timer size={18} />}
+                      value={data.contracts.in_grace}
+                      attention={data.contracts.in_grace > 0}
+                      to={`${customAppsRoute.contracts}?status=grace`}
+                      detail={t("custom_apps:overview.contracts_grace_detail")}
+                    />
+                  </>
+                )}
+                {data.cycles && (
+                  <>
+                    <StatCard
+                      label={t("custom_apps:overview.cycles_exceeded")}
+                      icon={<HourglassLow size={18} />}
+                      value={data.cycles.exceeded}
+                      attention={data.cycles.exceeded > 0}
+                      to={customAppsRoute.contracts}
+                      detail={t("custom_apps:overview.cycles_exceeded_detail")}
+                    />
+                    <StatCard
+                      label={t("custom_apps:overview.cycles_to_bill")}
+                      icon={<Receipt size={18} />}
+                      value={data.cycles.to_bill}
+                      attention={data.cycles.to_bill > 0}
+                      to={customAppsRoute.contracts}
+                      detail={t("custom_apps:overview.cycles_to_bill_detail")}
+                    />
+                  </>
+                )}
+              </div>
+            )}
 
             <div className="grid gap-6 xl:grid-cols-2">
               <Panel title={t("custom_apps:overview.review_title")} description={t("custom_apps:overview.review_description")}>

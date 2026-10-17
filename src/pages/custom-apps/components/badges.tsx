@@ -191,3 +191,34 @@ export const ReleaseStatusBadge = (props: VocabularyBadgeProps) => (
 export const UpdateReportStatusBadge = (props: VocabularyBadgeProps) => (
   <VocabularyPill prefix="update_report_statuses" tones={UPDATE_REPORT_TONES} {...props} />
 );
+
+const CONTRACT_TONES: Record<string, Tone> = {
+  scheduled: "planned",
+  active: "good",
+  grace: "pending",
+  ended: "inert",
+  cancelled: "bad",
+};
+/* An open cycle is running, a closed one waits to be billed, a billed one is done. */
+const CYCLE_TONES: Record<string, Tone> = {open: "planned", closed: "pending", billed: "good"};
+
+export const ContractStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="contract_statuses" tones={CONTRACT_TONES} {...props} />
+);
+
+export const CycleStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="cycle_statuses" tones={CYCLE_TONES} {...props} />
+);
+
+/**
+ * A contract ending within its notice period without renewing itself, with the days it has left —
+ * the one thing about a contract worth catching at a glance down a list.
+ */
+export const ExpiringBadge = ({daysLeft}: {daysLeft: number | null}) => {
+  const {t} = useTranslation("custom_apps");
+  return (
+    <Pill tone="pending">
+      {daysLeft === null ? t("contracts.expiring") : t("contracts.expiring_days", {count: daysLeft})}
+    </Pill>
+  );
+};

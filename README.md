@@ -6,7 +6,7 @@ This is my portfolio with all my projects and information about me.
 - [AUTH.md](docs/AUTH.md) — the sign-in flow, the account screens and the administration console
 - [CMS.md](docs/CMS.md) — the editorial interface behind the landing page
 - [MARKETPLACE.md](docs/MARKETPLACE.md) — the marketplace: one product page per thing built here, at `/product/<slug>`
-- [CUSTOM_APPS.md](docs/CUSTOM_APPS.md) — the private panel for the apps built for clients: CRM, installations and telemetry, remote operation, releases and updates
+- [CUSTOM_APPS.md](docs/CUSTOM_APPS.md) — the private panel for the apps built for clients: CRM, installations and telemetry, remote operation, releases and updates, contracts, hours and the work log
 - [NOTIFICATIONS.md](docs/NOTIFICATIONS.md) — the bell, the account's notifications tab, Web Push and the installable app
 - [LEGAL.md](docs/LEGAL.md) — how the legal pages are rendered
 - [BRAND.md](docs/BRAND.md) — the identity and the assets built from it

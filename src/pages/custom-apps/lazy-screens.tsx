@@ -57,6 +57,18 @@ export const AppReleases = lazy(() =>
 export const ReleaseDetail = lazy(() =>
   import("@/pages/custom-apps/release-detail.tsx").then((m) => ({default: m.ReleaseDetail})),
 );
+export const AppWorkLog = lazy(() =>
+  import("@/pages/custom-apps/app-work-log.tsx").then((m) => ({default: m.AppWorkLog})),
+);
+export const ContractList = lazy(() =>
+  import("@/pages/custom-apps/contract-list.tsx").then((m) => ({default: m.ContractList})),
+);
+export const ContractEditor = lazy(() =>
+  import("@/pages/custom-apps/contract-editor.tsx").then((m) => ({default: m.ContractEditor})),
+);
+export const ContractDetail = lazy(() =>
+  import("@/pages/custom-apps/contract-detail.tsx").then((m) => ({default: m.ContractDetail})),
+);
 export const CrashDetail = lazy(() =>
   import("@/pages/custom-apps/crash-detail.tsx").then((m) => ({default: m.CrashDetail})),
 );

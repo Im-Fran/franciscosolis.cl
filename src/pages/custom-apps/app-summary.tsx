@@ -12,6 +12,7 @@ import {formatDuration} from "@/lib/custom-apps/format.ts";
 import {WEEKDAYS} from "@/lib/custom-apps/types.ts";
 import {OpenAlertsHint} from "@/pages/custom-apps/components/alerts/open-alerts-hint.tsx";
 import {useApp} from "@/pages/custom-apps/components/app-context.ts";
+import {AppContractCard} from "@/pages/custom-apps/components/contracts/app-contract-card.tsx";
 import {CopyButton, CopyField} from "@/pages/custom-apps/components/copy-button.tsx";
 import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx";
 import {StatCard} from "@/pages/custom-apps/components/stat-card.tsx";
@@ -56,6 +57,8 @@ export const AppSummary = () => {
       )}
 
       <OpenAlertsHint appId={app.id} />
+
+      <AppContractCard appId={app.id} companyId={app.company_id} />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
@@ -177,6 +180,12 @@ export const AppSummary = () => {
                   <Code size={14} className="mr-2 inline align-[-2px] text-neutral-600" aria-hidden="true" />
                   {scriptTag(sdk.data.url, sdk.data.integrity)}
                 </pre>
+                {sdk.data.modules.includes("support") && (
+                  <p className="text-[12px] leading-relaxed text-neutral-500">
+                    {t("custom_apps:sdk.support")}{" "}
+                    <code className="font-mono text-neutral-300">{"FSCustomApps.support({subject, message, name, email})"}</code>
+                  </p>
+                )}
                 <p className="text-[12px] leading-relaxed text-neutral-500">
                   {t("custom_apps:sdk.modules", {
                     modules:

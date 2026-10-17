@@ -14,9 +14,10 @@ import {orNull} from "@/lib/admin/format.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {useResource} from "@/lib/auth/useResource.ts";
-import {formatAlertValue} from "@/lib/custom-apps/alerts.ts";
+import {formatAlertValue, isContractKind} from "@/lib/custom-apps/alerts.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
+import {formatMinutes} from "@/lib/custom-apps/format.ts";
 import {useAutoRefresh} from "@/lib/custom-apps/use-auto-refresh.ts";
 import type {AlertEntry} from "@/lib/custom-apps/types.ts";
 import {PageHeader} from "@/components/admin/page-header.tsx";
@@ -92,6 +93,15 @@ export const AlertDetail = () => {
   const threshold = formatAlertValue(current.kind, current.threshold, language);
   const details = current.details && Object.keys(current.details).length > 0 ? JSON.stringify(current.details, null, 2) : null;
   const kindLabel = t(`custom_apps:alert_kinds.${current.kind}`, {defaultValue: current.kind});
+  /* The contract kinds are about a contract, which has a page of its own; the details name it. */
+  const detail = (key: string) => {
+    const raw = current.details?.[key];
+    return typeof raw === "string" || typeof raw === "number" ? raw : null;
+  };
+  const contractId = isContractKind(current.kind) ? detail("contract_id") : null;
+  const companyName = detail("company_name");
+  const availableMinutes = detail("available_minutes");
+  const usedMinutes = detail("used_minutes");
 
   return (
     <>
@@ -152,7 +162,12 @@ export const AlertDetail = () => {
               )}
             </Detail>
             <Detail label={t("custom_apps:alerts.subject")}>
-              {current.installation_id ? (
+              {contractId ? (
+                <Link to={customAppsRoute.contract(String(contractId))} className="hover:underline">
+                  {current.subject_name || detail("contract_name") || t("custom_apps:alerts.open_contract")}
+                  {companyName && <span className="text-neutral-500"> · {companyName}</span>}
+                </Link>
+              ) : current.installation_id ? (
                 <Link to={customAppsRoute.installation(current.installation_id)} className="hover:underline">
                   {current.subject_name ?? current.installation_id}
                 </Link>
@@ -164,6 +179,14 @@ export const AlertDetail = () => {
                 current.subject_name
               )}
             </Detail>
+            {contractId && typeof availableMinutes === "number" && typeof usedMinutes === "number" && (
+              <Detail label={t("custom_apps:alerts.cycle_usage")}>
+                {t("custom_apps:alerts.cycle_usage_value", {
+                  used: formatMinutes(usedMinutes),
+                  available: formatMinutes(availableMinutes),
+                })}
+              </Detail>
+            )}
             <Detail label={t("custom_apps:alerts.rule")}>
               <Link to={customAppsRoute.alertRules} className="hover:underline">
                 {current.rule_name ?? current.rule_id}

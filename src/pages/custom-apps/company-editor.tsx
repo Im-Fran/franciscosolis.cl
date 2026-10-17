@@ -22,6 +22,9 @@ import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {AppRow} from "@/pages/custom-apps/components/app-row.tsx";
 import {CompanyContactsPanel} from "@/pages/custom-apps/components/company-contacts-panel.tsx";
+import {CompanyContractsPanel} from "@/pages/custom-apps/components/contracts/company-contracts-panel.tsx";
+import {WorkLogPanel} from "@/pages/custom-apps/components/work-log/work-log-panel.tsx";
+import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
 
 const NAME_MAX = 200;
 
@@ -100,6 +103,8 @@ export const CompanyEditor = () => {
     setForm(next);
     setBaseline(next);
   }, [loaded]);
+
+  const workLogScope = useMemo<WorkLogScope | null>(() => (companyId ? {kind: "company", companyId} : null), [companyId]);
 
   const dirty = useMemo(() => (Object.keys(form) as FieldName[]).some((key) => form[key] !== baseline[key]), [form, baseline]);
 
@@ -384,6 +389,10 @@ export const CompanyEditor = () => {
                 </ul>
               )}
             </Panel>
+
+            <CompanyContractsPanel companyId={companyId} />
+
+            {workLogScope && <WorkLogPanel scope={workLogScope} description={t("custom_apps:work_log.description_company")} />}
           </>
         )}
       </div>
