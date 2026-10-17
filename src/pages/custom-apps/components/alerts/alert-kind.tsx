@@ -1,4 +1,4 @@
-import {Bug, ClockCountdown, Cpu, Memory, Scroll, UserPlus, Warning} from "@phosphor-icons/react";
+import {ArrowCounterClockwise, Bug, ClockCountdown, Cpu, Memory, Scroll, UserPlus, Warning} from "@phosphor-icons/react";
 import type {Icon, IconProps} from "@phosphor-icons/react";
 import type {AlertKind} from "@/lib/custom-apps/types.ts";
 
@@ -9,6 +9,7 @@ const ICONS: Record<AlertKind, Icon> = {
   crash_spike: Bug,
   error_log_spike: Scroll,
   enrollment_spike: UserPlus,
+  release_rollbacks: ArrowCounterClockwise,
 };
 
 /** One glyph per alert kind, so an inbox of mixed alerts can be scanned by what they are about. */

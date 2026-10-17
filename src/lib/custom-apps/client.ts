@@ -16,6 +16,7 @@ import type {
   AppSummary,
   AuditEntry,
   AuditQuery,
+  CiToken,
   Company,
   CompanyContact,
   CompanyDetail,
@@ -42,6 +43,7 @@ import type {
   InstallationPayload,
   InstallationQuery,
   InstallationSummary,
+  InstallationUpdates,
   LogEntry,
   LogQuery,
   MessagePayload,
@@ -51,9 +53,16 @@ import type {
   NewApp,
   NewCommand,
   NewFlag,
+  NewCiToken,
   NewMessage,
   Overview,
   Page,
+  ReleaseDetail,
+  ReleaseListItem,
+  ReleasePayload,
+  ReleaseQuery,
+  ReleaseReport,
+  RolloutPayload,
   Screenshot,
   ServiceStatus,
   UsageDay,
@@ -244,6 +253,16 @@ export const customAppsApi = {
     /** This device's log entries, newest first. `level` means "at least this severe". */
     logs: (id: string, params: Omit<LogQuery, "installation_id"> = {}, signal?: AbortSignal) =>
       page<LogEntry>(`/v1/installations/${seg(id)}/logs${query({...params})}`, signal),
+
+    /**
+     * What the device would be offered right now (null when nothing) beside a page of the update
+     * reports it sent. One envelope with both, so it is read whole like a page.
+     */
+    updates: (id: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      http.request<InstallationUpdates>(`/v1/installations/${seg(id)}/updates${query({...params})}`, {
+        signal,
+        envelope: true,
+      }),
   },
 
   /* ── Commands and screenshots ───────────────────────────────────────── */
@@ -381,6 +400,75 @@ export const customAppsApi = {
     /** If the condition still holds, the next evaluation opens it again. */
     resolve: (id: string, note?: string | null) =>
       http.request<AlertEntry>(`/v1/alerts/${seg(id)}/resolve`, {method: "POST", json: note ? {note} : {}}),
+  },
+
+  /* ── CI tokens ──────────────────────────────────────────────────────── */
+
+  /**
+   * What CI uploads releases with. Unlike an app key, a CI token is a secret: the service keeps only
+   * its hash, so the token itself comes back once, in the answer to `create`, and never again.
+   */
+  ciTokens: {
+    list: (appId: string, signal?: AbortSignal) =>
+      http.request<CiToken[]>(`/v1/apps/${seg(appId)}/ci-tokens`, {signal}),
+
+    create: (appId: string, body: {label?: string | null} = {}) =>
+      http.request<NewCiToken>(`/v1/apps/${seg(appId)}/ci-tokens`, {method: "POST", json: body}),
+
+    /** The next upload with it is refused; releases it already uploaded are untouched. */
+    revoke: (id: string) => http.request<CiToken>(`/v1/ci-tokens/${seg(id)}/revoke`, {method: "POST"}),
+  },
+
+  /* ── Releases ───────────────────────────────────────────────────────── */
+
+  /**
+   * Releases arrive from CI as drafts; everything after that is decided here. Each transition is
+   * refused with a 409 from a status it does not apply to, and answers with the release as it now
+   * stands, stats included.
+   */
+  releases: {
+    list: (appId: string, params: ReleaseQuery = {}, signal?: AbortSignal) =>
+      page<ReleaseListItem>(`/v1/apps/${seg(appId)}/releases${query({...params})}`, signal),
+
+    get: (id: string, signal?: AbortSignal) => http.request<ReleaseDetail>(`/v1/releases/${seg(id)}`, {signal}),
+
+    /** Notes, the minimum version, and the installations offered it whatever the percentage says. */
+    update: (id: string, body: ReleasePayload) =>
+      http.request<ReleaseDetail>(`/v1/releases/${seg(id)}`, {method: "PATCH", json: body}),
+
+    /** Drafts only. */
+    publish: (id: string, body: {rollout_percent: number; installation_ids?: string[]}) =>
+      http.request<ReleaseDetail>(`/v1/releases/${seg(id)}/publish`, {method: "POST", json: body}),
+
+    /** Published or paused only. Narrowing it stops offering it; it uninstalls nothing. */
+    rollout: (id: string, body: RolloutPayload) =>
+      http.request<ReleaseDetail>(`/v1/releases/${seg(id)}/rollout`, {method: "POST", json: body}),
+
+    pause: (id: string, reason?: string | null) =>
+      http.request<ReleaseDetail>(`/v1/releases/${seg(id)}/pause`, {method: "POST", json: reason ? {reason} : {}}),
+
+    resume: (id: string) => http.request<ReleaseDetail>(`/v1/releases/${seg(id)}/resume`, {method: "POST"}),
+
+    /** Devices running it are offered the newest earlier version of their line as a rollback. */
+    withdraw: (id: string, reason?: string | null) =>
+      http.request<ReleaseDetail>(`/v1/releases/${seg(id)}/withdraw`, {method: "POST", json: reason ? {reason} : {}}),
+
+    /**
+     * Rolls the whole line back to this release: every newer published or paused release of the same
+     * channel, platform and architecture is withdrawn, and this one is published to 100 %.
+     */
+    rollback: (id: string, reason?: string | null) =>
+      http.request<ReleaseDetail>(`/v1/releases/${seg(id)}/rollback`, {method: "POST", json: reason ? {reason} : {}}),
+
+    /** Drafts only: a release that was ever published is history. */
+    remove: (id: string) => http.request<Deleted>(`/v1/releases/${seg(id)}`, {method: "DELETE"}),
+
+    /** The artifact's bytes, behind the bearer token like a screenshot. */
+    artifact: (id: string, signal?: AbortSignal) =>
+      http.request<Blob>(`/v1/releases/${seg(id)}/artifact`, {signal, blob: true}),
+
+    reports: (id: string, params: {limit?: number; offset?: number} = {}, signal?: AbortSignal) =>
+      page<ReleaseReport>(`/v1/releases/${seg(id)}/reports${query({...params})}`, signal),
   },
 
   /* ── Audit log ──────────────────────────────────────────────────────── */

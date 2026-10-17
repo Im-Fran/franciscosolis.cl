@@ -9,7 +9,10 @@ Phase one brought a light CRM, the inventory of apps and their keys, the install
 telemetry, the kill switch, and the audit log. Phase two — **remote operation** — adds what is done
 *to* a running app: commands and screenshots, feature flags and a versioned remote configuration,
 in-app messages, crash reports and logs, and alerts delivered through the site's notification
-centre. See [Remote operation](#remote-operation) below.
+centre. See [Remote operation](#remote-operation) below. Phase three — **releases and the updater** —
+adds what reaches a running app as a new build: signed releases uploaded from CI, staged rollout,
+pause and rollback, and what each device reports while it updates. See
+[Releases and the updater](#releases-and-the-updater).
 
 | Route                                        | What it is                                                     |
 | -------------------------------------------- | -------------------------------------------------------------- |
@@ -23,9 +26,11 @@ centre. See [Remote operation](#remote-operation) below.
 | `/custom-apps/apps/:id/config`               | **Flags & config** — feature flags by scope, the remote configuration document and its history (`config` module) |
 | `/custom-apps/apps/:id/messages`             | **Messages** — banners and dialogs shown inside the app, with read receipts (`messages` module) |
 | `/custom-apps/apps/:id/diagnostics`          | **Crashes & logs** — crash groups and the fleet's logs (`crashes` and/or `logs` module) |
+| `/custom-apps/apps/:id/releases`             | **Releases** — every build CI uploaded, filtered by channel, platform, architecture and status; the upload instructions while there are none (`updates` module) |
 | `/custom-apps/apps/:id/status`               | The kill switch                                                |
-| `/custom-apps/apps/:id/settings`             | The app's fields (log level, screenshots, modules, presence…), its keys, and deleting it |
-| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), controls, commands and screenshots, logs, daily table, events, the full heartbeat log |
+| `/custom-apps/apps/:id/settings`             | The app's fields (log level, screenshots, modules, presence…), its keys, the updater's key, settings and CI tokens (`updates` module), and deleting it |
+| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), controls, commands and screenshots, its update offer and reports, logs, daily table, events, the full heartbeat log |
+| `/custom-apps/releases/:id`                  | One release: status and why, rollout figures and rates, reach, notes and minimum version, the artifact, and every device report |
 | `/custom-apps/crashes/:id`                   | One crash group, its status and every report with its stack    |
 | `/custom-apps/alerts`                        | **Alert inbox**, filterable by status, app, rule and installation (in the address) |
 | `/custom-apps/alerts/rules`                  | The alert rules: create, tune, silence, disable, take over notifications |
@@ -34,8 +39,9 @@ centre. See [Remote operation](#remote-operation) below.
 
 The app tabs for remote operation follow the app's **modules**: a tab whose module is off is hidden,
 and its route, if reached anyway, says which module to turn on instead of showing a screen the
-service would refuse. On an installation, the commands and screenshots panels need `commands` and
-the log panel needs `logs`; the page loads the app beside the installation to know.
+service would refuse. On an installation, the commands and screenshots panels need `commands`, the
+log panel needs `logs` and the updates panel needs `updates`; the page loads the app beside the
+installation to know.
 
 ## Its own client application
 
@@ -72,7 +78,8 @@ device off.
 
 Several screens refresh themselves while the tab is visible: the overview and the alert inbox every
 30 seconds, an app's installations and an installation's snapshot every 15, and an installation's
-command list every 5 — but only while a command on the page is still pending or delivered. "Connected" is derived from the last heartbeat
+command list every 5 — but only while a command on the page is still pending or delivered — and a
+published release's page every 30, while no dialog is open on it. "Connected" is derived from the last heartbeat
 (`offline_after_intervals` × the app's interval), so an answer that was right when the page loaded
 stops being right within a couple of intervals. A hidden tab is skipped rather than throttled, and a
 refresh keeps the rows on screen instead of flashing a spinner. The charts and the daily table do not
@@ -153,6 +160,52 @@ preferences). Each notification links to `/custom-apps/alerts/<id>`, which is wh
 contract with the service rather than a choice. Silencing pauses a rule until a date; disabling
 pauses it indefinitely; deleting takes its alerts with it. The overview counts unresolved alerts,
 and an app summary or installation page with open alerts links to the inbox filtered to it.
+
+## Releases and the updater
+
+Phase three is panel API too. **The panel never uploads a release**: CI does, straight to
+`POST /custom-apps/v1/apps/:appId/releases/upload` with a CI token of the app (`cic_…`) and an
+Ed25519 signature over the artifact's raw SHA-256 digest, and the build arrives as a **draft**. The
+Releases tab shows that command written for the app, with the key-pair and signing commands, as its
+empty state — and ticks off the key and the token once they exist. Everything after the upload is
+decided here, and every decision is audited.
+
+**Setting it up** (Settings, with `updates` on). The **release public key** is the raw 32 bytes of
+the Ed25519 public key in base64; the form checks that shape before sending and the service checks
+it again. Replacing or removing it asks first: the same key is built into the app so its updater can
+verify what it downloads, so a new key is only safe once a build carrying it is out, and with no key
+CI cannot upload at all. Beside it, the updater's numbers: how long a device waits for the new
+version to report healthy (30 s – 24 h), how many failed attempts it makes (1–100), and the rollback
+and crash rates at which a rollout **pauses itself** (1–100 %). **CI tokens** are secrets, unlike app
+keys: the service keeps only their hash, so a token is shown **once**, in the dialog after creating
+it, and only its prefix afterwards. Revoking one stops the next upload and nothing else.
+
+**A line** is app, channel, platform and architecture: a device is offered the newest published
+release of its line whose rollout reaches it. **Publishing** a draft takes a percentage of the line
+and, optionally, named installations offered it whatever the percentage says (the canary kiosks).
+The percentage picks devices by a stable bucket, so the same devices are always the first 10 %.
+**Changing the rollout** widens or narrows that reach; narrowing it uninstalls nothing. **Pausing**
+stops offering it to anybody new. **Withdrawing** pulls it, and every device running it is offered
+the newest earlier version as a mandatory rollback. **Rolling the line back** to a release withdraws
+every newer published or paused release of the line and publishes that one at 100 %. Pause, withdraw
+and roll back each take an optional reason, kept on the release and in the audit log. Only a draft
+can be deleted. The service refuses every other transition with a 409, so the page only offers the
+ones the status allows.
+
+**The release page** shows the distinct devices that downloaded, installed, came up healthy, rolled
+back, failed, and crashed on the version since it was published, and both rates against the app's
+thresholds. A rollout the service paused **automatically** says so in words — which rate, its value,
+the threshold and how many devices were behind it — and that resuming it without fixing the cause
+pauses it again at the next evaluation; the audit log shows that pause with no actor, as
+**automatic**, with the reason. The artifact is downloaded behind the bearer token, fetched as a
+blob and saved through an object URL, the same way screenshots are shown. A published release's page
+refreshes every 30 seconds while no dialog is open.
+
+**On an installation**, the updates panel shows what the service would offer the device right now —
+exactly as the device would read it, flagged **mandatory** below the release's minimum version or
+**rollback** when the version it runs was withdrawn — and every step it reported. The overview counts
+releases rolling out (published below 100 %), paused and in draft, and a `release_rollbacks` alert
+rule watches for rollbacks reported within a window.
 
 ## Configuration
 

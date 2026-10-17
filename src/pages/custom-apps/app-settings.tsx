@@ -19,10 +19,12 @@ import {appFormChanges, appToForm, validateAppForm} from "@/pages/custom-apps/co
 import type {AppForm, AppFormErrors, AppFormField} from "@/pages/custom-apps/components/app-form.ts";
 import {AppFormFields} from "@/pages/custom-apps/components/app-form-fields.tsx";
 import {AppKeysPanel} from "@/pages/custom-apps/components/app-keys-panel.tsx";
+import {CiTokensPanel} from "@/pages/custom-apps/components/releases/ci-tokens-panel.tsx";
+import {ReleaseSettingsPanel} from "@/pages/custom-apps/components/releases/release-settings-panel.tsx";
 
 /**
- * Everything about an app that is configuration rather than state: its fields, its keys, and
- * deleting it. Only what changed goes up, so a save never rewrites the schedule or the module list
+ * Everything about an app that is configuration rather than state: its fields, its keys, the
+ * updater's key, settings and CI tokens (with the `updates` module), and deleting it. Only what changed goes up, so a save never rewrites the schedule or the module list
  * somebody else just edited unless this form actually touched them.
  */
 export const AppSettings = () => {
@@ -111,6 +113,14 @@ export const AppSettings = () => {
       </form>
 
       <AppKeysPanel appId={app.id} />
+
+      {/* Saved on their own: the release key is not something to change in passing with the name. */}
+      {(app.modules ?? []).includes("updates") && (
+        <>
+          <ReleaseSettingsPanel />
+          <CiTokensPanel appId={app.id} />
+        </>
+      )}
 
       <Panel title={t("custom_apps:settings.danger_title")} description={t("custom_apps:settings.danger_description")}>
         <div className="flex flex-wrap items-center justify-between gap-3">

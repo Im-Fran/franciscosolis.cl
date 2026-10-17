@@ -75,6 +75,10 @@ export const customAppsRoute = {
   appMessages: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/messages`,
   /** Crash groups and fleet logs, for an app with the `crashes` or `logs` module. */
   appDiagnostics: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/diagnostics`,
+  /** Releases uploaded from CI, for an app with the `updates` module. */
+  appReleases: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/releases`,
+  /** One release, addressed on its own like a crash group. */
+  release: (id: string) => `${CUSTOM_APPS_ROUTE}/releases/${encodeURIComponent(id)}`,
   /** One crash group, addressed on its own like an installation. */
   crash: (id: string) => `${CUSTOM_APPS_ROUTE}/crashes/${encodeURIComponent(id)}`,
   /**

@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 import {useTranslation} from "react-i18next";
-import {AddressBook, AppWindow, ArrowClockwise, Bell, Buildings, CheckCircle, Plugs, Prohibit, Warning} from "@phosphor-icons/react";
+import {AddressBook, AppWindow, ArrowClockwise, Bell, Buildings, CheckCircle, Package, Plugs, Prohibit, Warning} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
@@ -88,7 +88,7 @@ export const Overview = () => {
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className={data.releases ? "grid gap-4 sm:grid-cols-2 xl:grid-cols-4" : "grid gap-4 sm:grid-cols-2 xl:grid-cols-3"}>
               <StatCard
                 label={t("custom_apps:overview.apps")}
                 icon={<AppWindow size={18} />}
@@ -114,6 +114,19 @@ export const Overview = () => {
                 value={data.contacts.total}
                 to={customAppsRoute.contacts}
               />
+              {/* Releases live under each app, so the card counts rather than links. */}
+              {data.releases && (
+                <StatCard
+                  label={t("custom_apps:overview.releases")}
+                  icon={<Package size={18} />}
+                  value={data.releases.rolling_out}
+                  attention={data.releases.paused > 0}
+                  detail={t("custom_apps:overview.releases_detail", {
+                    paused: data.releases.paused,
+                    drafts: data.releases.drafts,
+                  })}
+                />
+              )}
             </div>
 
             <div className="grid gap-6 xl:grid-cols-2">

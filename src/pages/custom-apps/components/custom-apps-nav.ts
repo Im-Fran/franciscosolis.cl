@@ -30,7 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
     label: "shell.apps",
     icon: AppWindow,
     nested: true,
-    also: [`${CUSTOM_APPS_ROUTE}/installations/`, `${CUSTOM_APPS_ROUTE}/crashes/`],
+    also: [`${CUSTOM_APPS_ROUTE}/installations/`, `${CUSTOM_APPS_ROUTE}/crashes/`, `${CUSTOM_APPS_ROUTE}/releases/`],
   },
   {to: customAppsRoute.alerts(), label: "shell.alerts", icon: Bell, nested: true},
   {to: customAppsRoute.audit, label: "shell.audit", icon: ClockCounterClockwise},

@@ -1,6 +1,6 @@
 /**
- * The custom-apps service's vocabulary and shapes, as its phase-one and phase-two contracts describe
- * them.
+ * The custom-apps service's vocabulary and shapes, as its phase-one, phase-two and phase-three
+ * contracts describe them.
  *
  * The vocabularies are also served by `GET /`, and the panel prefers those when it has them (see
  * `useServiceVocabulary`). The constants here are the fallback for a service that did not answer —
@@ -27,7 +27,7 @@ export const PRESENCE_MODES = ["ping", "socket"] as const;
 export type PresenceMode = (typeof PRESENCE_MODES)[number];
 
 /** Presence — the heartbeat — is always on, so it is not a module. */
-export const APP_MODULES = ["metrics", "events", "logs", "crashes", "config", "messages", "commands"] as const;
+export const APP_MODULES = ["metrics", "events", "logs", "crashes", "config", "messages", "commands", "updates"] as const;
 export type AppModule = (typeof APP_MODULES)[number];
 
 /* ── Phase two: remote operation ──────────────────────────────────────── */
@@ -69,11 +69,41 @@ export const ALERT_KINDS = [
   "crash_spike",
   "error_log_spike",
   "enrollment_spike",
+  "release_rollbacks",
 ] as const;
 export type AlertKind = (typeof ALERT_KINDS)[number];
 
 export const ALERT_STATUSES = ["open", "acknowledged", "resolved"] as const;
 export type AlertStatus = (typeof ALERT_STATUSES)[number];
+
+/* ── Phase three: releases and the updater ────────────────────────────── */
+
+/**
+ * A release's lifecycle: `draft` is offered to nobody, `published` to the devices its rollout
+ * reaches, `paused` to nobody new (by hand, or automatically on a bad rollback or crash rate), and
+ * `withdrawn` is pulled — devices running it are offered the newest earlier version as a rollback.
+ */
+export const RELEASE_STATUSES = ["draft", "published", "paused", "withdrawn"] as const;
+export type ReleaseStatus = (typeof RELEASE_STATUSES)[number];
+
+/** What a device reports while it updates, in the order it happens. `health_ok` is the only success. */
+export const UPDATE_REPORT_STATUSES = ["downloaded", "installed", "health_ok", "rolled_back", "failed"] as const;
+export type UpdateReportStatus = (typeof UPDATE_REPORT_STATUSES)[number];
+
+/** What an artifact is built for. `any` fits every architecture of its platform. */
+export const ARCHES = ["x86_64", "aarch64", "x86", "armv7", "universal", "any"] as const;
+export type Arch = (typeof ARCHES)[number];
+
+/** The largest artifact the service accepts, in bytes, until it says otherwise. */
+export const RELEASE_MAX_BYTES = 96 * 1024 * 1024;
+
+/** The per-app updater settings: the service's bounds and defaults. */
+export const UPDATE_SETTINGS = {
+  healthTimeout: {min: 30, max: 86_400, default: 600},
+  maxFailures: {min: 1, max: 100, default: 3},
+  pauseRollbackPercent: {min: 1, max: 100, default: 20},
+  pauseCrashPercent: {min: 1, max: 100, default: 20},
+} as const;
 
 /** How far ahead a grace period may end, in days, until the service says otherwise. */
 export const GRACE_MAX_DAYS = 31;
@@ -119,6 +149,11 @@ export type ServiceStatus = {
   grace_max_days?: number;
   /** The largest screenshot the service keeps, in bytes. */
   screenshot_max_bytes?: number;
+  release_statuses?: ReleaseStatus[];
+  update_report_statuses?: UpdateReportStatus[];
+  arches?: Arch[];
+  /** The largest release artifact the service accepts, in bytes. */
+  release_max_bytes?: number;
 };
 
 export type Account = {
@@ -264,6 +299,20 @@ export type App = AppSummary & {
    * which makes it personal data (ley 21.719).
    */
   screenshots_enabled: boolean;
+  /**
+   * The Ed25519 public key release uploads are verified against: base64 of the raw 32 bytes. Null
+   * until one is set, and no upload is accepted before then. Optional so a service that predates
+   * releases still renders.
+   */
+  release_public_key?: string | null;
+  /** How long a device waits for the new version to report healthy before rolling back, seconds. */
+  update_health_timeout_seconds?: number;
+  /** Failed attempts at one release before a device stops trying it. */
+  update_max_failures?: number;
+  /** Rollback rate, in %, at which a rollout pauses itself. */
+  rollout_pause_rollback_percent?: number;
+  /** Crash rate, in %, at which a rollout pauses itself. */
+  rollout_pause_crash_percent?: number;
   needs_review_count: number;
   company: CompanyRef;
   ingest: {base_url: string; sdk_url: string; openapi_url: string};
@@ -290,6 +339,12 @@ export type AppPayload = Partial<Omit<NewApp, "company_id" | "name" | "kind">> &
   presence_mode?: PresenceMode;
   log_level?: LogLevel;
   screenshots_enabled?: boolean;
+  /** Validated by the service (400 when it is not a 32-byte Ed25519 key); null clears it. */
+  release_public_key?: string | null;
+  update_health_timeout_seconds?: number;
+  update_max_failures?: number;
+  rollout_pause_rollback_percent?: number;
+  rollout_pause_crash_percent?: number;
 };
 
 export type AppStatusPayload = {state: AppState; message?: string | null; until?: string | null};
@@ -761,6 +816,165 @@ export type AlertQuery = {
   offset?: number;
 };
 
+/* ── Releases ─────────────────────────────────────────────────────────── */
+
+/** What CI uploads releases with. Only its first characters are ever shown again. */
+export type CiToken = {
+  id: string;
+  app_id: string;
+  label: string | null;
+  /** `cic_…`, the first characters of the token. */
+  token_prefix: string;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  revoked_by: string | null;
+  created_by: string | null;
+  created_at: string;
+};
+
+/** The answer to creating a token: the only time `token` is ever shown. */
+export type NewCiToken = CiToken & {token: string};
+
+/**
+ * Who changed a release's status last, and why. A person's change carries `by` and an optional
+ * `reason`; an automatic pause carries `automatic: true`, which rate crossed which threshold and over
+ * how many devices; a line rolled back carries the version it went back to.
+ */
+export type ReleaseStatusReason = {
+  by?: string | null;
+  automatic?: boolean;
+  reason?: string | null;
+  rate?: number;
+  threshold?: number;
+  sample?: number;
+  rolled_back_to?: string;
+  [key: string]: unknown;
+};
+
+export type Release = {
+  id: string;
+  app_id: string;
+  /** Semantic version. One per line: app, channel, platform and architecture. */
+  version: string;
+  channel: Channel;
+  platform: Platform;
+  arch: Arch;
+  status: ReleaseStatus;
+  /** 0–100: the share of the line offered it, by a stable per-device bucket. */
+  rollout_percent: number;
+  /** Installations offered it whatever the percentage says. */
+  rollout_installations: string[];
+  /** Devices below it must update before they carry on. */
+  min_version: string | null;
+  notes: string | null;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  /** Hex. */
+  sha256: string;
+  /** Ed25519 over the raw SHA-256 digest, base64. */
+  signature: string;
+  /** `ci:<tokenId>`. */
+  uploaded_by: string | null;
+  published_at: string | null;
+  published_by: string | null;
+  status_reason: ReleaseStatusReason | null;
+  status_changed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** A row of the release list: the release and how many devices got how far with it. */
+export type ReleaseListItem = Release & {
+  installed_count: number;
+  healthy_count: number;
+  rolled_back_count: number;
+};
+
+/** Distinct devices that ever reported each step, and the two rates the automatic pause reads. */
+export type ReleaseStats = {
+  downloaded: number;
+  installed: number;
+  health_ok: number;
+  rolled_back: number;
+  failed: number;
+  /** Devices that crashed on this version since it was published. */
+  crashed: number;
+  /** Percent of devices that settled (healthy or rolled back) and rolled back; null with none. */
+  rollback_rate: number | null;
+  /** Percent of devices that installed it and crashed on it; null with none. */
+  crash_rate: number | null;
+};
+
+export type ReleaseDetail = Release & {
+  stats: ReleaseStats;
+  /** Active installations on the release's line. */
+  installations_on_line: number;
+  /** Of those, the ones already running this version. */
+  installations_on_version: number;
+};
+
+export type ReleaseQuery = {
+  channel?: Channel;
+  platform?: Platform;
+  arch?: Arch;
+  status?: ReleaseStatus;
+  limit?: number;
+  offset?: number;
+};
+
+export type ReleasePayload = {
+  notes?: string | null;
+  min_version?: string | null;
+  installation_ids?: string[];
+};
+
+export type RolloutPayload = {rollout_percent?: number; installation_ids?: string[]};
+
+export type ReleaseReport = {
+  id: number;
+  release_id: string;
+  installation_id: string;
+  installation_alias: string | null;
+  installation_hostname: string | null;
+  status: UpdateReportStatus;
+  /** The version the device was running when it started. */
+  from_version: string | null;
+  detail: string | null;
+  created_at: string;
+  /** Present on an installation's own report list, which crosses releases. */
+  version?: string;
+};
+
+/** What a device would be offered right now, exactly as the device reads it. */
+export type UpdateOffer = {
+  release_id: string;
+  version: string;
+  channel: Channel;
+  platform: Platform;
+  arch: Arch;
+  filename: string;
+  size_bytes: number;
+  sha256: string;
+  signature: string;
+  notes: string | null;
+  min_version: string | null;
+  /** The device is below the release's minimum version: it has to update before it carries on. */
+  mandatory: boolean;
+  /** The device runs a withdrawn version and is being sent back to an earlier one. */
+  rollback: boolean;
+  published_at: string | null;
+  health_check_timeout_seconds: number;
+  max_failures: number;
+};
+
+/** One installation's updater: its current offer, and a page of its reports. */
+export type InstallationUpdates = {
+  code: number;
+  data: {offer: UpdateOffer | null; reports: ReleaseReport[]};
+  pagination: {limit: number; offset: number; total: number};
+};
+
 /* ── Overview and audit ───────────────────────────────────────────────── */
 
 export type Overview = {
@@ -774,6 +988,8 @@ export type Overview = {
   needs_review: InstallationSummary[];
   /** Optional so a service that predates alerts still renders. */
   alerts?: {unresolved: number};
+  /** Rolling out means published below 100 %. Optional for the same reason. */
+  releases?: {rolling_out: number; paused: number; drafts: number};
 };
 
 export type AuditEntry = {

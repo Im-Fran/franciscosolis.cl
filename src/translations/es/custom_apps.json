@@ -91,6 +91,14 @@
     "android": "Android",
     "web": "Web"
   },
+  "arches": {
+    "x86_64": "x86_64",
+    "aarch64": "ARM64",
+    "x86": "x86 (32 bits)",
+    "armv7": "ARMv7",
+    "universal": "Universal",
+    "any": "Cualquiera"
+  },
   "channels": {
     "stable": "Estable",
     "beta": "Beta"
@@ -106,7 +114,8 @@
     "crashes": "Reportes de fallos",
     "config": "Flags y configuración remota",
     "messages": "Mensajes en la app",
-    "commands": "Comandos remotos"
+    "commands": "Comandos remotos",
+    "updates": "Actualizaciones remotas"
   },
   "modules_hint": {
     "metrics": "Muestras de CPU, memoria, disco, red, batería y consumo.",
@@ -115,7 +124,8 @@
     "crashes": "Fallos agrupados por firma y versión, con su stack. Se guardan 30 días.",
     "config": "Feature flags y una configuración JSON versionada, que se aplican sin publicar una versión nueva.",
     "messages": "Banners y diálogos que ven las personas que usan la app.",
-    "commands": "Reiniciar, recargar, limpiar la caché, tomar una captura y más, equipo por equipo."
+    "commands": "Reiniciar, recargar, limpiar la caché, tomar una captura y más, equipo por equipo.",
+    "updates": "Releases firmadas que sube el CI, con despliegue gradual, versión mínima, pausa automática y rollback."
   },
   "roles": {
     "owner": "Dueño",
@@ -167,7 +177,9 @@
     "recent_description": "Las últimas instalaciones en inscribirse, de la más nueva a la más antigua.",
     "recent_empty": "Todavía no se ha inscrito ninguna instalación.",
     "alerts": "Alertas abiertas",
-    "alerts_detail": "Alertas sin resolver en todas las apps."
+    "alerts_detail": "Alertas sin resolver en todas las apps.",
+    "releases": "Releases desplegándose",
+    "releases_detail": "Publicadas bajo el 100 % · {{paused}} pausadas · {{drafts}} borradores"
   },
   "companies": {
     "title": "Clientes",
@@ -360,7 +372,8 @@
     "needs_review_aria_other": "{{count}} instalaciones por revisar",
     "config": "Flags y configuración",
     "messages": "Mensajes",
-    "diagnostics": "Fallos y logs"
+    "diagnostics": "Fallos y logs",
+    "releases": "Releases"
   },
   "summary": {
     "connected": "Conectadas ahora",
@@ -785,12 +798,30 @@
       "alert": {
         "acknowledged": "Alerta reconocida",
         "resolved": "Alerta resuelta"
+      },
+      "ci_token": {
+        "created": "Token de CI creado",
+        "revoked": "Token de CI revocado"
+      },
+      "release": {
+        "uploaded": "Release subida",
+        "updated": "Release actualizada",
+        "published": "Release publicada",
+        "rollout_changed": "Cambió el despliegue de una release",
+        "paused": "Release pausada",
+        "resumed": "Release reanudada",
+        "withdrawn": "Release retirada",
+        "rolled_back": "Línea revertida a una release",
+        "deleted": "Release eliminada"
       }
     },
     "automatic": "Automático",
     "reasons": {
-      "grace_period_ended": "Terminó el período de gracia"
-    }
+      "grace_period_ended": "Terminó el período de gracia",
+      "rollback_rate": "La tasa de rollback superó el umbral",
+      "crash_rate": "La tasa de fallos superó el umbral"
+    },
+    "open_release": "Release {{version}}"
   },
   "module_off": {
     "title": "{{modules}}: desactivado en esta app",
@@ -836,13 +867,27 @@
     "acknowledged": "Reconocida",
     "resolved": "Resuelta"
   },
+  "release_statuses": {
+    "draft": "Borrador",
+    "published": "Publicada",
+    "paused": "Pausada",
+    "withdrawn": "Retirada"
+  },
+  "update_report_statuses": {
+    "downloaded": "Descargada",
+    "installed": "Instalada",
+    "health_ok": "Sana",
+    "rolled_back": "Revertida",
+    "failed": "Fallida"
+  },
   "alert_kinds": {
     "installation_offline": "Instalación desconectada",
     "cpu_high": "CPU alta",
     "memory_high": "Memoria alta",
     "crash_spike": "Alza de fallos",
     "error_log_spike": "Alza de logs de error",
-    "enrollment_spike": "Alza de inscripciones"
+    "enrollment_spike": "Alza de inscripciones",
+    "release_rollbacks": "Rollbacks de releases"
   },
   "alert_kinds_hint": {
     "installation_offline": "Un equipo lleva más tiempo que el umbral sin enviar un latido.",
@@ -850,7 +895,8 @@
     "memory_high": "El promedio de memoria usada por un equipo en la ventana supera el umbral.",
     "crash_spike": "Al menos tantos reportes de fallos como el umbral dentro de la ventana.",
     "error_log_spike": "Al menos tantas entradas de log de error o fatales como el umbral dentro de la ventana.",
-    "enrollment_spike": "Al menos tantas instalaciones nuevas como el umbral dentro de la ventana. Así se ve una llave filtrada."
+    "enrollment_spike": "Al menos tantas instalaciones nuevas como el umbral dentro de la ventana. Así se ve una llave filtrada.",
+    "release_rollbacks": "Al menos tantos rollbacks de una actualización como el umbral dentro de la ventana, en todas las releases de la app."
   },
   "json": {
     "format": "Formatear",
@@ -1215,7 +1261,8 @@
       "memory_high": "Porcentaje promedio de memoria, de 1 a 100.",
       "crash_spike": "Reportes de fallos dentro de la ventana.",
       "error_log_spike": "Entradas de error o fatales dentro de la ventana.",
-      "enrollment_spike": "Instalaciones nuevas dentro de la ventana."
+      "enrollment_spike": "Instalaciones nuevas dentro de la ventana.",
+      "release_rollbacks": "Rollbacks reportados dentro de la ventana, de 1 a 100.000."
     },
     "range": "Entre {{min}} y {{max}}.",
     "condition": {
@@ -1224,7 +1271,8 @@
       "memory_high": "Memoria sobre {{threshold}} en promedio durante {{window}}",
       "crash_spike": "Al menos {{threshold}} fallos en {{window}}",
       "error_log_spike": "Al menos {{threshold}} entradas de log de error en {{window}}",
-      "enrollment_spike": "Al menos {{threshold}} instalaciones nuevas en {{window}}"
+      "enrollment_spike": "Al menos {{threshold}} instalaciones nuevas en {{window}}",
+      "release_rollbacks": "Al menos {{threshold}} rollbacks de actualizaciones en {{window}}"
     },
     "window_value": "ventana de {{window}}",
     "enabled": "Activa",
@@ -1254,5 +1302,260 @@
     "empty": "Todavía no hay reglas",
     "empty_app": "Ninguna regla vigila esta app",
     "empty_description": "Crea una para enterarte cuando un equipo deja de reportarse, se recalienta o falla más de lo normal."
+  },
+  "releases": {
+    "title": "Releases",
+    "description": "Las compilaciones que sube el CI, firmadas. Llegan como borrador y se publican desde aquí.",
+    "count_one": "{{count}} release · de la más nueva a la más antigua",
+    "count_other": "{{count}} releases · de la más nueva a la más antigua",
+    "empty": "Todavía no se ha subido ninguna release",
+    "empty_description": "Este panel nunca sube releases: lo hace el CI, firmando cada compilación con la llave privada de la app. Cada una llega como borrador y nadie la recibe hasta que la publicas.",
+    "no_matches": "Ninguna release coincide con estos filtros.",
+    "auto_paused": "Pausada automáticamente",
+    "named_short_one": "+ {{count}} equipo",
+    "named_short_other": "+ {{count}} equipos",
+    "installed_one": "{{value}} instalada",
+    "installed_other": "{{value}} instaladas",
+    "healthy_one": "{{value}} sana",
+    "healthy_other": "{{value}} sanas",
+    "rolled_back_one": "{{value}} revertida",
+    "rolled_back_other": "{{value}} revertidas",
+    "uploaded": "Subida {{when}}",
+    "published": "Publicada {{when}}",
+    "uploaded_by_ci": "CI (token {{id}}…)",
+    "setup_incomplete_title": "Falta configurar las subidas",
+    "setup_no_key": "Esta app no tiene una llave pública de releases, así que el servicio rechazará cualquier subida.",
+    "setup_no_token": "Esta app no tiene ningún token de CI activo, así que nada puede subir una release.",
+    "columns": {
+      "version": "Versión",
+      "line": "Línea",
+      "status": "Estado",
+      "rollout": "Despliegue",
+      "devices": "Equipos",
+      "dates": "Fechas"
+    },
+    "filters": {
+      "channel": "Canal",
+      "platform": "Plataforma",
+      "arch": "Arquitectura",
+      "status": "Estado",
+      "any_channel": "Cualquier canal",
+      "any_platform": "Cualquier plataforma",
+      "any_arch": "Cualquier arquitectura",
+      "any_status": "Cualquier estado"
+    },
+    "help": {
+      "title": "Cómo sube el CI una release",
+      "key_title": "1. Genera el par de llaves Ed25519 y guarda la pública en la app",
+      "key_body": "La llave privada queda como secreto del CI y la pública se pega en Configuración. La misma llave pública va dentro de la app, para que el actualizador verifique lo que descarga.",
+      "settings_link": "Abrir Configuración",
+      "token_title": "2. Crea un token de CI",
+      "token_body": "Se muestra una sola vez. Guárdalo como secreto del CI (por ejemplo CUSTOM_APPS_CI_TOKEN).",
+      "upload_title": "3. Firma y sube cada compilación",
+      "upload_body": "La firma es Ed25519 sobre el resumen SHA-256 crudo del archivo, en base64. El cuerpo es el archivo mismo, de hasta {{max}}. Cambia versión, plataforma, arquitectura y nombre por los de cada compilación.",
+      "upload_after": "Llega como borrador. Publícala desde su página, empezando con un porcentaje pequeño."
+    }
+  },
+  "release": {
+    "title": "Versión {{version}}",
+    "loading_title": "Release",
+    "back": "Releases de esta app",
+    "details": "Archivo",
+    "download": "Descargar artefacto",
+    "download_failed": "No se pudo descargar el artefacto.",
+    "publish": "Publicar",
+    "publish_title": "Publicar la versión {{version}}",
+    "publish_body": "Elige qué parte de la línea la recibe. Los equipos se reparten por un número fijo, así que los que caen en el 10 % de esta release son los mismos del 10 % de la siguiente: siempre los mismos canarios. Empieza con poco y amplíalo cuando los primeros equipos se reporten sanos.",
+    "rollout_change": "Cambiar despliegue",
+    "rollout_title": "Cambiar el despliegue",
+    "rollout_body": "Ampliarlo la ofrece a más equipos de la línea. Reducirlo deja de ofrecerla fuera del nuevo alcance, pero no la desinstala de ningún equipo.",
+    "rollout_apply": "Aplicar",
+    "percent": "Porcentaje de la línea",
+    "estimate_one": "≈ {{estimate}} de {{total}} equipo de la línea",
+    "estimate_other": "≈ {{estimate}} de {{total}} equipos de la línea",
+    "named": "Equipos con nombre",
+    "named_count_one": "{{count}} elegido",
+    "named_count_other": "{{count}} elegidos",
+    "named_hint": "Se les ofrece sin importar el porcentaje: los kioscos canario. Se listan los equipos activos del canal y la plataforma de la release.",
+    "named_search": "Buscar equipos",
+    "named_empty": "No hay equipos activos en el canal y la plataforma de esta release.",
+    "named_none": "Ninguno: solo cuenta el porcentaje.",
+    "nobody_title": "No llegará a nadie",
+    "nobody_body": "Con 0 % y sin equipos con nombre queda publicada pero no se le ofrece a ningún equipo hasta que amplíes el despliegue.",
+    "pause": "Pausar",
+    "pause_title": "¿Pausar esta release?",
+    "pause_body": "Deja de ofrecerse a equipos nuevos. Los que ya la instalaron la conservan. Puedes reanudarla después con el mismo despliegue.",
+    "resume": "Reanudar",
+    "resume_warning": "Si la reanudas sin corregir la causa, el servicio la volverá a pausar en la próxima evaluación.",
+    "withdraw": "Retirar",
+    "withdraw_title": "¿Retirar la versión {{version}}?",
+    "withdraw_body": "Nadie más la recibe, y cada equipo que la esté ejecutando recibe la versión anterior más nueva de su línea como rollback obligatorio. Una release retirada no se puede volver a publicar; para volver a ella hay que revertir la línea.",
+    "rollback": "Revertir la línea a esta",
+    "rollback_title": "¿Revertir la línea a la versión {{version}}?",
+    "rollback_body": "Toda release publicada o pausada más nueva que la {{version}} en la línea {{line}} queda retirada, y esta se publica al 100 % de la línea. Los equipos con una versión más nueva reciben la {{version}} como rollback obligatorio en su próximo latido (al instante si mantienen el socket).",
+    "delete": "Eliminar borrador",
+    "delete_title": "¿Eliminar este borrador?",
+    "delete_body": "La versión {{version}} y su archivo «{{filename}}» se eliminan para siempre. Para subirla de nuevo, el CI tiene que volver a subirla.",
+    "reason": "Motivo",
+    "reason_hint": "Opcional. Queda en la release y en el registro de auditoría.",
+    "done": {
+      "publish": "Release publicada.",
+      "rollout": "Despliegue actualizado.",
+      "pause": "Release pausada.",
+      "resume": "Release reanudada.",
+      "withdraw": "Release retirada. Los equipos que la ejecutan recibirán un rollback.",
+      "rollback": "Línea revertida. Los equipos con versiones más nuevas recibirán esta como rollback."
+    },
+    "draft_title": "Borrador",
+    "draft_body": "Nadie recibe esta release todavía. Revisa el archivo y las notas, y publícala con un porcentaje pequeño.",
+    "reach_title": "Alcance",
+    "reach_description": "A quién se le ofrece y cuántos equipos de la línea ya la ejecutan.",
+    "reach_draft": "Sin publicar",
+    "reach_published": "de la línea la recibe",
+    "reach_stopped": "de la línea, pero no se ofrece",
+    "on_line": "Equipos activos en la línea",
+    "on_version": "Ya en esta versión",
+    "on_version_value_one": "{{value}} de {{total}}",
+    "on_version_value_other": "{{value}} de {{total}}",
+    "notes_title": "Notas y versión mínima",
+    "notes_hint": "Lo que cambió. El actualizador puede mostrarlas antes de instalar.",
+    "no_notes": "Sin notas.",
+    "edit": "Editar",
+    "edit_title": "Editar la versión {{version}}",
+    "min_version": "Versión mínima",
+    "min_version_hint": "Opcional. Los equipos con una versión menor tienen que actualizar antes de seguir. No puede ser mayor que {{version}}.",
+    "min_version_invalid": "Tiene que ser una versión semántica, por ejemplo 1.4.0.",
+    "min_version_value": "Los equipos bajo la {{min}} tienen que actualizar antes de seguir: para ellos es obligatoria.",
+    "min_version_none": "Sin versión mínima: la actualización es opcional para todos.",
+    "filename": "Nombre del archivo",
+    "size": "Tamaño",
+    "content_type": "Tipo de contenido",
+    "uploaded_by": "Subida por",
+    "uploaded_at": "Subida",
+    "published_at": "Publicada",
+    "status_changed_at": "Último cambio de estado",
+    "sha256": "SHA-256",
+    "signature": "Firma Ed25519",
+    "signature_hint": "El servicio verificó la firma contra la llave pública de la app antes de guardar la release. Los equipos vuelven a verificarla sobre lo que descargan.",
+    "stats": {
+      "downloaded": "Descargada",
+      "downloaded_detail": "Equipos que la descargaron.",
+      "installed": "Instalada",
+      "installed_detail": "Equipos que la instalaron.",
+      "health_ok": "Sana",
+      "health_ok_detail": "Arrancaron, llegaron a la API y pasaron sus chequeos.",
+      "rolled_back": "Revertida",
+      "rolled_back_detail": "Volvieron a la versión anterior por su cuenta.",
+      "failed": "Fallida",
+      "failed_detail": "No lograron descargarla o instalarla.",
+      "crashed": "Con fallos",
+      "crashed_detail": "Reportaron un fallo en esta versión desde que se publicó.",
+      "rollback_rate": "Tasa de rollback",
+      "rollback_rate_detail": "Se pausa sola al llegar a {{threshold}}.",
+      "crash_rate": "Tasa de fallos",
+      "crash_rate_detail": "Se pausa sola al llegar a {{threshold}}."
+    },
+    "status_reason": {
+      "note": "Motivo:",
+      "auto_title": "Pausada automáticamente el {{date}}",
+      "auto_rollback_rate_one": "La tasa de rollback llegó a {{rate}}, sobre el umbral de {{threshold}}, con {{sample}} equipo detrás.",
+      "auto_rollback_rate_other": "La tasa de rollback llegó a {{rate}}, sobre el umbral de {{threshold}}, con {{sample}} equipos detrás.",
+      "auto_crash_rate_one": "La tasa de fallos llegó a {{rate}}, sobre el umbral de {{threshold}}, con {{sample}} equipo detrás.",
+      "auto_crash_rate_other": "La tasa de fallos llegó a {{rate}}, sobre el umbral de {{threshold}}, con {{sample}} equipos detrás.",
+      "auto_after": "Nadie nuevo la recibe; los equipos que ya la instalaron la conservan. Corrige la causa y publica una versión nueva, retírala, o reanúdala si fue una falsa alarma.",
+      "paused_title": "Pausada por {{by}} el {{date}}",
+      "paused_body": "Nadie nuevo la recibe; los equipos que ya la instalaron la conservan.",
+      "withdrawn_title": "Retirada por {{by}} el {{date}}",
+      "withdrawn_body": "Nadie la recibe, y los equipos que la ejecutan reciben la versión anterior de su línea como rollback obligatorio.",
+      "withdrawn_by_rollback": "Se retiró al revertir la línea a la versión {{version}}. Los equipos que la ejecutan reciben esa versión como rollback obligatorio.",
+      "rolled_back_title": "Línea revertida a esta versión por {{by}} el {{date}}",
+      "rolled_back_body": "Se publicó al 100 % de la línea y las releases más nuevas quedaron retiradas."
+    }
+  },
+  "release_settings": {
+    "title": "Actualizaciones",
+    "description": "La llave contra la que se verifica cada subida y los números con que corre un despliegue.",
+    "no_key_title": "Sin llave pública de releases",
+    "no_key_body": "El servicio rechaza toda subida del CI hasta que guardes una.",
+    "key": "Llave pública de releases",
+    "key_hint": "Los 32 bytes crudos de la llave pública Ed25519, en base64 (44 caracteres). Vacío la quita.",
+    "key_placeholder": "44 caracteres en base64",
+    "key_invalid": "No es una llave pública Ed25519: tienen que ser 32 bytes en base64, no un PEM ni hexadecimal.",
+    "key_how": "Cómo generar el par de llaves",
+    "key_how_body": "Hazlo una vez, donde vaya a vivir la llave privada. La privada queda como secreto del CI; la pública se pega aquí y va dentro de la app.",
+    "health_timeout": "Espera de salud (segundos)",
+    "health_timeout_hint": "{{duration}} para que la versión nueva se reporte sana antes de que el equipo vuelva atrás.",
+    "max_failures": "Intentos fallidos",
+    "max_failures_hint": "Cuántas veces intenta un equipo la misma release antes de dejar de intentarlo.",
+    "pause_rollback": "Pausar con rollbacks sobre (%)",
+    "pause_rollback_hint": "De los equipos que terminaron de actualizar, qué porcentaje volvió atrás.",
+    "pause_crash": "Pausar con fallos sobre (%)",
+    "pause_crash_hint": "De los equipos que la instalaron, qué porcentaje reportó un fallo en ella.",
+    "pause_sample": "Una tasa necesita al menos tres equipos detrás antes de pausar un despliegue: un kiosco de dos no es una tendencia.",
+    "replace_title": "¿Reemplazar la llave pública?",
+    "replace_body": "Las compilaciones ya instaladas verifican las descargas con la llave antigua, así que rechazarán toda release firmada con la nueva. Cambia la llave solo cuando una compilación que lleve la nueva ya esté desplegada.",
+    "replace_confirm": "Reemplazar",
+    "clear_title": "¿Quitar la llave pública?",
+    "clear_body": "El servicio rechazará toda subida del CI hasta que guardes otra. Las releases ya subidas no cambian.",
+    "clear_confirm": "Quitar"
+  },
+  "ci_tokens": {
+    "title": "Tokens de CI",
+    "description": "Con lo que el CI sube releases a esta app. Son secretos: el token se muestra una sola vez y después solo su comienzo. Revocar uno detiene la próxima subida; las releases que ya subió no cambian.",
+    "create": "Nuevo token",
+    "create_title": "Nuevo token de CI",
+    "label": "Etiqueta",
+    "label_hint": "Qué repositorio o qué flujo lo usa. Opcional.",
+    "label_placeholder": "GitHub Actions · main",
+    "token": "Token de CI",
+    "unlabelled": "Token sin etiqueta",
+    "created_title": "Token creado",
+    "once_title": "Cópialo ahora",
+    "once_body": "Esta es la única vez que se muestra. El servicio solo guarda su hash: si lo pierdes, revócalo y crea otro.",
+    "created_hint": "Guárdalo como secreto del CI y súbelo con «Authorization: Bearer <token>».",
+    "done": "Listo, ya lo guardé",
+    "created_at": "Creado el {{date}}",
+    "last_used": "Usado por última vez {{when}}",
+    "never_used": "Nunca usado",
+    "revoked_at": "Revocado el {{date}}",
+    "revoke": "Revocar",
+    "revoking": "Revocando…",
+    "revoked": "Token revocado.",
+    "revoke_title": "¿Revocar este token?",
+    "revoke_body": "«{{token}}» dejará de poder subir releases. Las releases que ya subió no cambian. Esto no se puede deshacer.",
+    "empty": "Esta app no tiene tokens de CI",
+    "empty_description": "Crea uno para que el CI pueda subir releases."
+  },
+  "update_reports": {
+    "title": "Reportes de actualización",
+    "description": "Cada paso que reportaron los equipos, del más nuevo al más antiguo.",
+    "count_one": "{{count}} reporte · del más nuevo al más antiguo",
+    "count_other": "{{count}} reportes · del más nuevo al más antiguo",
+    "empty": "Ningún equipo ha reportado nada todavía",
+    "empty_description": "Los equipos reportan cuando descargan, instalan, arrancan sanos, vuelven atrás o fallan.",
+    "columns": {
+      "device": "Equipo",
+      "version": "Versión",
+      "status": "Paso",
+      "from": "Desde",
+      "detail": "Detalle",
+      "when": "Cuándo"
+    }
+  },
+  "installation_updates": {
+    "title": "Actualizaciones",
+    "description": "Lo que se le ofrecería a este equipo ahora mismo, y cada paso que reportó.",
+    "offer": "Se le ofrece la versión {{version}}",
+    "rollback": "Rollback",
+    "mandatory": "Obligatoria",
+    "rollback_hint": "La versión que ejecuta fue retirada, así que se le envía de vuelta a una anterior. Es obligatorio.",
+    "mandatory_hint": "Ejecuta una versión bajo la mínima ({{min}}), así que tiene que actualizar antes de seguir.",
+    "open_release": "Ver la release",
+    "health": "Salud",
+    "health_value_one": "{{duration}} para reportarse sana · {{count}} intento",
+    "health_value_other": "{{duration}} para reportarse sana · hasta {{count}} intentos",
+    "no_offer": "No se le ofrece nada: ejecuta la {{version}} y su línea no tiene una release más nueva que le llegue, o la app está en gracia o suspendida.",
+    "reports_title": "Reportes",
+    "reports_empty": "Este equipo no ha reportado ninguna actualización."
   }
 }

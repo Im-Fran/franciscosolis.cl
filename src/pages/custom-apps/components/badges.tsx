@@ -153,6 +153,14 @@ const SEVERITY_TONES: Record<string, Tone> = {info: "planned", warning: "pending
 const MESSAGE_TONES: Record<string, Tone> = {active: "good", scheduled: "planned", ended: "inert"};
 const CRASH_TONES: Record<string, Tone> = {open: "bad", resolved: "good", ignored: "inert"};
 const ALERT_TONES: Record<string, Tone> = {open: "bad", acknowledged: "pending", resolved: "good"};
+const RELEASE_TONES: Record<string, Tone> = {draft: "inert", published: "good", paused: "pending", withdrawn: "bad"};
+const UPDATE_REPORT_TONES: Record<string, Tone> = {
+  downloaded: "planned",
+  installed: "planned",
+  health_ok: "good",
+  rolled_back: "bad",
+  failed: "bad",
+};
 
 export const CommandStatusBadge = (props: VocabularyBadgeProps) => (
   <VocabularyPill prefix="command_statuses" tones={COMMAND_TONES} {...props} />
@@ -174,4 +182,12 @@ export const CrashStatusBadge = (props: VocabularyBadgeProps) => (
 
 export const AlertStatusBadge = (props: VocabularyBadgeProps) => (
   <VocabularyPill prefix="alert_statuses" tones={ALERT_TONES} {...props} />
+);
+
+export const ReleaseStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="release_statuses" tones={RELEASE_TONES} {...props} />
+);
+
+export const UpdateReportStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="update_report_statuses" tones={UPDATE_REPORT_TONES} {...props} />
 );
