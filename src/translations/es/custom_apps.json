@@ -8,7 +8,9 @@
     "apps": "Apps",
     "audit": "Registro de auditoría",
     "sign_out": "Cerrar sesión",
-    "alerts": "Alertas"
+    "alerts": "Alertas",
+    "contracts": "Contratos",
+    "tickets": "Tickets"
   },
   "sign_in": {
     "title": "Apps a medida",
@@ -115,7 +117,8 @@
     "config": "Flags y configuración remota",
     "messages": "Mensajes en la app",
     "commands": "Comandos remotos",
-    "updates": "Actualizaciones remotas"
+    "updates": "Actualizaciones remotas",
+    "support": "Tickets de soporte"
   },
   "modules_hint": {
     "metrics": "Muestras de CPU, memoria, disco, red, batería y consumo.",
@@ -125,7 +128,8 @@
     "config": "Feature flags y una configuración JSON versionada, que se aplican sin publicar una versión nueva.",
     "messages": "Banners y diálogos que ven las personas que usan la app.",
     "commands": "Reiniciar, recargar, limpiar la caché, tomar una captura y más, equipo por equipo.",
-    "updates": "Releases firmadas que sube el CI, con despliegue gradual, versión mínima, pausa automática y rollback."
+    "updates": "Releases firmadas que sube el CI, con despliegue gradual, versión mínima, pausa automática y rollback.",
+    "support": "Tickets abiertos desde la app con el contexto del equipo; se responden desde este panel y la app lee las respuestas."
   },
   "roles": {
     "owner": "Dueño",
@@ -179,7 +183,23 @@
     "alerts": "Alertas abiertas",
     "alerts_detail": "Alertas sin resolver en todas las apps.",
     "releases": "Releases desplegándose",
-    "releases_detail": "Publicadas bajo el 100 % · {{paused}} pausadas · {{drafts}} borradores"
+    "releases_detail": "Publicadas bajo el 100 % · {{paused}} pausadas · {{drafts}} borradores",
+    "contracts_active": "Contratos vigentes",
+    "contracts_active_detail": "Contratos en curso hoy.",
+    "contracts_expiring": "Por vencer",
+    "contracts_expiring_detail": "Terminan dentro de su plazo de aviso y no se renuevan solos.",
+    "contracts_grace": "En gracia",
+    "contracts_grace_detail": "Vencieron sin renovarse; sus apps están en período de gracia.",
+    "cycles_exceeded": "Ciclos excedidos",
+    "cycles_exceeded_detail": "Ciclos en curso que ya usaron más horas de las disponibles.",
+    "cycles_to_bill": "Por facturar",
+    "cycles_to_bill_detail": "Ciclos cerrados con horas extra que aún no se marcan como facturados.",
+    "tickets_open": "Tickets abiertos",
+    "tickets_open_detail": "Esperan una respuesta nuestra.",
+    "tickets_pending": "Esperando al cliente",
+    "tickets_pending_detail": "Respondidos; esperan al solicitante.",
+    "tickets_unread": "Mensajes sin leer",
+    "tickets_unread_detail": "Mensajes de solicitantes que nadie ha abierto todavía."
   },
   "companies": {
     "title": "Clientes",
@@ -226,7 +246,10 @@
     "apps_empty": "Este cliente todavía no tiene apps.",
     "new_app": "Nueva app",
     "delete_title": "¿Eliminar este cliente?",
-    "delete_body": "Se eliminará «{{name}}» y sus vínculos con contactos. Los contactos se mantienen. Un cliente que todavía tiene apps no se puede eliminar: elimina o mueve las apps primero."
+    "delete_body": "Se eliminará «{{name}}» y sus vínculos con contactos. Los contactos se mantienen. Un cliente que todavía tiene apps, contratos o entradas de bitácora no se puede eliminar: elimínalos o muévelos primero.",
+    "contracts_title": "Contratos",
+    "contracts_description": "Lo que paga este cliente y las horas de trabajo que incluye cada ciclo.",
+    "contracts_empty": "Este cliente todavía no tiene contratos."
   },
   "company_contacts": {
     "title": "Contactos",
@@ -373,7 +396,8 @@
     "config": "Flags y configuración",
     "messages": "Mensajes",
     "diagnostics": "Fallos y logs",
-    "releases": "Releases"
+    "releases": "Releases",
+    "work_log": "Bitácora"
   },
   "summary": {
     "connected": "Conectadas ahora",
@@ -386,7 +410,11 @@
     "created": "Creada",
     "updated": "Actualizada",
     "screenshots_on": "Permitidas, donde cada equipo también las permita",
-    "screenshots_off": "Desactivadas"
+    "screenshots_off": "Desactivadas",
+    "support": "Tickets de soporte",
+    "support_assignee": "Los recibe {{email}}",
+    "support_nobody": "Nadie los recibe",
+    "support_link": "Ver tickets"
   },
   "ingest": {
     "title": "Ingesta",
@@ -401,7 +429,9 @@
     "modules": "Reporta: {{modules}}.",
     "unavailable_title": "No hay ninguna llave activa",
     "unavailable_body": "El SDK se inscribe con una de las llaves de la app, y todas están revocadas.",
-    "unavailable_link": "Crea una en Configuración."
+    "unavailable_link": "Crea una en Configuración.",
+    "support": "Con el módulo de soporte, la app abre un ticket con",
+    "support_more": "y lee y continúa los suyos con tickets(), ticket(id) y replyTicket(id, mensaje)."
   },
   "hours": {
     "enabled": "Este cliente trabaja con horario",
@@ -732,7 +762,9 @@
       "message": "Mensaje",
       "crash": "Fallo",
       "alert_rule": "Regla de alerta",
-      "alert": "Alerta"
+      "alert": "Alerta",
+      "contract": "Contrato",
+      "ticket": "Ticket"
     },
     "events": {
       "company": {
@@ -813,15 +845,41 @@
         "withdrawn": "Release retirada",
         "rolled_back": "Línea revertida a una release",
         "deleted": "Release eliminada"
+      },
+      "contract": {
+        "created": "Contrato creado",
+        "updated": "Contrato actualizado",
+        "renewed": "Contrato renovado",
+        "cancelled": "Contrato cancelado",
+        "deleted": "Contrato eliminado",
+        "notice_sent": "Aviso de término enviado",
+        "lapsed": "Contrato vencido sin renovar"
+      },
+      "cycle": {
+        "closed": "Ciclo de horas cerrado",
+        "billed": "Ciclo marcado como facturado"
+      },
+      "work_log": {
+        "created": "Trabajo registrado en la bitácora",
+        "updated": "Entrada de bitácora actualizada",
+        "deleted": "Entrada de bitácora eliminada"
+      },
+      "ticket": {
+        "opened": "Ticket abierto desde la app",
+        "replied": "Ticket respondido",
+        "status_changed": "Cambió el estado de un ticket"
       }
     },
     "automatic": "Automático",
     "reasons": {
       "grace_period_ended": "Terminó el período de gracia",
       "rollback_rate": "La tasa de rollback superó el umbral",
-      "crash_rate": "La tasa de fallos superó el umbral"
+      "crash_rate": "La tasa de fallos superó el umbral",
+      "contract_lapsed": "El contrato venció sin renovarse",
+      "contract_renewed": "Se renovó el contrato"
     },
-    "open_release": "Release {{version}}"
+    "open_release": "Release {{version}}",
+    "open_contract": "Ver contrato"
   },
   "module_off": {
     "title": "{{modules}}: desactivado en esta app",
@@ -887,7 +945,9 @@
     "crash_spike": "Alza de fallos",
     "error_log_spike": "Alza de logs de error",
     "enrollment_spike": "Alza de inscripciones",
-    "release_rollbacks": "Rollbacks de releases"
+    "release_rollbacks": "Rollbacks de releases",
+    "contract_expiring": "Contrato por vencer",
+    "cycle_hours_low": "Pocas horas en el ciclo"
   },
   "alert_kinds_hint": {
     "installation_offline": "Un equipo lleva más tiempo que el umbral sin enviar un latido.",
@@ -896,7 +956,9 @@
     "crash_spike": "Al menos tantos reportes de fallos como el umbral dentro de la ventana.",
     "error_log_spike": "Al menos tantas entradas de log de error o fatales como el umbral dentro de la ventana.",
     "enrollment_spike": "Al menos tantas instalaciones nuevas como el umbral dentro de la ventana. Así se ve una llave filtrada.",
-    "release_rollbacks": "Al menos tantos rollbacks de una actualización como el umbral dentro de la ventana, en todas las releases de la app."
+    "release_rollbacks": "Al menos tantos rollbacks de una actualización como el umbral dentro de la ventana, en todas las releases de la app.",
+    "contract_expiring": "Un contrato sin renovación automática termina dentro de los días del umbral.",
+    "cycle_hours_low": "Al ciclo de horas en curso de un contrato le queda menos del porcentaje del umbral de sus horas disponibles."
   },
   "json": {
     "format": "Formatear",
@@ -1226,7 +1288,10 @@
     "note": "Nota",
     "note_hint": "Qué se hizo al respecto. Opcional; queda guardada con la alerta.",
     "resolved_title": "Resuelta",
-    "resolved_body": "Resuelta el {{date}} por {{by}}."
+    "resolved_body": "Resuelta el {{date}} por {{by}}.",
+    "open_contract": "Ver contrato",
+    "cycle_usage": "Horas del ciclo",
+    "cycle_usage_value": "{{used}} usadas de {{available}}"
   },
   "rules": {
     "title": "Reglas",
@@ -1248,12 +1313,14 @@
     "hints": {
       "app": "Vacío vigila todas las apps, incluidas las que se creen después.",
       "window": "Entre {{min}} y {{max}} minutos.",
-      "notify": "Tú recibirás los avisos, por el centro de notificaciones del sitio. Otra persona puede tomarlos con «Avisarme a mí»."
+      "notify": "Tú recibirás los avisos, por el centro de notificaciones del sitio. Otra persona puede tomarlos con «Avisarme a mí».",
+      "app_contracts": "Vacío vigila todos los contratos; con una app, solo los contratos que la cubren."
     },
     "threshold": {
       "minutes": "Minutos desconectada",
       "percent": "Umbral (%)",
-      "count": "Umbral (cantidad)"
+      "count": "Umbral (cantidad)",
+      "days": "Días antes del término"
     },
     "threshold_hint": {
       "installation_offline": "Entre 1 y 10.080 minutos (una semana).",
@@ -1262,7 +1329,9 @@
       "crash_spike": "Reportes de fallos dentro de la ventana.",
       "error_log_spike": "Entradas de error o fatales dentro de la ventana.",
       "enrollment_spike": "Instalaciones nuevas dentro de la ventana.",
-      "release_rollbacks": "Rollbacks reportados dentro de la ventana, de 1 a 100.000."
+      "release_rollbacks": "Rollbacks reportados dentro de la ventana, de 1 a 100.000.",
+      "contract_expiring": "Días antes del último día del contrato, de 1 a 365.",
+      "cycle_hours_low": "Porcentaje de las horas disponibles del ciclo que queda, de 0 a 100. Con 0 avisa cuando se acaban."
     },
     "range": "Entre {{min}} y {{max}}.",
     "condition": {
@@ -1272,7 +1341,9 @@
       "crash_spike": "Al menos {{threshold}} fallos en {{window}}",
       "error_log_spike": "Al menos {{threshold}} entradas de log de error en {{window}}",
       "enrollment_spike": "Al menos {{threshold}} instalaciones nuevas en {{window}}",
-      "release_rollbacks": "Al menos {{threshold}} rollbacks de actualizaciones en {{window}}"
+      "release_rollbacks": "Al menos {{threshold}} rollbacks de actualizaciones en {{window}}",
+      "contract_expiring": "Un contrato termina dentro de {{threshold}}",
+      "cycle_hours_low": "A un ciclo le queda menos del {{threshold}} de sus horas"
     },
     "window_value": "ventana de {{window}}",
     "enabled": "Activa",
@@ -1557,5 +1628,480 @@
     "no_offer": "No se le ofrece nada: ejecuta la {{version}} y su línea no tiene una release más nueva que le llegue, o la app está en gracia o suspendida.",
     "reports_title": "Reportes",
     "reports_empty": "Este equipo no ha reportado ninguna actualización."
+  },
+  "audit_trail": {
+    "full_log": "Registro completo"
+  },
+  "contract_statuses": {
+    "scheduled": "Programado",
+    "active": "Vigente",
+    "grace": "En gracia",
+    "ended": "Terminado",
+    "cancelled": "Cancelado"
+  },
+  "cycle_statuses": {
+    "open": "Abierto",
+    "closed": "Cerrado",
+    "billed": "Facturado"
+  },
+  "billing_periods": {
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "one_time": "Pago único"
+  },
+  "cycle_periods": {
+    "daily": "Diario",
+    "weekly": "Semanal",
+    "monthly": "Mensual"
+  },
+  "cycle_periods_per": {
+    "daily": "por día",
+    "weekly": "por semana",
+    "monthly": "por mes"
+  },
+  "grace_allowances": {
+    "updates": "Actualizaciones",
+    "support": "Soporte"
+  },
+  "grace_allowances_hint": {
+    "updates": "Durante la gracia las apps siguen recibiendo actualizaciones.",
+    "support": "Durante la gracia la app sigue pudiendo abrir y continuar tickets de soporte."
+  },
+  "work_kinds": {
+    "maintenance": "Mantención",
+    "support": "Soporte",
+    "development": "Desarrollo",
+    "other": "Otro"
+  },
+  "contracts": {
+    "title": "Contratos",
+    "description": "Lo que paga cada cliente, qué apps cubre y cuántas horas de trabajo incluye cada ciclo. Los que vencen antes aparecen primero.",
+    "panel_title": "Todos los contratos",
+    "count_one": "{{count}} contrato",
+    "count_other": "{{count}} contratos",
+    "new": "Nuevo contrato",
+    "back": "Todos los contratos",
+    "empty_title": "Aún no hay contratos",
+    "empty_description": "Crea el primero para llevar las horas incluidas, la renovación y el período de gracia de un cliente.",
+    "no_matches": "Ningún contrato coincide con estos filtros.",
+    "expiring": "Por vencer",
+    "expiring_days_zero": "Vence hoy",
+    "expiring_days_one": "Por vencer · {{count}} día",
+    "expiring_days_other": "Por vencer · {{count}} días",
+    "days_left_zero": "Termina hoy",
+    "days_left_one": "Queda {{count}} día",
+    "days_left_other": "Quedan {{count}} días",
+    "open_ended": "indefinido",
+    "auto_renews_one": "Se renueva solo por {{count}} mes",
+    "auto_renews_other": "Se renueva solo por {{count}} meses",
+    "no_apps": "Sin apps",
+    "no_cycle": "Sin ciclo en curso",
+    "usage": "Horas del ciclo en curso",
+    "usage_value": "{{used}} de {{available}}",
+    "usage_used_only": "{{used}} usadas",
+    "over_by": "{{hours}} de exceso",
+    "columns": {
+      "name": "Contrato",
+      "apps": "Apps",
+      "status": "Estado",
+      "period": "Vigencia",
+      "usage": "Ciclo en curso",
+      "amount": "Monto"
+    },
+    "filters": {
+      "status": "Estado",
+      "any_status": "Todos los estados",
+      "any_company": "Todos los clientes"
+    }
+  },
+  "contract": {
+    "loading_title": "Contrato",
+    "details": "Datos",
+    "back_to_contract": "Volver al contrato",
+    "edit": "Editar",
+    "renew": "Renovar",
+    "renewed": "Contrato renovado.",
+    "renew_title": "Renovar el contrato",
+    "renew_body": "Hoy cubre hasta el {{date}}. Elige su nuevo último día: posterior al actual y no antes de hoy.",
+    "renew_body_open": "Elige su nuevo último día, o déjalo sin fecha de término.",
+    "renew_lapsed_title": "Este contrato venció",
+    "renew_lapsed_body": "Al renovarlo, las apps que su vencimiento dejó en gracia o suspendidas vuelven a quedar activas.",
+    "renew_until": "Nuevo último día",
+    "renew_until_hint": "El último día cubierto, incluido.",
+    "renew_preset_one": "+{{count}} mes",
+    "renew_preset_other": "+{{count}} meses",
+    "renew_open_ended": "Sin fecha de término",
+    "renew_too_early": "Tiene que ser el {{date}} o después.",
+    "cancel": "Cancelar contrato",
+    "cancelled": "Contrato cancelado.",
+    "cancel_title": "¿Cancelar «{{name}}»?",
+    "cancel_body": "Desde hoy no empiezan ciclos nuevos y no se envía nada más sobre este contrato. El ciclo en curso se cierra en su fecha normal. Las apps quedan como están: para suspenderlas usa el interruptor de cada app. Esto no se puede deshacer.",
+    "cancel_reason": "Motivo",
+    "cancel_reason_hint": "Opcional. Queda en el registro de auditoría.",
+    "cancelled_title": "Contrato cancelado",
+    "cancelled_body": "Cancelado el {{date}} por {{by}}. Ya no se puede editar ni renovar: para seguir, crea un contrato nuevo.",
+    "grace_title": "En período de gracia",
+    "grace_body": "El contrato venció sin renovarse y sus apps están en gracia hasta el {{date}}; después se suspenden. Renovarlo las reactiva.",
+    "grace_body_short": "El contrato venció sin renovarse y sus apps están en gracia. Renovarlo las reactiva.",
+    "ended_title": "Contrato terminado",
+    "ended_body": "Venció y terminó su período de gracia. Renovarlo reactiva las apps que su vencimiento suspendió.",
+    "expiring_title_zero": "Termina hoy",
+    "expiring_title_one": "Termina en {{count}} día",
+    "expiring_title_other": "Termina en {{count}} días",
+    "expiring_notified": "Se avisó al cliente el {{date}}, y las apps cubiertas muestran el aviso de término.",
+    "expiring_body": "No se renueva solo. El aviso al cliente sale dentro del plazo de aviso.",
+    "period": "Vigencia",
+    "renewal": "Renovación",
+    "no_auto_renew": "Manual",
+    "days_one": "{{count}} día",
+    "days_other": "{{count}} días",
+    "hours_plan": "Horas incluidas",
+    "hours_plan_value": "{{time}} {{period}}",
+    "overage_rate": "Valor de la hora extra",
+    "per_hour": "{{amount}} por hora",
+    "no_overage_rate": "Sin cobro por hora extra",
+    "rollover": "Acumulación",
+    "rollover_on": "Las horas sin usar pasan al ciclo siguiente",
+    "rollover_cap": "hasta {{time}}",
+    "rollover_cycles_one": "durante {{count}} ciclo",
+    "rollover_cycles_other": "durante {{count}} ciclos",
+    "rollover_off": "Las horas sin usar se pierden al cerrar el ciclo",
+    "grace": "Gracia",
+    "grace_allows": "permite: {{list}}",
+    "grace_allows_nothing": "no permite actualizaciones ni soporte",
+    "no_grace": "Sin gracia: al vencer, las apps se suspenden",
+    "apps": "Apps cubiertas",
+    "apps_none": "Este contrato no cubre ninguna app: las horas son del cliente en general.",
+    "lifecycle": "Ciclo de vida",
+    "lifecycle_hint": "Lo que el servicio hizo solo con este contrato, y quién lo cambió.",
+    "notice_sent_at": "Aviso de término",
+    "lapsed_at": "Vencido",
+    "cancelled_at": "Cancelado",
+    "not_yet": "Todavía no",
+    "history_title": "Historial",
+    "history_description": "Cada cambio de este contrato y de sus ciclos, del más nuevo al más antiguo.",
+    "history_empty": "Todavía no se ha registrado nada.",
+    "history": {
+      "reason": "Motivo: {{reason}}",
+      "reference": "Referencia: {{reference}}",
+      "cycle": "{{range}} · {{used}} usadas",
+      "renewed_until": "Hasta el {{date}}",
+      "renewed_open": "Sin fecha de término",
+      "recipients": "Enviado a {{recipients}}",
+      "lapsed": "Apps pasadas a: {{state}}"
+    },
+    "delete_title": "¿Eliminar este contrato?",
+    "delete_body": "Se eliminará «{{name}}» para siempre. Solo se puede eliminar un contrato sin ciclos cerrados ni trabajo registrado; si no, cancélalo.",
+    "delete_refused": "Este contrato tiene ciclos cerrados o trabajo registrado, así que es historia: cancélalo en vez de eliminarlo."
+  },
+  "contract_editor": {
+    "new_title": "Nuevo contrato",
+    "edit_title": "Editar «{{name}}»",
+    "description": "Las horas se escriben en horas y se guardan en minutos exactos.",
+    "cancelled_title": "Contrato cancelado",
+    "plan": "Plan y precio",
+    "plan_hint": "Qué se cobra y cada cuánto.",
+    "term": "Vigencia y renovación",
+    "term_hint": "Las fechas son días calendario en la zona del servicio.",
+    "hours": "Horas por ciclo y acumulación",
+    "hours_hint": "Cuántas horas de trabajo incluye cada ciclo, qué cuesta pasarse y qué pasa con las que sobran.",
+    "grace": "Fin de contrato y gracia",
+    "grace_hint": "Qué pasa con las apps cuando el contrato vence sin renovarse.",
+    "apps": "Apps cubiertas",
+    "apps_hint": "Una app puede estar cubierta por contratos sucesivos, pero nunca por dos en las mismas fechas.",
+    "apps_pick_company": "Elige primero el cliente.",
+    "apps_empty": "Este cliente todavía no tiene apps. Puedes crear el contrato igual: las horas serán del cliente en general.",
+    "no_limit": "Sin límite",
+    "fields": {
+      "name": "Nombre",
+      "company": "Cliente",
+      "amount": "Monto",
+      "currency": "Moneda",
+      "billing_period": "Periodicidad de cobro",
+      "starts_on": "Primer día",
+      "ends_on": "Último día",
+      "auto_renew": "Se renueva solo",
+      "renewal_months": "Meses por renovación",
+      "notice_days": "Días de aviso",
+      "cycle_period": "Duración del ciclo",
+      "included_hours": "Horas incluidas por ciclo",
+      "overage_rate": "Valor de la hora extra ({{currency}})",
+      "rollover": "Acumular las horas sin usar",
+      "rollover_max_hours": "Máximo acumulado (horas)",
+      "rollover_max_cycles": "Ciclos que duran",
+      "grace_days": "Días de gracia",
+      "grace_allows": "Durante la gracia se permite",
+      "grace_message": "Mensaje durante la gracia"
+    },
+    "hints": {
+      "name": "Como lo nombrarías en una factura, por ejemplo «Mantención 2026».",
+      "company_fixed": "El cliente no cambia una vez creado el contrato.",
+      "anchored": "Ya existe un ciclo: los ciclos se calculan desde este valor, así que no se puede cambiar.",
+      "ends_on": "Incluido. Vacío deja el contrato indefinido.",
+      "auto_renew": "Al llegar a su último día se extiende solo; nunca vence ni se avisa al cliente.",
+      "auto_renew_no_end": "Sin último día no hay nada que renovar: un contrato indefinido ya sigue solo.",
+      "notice_days": "Cuántos días antes del término se avisa al cliente y las apps muestran el aviso. De 0 a {{max}}.",
+      "cycle_period": "Los ciclos parten el primer día del contrato.",
+      "included_hours": "Puedes usar decimales: 12,5 son 12 h 30 min. 0 si se cobra todo por hora.",
+      "overage_rate": "Lo que se cobra por cada hora sobre las disponibles del ciclo.",
+      "rollover": "Lo que no se use en un ciclo se suma al siguiente, con los límites de abajo.",
+      "rollover_max_hours": "Vacío, sin tope.",
+      "rollover_max_cycles": "Cuántos ciclos sobreviven las horas acumuladas. Vacío, sin límite.",
+      "grace_days": "De 0 a {{max}}. Con 0, al vencer las apps se suspenden de inmediato.",
+      "grace_message": "Lo que muestran las apps mientras están en gracia. Opcional.",
+      "notes": "Solo para este panel; el cliente no las ve."
+    },
+    "errors": {
+      "money_clp": "Un monto en pesos, sin decimales.",
+      "money_uf": "Un monto en UF, con hasta dos decimales.",
+      "ends_before": "No puede ser antes del primer día.",
+      "hours": "Un número de horas, 0 o más.",
+      "anchored": "El primer día y la duración del ciclo ya no se pueden cambiar: existe al menos un ciclo, y los ciclos se calculan desde ellos.",
+      "app_clash": "Una de las apps ya está cubierta por otro contrato en esas fechas. ({{detail}})",
+      "cancelled": "Un contrato cancelado no se puede editar ni renovar. Crea uno nuevo.",
+      "ends_before_cycle": "Ya hay un ciclo que empieza después de ese último día.",
+      "foreign_app": "Todas las apps tienen que ser del mismo cliente del contrato."
+    }
+  },
+  "cycle": {
+    "current_title": "Ciclo en curso",
+    "none": "Este contrato no tiene un ciclo en curso.",
+    "none_scheduled": "El primer ciclo empieza el {{date}}.",
+    "included": "Incluidas",
+    "carried": "Acumuladas",
+    "available": "Disponibles",
+    "used": "Usadas",
+    "remaining": "Restantes",
+    "overage": "Exceso",
+    "overage_estimate": "El exceso costaría {{amount}} a {{rate}} por hora. Es una estimación mientras el ciclo está abierto; al cerrarlo queda fijo.",
+    "overage_no_rate": "El contrato no tiene valor de hora extra, así que el exceso no tiene un monto.",
+    "carried_from": "Acumuladas de ciclos anteriores",
+    "carried_bucket_one": "{{time}} del ciclo del {{date}} · {{count}} ciclo",
+    "carried_bucket_other": "{{time}} del ciclo del {{date}} · {{count}} ciclos",
+    "by_app": "Uso por app",
+    "by_app_empty": "Todavía no se registra trabajo en este ciclo.",
+    "work_log": "Bitácora",
+    "work_log_title": "Bitácora del ciclo {{range}}",
+    "work_log_summary_one": "{{count}} entrada · {{used}} usadas de {{available}}",
+    "work_log_summary_other": "{{count}} entradas · {{used}} usadas de {{available}}",
+    "work_log_empty": "No se registró trabajo en este ciclo.",
+    "history_title": "Ciclos",
+    "history_description": "Cada ciclo del contrato, del más nuevo al más antiguo.",
+    "history_empty": "Todavía no hay ciclos.",
+    "count_one": "{{count}} ciclo",
+    "count_other": "{{count}} ciclos",
+    "columns": {
+      "period": "Período",
+      "hours": "Usadas / disponibles",
+      "overage": "Exceso",
+      "closing": "Cierre",
+      "actions": "Acciones"
+    },
+    "carried_short": "incluye {{time}} acumuladas",
+    "expired_short": "{{time}} se perdieron al cerrar",
+    "estimate": "estimado",
+    "billed_on": "Facturado el {{date}}",
+    "closed_on": "Cerrado el {{date}}",
+    "ended_open": "Terminó; se cierra solo pronto",
+    "running": "En curso",
+    "close": "Cerrar",
+    "close_title": "¿Cerrar este ciclo?",
+    "close_body": "El balance del ciclo {{range}} queda fijo: las horas que sobren pasan al siguiente según el contrato y ya no se puede registrar ni corregir trabajo en él. El servicio lo cierra solo de todas formas.",
+    "closed_toast": "Ciclo cerrado.",
+    "bill": "Marcar facturado",
+    "bill_title": "Marcar el ciclo como facturado",
+    "bill_body": "El ciclo {{range}} queda como facturado.",
+    "bill_body_overage": "El ciclo {{range}} tuvo {{time}} de exceso por {{amount}}. Queda como facturado.",
+    "reference": "Referencia",
+    "reference_hint": "El número de factura o boleta. Opcional.",
+    "billed_toast": "Ciclo marcado como facturado."
+  },
+  "work_log": {
+    "title": "Bitácora",
+    "description": "El trabajo hecho para el cliente, día por día.",
+    "description_contract": "El trabajo registrado bajo este contrato. Descuenta de las horas del ciclo en que cae cada día.",
+    "description_app": "El trabajo hecho en esta app. Cada entrada descuenta del contrato que la cubre ese día.",
+    "description_company": "Todo el trabajo hecho para este cliente, en sus apps o en general.",
+    "summary_one": "{{count}} entrada · {{time}} en total",
+    "summary_other": "{{count}} entradas · {{time}} en total",
+    "create": "Registrar trabajo",
+    "created": "Trabajo registrado.",
+    "create_title": "Registrar trabajo",
+    "edit_title": "Editar entrada",
+    "edit_aria": "Editar la entrada del {{day}}",
+    "delete_aria": "Eliminar la entrada del {{day}}",
+    "delete_title": "¿Eliminar esta entrada?",
+    "delete_body": "Se eliminará el trabajo del {{day}} ({{time}}) y sus horas vuelven al ciclo.",
+    "locked": "Su ciclo está cerrado: el balance es final y la entrada no se puede cambiar.",
+    "whole_company": "Cliente en general",
+    "contract": "Contrato",
+    "no_contract": "Fuera de contrato",
+    "open_link": "Abrir enlace",
+    "empty": "Todavía no se registra trabajo",
+    "empty_description": "Cada entrada lleva el día, cuánto tomó, qué tipo de trabajo fue y qué se hizo.",
+    "no_matches": "Ninguna entrada coincide con estos filtros.",
+    "files_under": "Se registrará bajo «{{name}}», en el ciclo en que cae ese día.",
+    "files_outside": "Ningún contrato cubre ese día: quedará fuera de contrato.",
+    "pick_contract": "Elige un contrato",
+    "columns": {
+      "day": "Día",
+      "time": "Tiempo",
+      "work": "Trabajo",
+      "actions": "Acciones"
+    },
+    "filters": {
+      "kind": "Tipo",
+      "any_kind": "Todos los tipos",
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "fields": {
+      "day": "Día",
+      "duration": "Duración",
+      "hours": "Horas",
+      "minutes": "Minutos",
+      "kind": "Tipo de trabajo",
+      "app": "App",
+      "description": "Qué se hizo",
+      "link": "Enlace",
+      "contract": "Contrato",
+      "ticket": "Ticket"
+    },
+    "hints": {
+      "app": "Vacío si el trabajo fue para el cliente en general.",
+      "link": "Un pull request, un ticket o un documento. Opcional.",
+      "contract": "Más de un contrato cubre el {{day}}: elige bajo cuál se registra.",
+      "ticket": "El ticket de soporte que respondió este trabajo. Opcional."
+    },
+    "errors": {
+      "future": "No se puede registrar trabajo en un día futuro.",
+      "outside_contract": "Ese día está fuera de la vigencia del contrato.",
+      "duration": "Entre 1 minuto y {{max}} horas.",
+      "link": "Una dirección http o https completa.",
+      "choose_contract": "Más de un contrato cubre ese día: elige uno.",
+      "closed_cycle": "Ese día cae en un ciclo ya cerrado: su balance es final y no se puede registrar ni cambiar trabajo en él.",
+      "not_covered": "Ese contrato no cubre ese día.",
+      "ticket": "Ese ticket es de otro cliente: elige uno de este cliente o ninguno."
+    },
+    "ticket": "Ticket #{{number}}",
+    "no_ticket": "Sin ticket"
+  },
+  "app_contract": {
+    "title": "Contrato",
+    "none": "Ningún contrato cubre esta app."
+  },
+  "ticket_statuses": {
+    "open": "Abierto",
+    "pending": "Esperando al cliente",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
+  },
+  "ticket_statuses_hint": {
+    "open": "Espera una respuesta nuestra: es nuevo, o el solicitante volvió a escribir.",
+    "pending": "Respondido; espera al solicitante.",
+    "resolved": "Terminado. Si el solicitante vuelve a escribir, se reabre.",
+    "closed": "Terminado para siempre: el solicitante tiene que abrir uno nuevo."
+  },
+  "tickets": {
+    "title": "Tickets de soporte",
+    "description": "Lo que piden las personas desde dentro de las apps de los clientes. Se actualiza cada 30 segundos.",
+    "panel_title": "Bandeja",
+    "count_one": "{{count}} ticket",
+    "count_other": "{{count}} tickets",
+    "search": "Buscar por asunto, solicitante o #número",
+    "filters": {
+      "status": "Estado",
+      "active": "Por atender",
+      "all": "Todos los estados",
+      "any_app": "Todas las apps",
+      "any_company": "Todos los clientes",
+      "one_installation": "Solo una instalación"
+    },
+    "columns": {
+      "ticket": "Ticket",
+      "app": "App",
+      "status": "Estado",
+      "activity": "Última actividad",
+      "time": "Tiempo"
+    },
+    "unread_one": "{{count}} sin leer",
+    "unread_other": "{{count}} sin leer",
+    "turn_requester": "Escribió el solicitante",
+    "turn_staff": "Respondimos",
+    "anonymous": "Sin nombre",
+    "empty": "No hay tickets por atender",
+    "empty_description": "Cuando alguien abra un ticket desde una app con el módulo de soporte, aparecerá aquí.",
+    "no_matches": "Ningún ticket coincide con estos filtros.",
+    "back": "Bandeja de tickets",
+    "loading_title": "Ticket",
+    "status": "Estado",
+    "status_changed": "Estado actualizado.",
+    "edit_subject": "Editar asunto",
+    "subject": "Asunto",
+    "subject_saved": "Asunto actualizado.",
+    "conversation": "Conversación",
+    "conversation_description": "Lo que escribió el solicitante desde la app y lo que se le respondió. La app lee las respuestas la próxima vez que consulta el ticket.",
+    "from_requester": "Solicitante",
+    "from_staff": "Soporte",
+    "seen": "Leído el {{date}}",
+    "not_seen": "Todavía sin leer",
+    "no_messages": "Este ticket no tiene mensajes.",
+    "reply": "Respuesta",
+    "reply_hint": "La app la muestra la próxima vez que consulte el ticket. No se envía correo.",
+    "status_after": "Estado después de responder",
+    "send": "Enviar respuesta",
+    "sent": "Respuesta enviada.",
+    "closed_notice": "Este ticket está cerrado: el solicitante ya no puede escribir en él. Cámbiale el estado para reabrirlo.",
+    "details": "Datos",
+    "requester": "Solicitante",
+    "email": "Correo",
+    "app": "App",
+    "company": "Cliente",
+    "installation": "Instalación",
+    "installation_gone": "Ya no existe",
+    "opened": "Abierto",
+    "last_activity": "Última actividad",
+    "resolved_at": "Resuelto",
+    "logged": "Tiempo registrado",
+    "context": "Contexto del equipo",
+    "context_description": "Cómo estaba el equipo cuando se abrió el ticket. Queda guardado con el ticket y no cambia.",
+    "context_fields": {
+      "name": "Equipo",
+      "device_id": "ID del dispositivo",
+      "app_version": "Versión",
+      "channel": "Canal",
+      "platform": "Plataforma",
+      "os": "Sistema",
+      "arch": "Arquitectura",
+      "last_seen": "Visto por última vez"
+    },
+    "logs": "Logs recientes",
+    "crashes": "Fallos abiertos de esa versión",
+    "open_diagnostics": "Ver fallos y logs de la app",
+    "no_diagnostics": "No se adjuntó diagnóstico: la app no tiene los módulos de logs ni de fallos, o el solicitante no lo envió.",
+    "no_context": "Este ticket no trae el contexto del equipo.",
+    "work_log_title": "Tiempo registrado en este ticket",
+    "work_log_description": "El trabajo hecho para responder este ticket. Descuenta del contrato que cubre la app ese día, como cualquier otra entrada de la bitácora.",
+    "installation_panel": {
+      "title": "Tickets de soporte",
+      "description": "Los tickets abiertos desde este equipo, del más reciente al más antiguo.",
+      "empty": "Este equipo no ha abierto tickets",
+      "empty_description": "Cuando alguien abra un ticket desde la app en este equipo, aparecerá aquí.",
+      "see_all": "Ver en la bandeja"
+    },
+    "assignee": {
+      "title": "Soporte",
+      "description": "Quién recibe en la campana del sitio cada ticket nuevo de esta app y cada mensaje del solicitante. No se envía correo.",
+      "current": "Responsable",
+      "none": "Nadie todavía",
+      "you": "tú",
+      "take": "Tomar los tickets de esta app",
+      "taken": "Ahora recibes los tickets de esta app.",
+      "yours": "Ya recibes los tickets de esta app.",
+      "see_tickets": "Ver tickets de esta app"
+    },
+    "hint_one": "{{count}} ticket espera una respuesta",
+    "hint_other": "{{count}} tickets esperan una respuesta",
+    "hint_link": "Ver tickets"
   }
 }

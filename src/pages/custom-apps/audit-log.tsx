@@ -35,6 +35,8 @@ const RESOURCE_TYPES = [
   "crash",
   "alert_rule",
   "alert",
+  "contract",
+  "ticket",
 ] as const;
 
 /** Where a resource lives in this panel, for the types that have a screen. */
@@ -55,6 +57,10 @@ const resourceRoute = (type: string | null, id: string | null) => {
       return customAppsRoute.alert(id);
     case "alert_rule":
       return customAppsRoute.alertRules;
+    case "contract":
+      return customAppsRoute.contract(id);
+    case "ticket":
+      return customAppsRoute.ticket(id);
     default:
       return null;
   }
@@ -67,6 +73,15 @@ const resourceRoute = (type: string | null, id: string | null) => {
  */
 const releaseOf = (metadata: AuditEntry["metadata"]) =>
   typeof metadata?.release_id === "string" && metadata.release_id ? metadata.release_id : null;
+
+/**
+ * The contract an app's state change came from, when a contract's lapse or its renewal switched the
+ * app: the row links to it, and says which of the two it was even when a person renewed by hand.
+ */
+const contractOf = (entry: AuditEntry) =>
+  entry.event === "app.state_changed" && typeof entry.metadata?.contract_id === "string" && entry.metadata.contract_id
+    ? entry.metadata.contract_id
+    : null;
 
 /**
  * Who wrote an entry that has no actor: the service itself. An automatic change says why — a grace
@@ -245,6 +260,8 @@ export const AuditLog = () => {
                     {rows.map((entry) => {
                       const route = resourceRoute(entry.resource_type, entry.resource_id);
                       const releaseId = entry.event.startsWith("release.") && entry.event !== "release.deleted" ? releaseOf(entry.metadata) : null;
+                      const contractId = contractOf(entry);
+                      const reason = typeof entry.metadata?.reason === "string" ? entry.metadata.reason : null;
                       const resource = [entry.resource_type, entry.resource_id].filter(Boolean).join(" ");
                       return (
                         <tr key={entry.id} className="border-b border-neutral-800/70 align-top text-[13px] text-neutral-300 last:border-0">
@@ -257,6 +274,12 @@ export const AuditLog = () => {
                           <td className="py-3 pr-4">
                             <span className="block text-text">{t(`custom_apps:audit.events.${entry.event}`, {defaultValue: entry.event})}</span>
                             <span className="block font-mono text-[11px] text-neutral-600">{entry.event}</span>
+                            {/* An automatic entry already says why under its actor; a person's renewal says it here. */}
+                            {contractId && reason && (entry.actor_email || entry.actor_id) && (
+                              <span className="mt-1 block text-[12px] text-neutral-500">
+                                {t(`custom_apps:audit.reasons.${reason}`, {defaultValue: reason})}
+                              </span>
+                            )}
                           </td>
                           <td className="py-3 pr-4 break-all">
                             {entry.actor_email || entry.actor_id || <SystemActor metadata={entry.metadata} />}
@@ -272,6 +295,14 @@ export const AuditLog = () => {
                               )
                             ) : (
                               <span className="text-neutral-600">—</span>
+                            )}
+                            {contractId && (
+                              <Link
+                                to={customAppsRoute.contract(contractId)}
+                                className="mt-1 block text-[12px] text-neutral-400 hover:text-text hover:underline"
+                              >
+                                {t("custom_apps:audit.open_contract")}
+                              </Link>
                             )}
                             {releaseId && (
                               <Link

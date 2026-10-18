@@ -1,6 +1,25 @@
 import {useCallback} from "react";
 import {useTranslation} from "react-i18next";
-import {AddressBook, AppWindow, ArrowClockwise, Bell, Buildings, CheckCircle, Package, Plugs, Prohibit, Warning} from "@phosphor-icons/react";
+import {
+  AddressBook,
+  AppWindow,
+  ArrowClockwise,
+  Bell,
+  Buildings,
+  CalendarX,
+  ChatCircleDots,
+  CheckCircle,
+  FileText,
+  HourglassLow,
+  Lifebuoy,
+  Package,
+  Plugs,
+  Prohibit,
+  Receipt,
+  Timer,
+  Users,
+  Warning,
+} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
@@ -19,7 +38,8 @@ const REFRESH_MS = 30_000;
 
 /**
  * What the panel opens on: how many installations are connected right now, which ones are waiting
- * for a look, and what was enrolled lately.
+ * for a look, what was enrolled lately — and, beside the contracts, the support tickets waiting on
+ * us, waiting on the client and not opened yet.
  *
  * It is one request — the service aggregates — so the whole screen loads and refreshes as one, and
  * a refresh keeps the figures on screen rather than flashing a spinner every thirty seconds.
@@ -128,6 +148,88 @@ export const Overview = () => {
                 />
               )}
             </div>
+
+            {/* Contracts and cycles: optional, so a service that predates them still renders. */}
+            {(data.contracts || data.cycles) && (
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+                {data.contracts && (
+                  <>
+                    <StatCard
+                      label={t("custom_apps:overview.contracts_active")}
+                      icon={<FileText size={18} />}
+                      value={data.contracts.active}
+                      to={`${customAppsRoute.contracts}?status=active`}
+                      detail={t("custom_apps:overview.contracts_active_detail")}
+                    />
+                    <StatCard
+                      label={t("custom_apps:overview.contracts_expiring")}
+                      icon={<CalendarX size={18} />}
+                      value={data.contracts.expiring}
+                      attention={data.contracts.expiring > 0}
+                      to={`${customAppsRoute.contracts}?status=active`}
+                      detail={t("custom_apps:overview.contracts_expiring_detail")}
+                    />
+                    <StatCard
+                      label={t("custom_apps:overview.contracts_grace")}
+                      icon={<Timer size={18} />}
+                      value={data.contracts.in_grace}
+                      attention={data.contracts.in_grace > 0}
+                      to={`${customAppsRoute.contracts}?status=grace`}
+                      detail={t("custom_apps:overview.contracts_grace_detail")}
+                    />
+                  </>
+                )}
+                {data.cycles && (
+                  <>
+                    <StatCard
+                      label={t("custom_apps:overview.cycles_exceeded")}
+                      icon={<HourglassLow size={18} />}
+                      value={data.cycles.exceeded}
+                      attention={data.cycles.exceeded > 0}
+                      to={customAppsRoute.contracts}
+                      detail={t("custom_apps:overview.cycles_exceeded_detail")}
+                    />
+                    <StatCard
+                      label={t("custom_apps:overview.cycles_to_bill")}
+                      icon={<Receipt size={18} />}
+                      value={data.cycles.to_bill}
+                      attention={data.cycles.to_bill > 0}
+                      to={customAppsRoute.contracts}
+                      detail={t("custom_apps:overview.cycles_to_bill_detail")}
+                    />
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Support tickets: optional, so a service that predates them still renders. */}
+            {data.tickets && (
+              <div className="grid gap-4 sm:grid-cols-3">
+                <StatCard
+                  label={t("custom_apps:overview.tickets_open")}
+                  icon={<Lifebuoy size={18} />}
+                  value={data.tickets.open}
+                  attention={data.tickets.open > 0}
+                  to={customAppsRoute.tickets({status: "open"})}
+                  detail={t("custom_apps:overview.tickets_open_detail")}
+                />
+                <StatCard
+                  label={t("custom_apps:overview.tickets_pending")}
+                  icon={<Users size={18} />}
+                  value={data.tickets.pending}
+                  to={customAppsRoute.tickets({status: "pending"})}
+                  detail={t("custom_apps:overview.tickets_pending_detail")}
+                />
+                <StatCard
+                  label={t("custom_apps:overview.tickets_unread")}
+                  icon={<ChatCircleDots size={18} />}
+                  value={data.tickets.unread}
+                  attention={data.tickets.unread > 0}
+                  to={customAppsRoute.tickets()}
+                  detail={t("custom_apps:overview.tickets_unread_detail")}
+                />
+              </div>
+            )}
 
             <div className="grid gap-6 xl:grid-cols-2">
               <Panel title={t("custom_apps:overview.review_title")} description={t("custom_apps:overview.review_description")}>

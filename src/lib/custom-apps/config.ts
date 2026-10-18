@@ -75,6 +75,8 @@ export const customAppsRoute = {
   appMessages: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/messages`,
   /** Crash groups and fleet logs, for an app with the `crashes` or `logs` module. */
   appDiagnostics: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/diagnostics`,
+  /** The app's work log (bitácora). Not a module: work is logged whatever the app reports. */
+  appWorkLog: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/work-log`,
   /** Releases uploaded from CI, for an app with the `updates` module. */
   appReleases: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/releases`,
   /** One release, addressed on its own like a crash group. */
@@ -99,4 +101,26 @@ export const customAppsRoute = {
   alertRules: `${CUSTOM_APPS_ROUTE}/alerts/rules`,
   alert: (id: string) => `${CUSTOM_APPS_ROUTE}/alerts/${encodeURIComponent(id)}`,
   audit: `${CUSTOM_APPS_ROUTE}/audit-log`,
+  /** The support inbox, optionally filtered (`status=all` lists every status). */
+  tickets: (filters: {status?: string; app_id?: string; company_id?: string; installation_id?: string; search?: string} = {}) => {
+    const search = new URLSearchParams(
+      Object.entries(filters).filter((entry): entry is [string, string] => Boolean(entry[1])),
+    ).toString();
+    return `${CUSTOM_APPS_ROUTE}/tickets${search ? `?${search}` : ""}`;
+  },
+  /**
+   * One ticket. The notification centre links each `custom_apps.ticket_*` notification as
+   * `/custom-apps/tickets/<id>`, so that shape is a contract with the service, not a choice here.
+   */
+  ticket: (id: string) => `${CUSTOM_APPS_ROUTE}/tickets/${encodeURIComponent(id)}`,
+  contracts: `${CUSTOM_APPS_ROUTE}/contracts`,
+  /** `companyId` preselects the client, for the "new contract" button on a company. */
+  contractNew: (companyId?: string) =>
+    `${CUSTOM_APPS_ROUTE}/contracts/new${companyId ? `?company_id=${encodeURIComponent(companyId)}` : ""}`,
+  /**
+   * One contract. The `contract_expiring` and `cycle_hours_low` alerts and the contract audit
+   * events link here.
+   */
+  contract: (id: string) => `${CUSTOM_APPS_ROUTE}/contracts/${encodeURIComponent(id)}`,
+  contractEdit: (id: string) => `${CUSTOM_APPS_ROUTE}/contracts/${encodeURIComponent(id)}/edit`,
 } as const;

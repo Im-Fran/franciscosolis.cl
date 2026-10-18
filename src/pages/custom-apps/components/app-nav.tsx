@@ -1,6 +1,17 @@
 import {useTranslation} from "react-i18next";
 import {NavLink} from "react-router-dom";
-import {Bug, ChartBar, ChatCenteredText, Devices, GearSix, Package, Power, SlidersHorizontal, SquaresFour} from "@phosphor-icons/react";
+import {
+  Bug,
+  ChartBar,
+  ChatCenteredText,
+  Devices,
+  GearSix,
+  Notebook,
+  Package,
+  Power,
+  SlidersHorizontal,
+  SquaresFour,
+} from "@phosphor-icons/react";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import type {AppModule} from "@/lib/custom-apps/types.ts";
 import {cn} from "@/lib/utils.ts";
@@ -60,6 +71,8 @@ export const AppNav = ({id, needsReview, modules}: {id: string; needsReview: num
       badge: 0,
       shown: has("updates"),
     },
+    /* Not a module: work is logged on an app whatever the app itself reports. */
+    {to: customAppsRoute.appWorkLog(id), label: t("app_nav.work_log"), icon: Notebook, end: false, badge: 0, shown: true},
     {to: customAppsRoute.appStatus(id), label: t("app_nav.status"), icon: Power, end: false, badge: 0, shown: true},
     {to: customAppsRoute.appSettings(id), label: t("app_nav.settings"), icon: GearSix, end: false, badge: 0, shown: true},
   ].filter((item) => item.shown);
