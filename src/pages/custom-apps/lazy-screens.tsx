@@ -69,6 +69,10 @@ export const ContractEditor = lazy(() =>
 export const ContractDetail = lazy(() =>
   import("@/pages/custom-apps/contract-detail.tsx").then((m) => ({default: m.ContractDetail})),
 );
+export const Tickets = lazy(() => import("@/pages/custom-apps/tickets.tsx").then((m) => ({default: m.Tickets})));
+export const TicketDetail = lazy(() =>
+  import("@/pages/custom-apps/ticket-detail.tsx").then((m) => ({default: m.TicketDetail})),
+);
 export const CrashDetail = lazy(() =>
   import("@/pages/custom-apps/crash-detail.tsx").then((m) => ({default: m.CrashDetail})),
 );

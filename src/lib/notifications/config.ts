@@ -38,7 +38,10 @@ export const PAGE_SIZE = 20;
  */
 export const SERVICE_WORKER_URL = "/sw.js";
 
-/** `custom_apps` carries the custom-apps panel's alerts, for the accounts that create alert rules. */
+/**
+ * `custom_apps` carries the custom-apps panel's alerts and support tickets, for the accounts that
+ * create alert rules or receive an app's tickets.
+ */
 export const NOTIFICATION_CATEGORIES = ["account", "marketplace", "custom_apps"] as const;
 
 export const EMAIL_FREQUENCIES = ["immediate", "daily", "weekly", "never"] as const;

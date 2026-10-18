@@ -1,7 +1,7 @@
 import {useCallback, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
-import {ArrowSquareOut, LockSimple, Notebook, PencilSimple, Plus, Trash} from "@phosphor-icons/react";
+import {ArrowSquareOut, Lifebuoy, LockSimple, Notebook, PencilSimple, Plus, Trash} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input, Select} from "@/components/ui/input.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
@@ -19,6 +19,7 @@ import type {Column} from "@/components/admin/data-table.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {Pagination} from "@/components/admin/pagination.tsx";
 import {WorkLogDialog} from "@/pages/custom-apps/components/work-log/work-log-dialog.tsx";
+import type {WorkLogPreset} from "@/pages/custom-apps/components/work-log/work-log-dialog.tsx";
 import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
 
 const PAGE_SIZE = 25;
@@ -32,14 +33,20 @@ const PAGE_SIZE = 25;
  * closed and the next cycle's carried hours derive from it, so the service refuses to touch it.
  *
  * `onChanged` lets the page around it refresh what the entry moved — a contract's current cycle.
+ *
+ * `ticket` narrows it to the work logged against one support ticket, and a new entry starts linked
+ * to that ticket as support work — the ticket's own page shows its time this way. Elsewhere an entry
+ * linked to a ticket says so, and links to it.
  */
 export const WorkLogPanel = ({
   scope,
+  ticket,
   onChanged,
   title,
   description,
 }: {
   scope: WorkLogScope;
+  ticket?: {id: string; number: number};
   onChanged?: () => void;
   title?: string;
   description?: string;
@@ -58,15 +65,29 @@ export const WorkLogPanel = ({
   const appId = scope.kind === "app" ? scope.appId : "";
   const contractId = scope.kind === "contract" ? scope.contract.id : "";
   const companyId = scope.kind === "company" ? scope.companyId : "";
+  const ticketId = ticket?.id ?? "";
+  const ticketNumber = ticket?.number ?? 0;
+  /* Built from primitives: the dialog resets its form whenever the preset changes identity. */
+  const preset = useMemo<WorkLogPreset | undefined>(
+    () => (ticketId ? {ticketId, ticketNumber, kind: "support"} : undefined),
+    [ticketId, ticketNumber],
+  );
 
   const entries = useResource(
     useCallback(
       (signal: AbortSignal) => {
-        const filters = {kind: (kind || undefined) as WorkKind | undefined, from: from || undefined, to: to || undefined, limit: PAGE_SIZE, offset};
+        const filters = {
+          kind: (kind || undefined) as WorkKind | undefined,
+          from: from || undefined,
+          to: to || undefined,
+          ticket_id: ticketId || undefined,
+          limit: PAGE_SIZE,
+          offset,
+        };
         if (appId) return customAppsApi.workLogs.listForApp(appId, filters, signal);
         return customAppsApi.workLogs.list({...filters, contract_id: contractId || undefined, company_id: companyId || undefined}, signal);
       },
-      [appId, contractId, companyId, kind, from, to, offset],
+      [appId, contractId, companyId, ticketId, kind, from, to, offset],
     ),
   );
 
@@ -130,6 +151,16 @@ export const WorkLogPanel = ({
                   <span className="italic">{t("custom_apps:work_log.no_contract")}</span>
                 )
               ) : null}
+              {row.ticket_id && row.ticket_id !== ticketId && (
+                <Link
+                  to={customAppsRoute.ticket(row.ticket_id)}
+                  className="inline-flex items-center gap-1 hover:text-text hover:underline"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Lifebuoy size={12} aria-hidden="true" />
+                  {row.ticket_number ? t("custom_apps:work_log.ticket", {number: row.ticket_number}) : t("custom_apps:work_log.fields.ticket")}
+                </Link>
+              )}
             </p>
             <p className="mt-1 text-[13px] leading-relaxed whitespace-pre-line text-neutral-300">{row.description}</p>
             {(row.link_url || row.created_by) && (
@@ -182,7 +213,7 @@ export const WorkLogPanel = ({
       },
     ];
     return list;
-  }, [language, resetRemove, scope.kind, t]);
+  }, [language, resetRemove, scope.kind, ticketId, t]);
 
   return (
     <Panel
@@ -279,6 +310,7 @@ export const WorkLogPanel = ({
           open
           scope={scope}
           entry={editing.entry}
+          preset={preset}
           onClose={() => setEditing(null)}
           onSaved={() => {
             notify(editing.entry ? t("admin:common.saved") : t("custom_apps:work_log.created"));

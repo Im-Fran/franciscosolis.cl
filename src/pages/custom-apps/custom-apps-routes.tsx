@@ -40,6 +40,8 @@ import {
   Overview,
   ReleaseDetail,
   SignIn,
+  TicketDetail,
+  Tickets,
 } from "@/pages/custom-apps/lazy-screens.tsx";
 
 /**
@@ -63,6 +65,10 @@ import {
  * there. Contracts sit beside the apps rather than under one, because a contract belongs to a client
  * and covers several of its apps; its edit screen is a route of its own (`contracts/:id/edit`) so the
  * detail page stays a page to read.
+ *
+ * `tickets/:ticketId` is a contract in the same way `alerts/:alertId` is: the notification centre
+ * links each new ticket and each requester message there. Tickets sit beside the apps rather than
+ * under one because the inbox crosses apps, like the alerts.
  */
 export const customAppsRoutes: RouteObject = {
   path: "custom-apps",
@@ -120,6 +126,8 @@ export const customAppsRoutes: RouteObject = {
         {path: "installations/:installationId", element: <InstallationDetail />},
         {path: "crashes/:crashId", element: <CrashDetail />},
         {path: "releases/:releaseId", element: <ReleaseDetail />},
+        {path: "tickets", element: <Tickets />},
+        {path: "tickets/:ticketId", element: <TicketDetail />},
         /* `rules` is literal and must stay ahead of `:alertId`. */
         {path: "alerts", element: <Alerts />},
         {path: "alerts/rules", element: <AlertRules />},

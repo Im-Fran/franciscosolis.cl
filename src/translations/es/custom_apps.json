@@ -9,7 +9,8 @@
     "audit": "Registro de auditoría",
     "sign_out": "Cerrar sesión",
     "alerts": "Alertas",
-    "contracts": "Contratos"
+    "contracts": "Contratos",
+    "tickets": "Tickets"
   },
   "sign_in": {
     "title": "Apps a medida",
@@ -117,7 +118,7 @@
     "messages": "Mensajes en la app",
     "commands": "Comandos remotos",
     "updates": "Actualizaciones remotas",
-    "support": "Formulario de soporte"
+    "support": "Tickets de soporte"
   },
   "modules_hint": {
     "metrics": "Muestras de CPU, memoria, disco, red, batería y consumo.",
@@ -128,7 +129,7 @@
     "messages": "Banners y diálogos que ven las personas que usan la app.",
     "commands": "Reiniciar, recargar, limpiar la caché, tomar una captura y más, equipo por equipo.",
     "updates": "Releases firmadas que sube el CI, con despliegue gradual, versión mínima, pausa automática y rollback.",
-    "support": "Formulario de soporte en la app: envía la solicitud por correo a soporte@ con el contexto del dispositivo."
+    "support": "Tickets abiertos desde la app con el contexto del equipo; se responden desde este panel y la app lee las respuestas."
   },
   "roles": {
     "owner": "Dueño",
@@ -192,7 +193,13 @@
     "cycles_exceeded": "Ciclos excedidos",
     "cycles_exceeded_detail": "Ciclos en curso que ya usaron más horas de las disponibles.",
     "cycles_to_bill": "Por facturar",
-    "cycles_to_bill_detail": "Ciclos cerrados con horas extra que aún no se marcan como facturados."
+    "cycles_to_bill_detail": "Ciclos cerrados con horas extra que aún no se marcan como facturados.",
+    "tickets_open": "Tickets abiertos",
+    "tickets_open_detail": "Esperan una respuesta nuestra.",
+    "tickets_pending": "Esperando al cliente",
+    "tickets_pending_detail": "Respondidos; esperan al solicitante.",
+    "tickets_unread": "Mensajes sin leer",
+    "tickets_unread_detail": "Mensajes de solicitantes que nadie ha abierto todavía."
   },
   "companies": {
     "title": "Clientes",
@@ -403,7 +410,11 @@
     "created": "Creada",
     "updated": "Actualizada",
     "screenshots_on": "Permitidas, donde cada equipo también las permita",
-    "screenshots_off": "Desactivadas"
+    "screenshots_off": "Desactivadas",
+    "support": "Tickets de soporte",
+    "support_assignee": "Los recibe {{email}}",
+    "support_nobody": "Nadie los recibe",
+    "support_link": "Ver tickets"
   },
   "ingest": {
     "title": "Ingesta",
@@ -419,7 +430,8 @@
     "unavailable_title": "No hay ninguna llave activa",
     "unavailable_body": "El SDK se inscribe con una de las llaves de la app, y todas están revocadas.",
     "unavailable_link": "Crea una en Configuración.",
-    "support": "Con el módulo de soporte, la app abre el formulario con"
+    "support": "Con el módulo de soporte, la app abre un ticket con",
+    "support_more": "y lee y continúa los suyos con tickets(), ticket(id) y replyTicket(id, mensaje)."
   },
   "hours": {
     "enabled": "Este cliente trabaja con horario",
@@ -751,7 +763,8 @@
       "crash": "Fallo",
       "alert_rule": "Regla de alerta",
       "alert": "Alerta",
-      "contract": "Contrato"
+      "contract": "Contrato",
+      "ticket": "Ticket"
     },
     "events": {
       "company": {
@@ -851,8 +864,10 @@
         "updated": "Entrada de bitácora actualizada",
         "deleted": "Entrada de bitácora eliminada"
       },
-      "support": {
-        "requested": "Solicitud de soporte enviada desde la app"
+      "ticket": {
+        "opened": "Ticket abierto desde la app",
+        "replied": "Ticket respondido",
+        "status_changed": "Cambió el estado de un ticket"
       }
     },
     "automatic": "Automático",
@@ -1650,7 +1665,7 @@
   },
   "grace_allowances_hint": {
     "updates": "Durante la gracia las apps siguen recibiendo actualizaciones.",
-    "support": "Durante la gracia el formulario de soporte de la app sigue funcionando."
+    "support": "Durante la gracia la app sigue pudiendo abrir y continuar tickets de soporte."
   },
   "work_kinds": {
     "maintenance": "Mantención",
@@ -1949,12 +1964,14 @@
       "app": "App",
       "description": "Qué se hizo",
       "link": "Enlace",
-      "contract": "Contrato"
+      "contract": "Contrato",
+      "ticket": "Ticket"
     },
     "hints": {
       "app": "Vacío si el trabajo fue para el cliente en general.",
       "link": "Un pull request, un ticket o un documento. Opcional.",
-      "contract": "Más de un contrato cubre el {{day}}: elige bajo cuál se registra."
+      "contract": "Más de un contrato cubre el {{day}}: elige bajo cuál se registra.",
+      "ticket": "El ticket de soporte que respondió este trabajo. Opcional."
     },
     "errors": {
       "future": "No se puede registrar trabajo en un día futuro.",
@@ -1963,21 +1980,128 @@
       "link": "Una dirección http o https completa.",
       "choose_contract": "Más de un contrato cubre ese día: elige uno.",
       "closed_cycle": "Ese día cae en un ciclo ya cerrado: su balance es final y no se puede registrar ni cambiar trabajo en él.",
-      "not_covered": "Ese contrato no cubre ese día."
-    }
+      "not_covered": "Ese contrato no cubre ese día.",
+      "ticket": "Ese ticket es de otro cliente: elige uno de este cliente o ninguno."
+    },
+    "ticket": "Ticket #{{number}}",
+    "no_ticket": "Sin ticket"
   },
   "app_contract": {
     "title": "Contrato",
     "none": "Ningún contrato cubre esta app."
   },
-  "support": {
-    "title": "Solicitudes de soporte",
-    "description": "Lo que se envió desde el formulario de soporte de este equipo. Cada solicitud llegó por correo a soporte@ con el contexto del dispositivo; aquí solo queda el registro.",
-    "empty": "Este equipo no ha enviado solicitudes de soporte",
-    "empty_description": "Cuando alguien use el formulario de soporte de la app, aparecerá aquí.",
-    "with_reply": "con correo para responder",
-    "without_reply": "sin correo para responder",
-    "with_diagnostics": "con diagnóstico adjunto",
-    "from_device": "Desde el equipo"
+  "ticket_statuses": {
+    "open": "Abierto",
+    "pending": "Esperando al cliente",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
+  },
+  "ticket_statuses_hint": {
+    "open": "Espera una respuesta nuestra: es nuevo, o el solicitante volvió a escribir.",
+    "pending": "Respondido; espera al solicitante.",
+    "resolved": "Terminado. Si el solicitante vuelve a escribir, se reabre.",
+    "closed": "Terminado para siempre: el solicitante tiene que abrir uno nuevo."
+  },
+  "tickets": {
+    "title": "Tickets de soporte",
+    "description": "Lo que piden las personas desde dentro de las apps de los clientes. Se actualiza cada 30 segundos.",
+    "panel_title": "Bandeja",
+    "count_one": "{{count}} ticket",
+    "count_other": "{{count}} tickets",
+    "search": "Buscar por asunto, solicitante o #número",
+    "filters": {
+      "status": "Estado",
+      "active": "Por atender",
+      "all": "Todos los estados",
+      "any_app": "Todas las apps",
+      "any_company": "Todos los clientes",
+      "one_installation": "Solo una instalación"
+    },
+    "columns": {
+      "ticket": "Ticket",
+      "app": "App",
+      "status": "Estado",
+      "activity": "Última actividad",
+      "time": "Tiempo"
+    },
+    "unread_one": "{{count}} sin leer",
+    "unread_other": "{{count}} sin leer",
+    "turn_requester": "Escribió el solicitante",
+    "turn_staff": "Respondimos",
+    "anonymous": "Sin nombre",
+    "empty": "No hay tickets por atender",
+    "empty_description": "Cuando alguien abra un ticket desde una app con el módulo de soporte, aparecerá aquí.",
+    "no_matches": "Ningún ticket coincide con estos filtros.",
+    "back": "Bandeja de tickets",
+    "loading_title": "Ticket",
+    "status": "Estado",
+    "status_changed": "Estado actualizado.",
+    "edit_subject": "Editar asunto",
+    "subject": "Asunto",
+    "subject_saved": "Asunto actualizado.",
+    "conversation": "Conversación",
+    "conversation_description": "Lo que escribió el solicitante desde la app y lo que se le respondió. La app lee las respuestas la próxima vez que consulta el ticket.",
+    "from_requester": "Solicitante",
+    "from_staff": "Soporte",
+    "seen": "Leído el {{date}}",
+    "not_seen": "Todavía sin leer",
+    "no_messages": "Este ticket no tiene mensajes.",
+    "reply": "Respuesta",
+    "reply_hint": "La app la muestra la próxima vez que consulte el ticket. No se envía correo.",
+    "status_after": "Estado después de responder",
+    "send": "Enviar respuesta",
+    "sent": "Respuesta enviada.",
+    "closed_notice": "Este ticket está cerrado: el solicitante ya no puede escribir en él. Cámbiale el estado para reabrirlo.",
+    "details": "Datos",
+    "requester": "Solicitante",
+    "email": "Correo",
+    "app": "App",
+    "company": "Cliente",
+    "installation": "Instalación",
+    "installation_gone": "Ya no existe",
+    "opened": "Abierto",
+    "last_activity": "Última actividad",
+    "resolved_at": "Resuelto",
+    "logged": "Tiempo registrado",
+    "context": "Contexto del equipo",
+    "context_description": "Cómo estaba el equipo cuando se abrió el ticket. Queda guardado con el ticket y no cambia.",
+    "context_fields": {
+      "name": "Equipo",
+      "device_id": "ID del dispositivo",
+      "app_version": "Versión",
+      "channel": "Canal",
+      "platform": "Plataforma",
+      "os": "Sistema",
+      "arch": "Arquitectura",
+      "last_seen": "Visto por última vez"
+    },
+    "logs": "Logs recientes",
+    "crashes": "Fallos abiertos de esa versión",
+    "open_diagnostics": "Ver fallos y logs de la app",
+    "no_diagnostics": "No se adjuntó diagnóstico: la app no tiene los módulos de logs ni de fallos, o el solicitante no lo envió.",
+    "no_context": "Este ticket no trae el contexto del equipo.",
+    "work_log_title": "Tiempo registrado en este ticket",
+    "work_log_description": "El trabajo hecho para responder este ticket. Descuenta del contrato que cubre la app ese día, como cualquier otra entrada de la bitácora.",
+    "installation_panel": {
+      "title": "Tickets de soporte",
+      "description": "Los tickets abiertos desde este equipo, del más reciente al más antiguo.",
+      "empty": "Este equipo no ha abierto tickets",
+      "empty_description": "Cuando alguien abra un ticket desde la app en este equipo, aparecerá aquí.",
+      "see_all": "Ver en la bandeja"
+    },
+    "assignee": {
+      "title": "Soporte",
+      "description": "Quién recibe en la campana del sitio cada ticket nuevo de esta app y cada mensaje del solicitante. No se envía correo.",
+      "current": "Responsable",
+      "none": "Nadie todavía",
+      "you": "tú",
+      "take": "Tomar los tickets de esta app",
+      "taken": "Ahora recibes los tickets de esta app.",
+      "yours": "Ya recibes los tickets de esta app.",
+      "see_tickets": "Ver tickets de esta app"
+    },
+    "hint_one": "{{count}} ticket espera una respuesta",
+    "hint_other": "{{count}} tickets esperan una respuesta",
+    "hint_link": "Ver tickets"
   }
 }

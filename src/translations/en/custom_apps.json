@@ -9,7 +9,8 @@
     "audit": "Audit log",
     "sign_out": "Sign out",
     "alerts": "Alerts",
-    "contracts": "Contracts"
+    "contracts": "Contracts",
+    "tickets": "Tickets"
   },
   "sign_in": {
     "title": "Custom apps",
@@ -117,7 +118,7 @@
     "messages": "In-app messages",
     "commands": "Remote commands",
     "updates": "Remote updates",
-    "support": "Support form"
+    "support": "Support tickets"
   },
   "modules_hint": {
     "metrics": "CPU, memory, disk, network, battery and power samples.",
@@ -128,7 +129,7 @@
     "messages": "Banners and dialogs shown to the people using the app.",
     "commands": "Restart, reload, clear the cache, take a screenshot and more, one device at a time.",
     "updates": "Signed releases uploaded from CI, with staged rollout, a minimum version, automatic pause and rollback.",
-    "support": "In-app support form: the request is emailed to soporte@ with the device's context."
+    "support": "Tickets opened from inside the app with the device's context; answered from this panel and read back by the app."
   },
   "roles": {
     "owner": "Owner",
@@ -192,7 +193,13 @@
     "cycles_exceeded": "Cycles over budget",
     "cycles_exceeded_detail": "Running cycles that already used more hours than they have.",
     "cycles_to_bill": "To bill",
-    "cycles_to_bill_detail": "Closed cycles with overage not marked as billed yet."
+    "cycles_to_bill_detail": "Closed cycles with overage not marked as billed yet.",
+    "tickets_open": "Open tickets",
+    "tickets_open_detail": "Waiting for an answer from us.",
+    "tickets_pending": "Waiting on client",
+    "tickets_pending_detail": "Answered; waiting on the requester.",
+    "tickets_unread": "Unread messages",
+    "tickets_unread_detail": "Requester messages nobody has opened yet."
   },
   "companies": {
     "title": "Companies",
@@ -403,7 +410,11 @@
     "created": "Created",
     "updated": "Updated",
     "screenshots_on": "Allowed, where each device allows them too",
-    "screenshots_off": "Off"
+    "screenshots_off": "Off",
+    "support": "Support tickets",
+    "support_assignee": "Sent to {{email}}",
+    "support_nobody": "Nobody receives them",
+    "support_link": "See tickets"
   },
   "ingest": {
     "title": "Ingest",
@@ -419,7 +430,8 @@
     "unavailable_title": "No active key",
     "unavailable_body": "The SDK enrolls with one of the app's keys, and every key is revoked.",
     "unavailable_link": "Create one in Settings.",
-    "support": "With the support module, the app opens the form with"
+    "support": "With the support module, the app opens a ticket with",
+    "support_more": "and reads and continues its own with tickets(), ticket(id) and replyTicket(id, message)."
   },
   "hours": {
     "enabled": "This client works on a schedule",
@@ -751,7 +763,8 @@
       "crash": "Crash",
       "alert_rule": "Alert rule",
       "alert": "Alert",
-      "contract": "Contract"
+      "contract": "Contract",
+      "ticket": "Ticket"
     },
     "events": {
       "company": {
@@ -851,8 +864,10 @@
         "updated": "Work log entry updated",
         "deleted": "Work log entry deleted"
       },
-      "support": {
-        "requested": "Support request sent from the app"
+      "ticket": {
+        "opened": "Ticket opened from the app",
+        "replied": "Ticket answered",
+        "status_changed": "Ticket status changed"
       }
     },
     "automatic": "Automatic",
@@ -1650,7 +1665,7 @@
   },
   "grace_allowances_hint": {
     "updates": "During grace the apps keep receiving updates.",
-    "support": "During grace the app's support form keeps working."
+    "support": "During grace the app can still open and continue support tickets."
   },
   "work_kinds": {
     "maintenance": "Maintenance",
@@ -1949,12 +1964,14 @@
       "app": "App",
       "description": "What was done",
       "link": "Link",
-      "contract": "Contract"
+      "contract": "Contract",
+      "ticket": "Ticket"
     },
     "hints": {
       "app": "Empty when the work was for the client as a whole.",
       "link": "A pull request, a ticket or a document. Optional.",
-      "contract": "More than one contract covers {{day}}: pick the one it is filed under."
+      "contract": "More than one contract covers {{day}}: pick the one it is filed under.",
+      "ticket": "The support ticket this work answered. Optional."
     },
     "errors": {
       "future": "Work cannot be logged on a future day.",
@@ -1963,21 +1980,128 @@
       "link": "A full http or https address.",
       "choose_contract": "More than one contract covers that day: pick one.",
       "closed_cycle": "That day falls in a cycle that is already closed: its balance is final, and no work can be logged or changed in it.",
-      "not_covered": "That contract does not cover that day."
-    }
+      "not_covered": "That contract does not cover that day.",
+      "ticket": "That ticket belongs to another client: pick one of this client's, or none."
+    },
+    "ticket": "Ticket #{{number}}",
+    "no_ticket": "No ticket"
   },
   "app_contract": {
     "title": "Contract",
     "none": "No contract covers this app."
   },
-  "support": {
-    "title": "Support requests",
-    "description": "What this device sent through its support form. Each request was emailed to soporte@ with the device's context; only the record is kept here.",
-    "empty": "This device has sent no support requests",
-    "empty_description": "When somebody uses the app's support form, it shows up here.",
-    "with_reply": "with a reply address",
-    "without_reply": "no reply address",
-    "with_diagnostics": "diagnostics attached",
-    "from_device": "From the device"
+  "ticket_statuses": {
+    "open": "Open",
+    "pending": "Waiting on client",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+  "ticket_statuses_hint": {
+    "open": "Waiting on us: new, or the requester wrote again.",
+    "pending": "Answered; waiting on the requester.",
+    "resolved": "Done. If the requester writes again, it reopens.",
+    "closed": "Done for good: the requester has to open a new one."
+  },
+  "tickets": {
+    "title": "Support tickets",
+    "description": "What people ask for from inside the clients' apps. Refreshes every 30 seconds.",
+    "panel_title": "Inbox",
+    "count_one": "{{count}} ticket",
+    "count_other": "{{count}} tickets",
+    "search": "Search by subject, requester or #number",
+    "filters": {
+      "status": "Status",
+      "active": "Needs attention",
+      "all": "Every status",
+      "any_app": "Every app",
+      "any_company": "Every client",
+      "one_installation": "One installation only"
+    },
+    "columns": {
+      "ticket": "Ticket",
+      "app": "App",
+      "status": "Status",
+      "activity": "Last activity",
+      "time": "Time"
+    },
+    "unread_one": "{{count}} unread",
+    "unread_other": "{{count}} unread",
+    "turn_requester": "Requester wrote",
+    "turn_staff": "We answered",
+    "anonymous": "No name",
+    "empty": "Nothing needs attention",
+    "empty_description": "When somebody opens a ticket from an app with the support module, it shows up here.",
+    "no_matches": "No ticket matches these filters.",
+    "back": "Ticket inbox",
+    "loading_title": "Ticket",
+    "status": "Status",
+    "status_changed": "Status updated.",
+    "edit_subject": "Edit subject",
+    "subject": "Subject",
+    "subject_saved": "Subject updated.",
+    "conversation": "Conversation",
+    "conversation_description": "What the requester wrote from the app and what they were told. The app reads answers the next time it asks for the ticket.",
+    "from_requester": "Requester",
+    "from_staff": "Support",
+    "seen": "Read {{date}}",
+    "not_seen": "Not read yet",
+    "no_messages": "This ticket has no messages.",
+    "reply": "Answer",
+    "reply_hint": "The app shows it the next time it asks for the ticket. No email is sent.",
+    "status_after": "Status after answering",
+    "send": "Send answer",
+    "sent": "Answer sent.",
+    "closed_notice": "This ticket is closed: the requester can no longer write on it. Change its status to reopen it.",
+    "details": "Details",
+    "requester": "Requester",
+    "email": "Email",
+    "app": "App",
+    "company": "Client",
+    "installation": "Installation",
+    "installation_gone": "No longer exists",
+    "opened": "Opened",
+    "last_activity": "Last activity",
+    "resolved_at": "Resolved",
+    "logged": "Time logged",
+    "context": "Device context",
+    "context_description": "What the device looked like when the ticket was opened. Kept with the ticket; it never changes.",
+    "context_fields": {
+      "name": "Device",
+      "device_id": "Device ID",
+      "app_version": "Version",
+      "channel": "Channel",
+      "platform": "Platform",
+      "os": "System",
+      "arch": "Architecture",
+      "last_seen": "Last seen"
+    },
+    "logs": "Recent logs",
+    "crashes": "Open crashes of that version",
+    "open_diagnostics": "See the app's crashes and logs",
+    "no_diagnostics": "No diagnostics attached: the app has neither the logs nor the crashes module, or the requester did not send them.",
+    "no_context": "This ticket carries no device context.",
+    "work_log_title": "Time logged on this ticket",
+    "work_log_description": "The work done to answer this ticket. It counts against the contract covering the app on that day, like any other work log entry.",
+    "installation_panel": {
+      "title": "Support tickets",
+      "description": "Tickets opened from this device, newest first.",
+      "empty": "This device has opened no tickets",
+      "empty_description": "When somebody opens a ticket from the app on this device, it shows up here.",
+      "see_all": "See in the inbox"
+    },
+    "assignee": {
+      "title": "Support",
+      "description": "Who hears in the site's bell about every new ticket of this app and every message the requester adds. No email is sent.",
+      "current": "Assignee",
+      "none": "Nobody yet",
+      "you": "you",
+      "take": "Take this app's tickets",
+      "taken": "You now receive this app's tickets.",
+      "yours": "You already receive this app's tickets.",
+      "see_tickets": "See this app's tickets"
+    },
+    "hint_one": "{{count}} ticket is waiting for an answer",
+    "hint_other": "{{count}} tickets are waiting for an answer",
+    "hint_link": "See tickets"
   }
 }

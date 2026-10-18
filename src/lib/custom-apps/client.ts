@@ -73,6 +73,11 @@ import type {
   RolloutPayload,
   Screenshot,
   ServiceStatus,
+  Ticket,
+  TicketDetail,
+  TicketPayload,
+  TicketQuery,
+  TicketReply,
   UsageDay,
   UsageEvent,
   UsageHeatmap,
@@ -561,6 +566,34 @@ export const customAppsApi = {
       http.request<WorkLogEntry>(`/v1/work-logs/${seg(id)}`, {method: "PATCH", json: body}),
 
     remove: (id: string) => http.request<Deleted>(`/v1/work-logs/${seg(id)}`, {method: "DELETE"}),
+  },
+
+  /* ── Support tickets ────────────────────────────────────────────────── */
+
+  /**
+   * Tickets opened from inside clients' apps. Replies are read back by the app that opened the
+   * ticket on its next request — nothing here sends mail.
+   */
+  tickets: {
+    /** Most recently active first. `status: "active"` is `open` and `pending` together. */
+    list: (params: TicketQuery = {}, signal?: AbortSignal) => page<Ticket>(`/v1/tickets${query({...params})}`, signal),
+
+    /** The conversation, the device's context and the work logged. Marks the requester's messages read. */
+    get: (id: string, signal?: AbortSignal) => http.request<TicketDetail>(`/v1/tickets/${seg(id)}`, {signal}),
+
+    /** Answers it. It becomes `pending` (waiting on the requester) unless `status` says otherwise. */
+    reply: (id: string, body: TicketReply) =>
+      http.request<Ticket>(`/v1/tickets/${seg(id)}/replies`, {method: "POST", json: body}),
+
+    /** Changes the status or the subject without writing to the requester. */
+    update: (id: string, body: TicketPayload) =>
+      http.request<Ticket>(`/v1/tickets/${seg(id)}`, {method: "PATCH", json: body}),
+
+    /** Takes over an app's tickets: the signed-in account hears about each new one and every message. */
+    takeApp: (appId: string) =>
+      http.request<{app_id: string; support_assignee_email: string | null}>(`/v1/apps/${seg(appId)}/support/assignee`, {
+        method: "POST",
+      }),
   },
 
   /* ── Audit log ──────────────────────────────────────────────────────── */

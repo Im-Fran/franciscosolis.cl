@@ -1,5 +1,6 @@
 import {useCallback, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
 import {ArrowSquareOut, Calendar, ListBullets, LockSimple, Receipt} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Modal} from "@/components/ui/modal.tsx";
@@ -9,6 +10,7 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
+import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {formatDay, formatMinutes, formatMoney} from "@/lib/custom-apps/format.ts";
 import type {Contract, Cycle} from "@/lib/custom-apps/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
@@ -51,6 +53,12 @@ const CycleWorkLog = ({cycleId, onClose}: {cycleId: string; onClose: () => void}
                       <span className="text-neutral-300">
                         {formatDay(entry.occurred_on, language)} · {t(`custom_apps:work_kinds.${entry.kind}`, {defaultValue: entry.kind})}
                         {entry.app_name && <span className="text-neutral-500"> · {entry.app_name}</span>}
+                        {entry.ticket_id && (
+                          <Link to={customAppsRoute.ticket(entry.ticket_id)} className="text-neutral-500 hover:text-text hover:underline">
+                            {" · "}
+                            {entry.ticket_number ? t("custom_apps:work_log.ticket", {number: entry.ticket_number}) : t("custom_apps:work_log.fields.ticket")}
+                          </Link>
+                        )}
                       </span>
                       <span className="tabular-nums text-text">{formatMinutes(entry.minutes)}</span>
                     </p>

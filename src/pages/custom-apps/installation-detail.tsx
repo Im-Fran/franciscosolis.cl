@@ -23,7 +23,6 @@ import type {AppState, Channel, Installation, InstallationPayload, LogLevel} fro
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {OpenAlertsHint} from "@/pages/custom-apps/components/alerts/open-alerts-hint.tsx";
-import {SupportRequests} from "@/pages/custom-apps/components/support-requests.tsx";
 import {ConnectedIndicator, LifecycleBadge, ReviewBadge, SocketBadge, StateBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx";
 import {InstallationDaily} from "@/pages/custom-apps/components/installation-daily.tsx";
@@ -36,6 +35,7 @@ import {InstallationCommands} from "@/pages/custom-apps/components/remote/instal
 import {InstallationScreenshots} from "@/pages/custom-apps/components/remote/installation-screenshots.tsx";
 import {InstallationUpdates} from "@/pages/custom-apps/components/releases/installation-updates.tsx";
 import {SnapshotCards} from "@/pages/custom-apps/components/snapshot-cards.tsx";
+import {InstallationTickets} from "@/pages/custom-apps/components/tickets/installation-tickets.tsx";
 
 const REFRESH_MS = 15_000;
 const ALIAS_MAX = 80;
@@ -70,7 +70,7 @@ const controlsOf = (installation: Installation): Controls => ({
  *
  * The app is loaded beside the installation, because the remote-operation panels follow its
  * modules — commands and screenshots only with `commands`, the log only with `logs`, the updater
- * only with `updates`, the support requests only with `support` — and the command catalogue depends on its kind (only a kiosk restarts the
+ * only with `updates`, the support tickets only with `support` — and the command catalogue depends on its kind (only a kiosk restarts the
  * device).
  */
 export const InstallationDetail = () => {
@@ -461,7 +461,7 @@ export const InstallationDetail = () => {
 
         {modules.includes("logs") && <LogsPanel scope={{kind: "installation", installationId: current.id}} />}
 
-        {modules.includes("support") && <SupportRequests installationId={current.id} />}
+        {modules.includes("support") && <InstallationTickets installationId={current.id} />}
 
         <InstallationDaily installationId={current.id} />
         <InstallationEvents installationId={current.id} />

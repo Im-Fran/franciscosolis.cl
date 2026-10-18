@@ -7,14 +7,17 @@ import {
   Bell,
   Buildings,
   CalendarX,
+  ChatCircleDots,
   CheckCircle,
   FileText,
   HourglassLow,
+  Lifebuoy,
   Package,
   Plugs,
   Prohibit,
   Receipt,
   Timer,
+  Users,
   Warning,
 } from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
@@ -35,7 +38,8 @@ const REFRESH_MS = 30_000;
 
 /**
  * What the panel opens on: how many installations are connected right now, which ones are waiting
- * for a look, and what was enrolled lately.
+ * for a look, what was enrolled lately — and, beside the contracts, the support tickets waiting on
+ * us, waiting on the client and not opened yet.
  *
  * It is one request — the service aggregates — so the whole screen loads and refreshes as one, and
  * a refresh keeps the figures on screen rather than flashing a spinner every thirty seconds.
@@ -195,6 +199,35 @@ export const Overview = () => {
                     />
                   </>
                 )}
+              </div>
+            )}
+
+            {/* Support tickets: optional, so a service that predates them still renders. */}
+            {data.tickets && (
+              <div className="grid gap-4 sm:grid-cols-3">
+                <StatCard
+                  label={t("custom_apps:overview.tickets_open")}
+                  icon={<Lifebuoy size={18} />}
+                  value={data.tickets.open}
+                  attention={data.tickets.open > 0}
+                  to={customAppsRoute.tickets({status: "open"})}
+                  detail={t("custom_apps:overview.tickets_open_detail")}
+                />
+                <StatCard
+                  label={t("custom_apps:overview.tickets_pending")}
+                  icon={<Users size={18} />}
+                  value={data.tickets.pending}
+                  to={customAppsRoute.tickets({status: "pending"})}
+                  detail={t("custom_apps:overview.tickets_pending_detail")}
+                />
+                <StatCard
+                  label={t("custom_apps:overview.tickets_unread")}
+                  icon={<ChatCircleDots size={18} />}
+                  value={data.tickets.unread}
+                  attention={data.tickets.unread > 0}
+                  to={customAppsRoute.tickets()}
+                  detail={t("custom_apps:overview.tickets_unread_detail")}
+                />
               </div>
             )}
 

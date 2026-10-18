@@ -11,6 +11,7 @@ import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {formatDuration} from "@/lib/custom-apps/format.ts";
 import {WEEKDAYS} from "@/lib/custom-apps/types.ts";
 import {OpenAlertsHint} from "@/pages/custom-apps/components/alerts/open-alerts-hint.tsx";
+import {OpenTicketsHint} from "@/pages/custom-apps/components/tickets/open-tickets-hint.tsx";
 import {useApp} from "@/pages/custom-apps/components/app-context.ts";
 import {AppContractCard} from "@/pages/custom-apps/components/contracts/app-contract-card.tsx";
 import {CopyButton, CopyField} from "@/pages/custom-apps/components/copy-button.tsx";
@@ -26,7 +27,8 @@ const scriptTag = (url: string, integrity: string) =>
 
 /**
  * What an app is and how to wire a client to it: its counts, its facts, and the ingest addresses —
- * the only part of the service the client app ever talks to.
+ * the only part of the service the client app ever talks to. With the `support` module it also says
+ * who receives the app's tickets and how many are waiting for an answer.
  */
 export const AppSummary = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
@@ -57,6 +59,8 @@ export const AppSummary = () => {
       )}
 
       <OpenAlertsHint appId={app.id} />
+
+      {app.modules.includes("support") && <OpenTicketsHint appId={app.id} />}
 
       <AppContractCard appId={app.id} companyId={app.company_id} />
 
@@ -118,6 +122,19 @@ export const AppSummary = () => {
               ? app.modules.map((module) => t(`custom_apps:modules.${module}`, {defaultValue: module})).join(", ")
               : t("custom_apps:summary.heartbeat_only")}
           </Detail>
+          {app.modules.includes("support") && (
+            <Detail label={t("custom_apps:summary.support")}>
+              <span>
+                {app.support_assignee_email
+                  ? t("custom_apps:summary.support_assignee", {email: app.support_assignee_email})
+                  : t("custom_apps:summary.support_nobody")}
+                {" · "}
+                <Link to={customAppsRoute.tickets({app_id: app.id})} className="hover:underline">
+                  {t("custom_apps:summary.support_link")}
+                </Link>
+              </span>
+            </Detail>
+          )}
           <Detail label={t("custom_apps:apps.fields.hours")}>
             {hours
               ? openDays.length === 0
@@ -183,7 +200,8 @@ export const AppSummary = () => {
                 {sdk.data.modules.includes("support") && (
                   <p className="text-[12px] leading-relaxed text-neutral-500">
                     {t("custom_apps:sdk.support")}{" "}
-                    <code className="font-mono text-neutral-300">{"FSCustomApps.support({subject, message, name, email})"}</code>
+                    <code className="font-mono text-neutral-300">{"FSCustomApps.openTicket({subject, message, name, email})"}</code>{" "}
+                    {t("custom_apps:sdk.support_more")}
                   </p>
                 )}
                 <p className="text-[12px] leading-relaxed text-neutral-500">

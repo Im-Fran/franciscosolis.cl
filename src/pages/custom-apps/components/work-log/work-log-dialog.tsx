@@ -31,19 +31,25 @@ type Form = {
   appId: string;
   /** Empty: whichever contract the service finds covering the day. */
   contractId: string;
+  /** Empty: not about a support ticket. */
+  ticketId: string;
 };
+
+/** What a new entry starts with, for the ticket page's "log time" shortcut. */
+export type WorkLogPreset = {ticketId?: string; ticketNumber?: number; kind?: WorkKind};
 
 type FieldName = keyof Form;
 
-const formOf = (entry: WorkLogEntry | null, today: string, fixedAppId: string): Form => ({
+const formOf = (entry: WorkLogEntry | null, today: string, fixedAppId: string, preset?: WorkLogPreset): Form => ({
   day: entry?.occurred_on ?? today,
   hours: entry ? String(Math.floor(entry.minutes / 60)) : "1",
   minutes: entry ? String(entry.minutes % 60) : "0",
-  kind: entry?.kind ?? "maintenance",
+  kind: entry?.kind ?? preset?.kind ?? "maintenance",
   description: entry?.description ?? "",
   link: entry?.link_url ?? "",
   appId: fixedAppId || (entry?.app_id ?? ""),
   contractId: entry?.contract_id ?? "",
+  ticketId: entry ? (entry.ticket_id ?? "") : (preset?.ticketId ?? ""),
 });
 
 const isHttpUrl = (value: string) => {
@@ -67,11 +73,15 @@ const asksForContract = (message: string | null) => Boolean(message && /contract
  * and asks for one only when the day is covered by several: then the service refuses to guess (422),
  * and so does this form. A day inside a closed cycle is refused (409) because its balance was final
  * the moment it closed; the dialog says so in words rather than echoing the status.
+ *
+ * An entry may name the support ticket it answered — one of the app's tickets, or of the company's
+ * when the work is about the company as a whole. The service refuses a ticket of another company.
  */
 export const WorkLogDialog = ({
   open,
   scope,
   entry,
+  preset,
   onClose,
   onSaved,
 }: {
@@ -79,6 +89,8 @@ export const WorkLogDialog = ({
   scope: WorkLogScope;
   /** Null creates an entry. */
   entry: WorkLogEntry | null;
+  /** What a new entry starts with. Ignored when editing. */
+  preset?: WorkLogPreset;
   onClose: () => void;
   onSaved: (entry: WorkLogEntry) => void;
 }) => {
@@ -91,7 +103,7 @@ export const WorkLogDialog = ({
   const fixedAppId = scope.kind === "app" ? scope.appId : "";
   const fixedContractId = scope.kind === "contract" ? scope.contract.id : "";
 
-  const [form, setForm] = useState<Form>(() => formOf(entry, today, fixedAppId));
+  const [form, setForm] = useState<Form>(() => formOf(entry, today, fixedAppId, preset));
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   /* Set when the service answered that several contracts cover the day: the picker then stays up. */
   const [mustChoose, setMustChoose] = useState(false);
@@ -139,6 +151,32 @@ export const WorkLogDialog = ({
   }, [scope, contractsResource.data, form.appId, form.day, timezone]);
 
   const chosen = candidates.some((contract) => contract.id === form.contractId) ? form.contractId : "";
+
+  /*
+   * The tickets the entry could answer: the app's when it names one, the company's otherwise. The
+   * hundred most recently active cover any ticket still being worked on.
+   */
+  const ticketAppId = fixedAppId || form.appId;
+  const ticketsResource = useResource(
+    useCallback(
+      (signal: AbortSignal) =>
+        customAppsApi.tickets.list(ticketAppId ? {app_id: ticketAppId, limit: 100} : {company_id: companyId, limit: 100}, signal),
+      [ticketAppId, companyId],
+    ),
+  );
+  const ticketOptions = useMemo(() => {
+    const rows = (ticketsResource.data?.data ?? []).map((ticket) => ({id: ticket.id, number: ticket.number, subject: ticket.subject}));
+    /* The linked ticket stays selectable even when it is older than the loaded page. */
+    const linked = entry?.ticket_id
+      ? {id: entry.ticket_id, number: entry.ticket_number ?? null}
+      : preset?.ticketId
+        ? {id: preset.ticketId, number: preset.ticketNumber ?? null}
+        : null;
+    if (linked && !rows.some((row) => row.id === linked.id)) {
+      rows.unshift({id: linked.id, number: linked.number ?? 0, subject: ""});
+    }
+    return rows;
+  }, [ticketsResource.data, entry, preset]);
   const showPicker = scope.kind !== "contract" && (candidates.length > 1 || mustChoose);
 
   const save = useMutation(
@@ -159,12 +197,12 @@ export const WorkLogDialog = ({
   const {reset} = save;
   useEffect(() => {
     if (!open) return;
-    setForm(formOf(entry, dayIn(new Date(), timezone), fixedAppId));
+    setForm(formOf(entry, dayIn(new Date(), timezone), fixedAppId, preset));
     setErrors({});
     setMustChoose(false);
     setFailure(null);
     reset();
-  }, [open, entry, fixedAppId, timezone, reset]);
+  }, [open, entry, preset, fixedAppId, timezone, reset]);
 
   const set = <K extends FieldName>(key: K, value: Form[K]) => {
     setForm((current) => ({...current, [key]: value}));
@@ -206,6 +244,7 @@ export const WorkLogDialog = ({
       description: form.description.trim(),
       link_url: orNull(form.link),
     };
+    if (form.ticketId) body.ticket_id = form.ticketId;
     if (scope.kind !== "app") {
       body.company_id = companyId;
       if (form.appId) body.app_id = form.appId;
@@ -225,6 +264,8 @@ export const WorkLogDialog = ({
     if (form.description.trim() !== current.description) body.description = form.description.trim();
     if (orNull(form.link) !== (current.link_url ?? null)) body.link_url = orNull(form.link);
     if (scope.kind !== "app" && (form.appId || null) !== current.app_id) body.app_id = form.appId || null;
+    /* Linking a ticket files nothing again: it only says what the work answered. */
+    if ((form.ticketId || null) !== (current.ticket_id ?? null)) body.ticket_id = form.ticketId || null;
 
     const refiled = body.occurred_on !== undefined || body.app_id !== undefined;
     if (scope.kind === "contract") {
@@ -240,6 +281,7 @@ export const WorkLogDialog = ({
   const describeFailure = (status: number | null, message: string) => {
     if (status === 409) return t("custom_apps:work_log.errors.closed_cycle");
     if (status === 422 && /does not cover/i.test(message)) return t("custom_apps:work_log.errors.not_covered");
+    if (status === 422 && /ticket_id/i.test(message)) return t("custom_apps:work_log.errors.ticket");
     if (status === 400 && /future/i.test(message)) return t("custom_apps:work_log.errors.future");
     return t(`admin:errors.${message}`, {defaultValue: message});
   };
@@ -377,6 +419,30 @@ export const WorkLogDialog = ({
               </Select>
             </Field>
           )}
+
+          <Field
+            label={t("custom_apps:work_log.fields.ticket")}
+            htmlFor="work-log-ticket"
+            error={errors.ticketId}
+            hint={t("custom_apps:work_log.hints.ticket")}
+            className="sm:col-span-2"
+          >
+            <Select
+              id="work-log-ticket"
+              value={form.ticketId}
+              onChange={(event) => set("ticketId", event.target.value)}
+              disabled={pending || (ticketsResource.loading && !ticketsResource.data)}
+              aria-invalid={Boolean(errors.ticketId)}
+            >
+              <option value="">{t("custom_apps:work_log.no_ticket")}</option>
+              {ticketOptions.map((ticket) => (
+                <option key={ticket.id} value={ticket.id}>
+                  {ticket.number ? `#${ticket.number}` : t("custom_apps:work_log.fields.ticket")}
+                  {ticket.subject ? ` · ${ticket.subject}` : ""}
+                </option>
+              ))}
+            </Select>
+          </Field>
 
           <Field
             label={t("custom_apps:work_log.fields.description")}

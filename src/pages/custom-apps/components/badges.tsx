@@ -210,6 +210,16 @@ export const CycleStatusBadge = (props: VocabularyBadgeProps) => (
   <VocabularyPill prefix="cycle_statuses" tones={CYCLE_TONES} {...props} />
 );
 
+/*
+ * A ticket waiting on us is the one that needs somebody; waiting on the client is planned rather than
+ * wrong; resolved is done, and closed is done for good.
+ */
+const TICKET_TONES: Record<string, Tone> = {open: "pending", pending: "planned", resolved: "good", closed: "inert"};
+
+export const TicketStatusBadge = (props: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="ticket_statuses" tones={TICKET_TONES} {...props} />
+);
+
 /**
  * A contract ending within its notice period without renewing itself, with the days it has left —
  * the one thing about a contract worth catching at a glance down a list.

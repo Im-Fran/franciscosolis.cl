@@ -27,9 +27,9 @@ export const PRESENCE_MODES = ["ping", "socket"] as const;
 export type PresenceMode = (typeof PRESENCE_MODES)[number];
 
 /**
- * Presence — the heartbeat — is always on, so it is not a module. `support` is the in-app support
- * form: the request is emailed to soporte@ with the device's context, and the panel only sees that it
- * was sent (there are no tickets here, by decision).
+ * Presence — the heartbeat — is always on, so it is not a module. `support` is support tickets opened
+ * from inside the app, with the device's context attached, answered from this panel and read back by
+ * the app.
  */
 export const APP_MODULES = [
   "metrics",
@@ -158,6 +158,27 @@ export type GraceAllowance = (typeof GRACE_ALLOWANCES)[number];
 export const WORK_KINDS = ["maintenance", "support", "development", "other"] as const;
 export type WorkKind = (typeof WORK_KINDS)[number];
 
+/**
+ * A support ticket's lifecycle:
+ *
+ * - `open`: waiting on us — new, or the requester wrote again.
+ * - `pending`: answered, waiting on the requester.
+ * - `resolved`: done; a new message from the requester reopens it.
+ * - `closed`: done for good; the requester has to open a new ticket.
+ */
+export const TICKET_STATUSES = ["open", "pending", "resolved", "closed"] as const;
+export type TicketStatus = (typeof TICKET_STATUSES)[number];
+
+/** The inbox filter adds `active`, shorthand for what still needs somebody: `open` and `pending`. */
+export type TicketStatusFilter = TicketStatus | "active";
+
+/** What a reply may leave a ticket as. `pending` — waiting on the requester — unless it says otherwise. */
+export const REPLY_STATUSES = ["pending", "resolved", "closed"] as const;
+export type ReplyStatus = (typeof REPLY_STATUSES)[number];
+
+/** The service's bounds for a ticket, until it says otherwise. */
+export const TICKET_LIMITS = {maxSubjectLength: 200, maxMessageLength: 5000} as const;
+
 /** The service's bounds for contracts and the work log, until `GET /` says otherwise. */
 export const CONTRACT_LIMITS = {
   max_grace_days: 30,
@@ -228,6 +249,7 @@ export type ServiceStatus = {
   grace_allowances?: GraceAllowance[];
   work_kinds?: WorkKind[];
   contract_limits?: ContractLimits;
+  ticket_statuses?: TicketStatus[];
 };
 
 export type Account = {
@@ -387,6 +409,11 @@ export type App = AppSummary & {
   rollout_pause_rollback_percent?: number;
   /** Crash rate, in %, at which a rollout pauses itself. */
   rollout_pause_crash_percent?: number;
+  /**
+   * Who hears about this app's support tickets in the website's bell: whoever turned `support` on,
+   * until somebody takes them over. Optional so a service that predates tickets still renders.
+   */
+  support_assignee_email?: string | null;
   needs_review_count: number;
   company: CompanyRef;
   ingest: {base_url: string; sdk_url: string; openapi_url: string};
@@ -1200,6 +1227,9 @@ export type WorkLogEntry = {
   kind: WorkKind;
   description: string;
   link_url: string | null;
+  /** The support ticket the work answered. Optional so a service that predates tickets still renders. */
+  ticket_id?: string | null;
+  ticket_number?: number | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -1215,6 +1245,8 @@ export type WorkLogPayload = {
   kind?: WorkKind;
   description?: string;
   link_url?: string | null;
+  /** A ticket of the same company (422 otherwise); null unlinks it. */
+  ticket_id?: string | null;
 };
 
 export type NewWorkLog = WorkLogPayload & {
@@ -1230,6 +1262,7 @@ export type WorkLogQuery = {
   app_id?: string;
   contract_id?: string;
   cycle_id?: string;
+  ticket_id?: string;
   kind?: WorkKind;
   from?: string;
   to?: string;
@@ -1239,6 +1272,98 @@ export type WorkLogQuery = {
 
 /** A page of the work log, with the minutes of everything the filters match. */
 export type WorkLogPage = Page<WorkLogEntry> & {totals: {minutes: number}};
+
+/* ── Support tickets ──────────────────────────────────────────────────── */
+
+/**
+ * What the device looked like when the ticket was opened, kept with the ticket so it never drifts.
+ * `logs` are the latest entries as lines, oldest first, and `crashes` the open crash groups of the
+ * running version as `title (×n)` — both empty unless the app has the module and the requester
+ * attached diagnostics.
+ */
+export type TicketContext = {
+  installation?: {
+    name?: string | null;
+    device_id?: string | null;
+    app_version?: string | null;
+    channel?: string | null;
+    platform?: string | null;
+    os?: string | null;
+    arch?: string | null;
+    last_seen_at?: string | null;
+  };
+  logs?: string[];
+  crashes?: string[];
+};
+
+export type TicketMessage = {
+  id: string;
+  /** `requester` wrote it from the app; `staff` answered from this panel. */
+  author: "requester" | "staff";
+  author_name: string | null;
+  body: string;
+  /** When the other side opened it. */
+  seen_at: string | null;
+  created_at: string;
+};
+
+export type Ticket = {
+  id: string;
+  /** Sequential, for `#42` in conversation and in the search box. */
+  number: number;
+  app_id: string;
+  app_name: string | null;
+  company_id: string;
+  company_name: string | null;
+  /** Null once the installation is gone. */
+  installation_id: string | null;
+  installation_name: string | null;
+  subject: string;
+  status: TicketStatus;
+  requester_name: string | null;
+  requester_email: string | null;
+  context: TicketContext | null;
+  last_message_at: string | null;
+  /** Whose turn it is. */
+  last_message_by: "requester" | "staff" | null;
+  /** Requester messages nobody in the panel has opened yet. */
+  unread: number;
+  /** Work logged against the ticket, in minutes. */
+  logged_minutes: number;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  created_at: string;
+  updated_at: string;
+  /** Present on one ticket and on the answer to a reply. */
+  messages?: TicketMessage[];
+};
+
+/** Work logged against a ticket, in short. */
+export type TicketWorkLog = {
+  id: string;
+  occurred_on: string;
+  minutes: number;
+  kind: WorkKind;
+  description: string;
+  created_by: string | null;
+};
+
+export type TicketDetail = Ticket & {messages: TicketMessage[]; work_logs: TicketWorkLog[]};
+
+export type TicketQuery = {
+  status?: TicketStatusFilter;
+  app_id?: string;
+  company_id?: string;
+  installation_id?: string;
+  /** Subject, requester name or address — or `#42` (or `42`) for a number. */
+  search?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export type TicketReply = {message: string; status?: ReplyStatus};
+
+export type TicketPayload = {status?: TicketStatus; subject?: string};
 
 /* ── Overview and audit ───────────────────────────────────────────────── */
 
@@ -1259,6 +1384,8 @@ export type Overview = {
   contracts?: {active: number; expiring: number; in_grace: number};
   /** Open cycles over budget, and closed cycles with overage not billed yet. */
   cycles?: {exceeded: number; to_bill: number};
+  /** Tickets waiting on us and on the client, and requester messages nobody opened. Optional likewise. */
+  tickets?: {open: number; pending: number; unread: number};
 };
 
 export type AuditEntry = {

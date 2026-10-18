@@ -36,6 +36,7 @@ const RESOURCE_TYPES = [
   "alert_rule",
   "alert",
   "contract",
+  "ticket",
 ] as const;
 
 /** Where a resource lives in this panel, for the types that have a screen. */
@@ -58,6 +59,8 @@ const resourceRoute = (type: string | null, id: string | null) => {
       return customAppsRoute.alertRules;
     case "contract":
       return customAppsRoute.contract(id);
+    case "ticket":
+      return customAppsRoute.ticket(id);
     default:
       return null;
   }

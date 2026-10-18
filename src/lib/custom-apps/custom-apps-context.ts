@@ -28,6 +28,7 @@ import {
   RELEASE_MAX_BYTES,
   RELEASE_STATUSES,
   TARGET_SCOPES,
+  TICKET_STATUSES,
   UPDATE_REPORT_STATUSES,
   WORK_KINDS,
 } from "@/lib/custom-apps/types.ts";
@@ -110,5 +111,6 @@ export const useServiceVocabulary = () => {
     graceAllowances: service?.grace_allowances?.length ? service.grace_allowances : [...GRACE_ALLOWANCES],
     workKinds: service?.work_kinds?.length ? service.work_kinds : [...WORK_KINDS],
     contractLimits: {...CONTRACT_LIMITS, ...service?.contract_limits},
+    ticketStatuses: service?.ticket_statuses?.length ? service.ticket_statuses : [...TICKET_STATUSES],
   };
 };

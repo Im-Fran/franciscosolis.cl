@@ -21,10 +21,12 @@ import {AppFormFields} from "@/pages/custom-apps/components/app-form-fields.tsx"
 import {AppKeysPanel} from "@/pages/custom-apps/components/app-keys-panel.tsx";
 import {CiTokensPanel} from "@/pages/custom-apps/components/releases/ci-tokens-panel.tsx";
 import {ReleaseSettingsPanel} from "@/pages/custom-apps/components/releases/release-settings-panel.tsx";
+import {SupportAssigneePanel} from "@/pages/custom-apps/components/tickets/support-assignee-panel.tsx";
 
 /**
  * Everything about an app that is configuration rather than state: its fields, its keys, the
- * updater's key, settings and CI tokens (with the `updates` module), and deleting it. Only what changed goes up, so a save never rewrites the schedule or the module list
+ * updater's key, settings and CI tokens (with the `updates` module), who receives the support
+ * tickets (with the `support` module), and deleting it. Only what changed goes up, so a save never rewrites the schedule or the module list
  * somebody else just edited unless this form actually touched them.
  */
 export const AppSettings = () => {
@@ -121,6 +123,9 @@ export const AppSettings = () => {
           <CiTokensPanel appId={app.id} />
         </>
       )}
+
+      {/* Taken over on its own: whoever saves the form should not become the assignee in passing. */}
+      {(app.modules ?? []).includes("support") && <SupportAssigneePanel />}
 
       <Panel title={t("custom_apps:settings.danger_title")} description={t("custom_apps:settings.danger_description")}>
         <div className="flex flex-wrap items-center justify-between gap-3">

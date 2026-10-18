@@ -14,8 +14,10 @@ adds what reaches a running app as a new build: signed releases uploaded from CI
 pause and rollback, and what each device reports while it updates. See
 [Releases and the updater](#releases-and-the-updater). Phase four — **contracts and hours** — adds
 what each client pays for: contracts with their renewal and grace period, the hours each cycle
-includes and what is left of them, the work log (bitácora) those hours are spent on, and the in-app
-support form. See [Contracts, hours and the work log](#contracts-hours-and-the-work-log).
+includes and what is left of them, the work log (bitácora) those hours are spent on, and the
+support tickets opened from inside the apps, answered here. See
+[Contracts, hours and the work log](#contracts-hours-and-the-work-log) and
+[Support tickets](#support-tickets).
 
 | Route                                        | What it is                                                     |
 | -------------------------------------------- | -------------------------------------------------------------- |
@@ -36,9 +38,11 @@ support form. See [Contracts, hours and the work log](#contracts-hours-and-the-w
 | `/custom-apps/apps/:id/work-log`             | **Work log** — the covering contract and the work done on the app (always shown: it is not a module) |
 | `/custom-apps/apps/:id/status`               | The kill switch                                                |
 | `/custom-apps/apps/:id/settings`             | The app's fields (log level, screenshots, modules, presence…), its keys, the updater's key, settings and CI tokens (`updates` module), and deleting it |
-| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), controls, commands and screenshots, its update offer and reports, logs, support requests, daily table, events, the full heartbeat log |
+| `/custom-apps/installations/:id`             | One device: live snapshot, charts (one point per minute), controls, commands and screenshots, its update offer and reports, logs, its support tickets, daily table, events, the full heartbeat log |
 | `/custom-apps/releases/:id`                  | One release: status and why, rollout figures and rates, reach, notes and minimum version, the artifact, and every device report |
 | `/custom-apps/crashes/:id`                   | One crash group, its status and every report with its stack    |
+| `/custom-apps/tickets`                       | **Support inbox**, opening on what needs somebody (open and waiting on the client), filterable by status, app, client and installation (in the address) and searchable by subject, requester or `#number` |
+| `/custom-apps/tickets/:id`                   | One ticket — where the notification centre's links land: the conversation, answer (and the status it leaves), status and subject, the device's context, and the time logged against it |
 | `/custom-apps/alerts`                        | **Alert inbox**, filterable by status, app, rule and installation (in the address) |
 | `/custom-apps/alerts/rules`                  | The alert rules: create, tune, silence, disable, take over notifications |
 | `/custom-apps/alerts/:id`                    | One alert — where the notification centre's links land; acknowledge or resolve |
@@ -47,7 +51,7 @@ support form. See [Contracts, hours and the work log](#contracts-hours-and-the-w
 The app tabs for remote operation follow the app's **modules**: a tab whose module is off is hidden,
 and its route, if reached anyway, says which module to turn on instead of showing a screen the
 service would refuse. On an installation, the commands and screenshots panels need `commands`, the
-log panel needs `logs`, the updates panel needs `updates` and the support requests need `support`; the
+log panel needs `logs`, the updates panel needs `updates` and the support tickets need `support`; the
 page loads the app beside the installation to know. A company's page also lists its contracts and its
 whole work log, and an app's summary shows the contract covering it.
 
@@ -256,8 +260,11 @@ balance is final — the next cycle's carried hours derive from it.
 **The work log** is one panel shown in three places: an app's *Work log* tab (through the app's own
 routes, so the app is fixed), a company's page (where an entry may name one of its apps or none —
 work for the client as a whole), and a contract's page (where every entry is filed under that
-contract). An entry is a day (not in the future), hours and minutes (at most 24 h), a kind
-(maintenance, support, development, other), what was done and an optional link. The service files it
+contract) — and, narrowed to one ticket, on that ticket's page. An entry is a day (not in the
+future), hours and minutes (at most 24 h), a kind (maintenance, support, development, other), what
+was done, an optional link and an optional **support ticket** it answered (one of the app's tickets,
+or of the company's for work about the company as a whole; the service refuses a ticket of another
+company, 422). An entry linked to a ticket shows `#number` with a link to it. The service files it
 under the contract covering its app — or the company — on that day and under the cycle the day falls
 in; the dialog says beforehand which contract that will be, and asks for one only when several cover
 the day (the service's 422). An entry inside a **closed cycle** is shown locked, and a day inside one
@@ -269,14 +276,43 @@ default). Neither reads a window. Their alerts name the contract and link to its
 an app watches only the contracts covering it. The overview counts active contracts, those ending
 soon and those in grace, and cycles over budget and closed cycles with overage not billed yet.
 
-**Support.** The `support` module is the in-app support form: `FSCustomApps.support({subject,
-message, name, email})` in the web SDK, `POST /support` on the ingest. The request is emailed to
-soporte@franciscosolis.cl with the device's context; there are **no tickets in the panel**, by
-decision. The panel labels the module in its pickers, mentions the call under a web app's script tag,
-and lists the `support.requested` entries the service audits on the installation's page.
-
 The audit log labels every new event, links contract and cycle events to the contract, and shows when
 an app's state changed because its contract lapsed or was renewed — with a link to the contract.
+
+## Support tickets
+
+The `support` module lets a client's app open a **ticket** from its own support screen —
+`FSCustomApps.openTicket({subject, message, name, email})` in the web SDK, `POST /tickets` on the
+ingest — with the device's context attached, and read and continue its own tickets
+(`tickets()`, `ticket(id)`, `replyTicket(id, message)`). The tickets live in this panel; nothing is
+emailed, and this is not the website's support, which stays plain email to soporte@.
+
+**The inbox** (`/custom-apps/tickets`, in the main navigation) lists tickets most recently active
+first and opens on `active` — `open` (waiting on us: new, or the requester wrote again) and `pending`
+(answered, waiting on the requester); `resolved` and `closed` are one filter away. Each row shows the
+number, subject, requester, app, client and device, the status and whose turn it is, how many of the
+requester's messages nobody opened yet, the last activity and the time logged. Status, app, client and
+installation live in the address, so the app summary and settings and an installation's page link
+straight to their own tickets; the search runs on the service and takes `#42` for a number.
+
+**One ticket** (`/custom-apps/tickets/:id`, the URL the notification centre links to) shows the
+conversation — the requester's messages on one side, support's on the other, each answer saying
+whether the app has fetched it yet — and opening it marks the requester's messages read. An
+**answer** leaves the ticket `pending` unless the form says `resolved` or `closed`; the status
+selector changes it without writing to anybody (reopening is that selector too), and the subject can
+be corrected. The **context** is the snapshot taken when the ticket was opened — device, version,
+channel, platform, system, architecture, last seen — with the latest log lines and the open crash
+groups of that version when the app has those modules and the requester attached them; crash groups
+come by title only, so the panel links to the app's diagnostics rather than to one group. Below it,
+the **time logged** against the ticket is the ordinary work log narrowed to it, and *Log work* starts
+an entry as support work linked to the ticket.
+
+**Who hears about them.** Whoever turned `support` on receives every new ticket and every requester
+message in the website's bell (`custom_apps.ticket_opened` and `custom_apps.ticket_message`, in the
+`custom_apps` notification category), until somebody presses *Take this app's tickets* in the app's
+settings. The summary says who receives them and how many are waiting for an answer. The overview
+counts open tickets, tickets waiting on the client and unread requester messages, and the audit log
+labels `ticket.opened`, `ticket.replied` and `ticket.status_changed`, linking each to its ticket.
 
 ## Configuration
 
