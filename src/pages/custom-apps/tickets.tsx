@@ -24,6 +24,8 @@ import {CompanySelect} from "@/pages/custom-apps/components/app-form-fields.tsx"
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
 import {TicketStatusBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {UnreadCount} from "@/pages/custom-apps/components/tickets/ticket-row.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 50;
 const REFRESH_MS = 30_000;
@@ -43,6 +45,7 @@ export const Tickets = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const navigate = useNavigate();
   const {ticketStatuses} = useServiceVocabulary();
+  const help = useHelp();
   const [params, setParams] = useSearchParams();
   const [offset, setOffset] = useState(0);
   const [search, setSearch] = useState(params.get("search") ?? "");
@@ -190,36 +193,41 @@ export const Tickets = () => {
               setOffset(0);
             }}
             placeholder={t("custom_apps:tickets.search")}
+            help={help.field("tickets.filter_help.search")}
           />
           <div className="flex flex-wrap items-center gap-3">
-            <Select
-              value={status}
-              onChange={(event) => setFilter("status", event.target.value === DEFAULT_STATUS ? "" : event.target.value)}
-              aria-label={t("custom_apps:tickets.filters.status")}
-              className="w-auto min-w-[12rem]"
-            >
-              <option value="active">{t("custom_apps:tickets.filters.active")}</option>
-              {ticketStatuses.map((value) => (
-                <option key={value} value={value}>
-                  {t(`custom_apps:ticket_statuses.${value}`, {defaultValue: value})}
-                </option>
-              ))}
-              <option value="all">{t("custom_apps:tickets.filters.all")}</option>
-            </Select>
-            <AppSelect
-              value={appId}
-              onChange={(value) => setFilter("app_id", value)}
-              emptyLabel={t("custom_apps:tickets.filters.any_app")}
-              className="w-auto min-w-[14rem]"
-            />
-            <div className="w-full sm:w-64">
+            <WithHelp label={t("custom_apps:tickets.filters.status")} help={help.field("tickets.filter_help.status")}>
+              <Select
+                value={status}
+                onChange={(event) => setFilter("status", event.target.value === DEFAULT_STATUS ? "" : event.target.value)}
+                aria-label={t("custom_apps:tickets.filters.status")}
+                className="w-auto min-w-[12rem]"
+              >
+                <option value="active">{t("custom_apps:tickets.filters.active")}</option>
+                {ticketStatuses.map((value) => (
+                  <option key={value} value={value}>
+                    {t(`custom_apps:ticket_statuses.${value}`, {defaultValue: value})}
+                  </option>
+                ))}
+                <option value="all">{t("custom_apps:tickets.filters.all")}</option>
+              </Select>
+            </WithHelp>
+            <WithHelp label={t("custom_apps:tickets.app")} help={help.field("tickets.filter_help.app")}>
+              <AppSelect
+                value={appId}
+                onChange={(value) => setFilter("app_id", value)}
+                emptyLabel={t("custom_apps:tickets.filters.any_app")}
+                className="w-auto min-w-[14rem]"
+              />
+            </WithHelp>
+            <WithHelp label={t("custom_apps:tickets.company")} help={help.field("tickets.filter_help.company")} className="w-full sm:w-64">
               <CompanySelect
                 id="tickets-filter-company"
                 value={companyId}
                 onChange={(value) => setFilter("company_id", value)}
                 emptyLabel={t("custom_apps:tickets.filters.any_company")}
               />
-            </div>
+            </WithHelp>
             {installationId && (
               <Button variant="secondary" size="sm" onClick={() => setFilter("installation_id", "")}>
                 {t("custom_apps:tickets.filters.one_installation")}

@@ -14,6 +14,7 @@ import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {Pagination} from "@/components/admin/pagination.tsx";
 import {InstallationSelect} from "@/pages/custom-apps/components/installation-select.tsx";
 import {LogItem} from "@/pages/custom-apps/components/logs/log-item.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const PAGE_SIZE = 50;
 
@@ -28,6 +29,7 @@ export type LogsScope = {kind: "app"; appId: string; installations: Installation
  */
 export const LogsPanel = ({scope, description}: {scope: LogsScope; description?: string}) => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {logLevels} = useServiceVocabulary();
   const [level, setLevel] = useState<"" | LogLevel>("");
   const [search, setSearch] = useState("");
@@ -79,7 +81,7 @@ export const LogsPanel = ({scope, description}: {scope: LogsScope; description?:
       }
     >
       <div className={`mb-5 grid gap-3 sm:grid-cols-2 ${scope.kind === "app" ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}>
-        <Field label={t("custom_apps:logs.filters.level")} htmlFor={`${scopeKey}-level`}>
+        <Field label={t("custom_apps:logs.filters.level")} htmlFor={`${scopeKey}-level`} help={help.field("logs.filter_help.level")}>
           <Select
             id={`${scopeKey}-level`}
             value={level}
@@ -93,7 +95,7 @@ export const LogsPanel = ({scope, description}: {scope: LogsScope; description?:
             ))}
           </Select>
         </Field>
-        <Field label={t("custom_apps:logs.filters.search")} htmlFor={`${scopeKey}-search`}>
+        <Field label={t("custom_apps:logs.filters.search")} htmlFor={`${scopeKey}-search`} help={help.field("logs.filter_help.search")}>
           <Input
             id={`${scopeKey}-search`}
             type="search"
@@ -103,7 +105,7 @@ export const LogsPanel = ({scope, description}: {scope: LogsScope; description?:
           />
         </Field>
         {scope.kind === "app" && (
-          <Field label={t("custom_apps:logs.filters.installation")} htmlFor={`${scopeKey}-installation`}>
+          <Field label={t("custom_apps:logs.filters.installation")} htmlFor={`${scopeKey}-installation`} help={help.field("logs.filter_help.installation")}>
             <InstallationSelect
               id={`${scopeKey}-installation`}
               value={installationId}
@@ -114,7 +116,7 @@ export const LogsPanel = ({scope, description}: {scope: LogsScope; description?:
             />
           </Field>
         )}
-        <Field label={t("custom_apps:audit.filters.from")} htmlFor={`${scopeKey}-from`}>
+        <Field label={t("custom_apps:audit.filters.from")} htmlFor={`${scopeKey}-from`} help={help.field("logs.filter_help.from")}>
           <Input
             id={`${scopeKey}-from`}
             type="date"
@@ -123,7 +125,7 @@ export const LogsPanel = ({scope, description}: {scope: LogsScope; description?:
             onChange={(event) => filter(() => setFrom(event.target.value))}
           />
         </Field>
-        <Field label={t("custom_apps:audit.filters.to")} htmlFor={`${scopeKey}-to`}>
+        <Field label={t("custom_apps:audit.filters.to")} htmlFor={`${scopeKey}-to`} help={help.field("logs.filter_help.to")}>
           <Input
             id={`${scopeKey}-to`}
             type="date"

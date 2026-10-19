@@ -16,6 +16,8 @@ import {cn} from "@/lib/utils.ts";
 import {parseJsonObject} from "@/lib/cms/json.ts";
 import {JsonField} from "@/pages/custom-apps/components/json-field.tsx";
 import {commandUnavailable} from "@/pages/custom-apps/components/remote/commands.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {HelpButton} from "@/components/ui/help.tsx";
 
 /** How long a command may wait for the device, in seconds. The service takes 60 to 604 800. */
 const EXPIRY_OPTIONS = [300, 900, 3600, 21_600, 86_400, 604_800] as const;
@@ -34,6 +36,7 @@ export const CommandForm = ({
   const {t} = useTranslation(["custom_apps", "admin"]);
   const {notify} = useToast();
   const {commandTypes} = useServiceVocabulary();
+  const help = useHelp();
   const revoked = installation.status === "revoked";
 
   const firstAvailable = commandTypes.find((type) => !commandUnavailable(type, app, installation)) ?? commandTypes[0];
@@ -87,6 +90,7 @@ export const CommandForm = ({
               : t(`custom_apps:commands.types_hint.${type}`, {defaultValue: ""}) || undefined
           }
           error={unavailable ? t(`custom_apps:commands.unavailable.${unavailable}`) : undefined}
+          help={help.field("commands.help.type")}
         >
           <Select
             id="command-type"
@@ -105,7 +109,12 @@ export const CommandForm = ({
           </Select>
         </Field>
 
-        <Field label={t("custom_apps:commands.expires")} htmlFor="command-expires" hint={t("custom_apps:commands.expires_hint")}>
+        <Field
+          label={t("custom_apps:commands.expires")}
+          htmlFor="command-expires"
+          hint={t("custom_apps:commands.expires_hint")}
+          help={help.field("commands.help.expires")}
+        >
           <Select
             id="command-expires"
             value={expires}
@@ -122,16 +131,19 @@ export const CommandForm = ({
       </div>
 
       <div className="flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={() => setWithPayload((value) => !value)}
-          aria-expanded={withPayload}
-          disabled={revoked}
-          className="inline-flex w-fit cursor-pointer items-center gap-1 text-[13px] text-neutral-400 transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <CaretRight size={12} className={cn("transition-transform", withPayload && "rotate-90")} aria-hidden="true" />
-          {t("custom_apps:commands.payload_toggle")}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => setWithPayload((value) => !value)}
+            aria-expanded={withPayload}
+            disabled={revoked}
+            className="inline-flex w-fit cursor-pointer items-center gap-1 text-[13px] text-neutral-400 transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <CaretRight size={12} className={cn("transition-transform", withPayload && "rotate-90")} aria-hidden="true" />
+            {t("custom_apps:commands.payload_toggle")}
+          </button>
+          <HelpButton label={t("custom_apps:commands.payload")} help={help.field("commands.help.payload")} />
+        </div>
         {withPayload && (
           <>
             <label htmlFor="command-payload" className="sr-only">

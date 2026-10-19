@@ -16,6 +16,8 @@ import {AppSelect} from "@/pages/custom-apps/components/alerts/app-select.tsx";
 import {RuleFormModal} from "@/pages/custom-apps/components/alerts/rule-form-modal.tsx";
 import type {RuleDraft} from "@/pages/custom-apps/components/alerts/rule-form-modal.tsx";
 import {RuleItem} from "@/pages/custom-apps/components/alerts/rule-item.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 /**
  * What the service watches for. A rule is one condition — offline for too long, CPU or memory
@@ -27,6 +29,7 @@ import {RuleItem} from "@/pages/custom-apps/components/alerts/rule-item.tsx";
  */
 export const AlertRules = () => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {notify} = useToast();
   const [appId, setAppId] = useState("");
   const [draft, setDraft] = useState<RuleDraft | null>(null);
@@ -74,12 +77,14 @@ export const AlertRules = () => {
         description={rules.data ? t("custom_apps:rules.count", {count: rows.length}) : undefined}
         action={
           <>
-            <AppSelect
-              value={appId}
-              onChange={setAppId}
-              emptyLabel={t("custom_apps:alerts.filters.any_app")}
-              className="h-9 w-auto min-w-[12rem] text-[13px]"
-            />
+            <WithHelp label={t("custom_apps:rules.fields.app")} help={help.field("rules.filter_help.app")}>
+              <AppSelect
+                value={appId}
+                onChange={setAppId}
+                emptyLabel={t("custom_apps:alerts.filters.any_app")}
+                className="h-9 w-auto min-w-[12rem] text-[13px]"
+              />
+            </WithHelp>
             <Button size="sm" onClick={() => setDraft({mode: "create", appId: appId || undefined})}>
               <Plus size={14} /> {t("custom_apps:rules.create")}
             </Button>

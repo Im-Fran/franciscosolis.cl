@@ -17,6 +17,7 @@ import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {Pagination} from "@/components/admin/pagination.tsx";
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const PAGE_SIZE = 50;
 
@@ -29,6 +30,7 @@ const PAGE_SIZE = 50;
  */
 export const CompanyList = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [debounced] = useDebounceValue(search.trim(), 300);
@@ -129,6 +131,7 @@ export const CompanyList = () => {
               setOffset(0);
             }}
             placeholder={t("custom_apps:companies.search")}
+            help={help.field("companies.filter_help.search")}
           />
         </div>
 

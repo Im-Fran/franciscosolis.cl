@@ -5,6 +5,7 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import {ArrowRight, Buildings, FloppyDisk, Star, Trash} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
+import {FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 import {Field, Input, Textarea} from "@/components/ui/input.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -22,6 +23,8 @@ import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {TagInput} from "@/components/admin/tag-input.tsx";
 import {RoleChips} from "@/pages/custom-apps/components/badges.tsx";
+import {FormSection} from "@/pages/custom-apps/components/form-section.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const NAME_MAX = 200;
 
@@ -52,6 +55,7 @@ export const ContactEditor = () => {
   const {contactId} = useParams<{contactId: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
+  const help = useHelp();
 
   const [form, setForm] = useState<Form>(EMPTY);
   const [baseline, setBaseline] = useState<Form>(EMPTY);
@@ -166,6 +170,7 @@ export const ContactEditor = () => {
       back={{to: customAppsRoute.contacts, label: t("custom_apps:contacts.back")}}
       actions={
         <>
+          <FormHelpButton help={help.form("contacts.form_help")} />
           {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
           {contactId && (
             <Button
@@ -216,12 +221,15 @@ export const ContactEditor = () => {
                 </Alert>
               )}
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <RequiredLegend />
+
+              <FormSection title={t("custom_apps:contacts.sections.person")}>
                 <Field
                   label={t("custom_apps:contacts.fields.name")}
                   htmlFor="contact-name"
                   error={errors.name}
-                  className="sm:col-span-2"
+                  help={help.field("contacts.help.name")}
+                  required
                 >
                   <Input
                     id="contact-name"
@@ -233,12 +241,15 @@ export const ContactEditor = () => {
                     required
                   />
                 </Field>
+              </FormSection>
 
+              <FormSection title={t("custom_apps:contacts.sections.contact")} bodyClassName="sm:grid-cols-2">
                 <Field
                   label={t("custom_apps:contacts.fields.emails")}
                   htmlFor="contact-emails"
                   error={errors.emails}
                   hint={t("custom_apps:contacts.hints.list")}
+                  help={help.field("contacts.help.emails")}
                 >
                   <TagInput
                     id="contact-emails"
@@ -254,6 +265,7 @@ export const ContactEditor = () => {
                   htmlFor="contact-phones"
                   error={errors.phones}
                   hint={t("custom_apps:contacts.hints.list")}
+                  help={help.field("contacts.help.phones")}
                 >
                   <TagInput
                     id="contact-phones"
@@ -263,8 +275,10 @@ export const ContactEditor = () => {
                     maxTagLength={20}
                   />
                 </Field>
+              </FormSection>
 
-                <Field label={t("custom_apps:fields.address")} htmlFor="contact-address" className="sm:col-span-2">
+              <FormSection title={t("custom_apps:contacts.sections.address")}>
+                <Field label={t("custom_apps:fields.address")} htmlFor="contact-address" help={help.field("contacts.help.address")}>
                   <Input
                     id="contact-address"
                     value={form.address}
@@ -272,8 +286,10 @@ export const ContactEditor = () => {
                     autoComplete="off"
                   />
                 </Field>
+              </FormSection>
 
-                <Field label={t("custom_apps:fields.notes")} htmlFor="contact-notes" className="sm:col-span-2">
+              <FormSection title={t("custom_apps:contacts.sections.notes")}>
+                <Field label={t("custom_apps:fields.notes")} htmlFor="contact-notes" help={help.field("contacts.help.notes")}>
                   <Textarea
                     id="contact-notes"
                     value={form.notes}
@@ -282,7 +298,7 @@ export const ContactEditor = () => {
                     className="resize-y"
                   />
                 </Field>
-              </div>
+              </FormSection>
 
               {loaded?.updated_at && (
                 <p className="text-[13px] text-neutral-600">

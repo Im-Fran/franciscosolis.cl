@@ -42,6 +42,7 @@ import {describeUploader, isSemver, releaseLine, saveBlob} from "@/pages/custom-
 import {ReleaseReports} from "@/pages/custom-apps/components/releases/release-reports.tsx";
 import {ReleaseStatusReason} from "@/pages/custom-apps/components/releases/release-status-reason.tsx";
 import {StatCard} from "@/pages/custom-apps/components/stat-card.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 /** A published rollout is moving; its figures are worth asking for again while somebody watches. */
 const REFRESH_MS = 30_000;
@@ -63,6 +64,7 @@ type ReasonAction = "pause" | "withdraw" | "rollback";
  */
 export const ReleaseDetail = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {releaseId = ""} = useParams<{releaseId: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
@@ -509,6 +511,7 @@ export const ReleaseDetail = () => {
         open={reasonAction !== null}
         title={reasonAction ? reasonCopy[reasonAction].title : ""}
         body={reasonAction ? reasonCopy[reasonAction].body : ""}
+        formHelp={reasonAction ? help.form(`release.form_help_${reasonAction}`) : undefined}
         confirmLabel={reasonAction ? reasonCopy[reasonAction].confirm : ""}
         danger={reasonAction ? reasonCopy[reasonAction].danger : false}
         pending={act.pending}
@@ -533,9 +536,15 @@ export const ReleaseDetail = () => {
         onClose={update.pending ? () => undefined : () => setEditing(false)}
         title={t("custom_apps:release.edit_title", {version: current.version})}
         className="max-w-lg"
+        help={help.form("release.edit_form_help")}
       >
         <form onSubmit={saveEdit} className="flex flex-col gap-5" noValidate>
-          <Field label={t("custom_apps:release.notes_title")} htmlFor="release-notes" hint={t("custom_apps:release.notes_hint")}>
+          <Field
+            label={t("custom_apps:release.notes_title")}
+            htmlFor="release-notes"
+            hint={t("custom_apps:release.notes_hint")}
+            help={help.field("release.help.notes")}
+          >
             <Textarea
               id="release-notes"
               value={notes}
@@ -549,6 +558,7 @@ export const ReleaseDetail = () => {
           <Field
             label={t("custom_apps:release.min_version")}
             htmlFor="release-min-version"
+            help={help.field("release.help.min_version")}
             error={minVersionError ?? undefined}
             hint={t("custom_apps:release.min_version_hint", {version: current.version})}
           >

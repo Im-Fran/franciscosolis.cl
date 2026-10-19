@@ -6,6 +6,7 @@ import {useDebounceValue} from "usehooks-ts";
 import {LinkSimple, PencilSimple, Plus, Star, UserPlus, UsersThree, X} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
+import {FieldLabel, FieldLegend, RequiredLegend} from "@/components/ui/help.tsx";
 import {Modal} from "@/components/ui/modal.tsx";
 import {Panel} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -21,7 +22,9 @@ import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {RoleChips} from "@/pages/custom-apps/components/badges.tsx";
 import {CheckboxGroup} from "@/pages/custom-apps/components/checkbox-group.tsx";
+import {CheckboxField} from "@/pages/custom-apps/components/checkbox-field.tsx";
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 type Draft = {contactId: string; contactName: string; roles: ContactRole[]; isPrimary: boolean};
 
@@ -45,6 +48,7 @@ export const CompanyContactsPanel = ({
   const {t} = useTranslation(["custom_apps", "admin"]);
   const {notify} = useToast();
   const {contactRoles} = useServiceVocabulary();
+  const help = useHelp();
   const [draft, setDraft] = useState<Draft | null>(null);
   const [adding, setAdding] = useState(false);
   const [unlinking, setUnlinking] = useState<CompanyContact | null>(null);
@@ -188,10 +192,13 @@ export const CompanyContactsPanel = ({
             : t("custom_apps:company_contacts.edit_title", {name: draft?.contactName ?? ""})
         }
         className="max-w-xl"
+        help={help.form("company_contacts.form_help")}
       >
         <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
+          {adding && <RequiredLegend className="-mt-2" />}
           {adding && (
             <div className="flex flex-col gap-2">
+              <FieldLabel label={t("custom_apps:company_contacts.pick")} help={help.field("company_contacts.help.pick")} required />
               <SearchBox value={search} onChange={setSearch} placeholder={t("custom_apps:contacts.search")} />
               <div className="max-h-56 overflow-y-auto rounded-[var(--radius-md)] border border-neutral-800">
                 {candidates.loading && !candidates.data ? (
@@ -243,9 +250,11 @@ export const CompanyContactsPanel = ({
           {draft && (
             <>
               <fieldset className="flex flex-col gap-2">
-                <legend className="mb-2 text-sm font-medium text-neutral-300">
-                  {t("custom_apps:company_contacts.roles_for", {name: draft.contactName})}
-                </legend>
+                <FieldLegend
+                  label={t("custom_apps:company_contacts.roles_for", {name: draft.contactName})}
+                  help={help.field("company_contacts.help.roles")}
+                  className="mb-2"
+                />
                 <CheckboxGroup
                   idPrefix="link-role"
                   options={roleOptions}
@@ -255,18 +264,15 @@ export const CompanyContactsPanel = ({
                 />
               </fieldset>
 
-              <label className="flex items-center gap-2.5 text-sm text-neutral-300">
-                <input
-                  type="checkbox"
-                  checked={draft.isPrimary}
-                  disabled={save.pending}
-                  onChange={(event) =>
-                    setDraft((current) => (current ? {...current, isPrimary: event.target.checked} : current))
-                  }
-                  className="size-4 accent-[var(--color-accent)]"
-                />
-                {t("custom_apps:company_contacts.primary_label")}
-              </label>
+              <CheckboxField
+                variant="plain"
+                id="link-primary"
+                label={t("custom_apps:company_contacts.primary_label")}
+                checked={draft.isPrimary}
+                disabled={save.pending}
+                onChange={(checked) => setDraft((current) => (current ? {...current, isPrimary: checked} : current))}
+                help={help.field("company_contacts.help.primary")}
+              />
             </>
           )}
 

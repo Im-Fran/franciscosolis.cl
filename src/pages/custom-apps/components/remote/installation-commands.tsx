@@ -17,6 +17,8 @@ import {Pagination} from "@/components/admin/pagination.tsx";
 import {CommandForm} from "@/pages/custom-apps/components/remote/command-form.tsx";
 import {CommandItem} from "@/pages/custom-apps/components/remote/command-item.tsx";
 import {isLive} from "@/pages/custom-apps/components/remote/commands.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FormHelpButton, WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 20;
 /** Fast enough to watch a command land; it only runs while one is on its way. */
@@ -43,6 +45,7 @@ export const InstallationCommands = ({
   onScreenshot: () => void;
 }) => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {notify} = useToast();
   const {commandStatuses} = useServiceVocabulary();
   const [status, setStatus] = useState<"" | CommandStatus>("");
@@ -101,6 +104,7 @@ export const InstallationCommands = ({
   return (
     <Panel
       title={t("custom_apps:commands.title")}
+      action={<FormHelpButton help={help.form("commands.form_help")} />}
       description={
         installation.socket_connected
           ? t("custom_apps:commands.description_socket")
@@ -115,22 +119,24 @@ export const InstallationCommands = ({
         <div>
           <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-sm font-medium text-neutral-300">{t("custom_apps:commands.history")}</h3>
-            <Select
-              value={status}
-              onChange={(event) => {
-                setStatus(event.target.value as "" | CommandStatus);
-                setOffset(0);
-              }}
-              aria-label={t("custom_apps:commands.filter")}
-              className="h-9 w-auto text-[13px]"
-            >
-              <option value="">{t("custom_apps:commands.any_status")}</option>
-              {commandStatuses.map((value) => (
-                <option key={value} value={value}>
-                  {t(`custom_apps:command_statuses.${value}`, {defaultValue: value})}
-                </option>
-              ))}
-            </Select>
+            <WithHelp label={t("custom_apps:commands.filter")} help={help.field("commands.filter_help.status")}>
+              <Select
+                value={status}
+                onChange={(event) => {
+                  setStatus(event.target.value as "" | CommandStatus);
+                  setOffset(0);
+                }}
+                aria-label={t("custom_apps:commands.filter")}
+                className="h-9 w-auto text-[13px]"
+              >
+                <option value="">{t("custom_apps:commands.any_status")}</option>
+                {commandStatuses.map((value) => (
+                  <option key={value} value={value}>
+                    {t(`custom_apps:command_statuses.${value}`, {defaultValue: value})}
+                  </option>
+                ))}
+              </Select>
+            </WithHelp>
           </div>
 
           {live && (

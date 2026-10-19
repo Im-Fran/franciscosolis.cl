@@ -21,6 +21,8 @@ import {useApp} from "@/pages/custom-apps/components/app-context.ts";
 import {ConnectedIndicator, LifecycleBadge, ReviewBadge, SocketBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {describePlatform, installationLabel} from "@/pages/custom-apps/components/installation-label.ts";
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 50;
 const REFRESH_MS = 15_000;
@@ -39,6 +41,7 @@ const asBoolean = (value: TriState) => (value === "" ? undefined : value === "tr
  */
 export const AppInstallations = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const navigate = useNavigate();
   const {app} = useApp();
   const [search, setSearch] = useState("");
@@ -145,17 +148,20 @@ export const AppInstallations = () => {
     label: string,
     yes: string,
     no: string,
+    helpPath: string,
   ) => (
-    <Select
-      value={value}
-      onChange={(event) => filter(() => onChange(event.target.value as TriState))}
-      aria-label={label}
-      className="w-auto min-w-[10rem]"
-    >
-      <option value="">{label}</option>
-      <option value="true">{yes}</option>
-      <option value="false">{no}</option>
-    </Select>
+    <WithHelp label={label} help={help.field(helpPath)}>
+      <Select
+        value={value}
+        onChange={(event) => filter(() => onChange(event.target.value as TriState))}
+        aria-label={label}
+        className="w-auto min-w-[10rem]"
+      >
+        <option value="">{label}</option>
+        <option value="true">{yes}</option>
+        <option value="false">{no}</option>
+      </Select>
+    </WithHelp>
   );
 
   return (
@@ -176,6 +182,7 @@ export const AppInstallations = () => {
           value={search}
           onChange={(value) => filter(() => setSearch(value))}
           placeholder={t("custom_apps:installations.search")}
+          help={help.field("installations.filter_help.search")}
         />
         {triStateSelect(
           connected,
@@ -183,6 +190,7 @@ export const AppInstallations = () => {
           t("custom_apps:installations.filters.connection"),
           t("custom_apps:installations.connected"),
           t("custom_apps:installations.offline"),
+          "installations.filter_help.connection",
         )}
         {triStateSelect(
           needsReview,
@@ -190,17 +198,20 @@ export const AppInstallations = () => {
           t("custom_apps:installations.filters.review"),
           t("custom_apps:installations.needs_review"),
           t("custom_apps:installations.reviewed"),
+          "installations.filter_help.review",
         )}
-        <Select
-          value={status}
-          onChange={(event) => filter(() => setStatus(event.target.value as "" | InstallationStatus))}
-          aria-label={t("custom_apps:installations.filters.status")}
-          className="w-auto min-w-[10rem]"
-        >
-          <option value="">{t("custom_apps:installations.filters.status")}</option>
-          <option value="active">{t("custom_apps:lifecycle.active")}</option>
-          <option value="revoked">{t("custom_apps:lifecycle.revoked")}</option>
-        </Select>
+        <WithHelp label={t("custom_apps:installations.filters.status")} help={help.field("installations.filter_help.status")}>
+          <Select
+            value={status}
+            onChange={(event) => filter(() => setStatus(event.target.value as "" | InstallationStatus))}
+            aria-label={t("custom_apps:installations.filters.status")}
+            className="w-auto min-w-[10rem]"
+          >
+            <option value="">{t("custom_apps:installations.filters.status")}</option>
+            <option value="active">{t("custom_apps:lifecycle.active")}</option>
+            <option value="revoked">{t("custom_apps:lifecycle.revoked")}</option>
+          </Select>
+        </WithHelp>
         {filtered && (
           <Button
             variant="ghost"

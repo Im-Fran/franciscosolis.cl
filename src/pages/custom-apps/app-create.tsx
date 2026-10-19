@@ -5,6 +5,7 @@ import {Link, useSearchParams} from "react-router-dom";
 import {ArrowRight, CheckCircle, FloppyDisk, Key} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
+import {FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 import {Panel} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useMutation} from "@/lib/admin/useMutation.ts";
@@ -16,6 +17,7 @@ import type {App, AppKey, NewApp} from "@/lib/custom-apps/types.ts";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {emptyAppForm, newAppPayload, validateAppForm} from "@/pages/custom-apps/components/app-form.ts";
 import type {AppForm, AppFormErrors, AppFormField} from "@/pages/custom-apps/components/app-form.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 import {AppFormFields} from "@/pages/custom-apps/components/app-form-fields.tsx";
 import {CopyField} from "@/pages/custom-apps/components/copy-button.tsx";
 
@@ -29,6 +31,7 @@ import {CopyField} from "@/pages/custom-apps/components/copy-button.tsx";
  */
 export const AppCreate = () => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {notify} = useToast();
   const [params] = useSearchParams();
   const vocabulary = useServiceVocabulary();
@@ -108,10 +111,13 @@ export const AppCreate = () => {
         description={t("custom_apps:apps.new_description")}
         back={{to: customAppsRoute.apps, label: t("custom_apps:apps.back")}}
         actions={
-          <Button type="submit" form="app-create-form" disabled={create.pending}>
-            {create.pending ? <Spinner size={16} /> : <FloppyDisk size={16} />}
-            {create.pending ? t("admin:common.creating") : t("admin:common.create")}
-          </Button>
+          <>
+            <FormHelpButton help={help.form("apps.form_help_create")} />
+            <Button type="submit" form="app-create-form" disabled={create.pending}>
+              {create.pending ? <Spinner size={16} /> : <FloppyDisk size={16} />}
+              {create.pending ? t("admin:common.creating") : t("admin:common.create")}
+            </Button>
+          </>
         }
       />
 
@@ -123,6 +129,7 @@ export const AppCreate = () => {
                 {t(`admin:errors.${create.error}`, {defaultValue: create.error})}
               </Alert>
             )}
+            <RequiredLegend />
             <AppFormFields form={form} set={set} errors={errors} disabled={create.pending} mode="create" />
           </div>
         </Panel>

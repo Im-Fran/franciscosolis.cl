@@ -5,6 +5,7 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import {AppWindow, FloppyDisk, Plus, Trash} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
+import {FieldLegend, FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 import {Field, Input, Textarea} from "@/components/ui/input.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -23,6 +24,8 @@ import {PageHeader} from "@/components/admin/page-header.tsx";
 import {AppRow} from "@/pages/custom-apps/components/app-row.tsx";
 import {CompanyContactsPanel} from "@/pages/custom-apps/components/company-contacts-panel.tsx";
 import {CompanyContractsPanel} from "@/pages/custom-apps/components/contracts/company-contracts-panel.tsx";
+import {FormSection} from "@/pages/custom-apps/components/form-section.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 import {WorkLogPanel} from "@/pages/custom-apps/components/work-log/work-log-panel.tsx";
 import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
 
@@ -72,6 +75,7 @@ export const CompanyEditor = () => {
   const {companyId} = useParams<{companyId: string}>();
   const navigate = useNavigate();
   const {notify} = useToast();
+  const help = useHelp();
 
   const [form, setForm] = useState<Form>(EMPTY);
   const [baseline, setBaseline] = useState<Form>(EMPTY);
@@ -194,6 +198,7 @@ export const CompanyEditor = () => {
       back={{to: customAppsRoute.companies, label: t("custom_apps:companies.back")}}
       actions={
         <>
+          <FormHelpButton help={help.form("companies.form_help")} />
           {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
           {companyId && (
             <Button
@@ -244,9 +249,11 @@ export const CompanyEditor = () => {
                 </Alert>
               )}
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <RequiredLegend />
+
+              <FormSection title={t("custom_apps:companies.sections.identification")} bodyClassName="sm:grid-cols-2">
                 <fieldset className="flex flex-col gap-1.5 sm:col-span-2">
-                  <legend className="mb-1.5 text-sm font-medium text-neutral-300">{t("custom_apps:companies.fields.kind")}</legend>
+                  <FieldLegend label={t("custom_apps:companies.fields.kind")} help={help.field("companies.help.kind")} />
                   <div className="flex flex-wrap gap-2">
                     {[true, false].map((isCompany) => (
                       <label
@@ -267,41 +274,11 @@ export const CompanyEditor = () => {
                 </fieldset>
 
                 <Field
-                  label={form.isCompany ? t("custom_apps:companies.fields.legal_name") : t("custom_apps:companies.fields.full_name")}
-                  htmlFor="company-legal-name"
-                  error={errors.legalName}
-                  hint={form.isCompany ? t("custom_apps:companies.hints.legal_name") : undefined}
-                >
-                  <Input
-                    id="company-legal-name"
-                    value={form.legalName}
-                    onChange={(event) => set("legalName", event.target.value)}
-                    maxLength={NAME_MAX}
-                    aria-invalid={Boolean(errors.legalName)}
-                    autoComplete="off"
-                    required
-                  />
-                </Field>
-
-                <Field
-                  label={t("custom_apps:companies.fields.trade_name")}
-                  htmlFor="company-trade-name"
-                  hint={t("custom_apps:companies.hints.trade_name")}
-                >
-                  <Input
-                    id="company-trade-name"
-                    value={form.tradeName}
-                    onChange={(event) => set("tradeName", event.target.value)}
-                    maxLength={NAME_MAX}
-                    autoComplete="off"
-                  />
-                </Field>
-
-                <Field
                   label={t("custom_apps:companies.fields.rut")}
                   htmlFor="company-rut"
                   error={errors.rut}
                   hint={t("custom_apps:companies.hints.rut")}
+                  help={help.field("companies.help.rut")}
                 >
                   <Input
                     id="company-rut"
@@ -323,9 +300,44 @@ export const CompanyEditor = () => {
                 </Field>
 
                 <Field
+                  label={form.isCompany ? t("custom_apps:companies.fields.legal_name") : t("custom_apps:companies.fields.full_name")}
+                  htmlFor="company-legal-name"
+                  error={errors.legalName}
+                  hint={form.isCompany ? t("custom_apps:companies.hints.legal_name") : undefined}
+                  help={help.field(form.isCompany ? "companies.help.legal_name" : "companies.help.full_name")}
+                  required
+                >
+                  <Input
+                    id="company-legal-name"
+                    value={form.legalName}
+                    onChange={(event) => set("legalName", event.target.value)}
+                    maxLength={NAME_MAX}
+                    aria-invalid={Boolean(errors.legalName)}
+                    autoComplete="off"
+                    required
+                  />
+                </Field>
+
+                <Field
+                  label={t("custom_apps:companies.fields.trade_name")}
+                  htmlFor="company-trade-name"
+                  hint={t("custom_apps:companies.hints.trade_name")}
+                  help={help.field("companies.help.trade_name")}
+                >
+                  <Input
+                    id="company-trade-name"
+                    value={form.tradeName}
+                    onChange={(event) => set("tradeName", event.target.value)}
+                    maxLength={NAME_MAX}
+                    autoComplete="off"
+                  />
+                </Field>
+
+                <Field
                   label={t("custom_apps:companies.fields.business_activity")}
                   htmlFor="company-activity"
                   hint={t("custom_apps:companies.hints.business_activity")}
+                  help={help.field("companies.help.business_activity")}
                 >
                   <Input
                     id="company-activity"
@@ -334,8 +346,10 @@ export const CompanyEditor = () => {
                     autoComplete="off"
                   />
                 </Field>
+              </FormSection>
 
-                <Field label={t("custom_apps:fields.address")} htmlFor="company-address" className="sm:col-span-2">
+              <FormSection title={t("custom_apps:companies.sections.location")}>
+                <Field label={t("custom_apps:fields.address")} htmlFor="company-address" help={help.field("companies.help.address")}>
                   <Input
                     id="company-address"
                     value={form.address}
@@ -343,8 +357,10 @@ export const CompanyEditor = () => {
                     autoComplete="off"
                   />
                 </Field>
+              </FormSection>
 
-                <Field label={t("custom_apps:fields.notes")} htmlFor="company-notes" className="sm:col-span-2">
+              <FormSection title={t("custom_apps:companies.sections.notes")}>
+                <Field label={t("custom_apps:fields.notes")} htmlFor="company-notes" help={help.field("companies.help.notes")}>
                   <Textarea
                     id="company-notes"
                     value={form.notes}
@@ -353,7 +369,7 @@ export const CompanyEditor = () => {
                     className="resize-y"
                   />
                 </Field>
-              </div>
+              </FormSection>
 
               {loaded?.updated_at && (
                 <p className="text-[13px] text-neutral-600">

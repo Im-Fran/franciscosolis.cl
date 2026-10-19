@@ -36,6 +36,9 @@ import {InstallationScreenshots} from "@/pages/custom-apps/components/remote/ins
 import {InstallationUpdates} from "@/pages/custom-apps/components/releases/installation-updates.tsx";
 import {SnapshotCards} from "@/pages/custom-apps/components/snapshot-cards.tsx";
 import {InstallationTickets} from "@/pages/custom-apps/components/tickets/installation-tickets.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FormHelpButton} from "@/components/ui/help.tsx";
+import {CheckboxField} from "@/pages/custom-apps/components/checkbox-field.tsx";
 
 const REFRESH_MS = 15_000;
 const ALIAS_MAX = 80;
@@ -78,6 +81,7 @@ export const InstallationDetail = () => {
   const {installationId = ""} = useParams<{installationId: string}>();
   const {notify} = useToast();
   const {states, channels, logLevels} = useServiceVocabulary();
+  const help = useHelp();
   const language = i18n.language;
 
   const record = useResource(
@@ -329,7 +333,11 @@ export const InstallationDetail = () => {
           </Panel>
 
           <form onSubmit={saveControls} noValidate>
-            <Panel title={t("custom_apps:installation.controls")} description={t("custom_apps:installation.controls_hint")}>
+            <Panel
+              title={t("custom_apps:installation.controls")}
+              description={t("custom_apps:installation.controls_hint")}
+              action={<FormHelpButton help={help.form("installation.form_help")} />}
+            >
               <div className="flex flex-col gap-5">
                 {update.error && !renaming && (
                   <Alert tone="error" title={t("admin:common.failed")}>
@@ -337,7 +345,12 @@ export const InstallationDetail = () => {
                   </Alert>
                 )}
 
-                <Field label={t("custom_apps:installation.channel")} htmlFor="installation-channel" hint={t("custom_apps:installation.channel_hint")}>
+                <Field
+                  label={t("custom_apps:installation.channel")}
+                  htmlFor="installation-channel"
+                  hint={t("custom_apps:installation.channel_hint")}
+                  help={help.field("installation.help.channel")}
+                >
                   <Select
                     id="installation-channel"
                     value={controls.channel}
@@ -352,7 +365,12 @@ export const InstallationDetail = () => {
                   </Select>
                 </Field>
 
-                <Field label={t("custom_apps:installation.override")} htmlFor="installation-override" hint={t("custom_apps:installation.override_hint")}>
+                <Field
+                  label={t("custom_apps:installation.override")}
+                  htmlFor="installation-override"
+                  hint={t("custom_apps:installation.override_hint")}
+                  help={help.field("installation.help.override")}
+                >
                   <Select
                     id="installation-override"
                     value={controls.override}
@@ -371,6 +389,7 @@ export const InstallationDetail = () => {
                 <Field
                   label={t("custom_apps:installation.log_level")}
                   htmlFor="installation-log-level"
+                  help={help.field("installation.help.log_level")}
                   hint={t("custom_apps:installation.log_level_hint", {
                     level: t(`custom_apps:log_levels.${current.effective_log_level}`, {
                       defaultValue: current.effective_log_level ?? "",
@@ -398,30 +417,22 @@ export const InstallationDetail = () => {
                   </Select>
                 </Field>
 
-                <label
-                  htmlFor="installation-screenshots"
-                  className="flex cursor-pointer items-start gap-2.5 rounded-[var(--radius-md)] border border-neutral-800 px-3 py-2.5 transition-colors hover:border-neutral-700"
-                >
-                  <input
-                    id="installation-screenshots"
-                    type="checkbox"
-                    checked={controls.screenshots}
-                    disabled={revoked || update.pending}
-                    onChange={(event) => setControls((value) => ({...value, screenshots: event.target.checked}))}
-                    className="mt-0.5 size-4 shrink-0 accent-[var(--color-accent)]"
-                  />
-                  <span className="min-w-0">
-                    <span className="block text-sm text-text">{t("custom_apps:installation.screenshots")}</span>
-                    <span className="mt-0.5 block text-[12px] leading-relaxed text-neutral-500">
-                      {app && !app.screenshots_enabled
-                        ? t("custom_apps:installation.screenshots_app_off")
-                        : t("custom_apps:installation.screenshots_hint")}
-                    </span>
-                  </span>
-                </label>
+                <CheckboxField
+                  id="installation-screenshots"
+                  label={t("custom_apps:installation.screenshots")}
+                  hint={
+                    app && !app.screenshots_enabled
+                      ? t("custom_apps:installation.screenshots_app_off")
+                      : t("custom_apps:installation.screenshots_hint")
+                  }
+                  checked={controls.screenshots}
+                  disabled={revoked || update.pending}
+                  onChange={(checked) => setControls((value) => ({...value, screenshots: checked}))}
+                  help={help.field("installation.help.screenshots")}
+                />
 
                 {controls.override !== "" && (
-                  <Field label={t("custom_apps:status.message")} htmlFor="installation-message">
+                  <Field label={t("custom_apps:status.message")} htmlFor="installation-message" help={help.field("installation.help.message")}>
                     <Textarea
                       id="installation-message"
                       value={controls.message}
@@ -473,9 +484,15 @@ export const InstallationDetail = () => {
         onClose={update.pending ? () => undefined : () => setRenaming(false)}
         title={t("custom_apps:installation.rename_title")}
         className="max-w-md"
+        help={help.form("installation.rename_form_help")}
       >
         <form onSubmit={saveAlias} className="flex flex-col gap-5" noValidate>
-          <Field label={t("custom_apps:installation.alias")} htmlFor="installation-alias" hint={t("custom_apps:installation.alias_hint")}>
+          <Field
+            label={t("custom_apps:installation.alias")}
+            htmlFor="installation-alias"
+            hint={t("custom_apps:installation.alias_hint")}
+            help={help.field("installation.help.alias")}
+          >
             <Input
               id="installation-alias"
               value={alias}

@@ -24,6 +24,7 @@ import {PageHeader} from "@/components/admin/page-header.tsx";
 import {AlertKindIcon} from "@/pages/custom-apps/components/alerts/alert-kind.tsx";
 import {AlertStatusBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const REFRESH_MS = 30_000;
 const NOTE_MAX = 500;
@@ -37,6 +38,7 @@ const NOTE_MAX = 500;
  */
 export const AlertDetail = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {alertId = ""} = useParams<{alertId: string}>();
   const {notify} = useToast();
   const language = i18n.language;
@@ -223,10 +225,11 @@ export const AlertDetail = () => {
         onClose={resolve.pending ? () => undefined : () => setResolving(false)}
         title={t("custom_apps:alerts.resolve_title")}
         className="max-w-md"
+        help={help.form("alerts.resolve_form_help")}
       >
         <form onSubmit={submitResolve} className="flex flex-col gap-5" noValidate>
           <p className="text-sm leading-relaxed text-neutral-300">{t("custom_apps:alerts.resolve_body")}</p>
-          <Field label={t("custom_apps:alerts.note")} htmlFor="alert-note" hint={t("custom_apps:alerts.note_hint")}>
+          <Field label={t("custom_apps:alerts.note")} htmlFor="alert-note" hint={t("custom_apps:alerts.note_hint")} help={help.field("alerts.help.note")}>
             <Textarea
               id="alert-note"
               value={note}

@@ -5,10 +5,12 @@ import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {useServiceVocabulary} from "@/lib/custom-apps/custom-apps-context.ts";
 import type {InstallationSummary, TargetScope} from "@/lib/custom-apps/types.ts";
 import {InstallationSelect} from "@/pages/custom-apps/components/installation-select.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 /**
  * Who a flag or a message is for: the whole app, one release channel, or one device. The second
- * field follows the first — a channel picker, a device picker, or nothing.
+ * field follows the first — a channel picker, a device picker, or nothing — and is required whenever
+ * it is shown.
  */
 export const ScopeFields = ({
   idPrefix,
@@ -33,10 +35,16 @@ export const ScopeFields = ({
 }) => {
   const {t} = useTranslation("custom_apps");
   const {targetScopes, channels} = useServiceVocabulary();
+  const help = useHelp();
 
   return (
     <>
-      <Field label={t("scope.label")} htmlFor={`${idPrefix}-scope`} hint={t(`scope.hint.${scope}`, {defaultValue: ""})}>
+      <Field
+        label={t("scope.label")}
+        htmlFor={`${idPrefix}-scope`}
+        hint={t(`scope.hint.${scope}`, {defaultValue: ""})}
+        help={help.field("scope.help.scope")}
+      >
         <Select
           id={`${idPrefix}-scope`}
           value={scope}
@@ -55,7 +63,13 @@ export const ScopeFields = ({
       </Field>
 
       {scope === "channel" && (
-        <Field label={t("scope.channel_value")} htmlFor={`${idPrefix}-scope-value`} error={error}>
+        <Field
+          label={t("scope.channel_value")}
+          htmlFor={`${idPrefix}-scope-value`}
+          error={error}
+          help={help.field("scope.help.channel")}
+          required
+        >
           <Select
             id={`${idPrefix}-scope-value`}
             value={scopeValue}
@@ -74,7 +88,13 @@ export const ScopeFields = ({
       )}
 
       {scope === "installation" && (
-        <Field label={t("scope.installation_value")} htmlFor={`${idPrefix}-scope-value`} error={error}>
+        <Field
+          label={t("scope.installation_value")}
+          htmlFor={`${idPrefix}-scope-value`}
+          error={error}
+          help={help.field("scope.help.installation")}
+          required
+        >
           <InstallationSelect
             id={`${idPrefix}-scope-value`}
             value={scopeValue}

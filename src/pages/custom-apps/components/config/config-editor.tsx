@@ -15,6 +15,8 @@ import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import type {ConfigDocument, ConfigPayload} from "@/lib/custom-apps/types.ts";
 import {parseJsonObject} from "@/lib/cms/json.ts";
 import {JsonField} from "@/pages/custom-apps/components/json-field.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FieldLabel, FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 
 const NOTE_MAX = 200;
 
@@ -64,6 +66,7 @@ export const ConfigEditor = ({
   onReload: () => void;
 }) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {notify} = useToast();
 
   const baseline = useMemo(
@@ -131,6 +134,7 @@ export const ConfigEditor = ({
         }
         action={
           <>
+            <FormHelpButton help={help.form("config.form_help")} />
             {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
             <Button type="submit" size="sm" disabled={save.pending || !dirty || invalid}>
               {save.pending ? <Spinner size={14} /> : <FloppyDisk size={14} />}
@@ -166,11 +170,16 @@ export const ConfigEditor = ({
             </Alert>
           ) : null}
 
+          <RequiredLegend />
+
           <div className="grid gap-5 xl:grid-cols-2">
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="config-document" className="text-sm font-medium text-neutral-300">
-                {t("custom_apps:config.document")}
-              </label>
+              <FieldLabel
+                label={t("custom_apps:config.document")}
+                htmlFor="config-document"
+                help={help.field("config.help.document")}
+                required
+              />
               <JsonField
                 id="config-document"
                 value={documentText}
@@ -187,9 +196,7 @@ export const ConfigEditor = ({
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="config-schema" className="text-sm font-medium text-neutral-300">
-                {t("custom_apps:config.schema")}
-              </label>
+              <FieldLabel label={t("custom_apps:config.schema")} htmlFor="config-schema" help={help.field("config.help.schema")} />
               <JsonField
                 id="config-schema"
                 value={schemaText}
@@ -205,7 +212,7 @@ export const ConfigEditor = ({
             </div>
           </div>
 
-          <Field label={t("custom_apps:config.note")} htmlFor="config-note" hint={t("custom_apps:config.note_hint")}>
+          <Field label={t("custom_apps:config.note")} htmlFor="config-note" hint={t("custom_apps:config.note_hint")} help={help.field("config.help.note")}>
             <Input
               id="config-note"
               value={note}

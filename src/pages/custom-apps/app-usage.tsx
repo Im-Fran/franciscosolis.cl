@@ -12,6 +12,8 @@ import {BarChart} from "@/pages/custom-apps/components/charts/bar-chart.tsx";
 import {Heatmap} from "@/pages/custom-apps/components/charts/heatmap.tsx";
 import {installationLabel} from "@/pages/custom-apps/components/installation-label.ts";
 import {isWithinHours} from "@/pages/custom-apps/components/operating-hours.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const DAYS = 30;
 
@@ -33,6 +35,7 @@ export const AppUsage = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const {app} = useApp();
   const {timezone} = useServiceVocabulary();
+  const help = useHelp();
   const [installationId, setInstallationId] = useState("");
   const language = i18n.language;
 
@@ -121,19 +124,21 @@ export const AppUsage = () => {
           timezone: grid?.timezone ?? timezone,
         })}
         action={
-          <Select
-            value={installationId}
-            onChange={(event) => setInstallationId(event.target.value)}
-            aria-label={t("custom_apps:usage.scope")}
-            className="h-9 w-auto max-w-[16rem] text-[13px]"
-          >
-            <option value="">{t("custom_apps:usage.all_installations")}</option>
-            {(installations.data?.data ?? []).map((installation) => (
-              <option key={installation.id} value={installation.id}>
-                {installationLabel(installation)}
-              </option>
-            ))}
-          </Select>
+          <WithHelp label={t("custom_apps:usage.scope")} help={help.field("usage.filter_help.scope")}>
+            <Select
+              value={installationId}
+              onChange={(event) => setInstallationId(event.target.value)}
+              aria-label={t("custom_apps:usage.scope")}
+              className="h-9 w-auto max-w-[16rem] text-[13px]"
+            >
+              <option value="">{t("custom_apps:usage.all_installations")}</option>
+              {(installations.data?.data ?? []).map((installation) => (
+                <option key={installation.id} value={installation.id}>
+                  {installationLabel(installation)}
+                </option>
+              ))}
+            </Select>
+          </WithHelp>
         }
       >
         <PanelState loading={heatmap.loading && !grid} error={grid ? null : heatmap.error} onRetry={heatmap.reload} ns="admin">

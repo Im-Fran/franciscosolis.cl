@@ -11,6 +11,8 @@ import type {UsageEvent} from "@/lib/custom-apps/types.ts";
 import {cn} from "@/lib/utils.ts";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {Pagination} from "@/components/admin/pagination.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 25;
 
@@ -73,6 +75,7 @@ const EventItem = ({event}: {event: UsageEvent}) => {
 /** What the app said happened on this device, newest first, as the client sent it. */
 export const InstallationEvents = ({installationId}: {installationId: string}) => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const [type, setType] = useState("");
   const [offset, setOffset] = useState(0);
 
@@ -91,22 +94,24 @@ export const InstallationEvents = ({installationId}: {installationId: string}) =
       title={t("custom_apps:events.title")}
       description={t("custom_apps:events.description")}
       action={
-        <Select
-          value={type}
-          onChange={(event) => {
-            setType(event.target.value);
-            setOffset(0);
-          }}
-          aria-label={t("custom_apps:events.type")}
-          className="h-9 w-auto text-[13px]"
-        >
-          <option value="">{t("custom_apps:events.any_type")}</option>
-          {EVENT_TYPES.map((value) => (
-            <option key={value} value={value}>
-              {t(`custom_apps:events.types.${value}`)}
-            </option>
-          ))}
-        </Select>
+        <WithHelp label={t("custom_apps:events.type")} help={help.field("events.filter_help.type")}>
+          <Select
+            value={type}
+            onChange={(event) => {
+              setType(event.target.value);
+              setOffset(0);
+            }}
+            aria-label={t("custom_apps:events.type")}
+            className="h-9 w-auto text-[13px]"
+          >
+            <option value="">{t("custom_apps:events.any_type")}</option>
+            {EVENT_TYPES.map((value) => (
+              <option key={value} value={value}>
+                {t(`custom_apps:events.types.${value}`)}
+              </option>
+            ))}
+          </Select>
+        </WithHelp>
       }
     >
       <PanelState loading={events.loading && !events.data} error={events.error} onRetry={events.reload} ns="admin">

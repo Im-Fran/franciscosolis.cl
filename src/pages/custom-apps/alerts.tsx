@@ -23,6 +23,8 @@ import {AlertKindIcon} from "@/pages/custom-apps/components/alerts/alert-kind.ts
 import {AlertsTabs} from "@/pages/custom-apps/components/alerts/alerts-tabs.tsx";
 import {AppSelect} from "@/pages/custom-apps/components/alerts/app-select.tsx";
 import {AlertStatusBadge} from "@/pages/custom-apps/components/badges.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 50;
 const REFRESH_MS = 30_000;
@@ -40,6 +42,7 @@ export const Alerts = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const navigate = useNavigate();
   const {alertStatuses} = useServiceVocabulary();
+  const help = useHelp();
   const [params, setParams] = useSearchParams();
   const [offset, setOffset] = useState(0);
   const language = i18n.language;
@@ -162,26 +165,30 @@ export const Alerts = () => {
         description={alerts.data ? t("custom_apps:alerts.count", {count: alerts.data.pagination.total}) : undefined}
       >
         <div className="mb-5 flex flex-wrap items-center gap-3">
-          <Select
-            value={status}
-            onChange={(event) => setFilter("status", event.target.value === DEFAULT_STATUS ? "" : event.target.value)}
-            aria-label={t("custom_apps:alerts.filters.status")}
-            className="w-auto min-w-[12rem]"
-          >
-            <option value="unresolved">{t("custom_apps:alerts.filters.unresolved")}</option>
-            {alertStatuses.map((value) => (
-              <option key={value} value={value}>
-                {t(`custom_apps:alert_statuses.${value}`, {defaultValue: value})}
-              </option>
-            ))}
-            <option value="all">{t("custom_apps:alerts.filters.all")}</option>
-          </Select>
-          <AppSelect
-            value={appId}
-            onChange={(value) => setFilter("app_id", value)}
-            emptyLabel={t("custom_apps:alerts.filters.any_app")}
-            className="w-auto min-w-[14rem]"
-          />
+          <WithHelp label={t("custom_apps:alerts.filters.status")} help={help.field("alerts.filter_help.status")}>
+            <Select
+              value={status}
+              onChange={(event) => setFilter("status", event.target.value === DEFAULT_STATUS ? "" : event.target.value)}
+              aria-label={t("custom_apps:alerts.filters.status")}
+              className="w-auto min-w-[12rem]"
+            >
+              <option value="unresolved">{t("custom_apps:alerts.filters.unresolved")}</option>
+              {alertStatuses.map((value) => (
+                <option key={value} value={value}>
+                  {t(`custom_apps:alert_statuses.${value}`, {defaultValue: value})}
+                </option>
+              ))}
+              <option value="all">{t("custom_apps:alerts.filters.all")}</option>
+            </Select>
+          </WithHelp>
+          <WithHelp label={t("custom_apps:rules.fields.app")} help={help.field("alerts.filter_help.app")}>
+            <AppSelect
+              value={appId}
+              onChange={(value) => setFilter("app_id", value)}
+              emptyLabel={t("custom_apps:alerts.filters.any_app")}
+              className="w-auto min-w-[14rem]"
+            />
+          </WithHelp>
           {ruleId && (
             <Button variant="secondary" size="sm" onClick={() => setFilter("rule_id", "")}>
               {rows[0]?.rule_name

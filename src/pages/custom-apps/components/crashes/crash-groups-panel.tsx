@@ -19,6 +19,8 @@ import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {Pagination} from "@/components/admin/pagination.tsx";
 import {CrashStatusBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 25;
 
@@ -29,6 +31,7 @@ const PAGE_SIZE = 25;
  */
 export const CrashGroupsPanel = ({appId}: {appId: string}) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const navigate = useNavigate();
   const {crashStatuses} = useServiceVocabulary();
   const [status, setStatus] = useState<"" | CrashStatus>("open");
@@ -138,27 +141,36 @@ export const CrashGroupsPanel = ({appId}: {appId: string}) => {
       }
     >
       <div className="mb-5 flex flex-wrap items-center gap-3">
-        <SearchBox value={search} onChange={(value) => filter(() => setSearch(value))} placeholder={t("custom_apps:crashes.search")} />
-        <Input
-          value={version}
-          onChange={(event) => filter(() => setVersion(event.target.value))}
-          placeholder={t("custom_apps:crashes.version_filter")}
-          aria-label={t("custom_apps:crashes.version_filter")}
-          className="w-auto max-w-[10rem] font-mono text-[13px]"
+        <SearchBox
+          value={search}
+          onChange={(value) => filter(() => setSearch(value))}
+          placeholder={t("custom_apps:crashes.search")}
+          help={help.field("crashes.filter_help.search")}
         />
-        <Select
-          value={status}
-          onChange={(event) => filter(() => setStatus(event.target.value as "" | CrashStatus))}
-          aria-label={t("custom_apps:crashes.status_filter")}
-          className="w-auto min-w-[10rem]"
-        >
-          <option value="">{t("custom_apps:crashes.any_status")}</option>
-          {crashStatuses.map((value) => (
-            <option key={value} value={value}>
-              {t(`custom_apps:crash_statuses.${value}`, {defaultValue: value})}
-            </option>
-          ))}
-        </Select>
+        <WithHelp label={t("custom_apps:crashes.version_filter")} help={help.field("crashes.filter_help.version")}>
+          <Input
+            value={version}
+            onChange={(event) => filter(() => setVersion(event.target.value))}
+            placeholder={t("custom_apps:crashes.version_filter")}
+            aria-label={t("custom_apps:crashes.version_filter")}
+            className="w-auto max-w-[10rem] font-mono text-[13px]"
+          />
+        </WithHelp>
+        <WithHelp label={t("custom_apps:crashes.status_filter")} help={help.field("crashes.filter_help.status")}>
+          <Select
+            value={status}
+            onChange={(event) => filter(() => setStatus(event.target.value as "" | CrashStatus))}
+            aria-label={t("custom_apps:crashes.status_filter")}
+            className="w-auto min-w-[10rem]"
+          >
+            <option value="">{t("custom_apps:crashes.any_status")}</option>
+            {crashStatuses.map((value) => (
+              <option key={value} value={value}>
+                {t(`custom_apps:crash_statuses.${value}`, {defaultValue: value})}
+              </option>
+            ))}
+          </Select>
+        </WithHelp>
         {filtered && (
           <Button
             variant="ghost"

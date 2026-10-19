@@ -249,7 +249,71 @@
     "delete_body": "“{{name}}” and its links to contacts will be removed. The contacts themselves stay. A client that still has apps, contracts or work log entries cannot be deleted — delete or move them first.",
     "contracts_title": "Contracts",
     "contracts_description": "What this client pays for, and the hours of work each cycle includes.",
-    "contracts_empty": "This client has no contracts yet."
+    "contracts_empty": "This client has no contracts yet.",
+    "sections": {
+      "identification": "Identification",
+      "location": "Location",
+      "notes": "Notes"
+    },
+    "help": {
+      "kind": {
+        "what": "Whether the client is a company (legal entity) or a natural person. It changes what the main name is called: legal name or full name.",
+        "how": "Choose \"Company\" if it invoices under a legal name and a company RUT; \"Natural person\" if it is someone hiring in their own name. It can be changed later.",
+        "example": "Company"
+      },
+      "rut": {
+        "what": "The client's Rol Único Tributario, the Chilean tax ID issued by the SII. It is used for invoicing and to tell apart two clients with similar names.",
+        "how": "Type it with or without dots and with a hyphen before the check digit (which can be K). When you leave the field the check digit is validated and it is stored normalised, without dots. Optional, but two clients cannot share a RUT.",
+        "example": "76.123.456-7 (stored as 76123456-7)"
+      },
+      "legal_name": {
+        "what": "The company's legal name, the one on its invoices and registered with the SII.",
+        "how": "Copy it exactly as it appears on an invoice, including the company type (SpA, Ltda., S.A.). Required, up to 200 characters. It is the name the panel shows when the client has no trade name.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "full_name": {
+        "what": "The name of the natural person hiring, as it appears on their ID card.",
+        "how": "Full first and last names. Required, up to 200 characters.",
+        "example": "Juan Pablo Rojas Soto"
+      },
+      "trade_name": {
+        "what": "The name people actually know the client by, if it differs from the legal name.",
+        "how": "Type it the way the client uses it in their branding. When filled in, the panel shows this name first and the legal name in parentheses. Optional, up to 200 characters.",
+        "example": "Panadería Los Andes"
+      },
+      "business_activity": {
+        "what": "The giro: the business activity the client is registered under with the SII.",
+        "how": "Copy it from an invoice or the client's tax records. Free text and optional.",
+        "example": "Production and sale of bakery products"
+      },
+      "address": {
+        "what": "The client's business address: head office or where the work happens.",
+        "how": "Street, number, office and district, on one line. Free text and optional.",
+        "example": "Av. Apoquindo 4500, 12th floor, Las Condes, Santiago"
+      },
+      "notes": {
+        "what": "What is worth knowing about this client that has no other place: agreements, preferences, context.",
+        "how": "Free text and optional. It is only shown in this panel; the client never sees it.",
+        "example": "Pays invoices at 30 days. Maintenance is scheduled with their IT team on Tuesdays."
+      }
+    },
+    "form_help": {
+      "what": "Records who the apps are built for: a company or a natural person. The client's contacts, apps, contracts and work log all hang from it.",
+      "can_do": [
+        "Save how it is identified: kind, RUT, legal or full name, trade name and business activity.",
+        "Note its address and internal notes.",
+        "Once created, link contacts with their roles, register apps, create contracts and log work.",
+        "Delete it, once it has no apps, contracts or work log entries."
+      ],
+      "on_save": "Creating it takes you to its page, where the contacts, apps, contracts and work log panels appear. Editing sends only what changed, with the RUT normalised. The client is not told anything and the change is written to the audit log."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches every client.",
+        "how": "Type part of the legal name, the trade name or the RUT (with or without dots). The service does the matching. Empty shows them all.",
+        "example": "76123456"
+      }
+    }
   },
   "company_contacts": {
     "title": "Contacts",
@@ -273,7 +337,32 @@
     "edit_aria": "Edit the roles of {{name}}",
     "unlink_aria": "Unlink {{name}}",
     "empty_title": "Nobody linked yet",
-    "empty_description": "Link the people you deal with at this client, with their roles."
+    "empty_description": "Link the people you deal with at this client, with their roles.",
+    "help": {
+      "pick": {
+        "what": "The person you are linking to this client. They must already exist as a contact.",
+        "how": "Search by name, email or phone and click the person. Those already linked are shown disabled. If they are not there, create them first with \"New contact\" and come back.",
+        "example": "Search \"gonzalez\" and pick María José González"
+      },
+      "roles": {
+        "what": "What this person is there for at this client. Roles belong to the link, not the person: somebody can be technical at one client and owner at another.",
+        "how": "Tick every one that applies; you can leave all unticked. Owner decides about the app, Technical sees code, servers and devices, Billing gets invoices and payments, and Approves maintenance authorises maintenance windows.",
+        "example": "Technical and Approves maintenance"
+      },
+      "primary": {
+        "what": "Marks the first person to call at this client. They are listed first, with a star.",
+        "how": "Turn it on for the go-to person. A client has only one primary contact: marking this person removes the flag from the previous one."
+      }
+    },
+    "form_help": {
+      "what": "Links a person to this client and says what they do there, or changes the roles of someone already linked.",
+      "can_do": [
+        "Pick an existing contact (only when linking).",
+        "Tick their roles at this client.",
+        "Make them the primary contact."
+      ],
+      "on_save": "The link is saved whole every time. Marking them primary removes the flag from the previous primary contact. The person is not notified and the change is written to the audit log."
+    }
   },
   "contacts": {
     "title": "Contacts",
@@ -302,7 +391,7 @@
       "updated": "Updated"
     },
     "fields": {
-      "name": "Name",
+      "name": "Full name",
       "emails": "Emails",
       "phones": "Phones"
     },
@@ -314,7 +403,57 @@
     "companies_empty": "Not linked to any client",
     "companies_empty_description": "Open a client and use “Link a contact”.",
     "delete_title": "Delete this contact?",
-    "delete_body": "“{{name}}” will be removed and unlinked from every client."
+    "delete_body": "“{{name}}” will be removed and unlinked from every client.",
+    "sections": {
+      "person": "Person",
+      "contact": "Contact details",
+      "address": "Address",
+      "notes": "Notes"
+    },
+    "help": {
+      "name": {
+        "what": "The person's name as you know them: first and last name in one field. It is what the contact list and every client you link them to show.",
+        "how": "Type the first name and at least one last name, so they can be told apart from others with the same first name. Up to 200 characters. It is the only required field of a contact.",
+        "example": "María José González Pérez"
+      },
+      "emails": {
+        "what": "The person's email addresses. There can be several: a work one, a personal one, a team's.",
+        "how": "Type an address and press Enter or a comma to add it; repeat for the rest. The x on each one removes it. Each address is checked before saving and can be up to 254 characters long. Optional.",
+        "example": "maria.gonzalez@empresa.cl, soporte@empresa.cl"
+      },
+      "phones": {
+        "what": "The phone numbers the person can be reached on: mobile, landline or extension.",
+        "how": "Type a number and press Enter or a comma to add it. Digits, spaces, parentheses, dots, hyphens and a leading + are accepted, 6 to 20 characters. Including the country code means it can be dialled from anywhere. Optional.",
+        "example": "+56 9 1234 5678, +56 2 2345 6789"
+      },
+      "address": {
+        "what": "Where the person works or can be found, in case somebody has to visit or send something.",
+        "how": "Street, number, office and district, on one line. Free text and optional; it is not validated.",
+        "example": "Av. Providencia 1234, office 501, Providencia, Santiago"
+      },
+      "notes": {
+        "what": "Whatever is worth remembering about the person that does not fit in the other fields.",
+        "how": "Free text and optional. It is only shown in this panel: it never reaches the client or their apps.",
+        "example": "Prefers WhatsApp over email. Not available on Friday afternoons."
+      }
+    },
+    "form_help": {
+      "what": "Saves a person at your clients and how to reach them. The same person can be linked to several clients, with different roles at each.",
+      "can_do": [
+        "Record their name, emails and phones.",
+        "Note an address and internal notes.",
+        "See which clients they are linked to and with which roles (roles are edited from the client's page).",
+        "Delete the contact, which unlinks it from every client."
+      ],
+      "on_save": "Creating it takes you to its page, where you can keep editing. Editing sends only what changed. Nothing is sent to the person, and the change is written to the audit log. To link them to a client, open the client and use \"Link a contact\"."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches every contact.",
+        "how": "Type part of a name, an email or a phone. The service does the matching, ignoring case. Empty shows them all.",
+        "example": "gonzalez"
+      }
+    }
   },
   "apps": {
     "title": "Apps",
@@ -382,6 +521,118 @@
       "presence_web": "Websites always ping: a page cannot hold the live connection, so socket changes nothing for a web app.",
       "log_level": "The least severe entry installations send. A device can override it from its own page.",
       "screenshots": "Off by default. A screenshot can show the client's own customers, which makes it personal data (ley 21.719): turn it on only where the contract allows it. Each device has to allow them too."
+    },
+    "sections": {
+      "identity": "Identity",
+      "reports": "What it reports",
+      "connection": "Connection"
+    },
+    "help": {
+      "company": {
+        "what": "The client the app was built for. It ties the app to that client's contacts, contracts and work log.",
+        "how": "Pick the client from the list. If it is not there, create it first under Clients. Required.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "name": {
+        "what": "What the app is called in this panel, in alerts and in the audit log.",
+        "how": "A short name that tells this app apart from the client's others. Required, up to 120 characters.",
+        "example": "Self-service kiosk"
+      },
+      "kind": {
+        "what": "What the app runs on: a website, a desktop app, an Android app or a kiosk.",
+        "how": "Pick the matching kind. It changes what is offered: only a kiosk can restart the device with a command, and a web app always reports by ping (it loads the SDK with a script tag shown on the summary).",
+        "example": "Kiosk"
+      },
+      "domain": {
+        "what": "For web apps, the hostname the site is served from. The service compares it with each request's origin.",
+        "how": "Type only the hostname: no https://, no path and no port. It is stored in lowercase. Leave it empty for apps that are not web apps.",
+        "example": "pedidos.losandes.cl"
+      },
+      "description": {
+        "what": "What the app does and for whom, in a few lines.",
+        "how": "Free text and optional. It helps recall the context months later; it is only shown in this panel.",
+        "example": "Kiosk where the store's customers build and pay for their order without going to the till."
+      },
+      "repository": {
+        "what": "Where the app's code lives.",
+        "how": "A full address starting with https:// (or http://). Optional.",
+        "example": "https://github.com/franciscosolis/kiosco-los-andes"
+      },
+      "modules": {
+        "what": "What the app reports and what can be done with it on top of the heartbeat, which is always on. Each module adds its tab or panel.",
+        "how": "Tick only what the client's app implements: metrics and events are ticked by default. A module that is off hides its tab and the service refuses whatever depends on it (commands without \"commands\", for example). Logs and crashes are kept for 30 days.",
+        "example": "Metrics, Events, Logs and Commands"
+      },
+      "log_level": {
+        "what": "The least severe log entry the installations send. Anything less severe is dropped on the device.",
+        "how": "Pick a level: debug sends everything, info the usual, warning only warnings and worse, and so on. Each device can have its own level from its page. Installations pick it up on their next heartbeat.",
+        "example": "Info in production; Debug while investigating an issue"
+      },
+      "screenshots": {
+        "what": "The app's switch for taking screenshots of its devices with the \"Take a screenshot\" command.",
+        "how": "It is off by default. Turn it on only if the client's contract allows it: a screenshot can show the client's own customers and is personal data under Chilean law 21.719. Each device also has its own permission: both are needed."
+      },
+      "presence": {
+        "what": "How installations say they are still alive: with a periodic heartbeat (ping) or a live connection (socket).",
+        "how": "Use ping for most apps. Use socket for kiosks and points of sale whose native app holds a WebSocket: commands reach them at once instead of on the next heartbeat. Websites always use ping, even if you choose socket.",
+        "example": "Live connection (socket) for a kiosk"
+      },
+      "heartbeat": {
+        "what": "How often, in seconds, each installation reports. It decides how quickly the panel knows it is connected and how quickly changes reach it.",
+        "how": "A whole number between {{min}} and {{max}}. An installation counts as connected until it misses {{intervals}} heartbeats in a row. A short interval shows everything sooner but means more traffic; a minute is usually enough for kiosks and desktop apps. Required.",
+        "example": "60"
+      },
+      "hours": {
+        "what": "When the client uses the app, per weekday. The usage heatmap outlines it, to show where maintenance fits.",
+        "how": "Turn it on to set windows per day; it starts with Monday to Friday, 09:00 to 18:00. Add or remove windows per day, and use \"Copy to weekdays\" to repeat Monday. A day with no windows is closed. Times are 24-hour and a night shift is split over two days. Off means \"not defined\", which is not the same as closed.",
+        "example": "Monday to Friday 09:00–13:00 and 14:00–18:00; Saturday 10:00–14:00"
+      },
+      "timezone": {
+        "what": "The time zone the schedule's windows are read in.",
+        "how": "The IANA zone name, with its capitals and slash. Required while the schedule is on.",
+        "example": "America/Santiago"
+      }
+    },
+    "form_help_create": {
+      "what": "Registers an app built for a client, so its installations can enrol and report.",
+      "can_do": [
+        "Say which client it belongs to, what it is called and what kind of app it is.",
+        "Choose which modules it reports and how often it beats.",
+        "Set the client's operating hours."
+      ],
+      "on_save": "The app is created together with its first key (cak_…), and the key and the ingest address are shown so they can be put in the client's app. Presence, log level and screenshots keep their defaults (ping, info and off) and are changed later in Settings. The creation is written to the audit log."
+    },
+    "form_help_edit": {
+      "what": "Changes the app's details and how its installations behave.",
+      "can_do": [
+        "Correct the client, name, kind, domain, description or repository.",
+        "Turn modules on or off, which shows or hides their tabs.",
+        "Set the log level, allow screenshots, choose presence and the heartbeat interval.",
+        "Define the operating hours."
+      ],
+      "on_save": "Only what changed is sent. Installations pick up the changes that affect them (modules, log level, presence, interval) on their next heartbeat. The change is written to the audit log. Keys, updates and CI tokens are saved in their own panels further down."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches apps by name.",
+        "how": "Type part of the name; the service does the matching, combined with the other filters. Empty shows them all.",
+        "example": "kiosk"
+      },
+      "state": {
+        "what": "Shows only the apps in one kill-switch state.",
+        "how": "Pick Active, Grace, Maintenance or Suspended. \"Any state\" removes the filter.",
+        "example": "Suspended"
+      },
+      "kind": {
+        "what": "Shows only the apps of one kind.",
+        "how": "Pick web, desktop, Android or kiosk. \"Any kind\" removes the filter.",
+        "example": "Kiosk"
+      },
+      "company": {
+        "what": "Shows only one client's apps.",
+        "how": "Pick the client; \"Any client\" removes the filter.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   },
   "app_nav": {
@@ -483,7 +734,29 @@
       "last_seen": "Last seen"
     },
     "socket": "Socket",
-    "socket_title": "Holding the live connection: commands reach it at once."
+    "socket_title": "Holding the live connection: commands reach it at once.",
+    "filter_help": {
+      "search": {
+        "what": "Searches this app's installations.",
+        "how": "Type part of the alias, the hostname or the device ID. Empty shows them all.",
+        "example": "reception"
+      },
+      "connection": {
+        "what": "Separates connected installations from offline ones.",
+        "how": "Connected means its last heartbeat arrived within the allowed intervals. \"Any connection\" removes the filter.",
+        "example": "Offline"
+      },
+      "review": {
+        "what": "Shows installations still to be reviewed, or those already reviewed.",
+        "how": "Every device that enrols by itself stays to be reviewed until someone confirms it is expected. \"Any review state\" removes the filter.",
+        "example": "Needs review"
+      },
+      "status": {
+        "what": "Separates active installations from revoked ones.",
+        "how": "A revoked one can no longer report or enrol again, but its history is kept. \"Any status\" removes the filter.",
+        "example": "Active"
+      }
+    }
   },
   "usage": {
     "daily_title": "Daily usage",
@@ -503,7 +776,14 @@
     "all_installations": "Every installation",
     "cell": "{{day}} {{from}}–{{to}}: {{active}} active on average, {{online}} online",
     "legend_low": "Idle",
-    "legend_hours": "Operating hours"
+    "legend_hours": "Operating hours",
+    "filter_help": {
+      "scope": {
+        "what": "Which devices the heatmap is drawn from: all of them or one.",
+        "how": "Pick an installation to see only its usage, or \"Every installation\" for the whole app.",
+        "example": "Entrance kiosk"
+      }
+    }
   },
   "status": {
     "title": "Kill switch",
@@ -544,7 +824,38 @@
     "grace_past": "The end of the grace period has to be in the future.",
     "grace_too_far_one": "At most {{count}} day ahead.",
     "grace_too_far_other": "At most {{count}} days ahead.",
-    "grace_until_value": "suspended automatically on {{date}}"
+    "grace_until_value": "suspended automatically on {{date}}",
+    "help": {
+      "state": {
+        "what": "What every installation of the app is told on its next heartbeat: carry on, warn that it will stop, show maintenance, or stop.",
+        "how": "Active works normally. Grace keeps working with a warning and suspends itself on the date you set (for a late payment). Maintenance shows a maintenance screen until you reactivate it. Suspended stops working and asks for confirmation. A device can have its own state from its page.",
+        "example": "Grace until Friday, for an unpaid invoice"
+      },
+      "message": {
+        "what": "The text the app shows its users while in grace, maintenance or suspended.",
+        "how": "Write it for the client's users, in their language, saying what is happening and whom to turn to. Optional, up to 500 characters. If empty, the app uses its own text.",
+        "example": "We are updating the system. Back at 3 pm."
+      },
+      "until": {
+        "what": "Until when the state is expected to last. It is shown to the user.",
+        "how": "Pick a date and time, in your local time. Optional and informative: nothing changes by itself when it passes; you have to reactivate the app.",
+        "example": "2026-03-15 15:00"
+      },
+      "until_grace": {
+        "what": "The moment grace ends. When it passes, the service suspends the app automatically.",
+        "how": "Pick a date and time in the future, at most {{days}} days ahead. Required in grace. To give the client more time, come back and move the date.",
+        "example": "2026-03-20 23:59"
+      }
+    },
+    "form_help": {
+      "what": "The kill switch: decides whether the app keeps working on all its installations.",
+      "can_do": [
+        "Put the app in active, grace, maintenance or suspended.",
+        "Write the message its users see.",
+        "Set until when it lasts; in grace, the date it suspends itself (at most {{days}} days)."
+      ],
+      "on_save": "Each installation gets the state on its next heartbeat (at once if it holds the socket). Suspending asks for confirmation, because it locks out whoever is using the app; reactivating does not. In grace, the service suspends the app by itself when the date passes. The change is written to the audit log."
+    }
   },
   "settings": {
     "title": "Settings",
@@ -584,7 +895,21 @@
     "revoke_body": "“{{key}}” will stop enrolling new devices. Devices already enrolled are not affected. This cannot be undone.",
     "empty": "This app has no keys.",
     "none_active_title": "No active key",
-    "none_active_body": "No new device can enroll until a key is created."
+    "none_active_body": "No new device can enroll until a key is created.",
+    "help": {
+      "label": {
+        "what": "A name to recognise the key in the list: which build, installer or branch it is for.",
+        "how": "Free text and optional, up to 80 characters. It does not change what the key can do.",
+        "example": "Windows installer 2.x"
+      }
+    },
+    "form_help": {
+      "what": "Creates a new key (cak_…) the client's app enrols devices with.",
+      "can_do": [
+        "Give it a label to recognise it."
+      ],
+      "on_save": "The key appears in the list at once and can always be copied: it is public by design because it ships inside the app. Anyone holding it can enrol a device, and every new device is flagged for review. Revoking it later only stops new enrolments. The creation is written to the audit log."
+    }
   },
   "installation": {
     "loading_title": "Installation",
@@ -632,7 +957,55 @@
     "log_level_follow_value": "Follow the app ({{level}})",
     "screenshots": "Allow screenshots on this device",
     "screenshots_hint": "Needed on top of the app's own switch. A screenshot can show whoever is using the device.",
-    "screenshots_app_off": "The app has screenshots off, so this alone does not allow them."
+    "screenshots_app_off": "The app has screenshots off, so this alone does not allow them.",
+    "help": {
+      "channel": {
+        "what": "Which line of versions this device is offered: stable or beta.",
+        "how": "Choose Beta only for test devices or clients who accept early versions. Per-channel flags and messages follow this value too.",
+        "example": "Beta for the office kiosk, Stable for the rest"
+      },
+      "override": {
+        "what": "A state for this device alone, different from the app's state.",
+        "how": "Leave \"Follow the app\" so it does what the others do. Pick another state to, say, put a single kiosk in maintenance or suspend a stolen device. Choosing one shows the message field.",
+        "example": "Maintenance, only for the second-floor kiosk"
+      },
+      "log_level": {
+        "what": "This device's log level, above the app's.",
+        "how": "Leave \"Follow the app\" or pick a more detailed level (debug) to investigate a problem on this device without flooding the whole fleet's logs.",
+        "example": "Debug for a week on the failing device"
+      },
+      "screenshots": {
+        "what": "This device's permission for screenshots.",
+        "how": "Turn it on only if whoever uses the device may be captured under the contract. The app's switch in Settings is also needed: without both, the screenshot command is refused."
+      },
+      "message": {
+        "what": "The text this device shows while in its own state.",
+        "how": "Write it for whoever uses the device. Optional, up to 500 characters.",
+        "example": "This kiosk is under maintenance. Please use the one by the entrance."
+      },
+      "alias": {
+        "what": "A name of your own for this device, easier to recognise than its hostname.",
+        "how": "Type where it is or what it is used for. Up to 80 characters. Empty goes back to the hostname.",
+        "example": "Entrance kiosk · Ñuñoa branch"
+      }
+    },
+    "form_help": {
+      "what": "Adjusts this device above the app's settings.",
+      "can_do": [
+        "Choose its update channel.",
+        "Give it a state of its own, with its message.",
+        "Change its log level.",
+        "Allow screenshots on it."
+      ],
+      "on_save": "Only what changed is sent. The device picks it up on its next heartbeat (at once if it holds the socket). A revoked device cannot be adjusted. The change is written to the audit log."
+    },
+    "rename_form_help": {
+      "what": "Gives this device an alias to recognise it in lists.",
+      "can_do": [
+        "Type an alias, or clear it to go back to the hostname."
+      ],
+      "on_save": "The alias replaces the hostname across the panel. Nothing changes on the device. It is written to the audit log."
+    }
   },
   "snapshot": {
     "title": "Right now",
@@ -700,6 +1073,13 @@
       "screen": "Screen",
       "action": "Action",
       "custom": "Custom"
+    },
+    "filter_help": {
+      "type": {
+        "what": "Shows only one kind of event the app reported.",
+        "how": "Pick session start or end, screen, action or custom; \"Every type\" removes the filter.",
+        "example": "Screen"
+      }
     }
   },
   "heartbeats": {
@@ -879,7 +1259,34 @@
       "contract_renewed": "The contract was renewed"
     },
     "open_release": "Release {{version}}",
-    "open_contract": "Open contract"
+    "open_contract": "Open contract",
+    "filter_help": {
+      "event": {
+        "what": "Shows only one kind of event in the log.",
+        "how": "Type the event's name as it appears in the event column, dots included. Empty shows them all.",
+        "example": "app.status.updated"
+      },
+      "resource": {
+        "what": "Shows only the changes to one kind of record: apps, contracts, tickets…",
+        "how": "Pick a suggestion from the list or type the kind (contract, for example). Empty shows them all.",
+        "example": "contract"
+      },
+      "actor": {
+        "what": "Shows only what one person did.",
+        "how": "Type their email. The service's automatic changes have no author.",
+        "example": "fran@franciscosolis.cl"
+      },
+      "from": {
+        "what": "The first day included.",
+        "how": "Pick a day; empty sets no earlier limit.",
+        "example": "2026-03-01"
+      },
+      "to": {
+        "what": "The last day included.",
+        "how": "Pick a day on or after \"From\"; empty sets no later limit.",
+        "example": "2026-03-31"
+      }
+    }
   },
   "module_off": {
     "title": "{{modules}}: off for this app",
@@ -981,7 +1388,24 @@
     "pick_installation": "Pick an installation",
     "app_short": "Whole app",
     "channel_short": "Channel · {{channel}}",
-    "installation_short": "Device ·"
+    "installation_short": "Device ·",
+    "help": {
+      "scope": {
+        "what": "Whom it applies to: the whole app, the devices on one update channel, or a single device.",
+        "how": "Pick the scope; depending on the choice a channel or installation picker appears. It cannot be changed once created.",
+        "example": "One channel: Beta"
+      },
+      "channel": {
+        "what": "The update channel whose devices are covered.",
+        "how": "Pick Stable or Beta. It covers every device on that channel at the time. Required with this scope.",
+        "example": "Beta"
+      },
+      "installation": {
+        "what": "The single device covered.",
+        "how": "Pick it from the app's installations. Required with this scope.",
+        "example": "Entrance kiosk · Ñuñoa branch"
+      }
+    }
   },
   "logs": {
     "title": "Logs",
@@ -998,7 +1422,34 @@
     "hide_context": "Hide context",
     "no_matches": "No entry matches these filters.",
     "empty": "No log entries",
-    "empty_description": "Entries appear here once the app sends them, at or above its log level."
+    "empty_description": "Entries appear here once the app sends them, at or above its log level.",
+    "filter_help": {
+      "level": {
+        "what": "Shows the entries from one severity level up.",
+        "how": "Pick the minimum level: \"Warning\" shows warnings, errors and fatal ones. \"Every level\" removes the filter. There is only what the devices sent at their log level, kept for 30 days.",
+        "example": "Error or worse"
+      },
+      "search": {
+        "what": "Searches the text of the log messages.",
+        "how": "Type a word or phrase from the message; the service does the matching. Empty shows everything.",
+        "example": "timeout"
+      },
+      "installation": {
+        "what": "Shows only one device's logs.",
+        "how": "Pick the installation, revoked ones included; \"Every installation\" removes the filter.",
+        "example": "Entrance kiosk"
+      },
+      "from": {
+        "what": "The first day included.",
+        "how": "Pick a day within the last 30; empty sets no earlier limit.",
+        "example": "2026-03-10"
+      },
+      "to": {
+        "what": "The last day included.",
+        "how": "Pick a day on or after \"From\"; empty goes up to now.",
+        "example": "2026-03-12"
+      }
+    }
   },
   "commands": {
     "title": "Commands",
@@ -1055,7 +1506,40 @@
     "cancelled": "Command cancelled.",
     "empty": "No commands yet",
     "empty_description": "Commands sent to this device appear here, with what it answered.",
-    "no_matches": "No command with this status."
+    "no_matches": "No command with this status.",
+    "help": {
+      "type": {
+        "what": "What the device is asked to do: restart the app or the device, reload the configuration, clear the cache, take a screenshot, upload logs or check for updates.",
+        "how": "Pick the command; the line below explains what it does. Options that do not apply are disabled: restarting the device is for kiosks only and a screenshot needs both the app's and the device's permission. Restarting the app loses whatever the user has not saved.",
+        "example": "Reload the configuration"
+      },
+      "expires": {
+        "what": "How long the command waits for the device to collect it before it expires.",
+        "how": "Choose between 5 minutes and 7 days; 1 hour by default. A device that is off collects it when it comes back, if it has not expired. For something that only makes sense now, use a short expiry.",
+        "example": "1 hour"
+      },
+      "payload": {
+        "what": "Extra data the app receives with the command.",
+        "how": "Open \"Add a payload\" and type a JSON object, between { and }. Optional: most commands do not need one. Which fields it reads depends on the client's app.",
+        "example": "{\"reason\": \"printer test\"}"
+      }
+    },
+    "form_help": {
+      "what": "Sends a command from the catalogue to this device.",
+      "can_do": [
+        "Choose the command.",
+        "Set how long it waits for the device to collect it.",
+        "Add an optional JSON payload."
+      ],
+      "on_save": "The command waits as pending until the device collects it: on its next heartbeat, or at once if it holds the socket. It ends succeeded, failed, expired or cancelled, and can be cancelled while pending or delivered. The service refuses commands to a revoked device or to an app without the commands module. It is written to the audit log."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Shows only the commands in one status.",
+        "how": "Pending (waiting for the device), delivered, succeeded, failed, expired or cancelled; \"Every status\" removes the filter.",
+        "example": "Failed"
+      }
+    }
   },
   "screenshots": {
     "title": "Screenshots",
@@ -1104,7 +1588,38 @@
     "delete_aria": "Delete {{key}}",
     "delete_title": "Delete this flag?",
     "delete_body_app": "“{{key}}” stops being set for the whole app. Overrides for channels or devices stay.",
-    "delete_body_override": "This override of “{{key}}” is removed; the devices it covered fall back to the next value up."
+    "delete_body_override": "This override of “{{key}}” is removed; the devices it covered fall back to the next value up.",
+    "help": {
+      "key": {
+        "what": "The name the app reads the flag by. It must match what the code looks up.",
+        "how": "Lowercase letters, digits, \"_\", \".\" and \"-\", starting with a letter or digit, up to 64 characters. Required. It cannot be changed once created; an override uses the same key as the app's flag.",
+        "example": "checkout.new_flow"
+      },
+      "description": {
+        "what": "What the flag does, for whoever reads it later.",
+        "how": "One sentence. Optional, up to 500 characters. The app does not receive it.",
+        "example": "Turns on the new Webpay checkout flow"
+      },
+      "kind": {
+        "what": "The type of the flag's value: yes/no, text or number.",
+        "how": "Pick the type the app expects. Changing it resets the value to a default (true, empty or 0).",
+        "example": "Yes / no"
+      },
+      "value": {
+        "what": "The value every device within the flag's scope receives.",
+        "how": "For yes/no pick true or false; for text type anything (it can be empty); for number type a number, with decimals if needed (required for that type).",
+        "example": "true, or 0.15 for a discount rate"
+      }
+    },
+    "form_help": {
+      "what": "Creates a feature flag, adds an override for a channel or a device, or changes one's value.",
+      "can_do": [
+        "Choose the key and describe what it does.",
+        "Set the type and value.",
+        "Decide whom it applies to: the whole app, a channel or one installation."
+      ],
+      "on_save": "Devices get the flag on their next heartbeat or with \"Reload the configuration\". On each device the most specific value wins: its installation, then its channel, then the app. The same key cannot be defined twice at the same scope. The key and scope do not change afterwards; editing changes only the value and description. It is written to the audit log."
+    }
   },
   "config": {
     "title": "Remote configuration",
@@ -1132,7 +1647,33 @@
     "restore": "Restore",
     "restore_title": "Restore version {{version}}?",
     "restore_body": "Version {{version}} is published again as the newest version. Nothing is lost: the current one stays in the history.",
-    "restored": "Version {{from}} restored as version {{version}}."
+    "restored": "Version {{from}} restored as version {{version}}.",
+    "help": {
+      "document": {
+        "what": "The JSON object every installation receives as its remote configuration. The app reads it while running.",
+        "how": "Type a valid JSON object, between { and }; the syntax error shows underneath as you type and \"Format\" tidies it. Required: use {} for an empty one. If there is a schema, the document must satisfy it.",
+        "example": "{\"cart\": {\"maxItems\": 20}, \"welcomeMessage\": \"Hello!\"}"
+      },
+      "schema": {
+        "what": "An optional JSON Schema the document must satisfy, so nobody publishes a configuration the app cannot read.",
+        "how": "Type a JSON Schema object using the supported keywords listed underneath. If it uses others, or the document does not satisfy it, the service refuses the version and lists the issues. Emptying it removes it.",
+        "example": "{\"type\": \"object\", \"required\": [\"cart\"], \"properties\": {\"cart\": {\"type\": \"object\"}}}"
+      },
+      "note": {
+        "what": "A note for the history: what changed and why.",
+        "how": "A short sentence. Optional, up to 200 characters. It is shown beside the version in the history.",
+        "example": "Raises the cart limit to 20 at the client's request"
+      }
+    },
+    "form_help": {
+      "what": "Publishes the app's remote configuration: a JSON document installations apply without a new release.",
+      "can_do": [
+        "Edit the document and, optionally, its schema.",
+        "Leave a note for the history.",
+        "Discard unpublished changes."
+      ],
+      "on_save": "Publishing creates a new numbered version; earlier ones stay in the history and can be restored. If someone published while you were editing, the service refuses rather than overwrite, and you can load the latest. Installations get the version on their next heartbeat or with the \"Reload the configuration\" command. It is written to the audit log."
+    }
   },
   "messages": {
     "title": "In-app messages",
@@ -1184,6 +1725,61 @@
       "active": "No active message.",
       "scheduled": "No scheduled message.",
       "ended": "No ended message."
+    },
+    "sections": {
+      "content": "Content",
+      "presentation": "Presentation",
+      "audience": "Audience",
+      "when": "When"
+    },
+    "help": {
+      "title": {
+        "what": "The message's heading, the first thing the user sees.",
+        "how": "Short and clear, in the language of the client's users. Required, up to 200 characters.",
+        "example": "Scheduled maintenance on Saturday"
+      },
+      "body": {
+        "what": "The full text of the message.",
+        "how": "Explain what is happening, when and what the user has to do. Required, up to 4000 characters.",
+        "example": "On Saturday the 14th between 08:00 and 10:00 the system will be unavailable. Close your orders before then."
+      },
+      "severity": {
+        "what": "How important the message is. The app uses it for colour and icon.",
+        "how": "Info for notices, Warning for something the user should attend to, and Critical for something urgent.",
+        "example": "Warning"
+      },
+      "display": {
+        "what": "How the message appears inside the app.",
+        "how": "Banner shows a strip at the top and lets work continue; Dialog interrupts until the user closes it. Use the dialog only for what truly must not go unnoticed.",
+        "example": "Banner"
+      },
+      "starts_at": {
+        "what": "When the message starts showing.",
+        "how": "Pick a date and time, in your local time. Empty shows it from the moment it is published. A message starting in the future is scheduled.",
+        "example": "2026-03-13 09:00"
+      },
+      "ends_at": {
+        "what": "Until when the message is shown.",
+        "how": "Pick a date and time after the start. Empty keeps it until you use \"End now\".",
+        "example": "2026-03-14 10:00"
+      }
+    },
+    "form_help": {
+      "what": "Writes a message the people using the app see inside it: a maintenance notice, a change, a request.",
+      "can_do": [
+        "Write the title and text.",
+        "Choose the severity and whether it shows as a banner or a dialog.",
+        "Decide whom it goes to: the whole app, a channel or a device (only when creating it).",
+        "Schedule when it starts and ends."
+      ],
+      "on_save": "The devices in scope receive it on their next heartbeat and show it within its dates. Every device that shows it leaves a read receipt, listed under \"Seen\". Whom it goes to cannot be changed afterwards. Ending it does not delete it, so the receipts are kept. It is written to the audit log."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Shows only the messages at one stage.",
+        "how": "Active are showing now, Scheduled start later and Ended are past their end date. \"Every message\" removes the filter.",
+        "example": "Scheduled"
+      }
     }
   },
   "crashes": {
@@ -1231,7 +1827,24 @@
     "show_stack": "Show the stack",
     "hide_stack": "Hide the stack",
     "show_context": "Show context",
-    "hide_context": "Hide context"
+    "hide_context": "Hide context",
+    "filter_help": {
+      "search": {
+        "what": "Searches crash groups by title or signature.",
+        "how": "Type part of the error message or the signature; the service does the matching.",
+        "example": "NullPointerException"
+      },
+      "version": {
+        "what": "Shows only the crashes of one app version.",
+        "how": "Type the exact version as the app reports it. Empty shows them all.",
+        "example": "1.4.2"
+      },
+      "status": {
+        "what": "Shows the groups in one status.",
+        "how": "Open (the default), resolved (reopens if it happens again) or ignored; \"Any status\" removes the filter.",
+        "example": "Open"
+      }
+    }
   },
   "alerts": {
     "title": "Alerts",
@@ -1291,7 +1904,33 @@
     "resolved_body": "Resolved {{date}} by {{by}}.",
     "open_contract": "Open contract",
     "cycle_usage": "Cycle hours",
-    "cycle_usage_value": "{{used}} used of {{available}}"
+    "cycle_usage_value": "{{used}} used of {{available}}",
+    "help": {
+      "note": {
+        "what": "What was done about the alert, for whoever sees it later.",
+        "how": "One or two sentences. Optional, up to 500 characters. It is kept with the alert.",
+        "example": "The branch router was restarted; the kiosk reported again."
+      }
+    },
+    "resolve_form_help": {
+      "what": "Marks the alert as resolved, with an optional note.",
+      "can_do": [
+        "Note what was done."
+      ],
+      "on_save": "The alert leaves the inbox. If the condition still holds at the next evaluation, the service reopens it and notifies again. It is written to the audit log."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Shows the alerts in one status.",
+        "how": "\"Unresolved\" (the default) combines open and acknowledged; you can also pick one status or \"Every status\". It is kept in the address.",
+        "example": "Open"
+      },
+      "app": {
+        "what": "Shows only one app's alerts.",
+        "how": "Pick the app; \"Every app\" removes the filter. It is kept in the address.",
+        "example": "Self-service kiosk"
+      }
+    }
   },
   "rules": {
     "title": "Rules",
@@ -1372,7 +2011,54 @@
     "delete_body_other": "“{{name}}” and every alert it raised are deleted for good ({{count}} still open). To stop it for a while, silence or disable it instead.",
     "empty": "No rules yet",
     "empty_app": "No rule watches this app",
-    "empty_description": "Create one to be told when a device goes quiet, runs hot or crashes more than usual."
+    "empty_description": "Create one to be told when a device goes quiet, runs hot or crashes more than usual.",
+    "help": {
+      "kind": {
+        "what": "What the rule watches: an offline device, high CPU or memory, spikes of crashes, errors, enrolments or rollbacks, a contract about to end or few hours left in the cycle.",
+        "how": "Pick the kind; the threshold changes unit and suggested value with it, and some kinds also use a window. It cannot be changed once created: to watch something else, create another rule.",
+        "example": "Installation offline"
+      },
+      "app": {
+        "what": "The app the rule watches, or all of them.",
+        "how": "Pick an app, or leave \"Every app\" to watch every app, including those created later. For contract kinds, with an app only the contracts covering it are watched. It cannot be changed once created.",
+        "example": "Self-service kiosk"
+      },
+      "threshold": {
+        "what": "The value from which the rule opens an alert. Its unit depends on the kind.",
+        "how": "Minutes without reporting (1 to 10,080) for offline; a percentage (1 to 100) for CPU and memory; a count within the window for spikes; days before the end (1 to 365) for contracts; the percentage of hours left (0 to 100) for the cycle. Required.",
+        "example": "30 minutes offline, or 90 % CPU"
+      },
+      "window": {
+        "what": "The period looked back over to measure the threshold: the CPU or memory average, or how many events there were.",
+        "how": "A whole number of minutes between {{min}} and {{max}}. Required for the kinds that use it. A short window reacts sooner; a long one ignores brief peaks.",
+        "example": "15"
+      },
+      "name": {
+        "what": "What the rule is called in the list and in notifications.",
+        "how": "A short description of what it watches. Required, up to 120 characters.",
+        "example": "Kiosks offline for over 30 min"
+      },
+      "enabled": {
+        "what": "Whether the rule is evaluated. A disabled rule opens no alerts.",
+        "how": "Leave it on to start watching. Turn it off to pause it without deleting it; to pause it for a set time, use \"Silence\" in the list."
+      }
+    },
+    "form_help": {
+      "what": "Creates or tunes an alert rule: what is watched, on which app and from what value you are notified.",
+      "can_do": [
+        "Choose what it watches and on which app (only when creating it).",
+        "Set the threshold and, for the kinds that use it, the window.",
+        "Name it and turn it on or off."
+      ],
+      "on_save": "The service evaluates it periodically. When it holds, it opens an alert and notifies whoever created the rule through the site's notification centre (bell, push and email, per their preferences); someone else can take it over with \"Notify me\". The kind and the app do not change afterwards. It is written to the audit log."
+    },
+    "filter_help": {
+      "app": {
+        "what": "Shows only the rules watching one app.",
+        "how": "Pick the app; \"Every app\" removes the filter. A new rule created while it is set starts with that app.",
+        "example": "Self-service kiosk"
+      }
+    }
   },
   "releases": {
     "title": "Releases",
@@ -1425,6 +2111,28 @@
       "upload_title": "3. Sign and upload each build",
       "upload_body": "The signature is Ed25519 over the raw SHA-256 digest of the file, in base64. The body is the file itself, up to {{max}}. Replace version, platform, architecture and filename with each build's.",
       "upload_after": "It arrives as a draft. Publish it from its page, starting with a small percentage."
+    },
+    "filter_help": {
+      "channel": {
+        "what": "Shows only one channel's releases.",
+        "how": "Pick Stable or Beta; \"Any channel\" removes the filter.",
+        "example": "Beta"
+      },
+      "platform": {
+        "what": "Shows only the releases for one system.",
+        "how": "Pick Windows, macOS, Linux, Android or Web; \"Any platform\" removes the filter.",
+        "example": "Windows"
+      },
+      "arch": {
+        "what": "Shows only the releases for one processor architecture.",
+        "how": "Pick the architecture (x86_64, aarch64…); \"Any architecture\" removes the filter.",
+        "example": "x86_64"
+      },
+      "status": {
+        "what": "Shows only the releases in one status.",
+        "how": "Draft (uploaded by CI, not published yet), published, paused or withdrawn; \"Any status\" removes the filter.",
+        "example": "Draft"
+      }
     }
   },
   "release": {
@@ -1541,6 +2249,78 @@
       "withdrawn_by_rollback": "Withdrawn when the line was rolled back to version {{version}}. Devices running it are offered that version as a mandatory rollback.",
       "rolled_back_title": "Line rolled back to this version by {{by}} on {{date}}",
       "rolled_back_body": "It was published to 100 % of the line and the newer releases were withdrawn."
+    },
+    "help": {
+      "percent": {
+        "what": "Which share of the line (app, channel, platform and architecture) gets the release.",
+        "how": "Move the slider, type a number from 0 to 100 or use the shortcuts. Devices are split by a fixed number, so the first 10 % are always the same ones. Start small and widen it once the first ones report healthy. With 0 % and no named devices it is offered to nobody.",
+        "example": "10"
+      },
+      "named": {
+        "what": "Devices offered the release whatever the percentage: the canaries.",
+        "how": "Tick the test devices (the office kiosk, for example). The active devices on the release's channel and platform are listed. Optional.",
+        "example": "Office kiosk · Head office"
+      },
+      "reason": {
+        "what": "Why this action is taken, for whoever reads the release later.",
+        "how": "One concrete sentence. Optional, up to 500 characters. It is kept on the release and in the audit log.",
+        "example": "The printer driver fails on the Lo Barnechea kiosks"
+      },
+      "notes": {
+        "what": "What changed in this version. The app's updater can show it before installing.",
+        "how": "Free text, one line per change, in the users' language. Optional, up to 10,000 characters.",
+        "example": "- Fixes receipt printing\n- Faster payment screen"
+      },
+      "min_version": {
+        "what": "The minimum version: devices on a lower version must update before they can keep using the app.",
+        "how": "A semantic version (major.minor.patch) no higher than this release. Empty forces nobody. Use it for versions with a serious problem or incompatible with the server.",
+        "example": "1.4.0"
+      }
+    },
+    "edit_form_help": {
+      "what": "Edits this release's notes and minimum version.",
+      "can_do": [
+        "Write or correct the release notes.",
+        "Set or clear the minimum version."
+      ],
+      "on_save": "Only what changed is sent. With a minimum version, devices below it get the offer as mandatory on their next heartbeat. The file and the signature do not change. It is written to the audit log."
+    },
+    "form_help_publish": {
+      "what": "Publishes this draft and chooses which devices on its line are offered it.",
+      "can_do": [
+        "Choose the share of the line.",
+        "Name canary devices that always get it."
+      ],
+      "on_save": "The release becomes published. Devices in reach see it offered on their next heartbeat (at once if they hold the socket), download it, verify it against the public key and report each step. If the rollback or crash rates pass the app's thresholds, the rollout pauses itself. It is written to the audit log."
+    },
+    "form_help_rollout": {
+      "what": "Changes how many devices on the line are offered this release.",
+      "can_do": [
+        "Widen or narrow the percentage.",
+        "Add or remove named devices."
+      ],
+      "on_save": "Widening it offers it to more devices on their next heartbeat. Narrowing it stops offering it outside the new reach, but uninstalls it from no device. It is written to the audit log."
+    },
+    "form_help_pause": {
+      "what": "Pauses this release's rollout.",
+      "can_do": [
+        "Note why it is paused."
+      ],
+      "on_save": "It stops being offered to new devices; those that installed it keep it. It can be resumed later with the same rollout. The reason is kept on the release and in the audit log."
+    },
+    "form_help_withdraw": {
+      "what": "Withdraws this release from its line.",
+      "can_do": [
+        "Note why it is withdrawn."
+      ],
+      "on_save": "Nobody else gets it, and every device running it is offered the newest earlier version of its line as a mandatory rollback. A withdrawn release cannot be published again. The reason is kept on the release and in the audit log."
+    },
+    "form_help_rollback": {
+      "what": "Rolls the line back to this release.",
+      "can_do": [
+        "Note why the line is rolled back."
+      ],
+      "on_save": "Every newer published or paused release on the line is withdrawn and this one is published at 100 %. Devices on a newer version get it as a mandatory rollback on their next heartbeat. The reason is kept on the release and in the audit log."
     }
   },
   "release_settings": {
@@ -1568,7 +2348,43 @@
     "replace_confirm": "Replace",
     "clear_title": "Remove the public key?",
     "clear_body": "The service will refuse every CI upload until you save another. Releases already uploaded do not change.",
-    "clear_confirm": "Remove"
+    "clear_confirm": "Remove",
+    "help": {
+      "key": {
+        "what": "The Ed25519 public key every build CI uploads is verified against. The same key ships inside the app, so its updater can verify what it downloads.",
+        "how": "Paste the raw 32 bytes of the public key in base64: 44 characters, usually ending in \"=\" (base64url is accepted too). A PEM or hex will not do. Empty removes it, and with no key the service refuses every upload. Replacing it asks for confirmation: do it only once a build carrying the new one is already out.",
+        "example": "BwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSY="
+      },
+      "health_timeout": {
+        "what": "How long a device waits for the new version to report healthy before going back to the previous one.",
+        "how": "A whole number of seconds between 30 and 86,400 (24 hours); 600 (10 minutes) by default. Raise it if the app is slow to start. Required.",
+        "example": "600"
+      },
+      "max_failures": {
+        "what": "How many times a device tries to install the same release before giving up.",
+        "how": "A whole number between 1 and 100; 3 by default. Required.",
+        "example": "3"
+      },
+      "pause_rollback": {
+        "what": "The rollback rate at which a rollout pauses itself.",
+        "how": "A whole number from 1 to 100; 20 by default. It is measured over the devices that finished updating and needs at least three devices behind it to pause. Required.",
+        "example": "20 (if 2 of 10 devices roll back, it pauses)"
+      },
+      "pause_crash": {
+        "what": "The share of devices crashing on the new version at which a rollout pauses itself.",
+        "how": "A whole number from 1 to 100; 20 by default. It is measured over the devices that installed it and needs at least three devices behind it. Required.",
+        "example": "20"
+      }
+    },
+    "form_help": {
+      "what": "Configures the app's updater: the key releases are verified with and the numbers every rollout runs by.",
+      "can_do": [
+        "Save, replace or remove the release public key.",
+        "Set each device's health timeout and failed attempts.",
+        "Set the rollback and crash rates that pause a rollout."
+      ],
+      "on_save": "Only what changed is sent. Replacing or removing the key asks for confirmation, because installed builds verify with the old one. The numbers apply to rollouts from now on. The change is written to the audit log."
+    }
   },
   "ci_tokens": {
     "title": "CI tokens",
@@ -1595,7 +2411,21 @@
     "revoke_title": "Revoke this token?",
     "revoke_body": "“{{token}}” will no longer be able to upload releases. The releases it already uploaded do not change. This cannot be undone.",
     "empty": "This app has no CI tokens",
-    "empty_description": "Create one so CI can upload releases."
+    "empty_description": "Create one so CI can upload releases.",
+    "help": {
+      "label": {
+        "what": "A name to recognise the token: which repository or CI workflow uses it.",
+        "how": "Free text and optional, up to 120 characters. Only the token's prefix is shown afterwards, so the label is what identifies it.",
+        "example": "GitHub Actions · main"
+      }
+    },
+    "form_help": {
+      "what": "Creates a secret token (cic_…) CI uploads releases to this app with.",
+      "can_do": [
+        "Give it a label to know where it is used."
+      ],
+      "on_save": "The token is shown only once, in the next dialog: copy it into a CI secret. The service keeps only its hash, so if it is lost it has to be revoked and replaced. The creation is written to the audit log."
+    }
   },
   "update_reports": {
     "title": "Update reports",
@@ -1712,6 +2542,18 @@
       "status": "Status",
       "any_status": "Every status",
       "any_company": "Every client"
+    },
+    "filter_help": {
+      "status": {
+        "what": "Shows only the contracts in one status.",
+        "how": "Pick a status: scheduled (not started yet), active, in grace (ended, grace days running), ended or cancelled. \"Every status\" removes the filter. It is kept in the address, so it can be shared.",
+        "example": "Active"
+      },
+      "company": {
+        "what": "Shows only one client's contracts.",
+        "how": "Pick the client from the list; \"Every client\" removes the filter. It is kept in the address.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   },
   "contract": {
@@ -1792,18 +2634,47 @@
     },
     "delete_title": "Delete this contract?",
     "delete_body": "“{{name}}” will be deleted for good. Only a contract with no closed cycles and no logged work can be deleted; otherwise, cancel it.",
-    "delete_refused": "This contract has closed cycles or logged work, so it is history: cancel it instead of deleting it."
+    "delete_refused": "This contract has closed cycles or logged work, so it is history: cancel it instead of deleting it.",
+    "help": {
+      "renew_until": {
+        "what": "The contract's new last day covered, inclusive.",
+        "how": "Pick a day after the current last day and no earlier than today, or use the month shortcuts. Required unless you tick \"No end date\".",
+        "example": "2028-02-28 (one more year)"
+      },
+      "renew_open_ended": {
+        "what": "Renews the contract with no end date: it becomes open-ended.",
+        "how": "Turn it on when the agreement runs until someone cancels it. An open-ended contract never ends or sends end-of-contract notices."
+      },
+      "cancel_reason": {
+        "what": "Why the contract is being cancelled, for whoever reads the history later.",
+        "how": "One or two sentences. Optional, up to 500 characters. It is kept in the audit log and the contract's history; the client does not see it.",
+        "example": "The client switched providers as of April."
+      }
+    },
+    "renew_form_help": {
+      "what": "Extends the contract's term to a new last day, or makes it open-ended.",
+      "can_do": [
+        "Pick the new last day, by hand or with the month shortcuts.",
+        "Leave it with no end date."
+      ],
+      "on_save": "The contract stays active until the new date. If it had already ended, the apps its lapse put in grace or suspended become active again. Hour cycles continue where they were. The renewal is written to the audit log."
+    },
+    "cancel_form_help": {
+      "what": "Cancels the contract as of today, with an optional reason.",
+      "can_do": [
+        "Note why it is being cancelled."
+      ],
+      "on_save": "From today no new cycles start and no more notices are sent; the running cycle closes on its normal date. The apps stay as they are: to suspend them, use each app's kill switch. The cancellation is written to the audit log and cannot be undone: a cancelled contract cannot be edited or renewed."
+    }
   },
   "contract_editor": {
     "new_title": "New contract",
     "edit_title": "Edit “{{name}}”",
     "description": "Hours are typed in hours and stored as exact minutes.",
     "cancelled_title": "Contract cancelled",
-    "plan": "Plan and price",
-    "plan_hint": "What is charged, and how often.",
-    "term": "Term and renewal",
+    "term": "Term",
     "term_hint": "Dates are calendar days in the service's time zone.",
-    "hours": "Hours per cycle and rollover",
+    "hours": "Hours per cycle",
     "hours_hint": "How many hours of work each cycle includes, what going over costs and what happens to the unused ones.",
     "grace": "End of contract and grace",
     "grace_hint": "What happens to the apps when the contract lapses without renewal.",
@@ -1861,6 +2732,121 @@
       "cancelled": "A cancelled contract cannot be edited or renewed. Create a new one.",
       "ends_before_cycle": "A cycle already starts after that last day.",
       "foreign_app": "Every app has to belong to the contract's client."
+    },
+    "scope": "Client and scope",
+    "scope_hint": "Who is billed, what the contract is called and which apps it covers.",
+    "price": "Price",
+    "price_hint": "How much is charged, and how often.",
+    "help": {
+      "company": {
+        "what": "The client paying for this contract. It decides which apps can be covered.",
+        "how": "Pick it from the list. Changing it unticks the covered apps, because they belonged to the previous client. Required when creating; it cannot be changed afterwards: for another client, create another contract.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "name": {
+        "what": "What the contract is called in the panel, in notices and in alerts.",
+        "how": "Use the name you would put on the invoice, with the year if it renews by periods. Required, up to 160 characters.",
+        "example": "Maintenance and support 2026"
+      },
+      "apps": {
+        "what": "The client's apps the contract applies to: its hours, its end-of-contract notice and its grace period.",
+        "how": "Pick the client first; its apps appear. Tick the ones it covers. You may tick none: the hours are then for the client as a whole. An app cannot be in two contracts with overlapping dates; the service refuses it and names the app.",
+        "example": "Self-service kiosk and Sales app"
+      },
+      "starts_on": {
+        "what": "The first day covered. Hour cycles are counted from this day.",
+        "how": "Pick a calendar day (read in the service's time zone, America/Santiago). Required. Once a cycle exists it cannot be changed: cycles are computed from it.",
+        "example": "2026-03-01"
+      },
+      "ends_on": {
+        "what": "The last day covered, inclusive. Notice days and grace are counted from it.",
+        "how": "Pick a day on or after the first one. Leave it empty for an open-ended contract, which never ends or sends notices.",
+        "example": "2027-02-28 (one year from 2026-03-01)"
+      },
+      "auto_renew": {
+        "what": "Whether the contract extends itself when it reaches its last day, by the months you set.",
+        "how": "Turn it on for contracts that continue until someone says otherwise. A self-renewing contract never ends, so no end-of-contract notice is sent to the client. With no last day it does nothing: an open-ended contract already continues."
+      },
+      "renewal_months": {
+        "what": "How many months the contract is extended each time it renews itself.",
+        "how": "A whole number between 1 and 120. Required while \"Renews itself\" is on.",
+        "example": "12"
+      },
+      "notice_days": {
+        "what": "How many days before the last day the end of the contract is announced.",
+        "how": "A whole number from 0 to {{max}}. On that day the service emails the client and the covered apps show the notice; the panel flags the contract as \"ending soon\". With 0 there is no notice. It does not apply when the contract renews itself.",
+        "example": "30"
+      },
+      "amount": {
+        "what": "What the contract charges each billing period, and the currency.",
+        "how": "Type the amount and pick the currency beside it. CLP takes whole pesos, no decimals; UF takes up to two decimals. Required: use 0 when no fixed amount is charged. Changing the currency also re-reads the overage rate.",
+        "example": "450000 CLP a month, or 12.5 UF a month"
+      },
+      "billing_period": {
+        "what": "How often the amount is charged: monthly, yearly or once.",
+        "how": "Pick the period agreed with the client. It is shown beside the amount and does not have to match the length of the hour cycle: a yearly contract can have monthly cycles.",
+        "example": "Monthly"
+      },
+      "cycle_period": {
+        "what": "The length of each hour cycle: daily, weekly or monthly. The included hours renew every cycle.",
+        "how": "Pick the agreement's period. Cycles start on the contract's first day. Once a cycle exists it cannot be changed.",
+        "example": "Monthly: from the 1st to the last day of each month, if the contract starts on a 1st"
+      },
+      "included_hours": {
+        "what": "The hours of work each cycle includes, which the work log is counted against.",
+        "how": "A number of hours, 0 or more; decimals are fine (12.5 is 12 h 30 min) and it is stored as exact minutes. Required: use 0 if everything is billed by the hour.",
+        "example": "10"
+      },
+      "overage_rate": {
+        "what": "What is charged for each hour worked beyond the cycle's available hours, in the contract's currency.",
+        "how": "An amount with the same rules as the price: whole pesos in CLP, up to two decimals in UF. Required: use 0 if extra hours are not charged. The panel uses it to estimate what the cycle's overage costs.",
+        "example": "35000 CLP, or 1.2 UF"
+      },
+      "rollover": {
+        "what": "Whether the hours not used in a cycle carry over to the next one.",
+        "how": "Turn it on if the agreement lets hours accumulate. Two optional limits appear: how many hours can be carried and for how many cycles they last. Turning it off clears those limits on save."
+      },
+      "rollover_max_hours": {
+        "what": "The cap on carried hours a cycle can bring from earlier ones.",
+        "how": "A number of hours, with decimals if you like. Empty means no cap.",
+        "example": "20"
+      },
+      "rollover_max_cycles": {
+        "what": "How many cycles a carried hour survives before it expires.",
+        "how": "A whole number between 1 and 120. Empty means they never expire.",
+        "example": "3 (March's hours can be used until June)"
+      },
+      "grace_days": {
+        "what": "How many days the covered apps keep working when the contract ends without being renewed.",
+        "how": "A whole number from 0 to {{max}}. During grace the apps warn that they are about to stop; when it ends, the service suspends them. With 0 they are suspended as soon as the contract ends.",
+        "example": "7"
+      },
+      "grace_allows": {
+        "what": "What the apps may still do while in grace.",
+        "how": "Tick what you want to keep: \"Updates\" lets them keep receiving new versions and \"Support\" lets them keep opening and continuing tickets. With nothing ticked, both stop during grace.",
+        "example": "Support"
+      },
+      "grace_message": {
+        "what": "The text the covered apps show while in grace.",
+        "how": "Write it for the people using the app, in their language, saying what is happening and whom to contact. Optional, up to 1000 characters.",
+        "example": "The maintenance contract has ended. The app will stop working on 10 March; contact your administrator."
+      },
+      "notes": {
+        "what": "Internal notes about the contract: special terms, verbal agreements, context.",
+        "how": "Free text and optional, up to 5000 characters. Only shown in this panel; the client does not see it.",
+        "example": "Includes two on-site visits a year. Price frozen until 2027."
+      }
+    },
+    "form_help": {
+      "what": "Defines what a client pays for: which apps it covers, for how long, what it costs, how many hours of work each cycle includes and what happens to the apps when it ends.",
+      "can_do": [
+        "Pick the client and the covered apps.",
+        "Set the dates, automatic renewal and notice days.",
+        "Set the price and how often it is charged.",
+        "Define the hours per cycle, the overage rate and rollover.",
+        "Decide how many grace days the apps get and what they may do during them."
+      ],
+      "on_save": "Creating it takes you to the contract's page and the service starts keeping its hour cycles. Editing sends only what changed. Before the last day the service emails the client and the covered apps show the notice; if it ends without renewal, the apps go into grace or are suspended. Everything is written to the audit log. Once a cycle exists, the first day and the cycle length cannot be changed, and the client never can."
     }
   },
   "cycle": {
@@ -1914,7 +2900,21 @@
     "bill_body_overage": "The cycle {{range}} went {{time}} over, for {{amount}}. It is marked as billed.",
     "reference": "Reference",
     "reference_hint": "The invoice or receipt number. Optional.",
-    "billed_toast": "Cycle marked as billed."
+    "billed_toast": "Cycle marked as billed.",
+    "help": {
+      "reference": {
+        "what": "The document the cycle was billed with, so it can be found later.",
+        "how": "Type the invoice or receipt number, with its type if that helps. Optional, up to 500 characters.",
+        "example": "Electronic invoice no. 1234"
+      }
+    },
+    "bill_form_help": {
+      "what": "Marks a closed cycle as billed, with the document's reference.",
+      "can_do": [
+        "Note the invoice or receipt number."
+      ],
+      "on_save": "The cycle becomes \"billed\" and no longer counts in the overview as a cycle with overage to bill. Its balance was already final; this does not change it. It is written to the audit log."
+    }
   },
   "work_log": {
     "title": "Work log",
@@ -1984,7 +2984,80 @@
       "ticket": "That ticket belongs to another client: pick one of this client's, or none."
     },
     "ticket": "Ticket #{{number}}",
-    "no_ticket": "No ticket"
+    "no_ticket": "No ticket",
+    "sections": {
+      "what": "What for",
+      "when": "When and how long"
+    },
+    "help": {
+      "app": {
+        "what": "The app the work was about, if it was about one.",
+        "how": "Pick the app, or \"Client as a whole\" if the work was for the client in general (a meeting, a report). It decides which contract it is filed under and which tickets can be chosen.",
+        "example": "Self-service kiosk"
+      },
+      "ticket": {
+        "what": "The support ticket this work answered.",
+        "how": "Pick one of the app's tickets (or the client's, for general work). Optional. The service refuses another client's ticket. Linking it does not change which contract it is filed under: it only says what it answered.",
+        "example": "#42 · The kiosk printer does not print receipts"
+      },
+      "kind": {
+        "what": "What kind of work it was.",
+        "how": "Maintenance for keeping what exists running, Support for helping users, Development for new features and Other for the rest. It is used for filtering and to see where the hours go.",
+        "example": "Support"
+      },
+      "description": {
+        "what": "What was done, for the client and for you a few months from now.",
+        "how": "One or two concrete sentences. Required, up to 2000 characters.",
+        "example": "Fixed the thermal printer driver and reinstalled the app on the entrance kiosk."
+      },
+      "day": {
+        "what": "The day the work was done. It decides which contract and cycle the hours are counted against.",
+        "how": "Pick today or an earlier day; future days are not accepted. From a contract's page it must fall within its term. A day inside an already closed cycle is refused, because its balance is final. Required.",
+        "example": "2026-03-12"
+      },
+      "duration": {
+        "what": "How long the work took, in hours and minutes.",
+        "how": "Type hours and minutes (0 to 59). Between 1 minute and {{max}} hours per entry; if it took longer, split it over several days. Required.",
+        "example": "1 h 30 min"
+      },
+      "link": {
+        "what": "A link to what backs the work: a pull request, a ticket in the client's tracker, a document.",
+        "how": "A full address starting with https:// or http://. Optional.",
+        "example": "https://github.com/franciscosolis/kiosco-los-andes/pull/87"
+      },
+      "contract": {
+        "what": "Which contract the entry is filed under, when more than one covers that day.",
+        "how": "It only appears when several contracts cover the app (or the client) on that day; choosing one is then required. Normally the service picks it and the dialog says which.",
+        "example": "Maintenance and support 2026"
+      }
+    },
+    "form_help": {
+      "what": "Logs work done for a client, which is counted against its contract's hours.",
+      "can_do": [
+        "Say which app and ticket it was about, what kind it was and what was done.",
+        "Note the day and how long it took.",
+        "Add a link that backs it.",
+        "Pick the contract if more than one covers that day."
+      ],
+      "on_save": "The service files the entry under the contract covering the app (or the client) on that day and in the cycle the day falls in; the dialog says beforehand which it will be. The hours are counted against the cycle and show on the contract, the app, the client and the ticket. Editing sends only what changed. An entry in a closed cycle can no longer be changed. It is written to the audit log."
+    },
+    "filter_help": {
+      "kind": {
+        "what": "Shows only the entries of one kind of work.",
+        "how": "Pick maintenance, support, development or other; \"Every kind\" removes the filter. The hours total follows the filter.",
+        "example": "Development"
+      },
+      "from": {
+        "what": "The first day included.",
+        "how": "Pick a day; empty sets no earlier limit. It combines with \"To\".",
+        "example": "2026-03-01"
+      },
+      "to": {
+        "what": "The last day included.",
+        "how": "Pick a day on or after \"From\"; empty sets no later limit.",
+        "example": "2026-03-31"
+      }
+    }
   },
   "app_contract": {
     "title": "Contract",
@@ -2102,6 +3175,65 @@
     },
     "hint_one": "{{count}} ticket is waiting for an answer",
     "hint_other": "{{count}} tickets are waiting for an answer",
-    "hint_link": "See tickets"
+    "hint_link": "See tickets",
+    "help": {
+      "status": {
+        "what": "The ticket's status, which says whose turn it is.",
+        "how": "Open waits for our answer; Pending was answered and waits on the requester; Resolved is done but reopens if the requester writes again; Closed is done for good. Changing it here writes to nobody; to reopen one, choose Open.",
+        "example": "Resolved, once the requester confirmed it works"
+      },
+      "reply": {
+        "what": "The answer to the requester, which the app shows inside its support screen.",
+        "how": "Write in the requester's language and explain what was done or what you need from them. Required to send, up to 5000 characters. No email is sent: the app shows it the next time it fetches the ticket.",
+        "example": "Hi Carolina, we fixed the printing error. Restart the kiosk and let us know if it happens again."
+      },
+      "status_after": {
+        "what": "Which status the ticket is left in after sending the answer.",
+        "how": "Pending (the default) when you expect the requester to reply; Resolved when the answer solves it; Closed when there is nothing more to do and it must not reopen.",
+        "example": "Resolved"
+      },
+      "subject": {
+        "what": "The ticket's subject: what it is about, in one line.",
+        "how": "Correct it so it reads well in the inbox. Required, up to 200 characters. The client's app also sees it when listing its tickets.",
+        "example": "The kiosk printer does not print receipts"
+      }
+    },
+    "form_help": {
+      "what": "Answers the ticket's requester from the panel; the client's app shows the answer in its support screen.",
+      "can_do": [
+        "Write the answer.",
+        "Choose which status the ticket is left in afterwards."
+      ],
+      "on_save": "The answer is added to the conversation, which shows whether the app has read it yet. No email is sent. The ticket is left in the chosen status (Pending by default). It is written to the audit log. To log the time it took, use \"Log work\" in the ticket's time panel."
+    },
+    "subject_form_help": {
+      "what": "Corrects the ticket's subject.",
+      "can_do": [
+        "Rewrite the subject so it reads well in the inbox."
+      ],
+      "on_save": "The new subject shows in the panel and in the client's app. The requester is not notified. It is written to the audit log."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches tickets by their text or number.",
+        "how": "Type part of the subject or of the requester's name or email, or \"#\" and the number to go to one. The service does the matching.",
+        "example": "#42"
+      },
+      "status": {
+        "what": "Shows the tickets in one status.",
+        "how": "\"Needs attention\" (the default) combines Open and Pending; you can also pick one status or \"Every status\". It is kept in the address.",
+        "example": "Open"
+      },
+      "app": {
+        "what": "Shows only the tickets opened from one app.",
+        "how": "Pick the app; \"Every app\" removes the filter. It is kept in the address.",
+        "example": "Self-service kiosk"
+      },
+      "company": {
+        "what": "Shows only one client's tickets.",
+        "how": "Pick the client; \"Every client\" removes the filter. It is kept in the address.",
+        "example": "Comercial Los Andes SpA"
+      }
+    }
   }
 }

@@ -21,6 +21,7 @@ import {Pagination} from "@/components/admin/pagination.tsx";
 import {CycleStatusBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {TextDialog} from "@/pages/custom-apps/components/contracts/contract-dialogs.tsx";
 import {cycleEnded, cycleRange} from "@/pages/custom-apps/components/contracts/contract-format.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const PAGE_SIZE = 12;
 
@@ -106,6 +107,7 @@ export const CyclesPanel = ({
   onChanged: () => void;
 }) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const language = i18n.language;
   const {notify} = useToast();
   const [offset, setOffset] = useState(0);
@@ -318,6 +320,8 @@ export const CyclesPanel = ({
         }
         label={t("custom_apps:cycle.reference")}
         hint={t("custom_apps:cycle.reference_hint")}
+        help={help.field("cycle.help.reference")}
+        formHelp={help.form("cycle.bill_form_help")}
         confirmLabel={t("custom_apps:cycle.bill")}
         pending={bill.pending}
         error={bill.error}

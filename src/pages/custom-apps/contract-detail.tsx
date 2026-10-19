@@ -25,6 +25,7 @@ import {CyclesPanel} from "@/pages/custom-apps/components/contracts/cycles-panel
 import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx";
 import {WorkLogPanel} from "@/pages/custom-apps/components/work-log/work-log-panel.tsx";
 import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 /** The line under each entry of the contract's history, read from what the service recorded. */
 const useDescribeHistory = () => {
@@ -80,6 +81,7 @@ const useDescribeHistory = () => {
  */
 export const ContractDetail = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const language = i18n.language;
   const {contractId = ""} = useParams<{contractId: string}>();
   const navigate = useNavigate();
@@ -400,6 +402,8 @@ export const ContractDetail = () => {
         body={t("custom_apps:contract.cancel_body")}
         label={t("custom_apps:contract.cancel_reason")}
         hint={t("custom_apps:contract.cancel_reason_hint")}
+        help={help.field("contract.help.cancel_reason")}
+        formHelp={help.form("contract.cancel_form_help")}
         confirmLabel={t("custom_apps:contract.cancel")}
         multiline
         danger

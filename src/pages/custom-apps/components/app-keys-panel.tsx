@@ -20,6 +20,7 @@ import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {LifecycleBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {CopyField} from "@/pages/custom-apps/components/copy-button.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const LABEL_MAX = 80;
 
@@ -36,6 +37,7 @@ type PendingAction = {kind: "rotate" | "revoke"; key: AppKey};
  */
 export const AppKeysPanel = ({appId}: {appId: string}) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {notify} = useToast();
   const [creating, setCreating] = useState(false);
   const [label, setLabel] = useState("");
@@ -166,9 +168,15 @@ export const AppKeysPanel = ({appId}: {appId: string}) => {
         onClose={create.pending ? () => undefined : () => setCreating(false)}
         title={t("custom_apps:keys.create_title")}
         className="max-w-md"
+        help={help.form("keys.form_help")}
       >
         <form onSubmit={submitCreate} className="flex flex-col gap-5" noValidate>
-          <Field label={t("custom_apps:keys.label")} htmlFor="key-label" hint={t("custom_apps:keys.label_hint")}>
+          <Field
+            label={t("custom_apps:keys.label")}
+            htmlFor="key-label"
+            hint={t("custom_apps:keys.label_hint")}
+            help={help.field("keys.help.label")}
+          >
             <Input
               id="key-label"
               value={label}
