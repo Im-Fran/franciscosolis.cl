@@ -232,11 +232,12 @@ CLP equivalent for UF — this site reads no UF indicator to convert with.
 
 **A contract** belongs to a client and covers some of its apps — never an app already covered by
 another contract in overlapping dates (409, with the app named). Its form is grouped as the plan
-reads: plan and price; term and renewal (last day inclusive or open-ended, renews itself for N
-months, days of notice); hours per cycle (daily, weekly or monthly cycles anchored on the first day,
-included hours, overage rate per hour, and rollover with an optional cap in hours and in cycles); end
-of contract and grace (0–30 days, what is still allowed — updates, support — and the message the apps
-show); and the covered apps. Once a cycle exists the first day and the cycle length are **fixed**,
+reads: client and scope (the client, the name and the covered apps, which wait for a client to be
+chosen); term (last day inclusive or open-ended, renews itself for N months, days of notice); price
+(amount and currency, billing period); hours per cycle (daily, weekly or monthly cycles anchored on
+the first day, included hours, overage rate per hour, and rollover with an optional cap in hours and
+in cycles); end of contract and grace (0–30 days, what is still allowed — updates, support — and the
+message the apps show); and notes. Once a cycle exists the first day and the cycle length are **fixed**,
 because the cycles are computed from them: both fields are disabled, and the service's 409 is
 explained if it is reached anyway. Only the fields that changed go on a PATCH.
 
@@ -313,6 +314,49 @@ message in the website's bell (`custom_apps.ticket_opened` and `custom_apps.tick
 settings. The summary says who receives them and how many are waiting for an answer. The overview
 counts open tickets, tickets waiting on the client and unread requester messages, and the audit log
 labels `ticket.opened`, `ticket.replied` and `ticket.status_changed`, linking each to its ticket.
+
+## In-form help and required fields
+
+Every control in the panel's forms and list filters carries an **info button** after its label; it
+opens a dialog titled with the label, in three short sections — what it is, how to fill it in, and a
+valid example (left out for a plain yes/no switch). The grey hint under a field stays as it was: the
+dialog is the longer explanation. Every form also has a **"How does it work?"** button — in the page
+header for a page editor, in the panel's action slot for a panel form, in the header of a dialog —
+that says what the form is for, what can be done with it and what happens on save (what devices
+pick up on their next heartbeat, what is emailed, what is audited, what can no longer change).
+
+**Where it lives.** The generic pieces are in `src/components/ui/help.tsx`: `HelpButton`,
+`FormHelpButton`, `RequiredMark`, `RequiredLegend`, and `FieldLabel` / `FieldLegend` / `WithHelp`
+for controls that are not inside a `Field` (a JSON editor, a fieldset of checkboxes or radios, a
+filter with no visible label). `Field` takes opt-in `help` and `required` props and `Modal` an
+opt-in `help` (a form's `FormHelp`); a field or dialog that passes neither renders exactly as
+before, so the auth, CMS and marketplace screens are unaffected. The help dialogs are portalled to
+`document.body`, outside any form or label, and `Modal` ignores a nested dialog's `close`, so help
+opened from a form dialog closes back onto the form with what was typed still there. Inside the
+panel, `components/checkbox-field.tsx` draws a switch (card or plain) with its help, and
+`components/form-section.tsx` the lightweight section headings.
+
+**The copy** is in `custom_apps.json`, Spanish and English with identical keys, next to each area's
+own strings: `<area>.help.<field>.{what, how, example?}` for a form field,
+`<area>.filter_help.<filter>` (same shape) for a list filter, and
+`<area>.form_help.{title?, what, can_do[], on_save}` for a form (an area with several forms uses
+suffixed keys: `apps.form_help_create`, `release.form_help_pause`…). `useHelp()`
+(`components/use-help.ts`) reads them — `help.field("contacts.help.name")`,
+`help.form("contacts.form_help")` — and takes interpolation values for the limits the service sends
+at run time (heartbeat bounds, notice and grace days), so the help never states a number the form
+would refuse.
+
+**Adding help** to a new field is `help={help.field("<area>.help.<field>")}` on its `Field` (or a
+`FieldLabel` / `FieldLegend` / `WithHelp` around a custom control) plus the entry in both language
+files; a new form adds `<FormHelpButton help={help.form("<area>.form_help")} />`, or `help=` on its
+`Modal`. Write for the person filling the form in: the format and range the validation enforces,
+what an empty value means, what cannot be changed later and what the client or the devices see.
+
+**Required fields** carry an asterisk (read out as "required") and the form a one-line
+"* Required" legend. The marker follows the form's own validation, conditions included — renewal
+months only while the contract renews itself, the time zone only while operating hours are on, the
+contract only when several cover the day, the grace end only in grace — and changes no validation.
+A form with nothing required shows no legend.
 
 ## Configuration
 
