@@ -20,5 +20,17 @@
   "content_failed": "No se pudo cargar esta sección.",
   "retry": "Reintentar",
   "empty": "Todavía no hay nada publicado aquí.",
-  "company_rut": "RUT {{rut}}"
+  "company_rut": "RUT {{rut}}",
+  "help": {
+    "aria": "Ayuda: {{label}}",
+    "what": "Qué es",
+    "how": "Cómo llenarlo",
+    "example": "Ejemplo",
+    "form_button": "¿Cómo funciona?",
+    "form_what": "Para qué sirve",
+    "form_can_do": "Qué puedes hacer",
+    "form_on_save": "Qué pasa al guardar",
+    "required": "obligatorio",
+    "required_legend": "Obligatorio"
+  }
 }

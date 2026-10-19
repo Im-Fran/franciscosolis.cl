@@ -20,5 +20,17 @@
   "content_failed": "This section could not be loaded.",
   "retry": "Try again",
   "empty": "Nothing published here yet.",
-  "company_rut": "Chilean tax ID (RUT) {{rut}}"
+  "company_rut": "Chilean tax ID (RUT) {{rut}}",
+  "help": {
+    "aria": "Help: {{label}}",
+    "what": "What it is",
+    "how": "How to fill it in",
+    "example": "Example",
+    "form_button": "How does it work?",
+    "form_what": "What it is for",
+    "form_can_do": "What you can do",
+    "form_on_save": "What happens when you save",
+    "required": "required",
+    "required_legend": "Required"
+  }
 }

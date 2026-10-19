@@ -1,4 +1,6 @@
 import * as React from "react";
+import {FieldLabel} from "@/components/ui/help.tsx";
+import type {FieldHelp} from "@/components/ui/help.tsx";
 import {cn} from "@/lib/utils.ts";
 
 const field =
@@ -31,14 +33,27 @@ export type FieldProps = {
   error?: string | null;
   children: React.ReactNode;
   className?: string;
+  /** Opt-in: an info button after the label that opens this longer explanation. */
+  help?: FieldHelp;
+  /** Opt-in: an asterisk after the label (read out as "required"). Changes no validation. */
+  required?: boolean;
 };
 
-/** Label, control and message as one block, so every form in the auth interface reads the same. */
-export const Field = ({label, htmlFor, hint, error, children, className}: FieldProps) => (
+/**
+ * Label, control and message as one block, so every form in the auth interface reads the same.
+ *
+ * `help` and `required` are opt-in: a field that passes neither renders exactly the plain label it
+ * always did.
+ */
+export const Field = ({label, htmlFor, hint, error, children, className, help, required}: FieldProps) => (
   <div className={cn("flex flex-col gap-1.5", className)}>
-    <label htmlFor={htmlFor} className="text-sm font-medium text-neutral-300">
-      {label}
-    </label>
+    {help || required ? (
+      <FieldLabel label={label} htmlFor={htmlFor} help={help} required={required}/>
+    ) : (
+      <label htmlFor={htmlFor} className="text-sm font-medium text-neutral-300">
+        {label}
+      </label>
+    )}
     {children}
     {error ? (
       <p className="text-xs text-red-400">{error}</p>
