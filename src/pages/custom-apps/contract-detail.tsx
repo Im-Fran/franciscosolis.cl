@@ -232,6 +232,9 @@ export const ContractDetail = () => {
               date: formatDateTime(current.cancelled_at, language) ?? "—",
               by: current.cancelled_by ?? t("custom_apps:audit.system"),
             })}
+            {current.cancel_reason && (
+              <span className="mt-1 block">{t("custom_apps:contract.cancel_reason", {reason: current.cancel_reason})}</span>
+            )}
           </Alert>
         )}
         {current.status === "grace" && (
