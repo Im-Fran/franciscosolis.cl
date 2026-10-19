@@ -306,6 +306,13 @@
         "Delete it, once it has no apps, contracts or work log entries."
       ],
       "on_save": "Creating it takes you to its page, where the contacts, apps, contracts and work log panels appear. Editing sends only what changed, with the RUT normalised. The client is not told anything and the change is written to the audit log."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches every client.",
+        "how": "Type part of the legal name, the trade name or the RUT (with or without dots). The service does the matching. Empty shows them all.",
+        "example": "76123456"
+      }
     }
   },
   "company_contacts": {
@@ -439,6 +446,13 @@
         "Delete the contact, which unlinks it from every client."
       ],
       "on_save": "Creating it takes you to its page, where you can keep editing. Editing sends only what changed. Nothing is sent to the person, and the change is written to the audit log. To link them to a client, open the client and use \"Link a contact\"."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches every contact.",
+        "how": "Type part of a name, an email or a phone. The service does the matching, ignoring case. Empty shows them all.",
+        "example": "gonzalez"
+      }
     }
   },
   "apps": {
@@ -597,6 +611,28 @@
         "Define the operating hours."
       ],
       "on_save": "Only what changed is sent. Installations pick up the changes that affect them (modules, log level, presence, interval) on their next heartbeat. The change is written to the audit log. Keys, updates and CI tokens are saved in their own panels further down."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches apps by name.",
+        "how": "Type part of the name; the service does the matching, combined with the other filters. Empty shows them all.",
+        "example": "kiosk"
+      },
+      "state": {
+        "what": "Shows only the apps in one kill-switch state.",
+        "how": "Pick Active, Grace, Maintenance or Suspended. \"Any state\" removes the filter.",
+        "example": "Suspended"
+      },
+      "kind": {
+        "what": "Shows only the apps of one kind.",
+        "how": "Pick web, desktop, Android or kiosk. \"Any kind\" removes the filter.",
+        "example": "Kiosk"
+      },
+      "company": {
+        "what": "Shows only one client's apps.",
+        "how": "Pick the client; \"Any client\" removes the filter.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   },
   "app_nav": {
@@ -698,7 +734,29 @@
       "last_seen": "Last seen"
     },
     "socket": "Socket",
-    "socket_title": "Holding the live connection: commands reach it at once."
+    "socket_title": "Holding the live connection: commands reach it at once.",
+    "filter_help": {
+      "search": {
+        "what": "Searches this app's installations.",
+        "how": "Type part of the alias, the hostname or the device ID. Empty shows them all.",
+        "example": "reception"
+      },
+      "connection": {
+        "what": "Separates connected installations from offline ones.",
+        "how": "Connected means its last heartbeat arrived within the allowed intervals. \"Any connection\" removes the filter.",
+        "example": "Offline"
+      },
+      "review": {
+        "what": "Shows installations still to be reviewed, or those already reviewed.",
+        "how": "Every device that enrols by itself stays to be reviewed until someone confirms it is expected. \"Any review state\" removes the filter.",
+        "example": "Needs review"
+      },
+      "status": {
+        "what": "Separates active installations from revoked ones.",
+        "how": "A revoked one can no longer report or enrol again, but its history is kept. \"Any status\" removes the filter.",
+        "example": "Active"
+      }
+    }
   },
   "usage": {
     "daily_title": "Daily usage",
@@ -718,7 +776,14 @@
     "all_installations": "Every installation",
     "cell": "{{day}} {{from}}–{{to}}: {{active}} active on average, {{online}} online",
     "legend_low": "Idle",
-    "legend_hours": "Operating hours"
+    "legend_hours": "Operating hours",
+    "filter_help": {
+      "scope": {
+        "what": "Which devices the heatmap is drawn from: all of them or one.",
+        "how": "Pick an installation to see only its usage, or \"Every installation\" for the whole app.",
+        "example": "Entrance kiosk"
+      }
+    }
   },
   "status": {
     "title": "Kill switch",
@@ -1008,6 +1073,13 @@
       "screen": "Screen",
       "action": "Action",
       "custom": "Custom"
+    },
+    "filter_help": {
+      "type": {
+        "what": "Shows only one kind of event the app reported.",
+        "how": "Pick session start or end, screen, action or custom; \"Every type\" removes the filter.",
+        "example": "Screen"
+      }
     }
   },
   "heartbeats": {
@@ -1187,7 +1259,34 @@
       "contract_renewed": "The contract was renewed"
     },
     "open_release": "Release {{version}}",
-    "open_contract": "Open contract"
+    "open_contract": "Open contract",
+    "filter_help": {
+      "event": {
+        "what": "Shows only one kind of event in the log.",
+        "how": "Type the event's name as it appears in the event column, dots included. Empty shows them all.",
+        "example": "app.status.updated"
+      },
+      "resource": {
+        "what": "Shows only the changes to one kind of record: apps, contracts, tickets…",
+        "how": "Pick a suggestion from the list or type the kind (contract, for example). Empty shows them all.",
+        "example": "contract"
+      },
+      "actor": {
+        "what": "Shows only what one person did.",
+        "how": "Type their email. The service's automatic changes have no author.",
+        "example": "fran@franciscosolis.cl"
+      },
+      "from": {
+        "what": "The first day included.",
+        "how": "Pick a day; empty sets no earlier limit.",
+        "example": "2026-03-01"
+      },
+      "to": {
+        "what": "The last day included.",
+        "how": "Pick a day on or after \"From\"; empty sets no later limit.",
+        "example": "2026-03-31"
+      }
+    }
   },
   "module_off": {
     "title": "{{modules}}: off for this app",
@@ -1323,7 +1422,34 @@
     "hide_context": "Hide context",
     "no_matches": "No entry matches these filters.",
     "empty": "No log entries",
-    "empty_description": "Entries appear here once the app sends them, at or above its log level."
+    "empty_description": "Entries appear here once the app sends them, at or above its log level.",
+    "filter_help": {
+      "level": {
+        "what": "Shows the entries from one severity level up.",
+        "how": "Pick the minimum level: \"Warning\" shows warnings, errors and fatal ones. \"Every level\" removes the filter. There is only what the devices sent at their log level, kept for 30 days.",
+        "example": "Error or worse"
+      },
+      "search": {
+        "what": "Searches the text of the log messages.",
+        "how": "Type a word or phrase from the message; the service does the matching. Empty shows everything.",
+        "example": "timeout"
+      },
+      "installation": {
+        "what": "Shows only one device's logs.",
+        "how": "Pick the installation, revoked ones included; \"Every installation\" removes the filter.",
+        "example": "Entrance kiosk"
+      },
+      "from": {
+        "what": "The first day included.",
+        "how": "Pick a day within the last 30; empty sets no earlier limit.",
+        "example": "2026-03-10"
+      },
+      "to": {
+        "what": "The last day included.",
+        "how": "Pick a day on or after \"From\"; empty goes up to now.",
+        "example": "2026-03-12"
+      }
+    }
   },
   "commands": {
     "title": "Commands",
@@ -1647,6 +1773,13 @@
         "Schedule when it starts and ends."
       ],
       "on_save": "The devices in scope receive it on their next heartbeat and show it within its dates. Every device that shows it leaves a read receipt, listed under \"Seen\". Whom it goes to cannot be changed afterwards. Ending it does not delete it, so the receipts are kept. It is written to the audit log."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Shows only the messages at one stage.",
+        "how": "Active are showing now, Scheduled start later and Ended are past their end date. \"Every message\" removes the filter.",
+        "example": "Scheduled"
+      }
     }
   },
   "crashes": {
@@ -1694,7 +1827,24 @@
     "show_stack": "Show the stack",
     "hide_stack": "Hide the stack",
     "show_context": "Show context",
-    "hide_context": "Hide context"
+    "hide_context": "Hide context",
+    "filter_help": {
+      "search": {
+        "what": "Searches crash groups by title or signature.",
+        "how": "Type part of the error message or the signature; the service does the matching.",
+        "example": "NullPointerException"
+      },
+      "version": {
+        "what": "Shows only the crashes of one app version.",
+        "how": "Type the exact version as the app reports it. Empty shows them all.",
+        "example": "1.4.2"
+      },
+      "status": {
+        "what": "Shows the groups in one status.",
+        "how": "Open (the default), resolved (reopens if it happens again) or ignored; \"Any status\" removes the filter.",
+        "example": "Open"
+      }
+    }
   },
   "alerts": {
     "title": "Alerts",
@@ -1768,6 +1918,18 @@
         "Note what was done."
       ],
       "on_save": "The alert leaves the inbox. If the condition still holds at the next evaluation, the service reopens it and notifies again. It is written to the audit log."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Shows the alerts in one status.",
+        "how": "\"Unresolved\" (the default) combines open and acknowledged; you can also pick one status or \"Every status\". It is kept in the address.",
+        "example": "Open"
+      },
+      "app": {
+        "what": "Shows only one app's alerts.",
+        "how": "Pick the app; \"Every app\" removes the filter. It is kept in the address.",
+        "example": "Self-service kiosk"
+      }
     }
   },
   "rules": {
@@ -1889,6 +2051,13 @@
         "Name it and turn it on or off."
       ],
       "on_save": "The service evaluates it periodically. When it holds, it opens an alert and notifies whoever created the rule through the site's notification centre (bell, push and email, per their preferences); someone else can take it over with \"Notify me\". The kind and the app do not change afterwards. It is written to the audit log."
+    },
+    "filter_help": {
+      "app": {
+        "what": "Shows only the rules watching one app.",
+        "how": "Pick the app; \"Every app\" removes the filter. A new rule created while it is set starts with that app.",
+        "example": "Self-service kiosk"
+      }
     }
   },
   "releases": {
@@ -1942,6 +2111,28 @@
       "upload_title": "3. Sign and upload each build",
       "upload_body": "The signature is Ed25519 over the raw SHA-256 digest of the file, in base64. The body is the file itself, up to {{max}}. Replace version, platform, architecture and filename with each build's.",
       "upload_after": "It arrives as a draft. Publish it from its page, starting with a small percentage."
+    },
+    "filter_help": {
+      "channel": {
+        "what": "Shows only one channel's releases.",
+        "how": "Pick Stable or Beta; \"Any channel\" removes the filter.",
+        "example": "Beta"
+      },
+      "platform": {
+        "what": "Shows only the releases for one system.",
+        "how": "Pick Windows, macOS, Linux, Android or Web; \"Any platform\" removes the filter.",
+        "example": "Windows"
+      },
+      "arch": {
+        "what": "Shows only the releases for one processor architecture.",
+        "how": "Pick the architecture (x86_64, aarch64…); \"Any architecture\" removes the filter.",
+        "example": "x86_64"
+      },
+      "status": {
+        "what": "Shows only the releases in one status.",
+        "how": "Draft (uploaded by CI, not published yet), published, paused or withdrawn; \"Any status\" removes the filter.",
+        "example": "Draft"
+      }
     }
   },
   "release": {
@@ -2351,6 +2542,18 @@
       "status": "Status",
       "any_status": "Every status",
       "any_company": "Every client"
+    },
+    "filter_help": {
+      "status": {
+        "what": "Shows only the contracts in one status.",
+        "how": "Pick a status: scheduled (not started yet), active, in grace (ended, grace days running), ended or cancelled. \"Every status\" removes the filter. It is kept in the address, so it can be shared.",
+        "example": "Active"
+      },
+      "company": {
+        "what": "Shows only one client's contracts.",
+        "how": "Pick the client from the list; \"Every client\" removes the filter. It is kept in the address.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   },
   "contract": {
@@ -2837,6 +3040,23 @@
         "Pick the contract if more than one covers that day."
       ],
       "on_save": "The service files the entry under the contract covering the app (or the client) on that day and in the cycle the day falls in; the dialog says beforehand which it will be. The hours are counted against the cycle and show on the contract, the app, the client and the ticket. Editing sends only what changed. An entry in a closed cycle can no longer be changed. It is written to the audit log."
+    },
+    "filter_help": {
+      "kind": {
+        "what": "Shows only the entries of one kind of work.",
+        "how": "Pick maintenance, support, development or other; \"Every kind\" removes the filter. The hours total follows the filter.",
+        "example": "Development"
+      },
+      "from": {
+        "what": "The first day included.",
+        "how": "Pick a day; empty sets no earlier limit. It combines with \"To\".",
+        "example": "2026-03-01"
+      },
+      "to": {
+        "what": "The last day included.",
+        "how": "Pick a day on or after \"From\"; empty sets no later limit.",
+        "example": "2026-03-31"
+      }
     }
   },
   "app_contract": {
@@ -2992,6 +3212,28 @@
         "Rewrite the subject so it reads well in the inbox."
       ],
       "on_save": "The new subject shows in the panel and in the client's app. The requester is not notified. It is written to the audit log."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Searches tickets by their text or number.",
+        "how": "Type part of the subject or of the requester's name or email, or \"#\" and the number to go to one. The service does the matching.",
+        "example": "#42"
+      },
+      "status": {
+        "what": "Shows the tickets in one status.",
+        "how": "\"Needs attention\" (the default) combines Open and Pending; you can also pick one status or \"Every status\". It is kept in the address.",
+        "example": "Open"
+      },
+      "app": {
+        "what": "Shows only the tickets opened from one app.",
+        "how": "Pick the app; \"Every app\" removes the filter. It is kept in the address.",
+        "example": "Self-service kiosk"
+      },
+      "company": {
+        "what": "Shows only one client's tickets.",
+        "how": "Pick the client; \"Every client\" removes the filter. It is kept in the address.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   }
 }

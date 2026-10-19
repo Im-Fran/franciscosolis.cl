@@ -22,6 +22,8 @@ import {ReleaseStatusBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {ModuleGate} from "@/pages/custom-apps/components/module-gate.tsx";
 import {CiUploadHelp} from "@/pages/custom-apps/components/releases/ci-upload-help.tsx";
 import {releaseLine} from "@/pages/custom-apps/components/releases/release-format.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 25;
 
@@ -58,6 +60,7 @@ const RolloutCell = ({release}: {release: ReleaseListItem}) => {
  */
 export const AppReleases = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const navigate = useNavigate();
   const {app} = useApp();
   const {channels, platforms, arches, releaseStatuses, releaseMaxBytes} = useServiceVocabulary();
@@ -173,19 +176,21 @@ export const AppReleases = () => {
   );
 
   const select = <K extends keyof Filters>(key: K, label: string, anyLabel: string, values: readonly string[], prefix: string) => (
-    <Select
-      value={filters[key]}
-      onChange={(event) => setFilter(key, event.target.value as Filters[K])}
-      aria-label={label}
-      className="w-auto min-w-[9rem]"
-    >
-      <option value="">{anyLabel}</option>
-      {values.map((value) => (
-        <option key={value} value={value}>
-          {t(`custom_apps:${prefix}.${value}`, {defaultValue: value})}
-        </option>
-      ))}
-    </Select>
+    <WithHelp label={label} help={help.field(`releases.filter_help.${key}`)}>
+      <Select
+        value={filters[key]}
+        onChange={(event) => setFilter(key, event.target.value as Filters[K])}
+        aria-label={label}
+        className="w-auto min-w-[9rem]"
+      >
+        <option value="">{anyLabel}</option>
+        {values.map((value) => (
+          <option key={value} value={value}>
+            {t(`custom_apps:${prefix}.${value}`, {defaultValue: value})}
+          </option>
+        ))}
+      </Select>
+    </WithHelp>
   );
 
   const nothingYet = releases.data && rows.length === 0 && !filtered;

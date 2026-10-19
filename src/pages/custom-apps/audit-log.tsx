@@ -17,6 +17,7 @@ import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {Pagination} from "@/components/admin/pagination.tsx";
 import {AuditDiff} from "@/pages/custom-apps/components/audit-diff.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const PAGE_SIZE = 50;
 
@@ -116,6 +117,7 @@ const SystemActor = ({metadata}: {metadata: AuditEntry["metadata"]}) => {
  */
 export const AuditLog = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const language = i18n.language;
   const [event, setEvent] = useState("");
   const [resourceType, setResourceType] = useState("");
@@ -166,7 +168,7 @@ export const AuditLog = () => {
         description={entries.data ? t("custom_apps:audit.count", {count: entries.data.pagination.total}) : undefined}
       >
         <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          <Field label={t("custom_apps:audit.filters.event")} htmlFor="audit-event">
+          <Field label={t("custom_apps:audit.filters.event")} htmlFor="audit-event" help={help.field("audit.filter_help.event")}>
             <Input
               id="audit-event"
               value={event}
@@ -175,7 +177,7 @@ export const AuditLog = () => {
               className="font-mono text-[13px]"
             />
           </Field>
-          <Field label={t("custom_apps:audit.filters.resource")} htmlFor="audit-resource">
+          <Field label={t("custom_apps:audit.filters.resource")} htmlFor="audit-resource" help={help.field("audit.filter_help.resource")}>
             <Input
               id="audit-resource"
               list={typesId}
@@ -191,7 +193,7 @@ export const AuditLog = () => {
               ))}
             </datalist>
           </Field>
-          <Field label={t("custom_apps:audit.filters.actor")} htmlFor="audit-actor">
+          <Field label={t("custom_apps:audit.filters.actor")} htmlFor="audit-actor" help={help.field("audit.filter_help.actor")}>
             <Input
               id="audit-actor"
               value={actor}
@@ -199,10 +201,10 @@ export const AuditLog = () => {
               placeholder="fran@franciscosolis.cl"
             />
           </Field>
-          <Field label={t("custom_apps:audit.filters.from")} htmlFor="audit-from">
+          <Field label={t("custom_apps:audit.filters.from")} htmlFor="audit-from" help={help.field("audit.filter_help.from")}>
             <Input id="audit-from" type="date" value={from} max={to || undefined} onChange={(change) => filter(() => setFrom(change.target.value))} />
           </Field>
-          <Field label={t("custom_apps:audit.filters.to")} htmlFor="audit-to">
+          <Field label={t("custom_apps:audit.filters.to")} htmlFor="audit-to" help={help.field("audit.filter_help.to")}>
             <Input id="audit-to" type="date" value={to} min={from || undefined} onChange={(change) => filter(() => setTo(change.target.value))} />
           </Field>
         </div>

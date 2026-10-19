@@ -306,6 +306,13 @@
         "Eliminarlo, si ya no tiene apps, contratos ni entradas de bitácora."
       ],
       "on_save": "Al crearlo pasas a su página, donde aparecen los paneles de contactos, apps, contratos y bitácora. Al editarlo solo se envía lo que cambió, el RUT normalizado. No se le avisa nada al cliente y el cambio queda en el registro de auditoría."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Busca entre todos los clientes.",
+        "how": "Escribe parte de la razón social, del nombre de fantasía o del RUT (con o sin puntos). La búsqueda la hace el servicio. Vacío muestra todos.",
+        "example": "76123456"
+      }
     }
   },
   "company_contacts": {
@@ -439,6 +446,13 @@
         "Eliminar el contacto, lo que lo desvincula de todos los clientes."
       ],
       "on_save": "Al crearlo pasas a su página, desde donde puedes seguir editándolo. Al editarlo solo se envía lo que cambió. Nada se le comunica a la persona, y el cambio queda en el registro de auditoría. Para vincularla a un cliente, abre el cliente y usa «Vincular un contacto»."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Busca entre todos los contactos.",
+        "how": "Escribe parte del nombre, de un correo o de un teléfono. La búsqueda la hace el servicio y no distingue mayúsculas. Vacío muestra todos.",
+        "example": "gonzalez"
+      }
     }
   },
   "apps": {
@@ -597,6 +611,28 @@
         "Definir el horario de operación."
       ],
       "on_save": "Solo se envía lo que cambió. Las instalaciones toman los cambios que les afectan (módulos, nivel de log, presencia, intervalo) en su próximo latido. El cambio queda en el registro de auditoría. Las llaves, las actualizaciones y los tokens de CI se guardan en sus propios paneles, más abajo."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Busca apps por nombre.",
+        "how": "Escribe parte del nombre; la búsqueda la hace el servicio y se combina con los demás filtros. Vacío muestra todas.",
+        "example": "kiosco"
+      },
+      "state": {
+        "what": "Muestra solo las apps en un estado del interruptor de corte.",
+        "how": "Elige Activa, En gracia, Mantenimiento o Suspendida. «Cualquier estado» quita el filtro.",
+        "example": "Suspendida"
+      },
+      "kind": {
+        "what": "Muestra solo las apps de un tipo.",
+        "how": "Elige web, escritorio, Android o kiosco. «Cualquier tipo» quita el filtro.",
+        "example": "Kiosco"
+      },
+      "company": {
+        "what": "Muestra solo las apps de un cliente.",
+        "how": "Elige el cliente; «Cualquier cliente» quita el filtro.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   },
   "app_nav": {
@@ -698,7 +734,29 @@
       "last_seen": "Vista por última vez"
     },
     "socket": "Socket",
-    "socket_title": "Mantiene la conexión en vivo: los comandos le llegan al instante."
+    "socket_title": "Mantiene la conexión en vivo: los comandos le llegan al instante.",
+    "filter_help": {
+      "search": {
+        "what": "Busca instalaciones de esta app.",
+        "how": "Escribe parte del alias, del nombre de host o del ID del equipo. Vacío muestra todas.",
+        "example": "recepcion"
+      },
+      "connection": {
+        "what": "Separa las instalaciones conectadas de las desconectadas.",
+        "how": "Conectada significa que su último latido llegó hace menos de los intervalos permitidos. «Cualquier conexión» quita el filtro.",
+        "example": "Desconectada"
+      },
+      "review": {
+        "what": "Muestra las instalaciones que falta revisar, o las ya revisadas.",
+        "how": "Cada equipo que se inscribe solo queda por revisar hasta que alguien confirma que es esperado. «Cualquier revisión» quita el filtro.",
+        "example": "Por revisar"
+      },
+      "status": {
+        "what": "Separa las instalaciones activas de las revocadas.",
+        "how": "Una revocada ya no puede reportar ni volver a inscribirse, pero su historial se conserva. «Cualquier estado» quita el filtro.",
+        "example": "Activa"
+      }
+    }
   },
   "usage": {
     "daily_title": "Uso diario",
@@ -718,7 +776,14 @@
     "all_installations": "Todas las instalaciones",
     "cell": "{{day}} {{from}}–{{to}}: {{active}} activo en promedio, {{online}} en línea",
     "legend_low": "Sin uso",
-    "legend_hours": "Horario de operación"
+    "legend_hours": "Horario de operación",
+    "filter_help": {
+      "scope": {
+        "what": "De qué equipos sale el mapa de calor: de todos o de uno.",
+        "how": "Elige una instalación para ver solo su uso, o «Todas las instalaciones» para toda la app.",
+        "example": "Kiosco entrada"
+      }
+    }
   },
   "status": {
     "title": "Interruptor de corte",
@@ -1008,6 +1073,13 @@
       "screen": "Pantalla",
       "action": "Acción",
       "custom": "Personalizado"
+    },
+    "filter_help": {
+      "type": {
+        "what": "Muestra solo un tipo de evento que reportó la app.",
+        "how": "Elige inicio o fin de sesión, pantalla, acción o personalizado; «Todos los tipos» quita el filtro.",
+        "example": "Pantalla"
+      }
     }
   },
   "heartbeats": {
@@ -1187,7 +1259,34 @@
       "contract_renewed": "Se renovó el contrato"
     },
     "open_release": "Release {{version}}",
-    "open_contract": "Ver contrato"
+    "open_contract": "Ver contrato",
+    "filter_help": {
+      "event": {
+        "what": "Muestra solo un tipo de evento del registro.",
+        "how": "Escribe el nombre del evento tal como aparece en la columna de eventos, con sus puntos. Vacío muestra todos.",
+        "example": "app.status.updated"
+      },
+      "resource": {
+        "what": "Muestra solo los cambios sobre un tipo de registro: apps, contratos, tickets…",
+        "how": "Elige una sugerencia de la lista o escribe el tipo (por ejemplo, contract). Vacío muestra todos.",
+        "example": "contract"
+      },
+      "actor": {
+        "what": "Muestra solo lo que hizo una persona.",
+        "how": "Escribe su correo. Los cambios automáticos del servicio no tienen autor.",
+        "example": "fran@franciscosolis.cl"
+      },
+      "from": {
+        "what": "El primer día que se incluye.",
+        "how": "Elige un día; vacío no pone límite hacia atrás.",
+        "example": "01-03-2026"
+      },
+      "to": {
+        "what": "El último día que se incluye.",
+        "how": "Elige un día igual o posterior a «Desde»; vacío no pone límite hacia adelante.",
+        "example": "31-03-2026"
+      }
+    }
   },
   "module_off": {
     "title": "{{modules}}: desactivado en esta app",
@@ -1323,7 +1422,34 @@
     "hide_context": "Ocultar contexto",
     "no_matches": "Ninguna entrada coincide con estos filtros.",
     "empty": "Sin entradas de log",
-    "empty_description": "Las entradas aparecen aquí cuando la app las envía, desde su nivel de log hacia arriba."
+    "empty_description": "Las entradas aparecen aquí cuando la app las envía, desde su nivel de log hacia arriba.",
+    "filter_help": {
+      "level": {
+        "what": "Muestra las entradas desde un nivel de gravedad hacia arriba.",
+        "how": "Elige el nivel mínimo: «Advertencia» muestra advertencias, errores y fatales. «Todos los niveles» quita el filtro. Solo hay lo que los equipos enviaron según su nivel de log, y se guarda 30 días.",
+        "example": "Error o más grave"
+      },
+      "search": {
+        "what": "Busca en el texto de los mensajes de log.",
+        "how": "Escribe una palabra o frase del mensaje; la búsqueda la hace el servicio. Vacío muestra todo.",
+        "example": "timeout"
+      },
+      "installation": {
+        "what": "Muestra solo los logs de un equipo.",
+        "how": "Elige la instalación, incluidas las revocadas; «Todas las instalaciones» quita el filtro.",
+        "example": "Kiosco entrada"
+      },
+      "from": {
+        "what": "El primer día que se incluye.",
+        "how": "Elige un día de los últimos 30; vacío no pone límite hacia atrás.",
+        "example": "10-03-2026"
+      },
+      "to": {
+        "what": "El último día que se incluye.",
+        "how": "Elige un día igual o posterior a «Desde»; vacío llega hasta ahora.",
+        "example": "12-03-2026"
+      }
+    }
   },
   "commands": {
     "title": "Comandos",
@@ -1647,6 +1773,13 @@
         "Programar cuándo empieza y cuándo termina."
       ],
       "on_save": "Los equipos alcanzados lo reciben en su próximo latido y lo muestran dentro de las fechas. Cada equipo que lo muestra deja una confirmación de lectura, que ves en «Visto». A quién va no se puede cambiar después. Terminarlo no lo borra, así que las confirmaciones se conservan. Queda en el registro de auditoría."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Muestra solo los mensajes en una etapa.",
+        "how": "Activos se están mostrando ahora, Programados empiezan más adelante y Terminados ya pasaron su fecha de término. «Todos los mensajes» quita el filtro.",
+        "example": "Programados"
+      }
     }
   },
   "crashes": {
@@ -1694,7 +1827,24 @@
     "show_stack": "Ver el stack",
     "hide_stack": "Ocultar el stack",
     "show_context": "Ver contexto",
-    "hide_context": "Ocultar contexto"
+    "hide_context": "Ocultar contexto",
+    "filter_help": {
+      "search": {
+        "what": "Busca grupos de fallos por su título o su firma.",
+        "how": "Escribe parte del mensaje del error o de la firma; la búsqueda la hace el servicio.",
+        "example": "NullPointerException"
+      },
+      "version": {
+        "what": "Muestra solo los fallos de una versión de la app.",
+        "how": "Escribe la versión exacta tal como la reporta la app. Vacío muestra todas.",
+        "example": "1.4.2"
+      },
+      "status": {
+        "what": "Muestra los grupos en un estado.",
+        "how": "Abierto (por defecto), resuelto (se reabre si vuelve a pasar) o ignorado; «Cualquier estado» quita el filtro.",
+        "example": "Abierto"
+      }
+    }
   },
   "alerts": {
     "title": "Alertas",
@@ -1768,6 +1918,18 @@
         "Anotar qué se hizo."
       ],
       "on_save": "La alerta sale de la bandeja. Si la condición se sigue cumpliendo en la próxima evaluación, el servicio la vuelve a abrir y avisa otra vez. Queda en el registro de auditoría."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Muestra las alertas en un estado.",
+        "how": "«Sin resolver» (por defecto) junta abiertas y reconocidas; también puedes elegir un estado o «Todos los estados». Queda en la dirección.",
+        "example": "Abierta"
+      },
+      "app": {
+        "what": "Muestra solo las alertas de una app.",
+        "how": "Elige la app; «Todas las apps» quita el filtro. Queda en la dirección.",
+        "example": "Kiosco de autoatención"
+      }
     }
   },
   "rules": {
@@ -1889,6 +2051,13 @@
         "Ponerle nombre y activarla o desactivarla."
       ],
       "on_save": "El servicio la evalúa periódicamente. Cuando se cumple, abre una alerta y avisa a quien creó la regla por el centro de notificaciones del sitio (campana, push y correo, según sus preferencias); otra persona puede tomarla con «Avisarme a mí». El tipo y la app no cambian después. Queda en el registro de auditoría."
+    },
+    "filter_help": {
+      "app": {
+        "what": "Muestra solo las reglas que vigilan una app.",
+        "how": "Elige la app; «Todas las apps» quita el filtro. Una regla nueva creada con el filtro puesto parte con esa app.",
+        "example": "Kiosco de autoatención"
+      }
     }
   },
   "releases": {
@@ -1942,6 +2111,28 @@
       "upload_title": "3. Firma y sube cada compilación",
       "upload_body": "La firma es Ed25519 sobre el resumen SHA-256 crudo del archivo, en base64. El cuerpo es el archivo mismo, de hasta {{max}}. Cambia versión, plataforma, arquitectura y nombre por los de cada compilación.",
       "upload_after": "Llega como borrador. Publícala desde su página, empezando con un porcentaje pequeño."
+    },
+    "filter_help": {
+      "channel": {
+        "what": "Muestra solo las releases de un canal.",
+        "how": "Elige Estable o Beta; «Cualquier canal» quita el filtro.",
+        "example": "Beta"
+      },
+      "platform": {
+        "what": "Muestra solo las releases para un sistema.",
+        "how": "Elige Windows, macOS, Linux, Android o Web; «Cualquier plataforma» quita el filtro.",
+        "example": "Windows"
+      },
+      "arch": {
+        "what": "Muestra solo las releases para una arquitectura de procesador.",
+        "how": "Elige la arquitectura (x86_64, aarch64…); «Cualquier arquitectura» quita el filtro.",
+        "example": "x86_64"
+      },
+      "status": {
+        "what": "Muestra solo las releases en un estado.",
+        "how": "Borrador (subida por el CI y aún no publicada), publicada, pausada o retirada; «Cualquier estado» quita el filtro.",
+        "example": "Borrador"
+      }
     }
   },
   "release": {
@@ -2351,6 +2542,18 @@
       "status": "Estado",
       "any_status": "Todos los estados",
       "any_company": "Todos los clientes"
+    },
+    "filter_help": {
+      "status": {
+        "what": "Muestra solo los contratos en un estado.",
+        "how": "Elige un estado: Programado (aún no empieza), Vigente, En gracia (venció y corren sus días de gracia), Terminado o Cancelado. «Todos los estados» quita el filtro. Queda en la dirección, así que se puede compartir.",
+        "example": "Vigente"
+      },
+      "company": {
+        "what": "Muestra solo los contratos de un cliente.",
+        "how": "Elige el cliente de la lista; «Todos los clientes» quita el filtro. Queda en la dirección.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   },
   "contract": {
@@ -2837,6 +3040,23 @@
         "Elegir el contrato si más de uno cubre ese día."
       ],
       "on_save": "El servicio registra la entrada bajo el contrato que cubre la app (o el cliente) ese día y en el ciclo en que cae; el diálogo dice antes cuál será. Las horas se descuentan del ciclo y se ven en el contrato, la app, el cliente y el ticket. Al editar solo se envía lo que cambió. Una entrada en un ciclo cerrado ya no se puede cambiar. Queda en el registro de auditoría."
+    },
+    "filter_help": {
+      "kind": {
+        "what": "Muestra solo las entradas de un tipo de trabajo.",
+        "how": "Elige mantención, soporte, desarrollo u otro; «Todos los tipos» quita el filtro. El total de horas sigue al filtro.",
+        "example": "Desarrollo"
+      },
+      "from": {
+        "what": "El primer día que se incluye.",
+        "how": "Elige un día; vacío no pone límite hacia atrás. Se combina con «Hasta».",
+        "example": "01-03-2026"
+      },
+      "to": {
+        "what": "El último día que se incluye.",
+        "how": "Elige un día igual o posterior a «Desde»; vacío no pone límite hacia adelante.",
+        "example": "31-03-2026"
+      }
     }
   },
   "app_contract": {
@@ -2992,6 +3212,28 @@
         "Reescribir el asunto para que se entienda en la bandeja."
       ],
       "on_save": "El asunto nuevo aparece en el panel y en la app del cliente. No se le avisa al solicitante. Queda en el registro de auditoría."
+    },
+    "filter_help": {
+      "search": {
+        "what": "Busca tickets por su texto o su número.",
+        "how": "Escribe parte del asunto o del nombre o correo del solicitante, o «#» y el número para ir a uno. La búsqueda la hace el servicio.",
+        "example": "#42"
+      },
+      "status": {
+        "what": "Muestra los tickets en un estado.",
+        "how": "«Por atender» (por defecto) junta Abiertos y Pendientes; también puedes elegir un estado o «Todos los estados». Queda en la dirección.",
+        "example": "Abierto"
+      },
+      "app": {
+        "what": "Muestra solo los tickets abiertos desde una app.",
+        "how": "Elige la app; «Todas las apps» quita el filtro. Queda en la dirección.",
+        "example": "Kiosco de autoatención"
+      },
+      "company": {
+        "what": "Muestra solo los tickets de un cliente.",
+        "how": "Elige el cliente; «Todos los clientes» quita el filtro. Queda en la dirección.",
+        "example": "Comercial Los Andes SpA"
+      }
     }
   }
 }

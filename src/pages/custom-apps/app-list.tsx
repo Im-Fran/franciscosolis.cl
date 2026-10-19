@@ -20,6 +20,8 @@ import {Pagination} from "@/components/admin/pagination.tsx";
 import {CompanySelect} from "@/pages/custom-apps/components/app-form-fields.tsx";
 import {StateBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 50;
 
@@ -29,6 +31,7 @@ const PAGE_SIZE = 50;
  */
 export const AppList = () => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const navigate = useNavigate();
   const vocabulary = useServiceVocabulary();
   const [search, setSearch] = useState("");
@@ -135,41 +138,46 @@ export const AppList = () => {
             value={search}
             onChange={(value) => filter(() => setSearch(value))}
             placeholder={t("custom_apps:apps.search")}
+            help={help.field("apps.filter_help.search")}
           />
-          <Select
-            value={state}
-            onChange={(event) => filter(() => setState(event.target.value))}
-            aria-label={t("custom_apps:apps.filters.state")}
-            className="w-auto min-w-[9rem]"
-          >
-            <option value="">{t("custom_apps:apps.filters.any_state")}</option>
-            {vocabulary.states.map((value) => (
-              <option key={value} value={value}>
-                {t(`custom_apps:states.${value}`, {defaultValue: value})}
-              </option>
-            ))}
-          </Select>
-          <Select
-            value={kind}
-            onChange={(event) => filter(() => setKind(event.target.value))}
-            aria-label={t("custom_apps:apps.filters.kind")}
-            className="w-auto min-w-[9rem]"
-          >
-            <option value="">{t("custom_apps:apps.filters.any_kind")}</option>
-            {vocabulary.kinds.map((value) => (
-              <option key={value} value={value}>
-                {t(`custom_apps:kinds.${value}`, {defaultValue: value})}
-              </option>
-            ))}
-          </Select>
-          <div className="w-full sm:w-64">
+          <WithHelp label={t("custom_apps:apps.filters.state")} help={help.field("apps.filter_help.state")}>
+            <Select
+              value={state}
+              onChange={(event) => filter(() => setState(event.target.value))}
+              aria-label={t("custom_apps:apps.filters.state")}
+              className="w-auto min-w-[9rem]"
+            >
+              <option value="">{t("custom_apps:apps.filters.any_state")}</option>
+              {vocabulary.states.map((value) => (
+                <option key={value} value={value}>
+                  {t(`custom_apps:states.${value}`, {defaultValue: value})}
+                </option>
+              ))}
+            </Select>
+          </WithHelp>
+          <WithHelp label={t("custom_apps:apps.filters.kind")} help={help.field("apps.filter_help.kind")}>
+            <Select
+              value={kind}
+              onChange={(event) => filter(() => setKind(event.target.value))}
+              aria-label={t("custom_apps:apps.filters.kind")}
+              className="w-auto min-w-[9rem]"
+            >
+              <option value="">{t("custom_apps:apps.filters.any_kind")}</option>
+              {vocabulary.kinds.map((value) => (
+                <option key={value} value={value}>
+                  {t(`custom_apps:kinds.${value}`, {defaultValue: value})}
+                </option>
+              ))}
+            </Select>
+          </WithHelp>
+          <WithHelp label={t("custom_apps:apps.fields.company")} help={help.field("apps.filter_help.company")} className="w-full sm:w-64">
             <CompanySelect
               id="apps-filter-company"
               value={companyId}
               onChange={(value) => filter(() => setCompanyId(value))}
               emptyLabel={t("custom_apps:apps.filters.any_company")}
             />
-          </div>
+          </WithHelp>
           {filtered && (
             <Button
               variant="ghost"

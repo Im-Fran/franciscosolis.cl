@@ -19,6 +19,8 @@ import type {MessageDraft} from "@/pages/custom-apps/components/messages/message
 import {MessageItem} from "@/pages/custom-apps/components/messages/message-item.tsx";
 import {ReceiptsModal} from "@/pages/custom-apps/components/messages/receipts-modal.tsx";
 import {ModuleGate} from "@/pages/custom-apps/components/module-gate.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 20;
 const FILTERS = ["all", "active", "scheduled", "ended"] as const;
@@ -31,6 +33,7 @@ type Filter = (typeof FILTERS)[number];
  */
 export const AppMessages = () => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {app} = useApp();
   const {notify} = useToast();
   const [filter, setFilter] = useState<Filter>("all");
@@ -84,21 +87,23 @@ export const AppMessages = () => {
         description={t("custom_apps:messages.description")}
         action={
           <>
-            <Select
-              value={filter}
-              onChange={(event) => {
-                setFilter(event.target.value as Filter);
-                setOffset(0);
-              }}
-              aria-label={t("custom_apps:messages.filter")}
-              className="h-9 w-auto text-[13px]"
-            >
-              {FILTERS.map((value) => (
-                <option key={value} value={value}>
-                  {t(`custom_apps:messages.filters.${value}`)}
-                </option>
-              ))}
-            </Select>
+            <WithHelp label={t("custom_apps:messages.filter")} help={help.field("messages.filter_help.status")}>
+              <Select
+                value={filter}
+                onChange={(event) => {
+                  setFilter(event.target.value as Filter);
+                  setOffset(0);
+                }}
+                aria-label={t("custom_apps:messages.filter")}
+                className="h-9 w-auto text-[13px]"
+              >
+                {FILTERS.map((value) => (
+                  <option key={value} value={value}>
+                    {t(`custom_apps:messages.filters.${value}`)}
+                  </option>
+                ))}
+              </Select>
+            </WithHelp>
             <Button size="sm" onClick={() => setDraft({mode: "create"})}>
               <Plus size={14} /> {t("custom_apps:messages.create")}
             </Button>

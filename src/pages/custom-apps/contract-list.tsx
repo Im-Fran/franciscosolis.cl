@@ -20,6 +20,8 @@ import {CompanySelect} from "@/pages/custom-apps/components/app-form-fields.tsx"
 import {ContractStatusBadge, ExpiringBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {companyName, contractPeriod} from "@/pages/custom-apps/components/contracts/contract-format.ts";
 import {UsageBar} from "@/pages/custom-apps/components/contracts/usage-bar.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {WithHelp} from "@/components/ui/help.tsx";
 
 const PAGE_SIZE = 50;
 
@@ -35,6 +37,7 @@ export const ContractList = () => {
   const language = i18n.language;
   const navigate = useNavigate();
   const vocabulary = useServiceVocabulary();
+  const help = useHelp();
   const [params, setParams] = useSearchParams();
   const status = params.get("status") ?? "";
   const companyId = params.get("company_id") ?? "";
@@ -161,27 +164,29 @@ export const ContractList = () => {
         }
       >
         <div className="mb-5 flex flex-wrap items-center gap-3">
-          <Select
-            value={status}
-            onChange={(event) => setFilter("status", event.target.value)}
-            aria-label={t("custom_apps:contracts.filters.status")}
-            className="w-auto min-w-[10rem]"
-          >
-            <option value="">{t("custom_apps:contracts.filters.any_status")}</option>
-            {vocabulary.contractStatuses.map((value) => (
-              <option key={value} value={value}>
-                {t(`custom_apps:contract_statuses.${value}`, {defaultValue: value})}
-              </option>
-            ))}
-          </Select>
-          <div className="w-full sm:w-64">
+          <WithHelp label={t("custom_apps:contracts.filters.status")} help={help.field("contracts.filter_help.status")}>
+            <Select
+              value={status}
+              onChange={(event) => setFilter("status", event.target.value)}
+              aria-label={t("custom_apps:contracts.filters.status")}
+              className="w-auto min-w-[10rem]"
+            >
+              <option value="">{t("custom_apps:contracts.filters.any_status")}</option>
+              {vocabulary.contractStatuses.map((value) => (
+                <option key={value} value={value}>
+                  {t(`custom_apps:contract_statuses.${value}`, {defaultValue: value})}
+                </option>
+              ))}
+            </Select>
+          </WithHelp>
+          <WithHelp label={t("custom_apps:contract_editor.fields.company")} help={help.field("contracts.filter_help.company")} className="w-full sm:w-64">
             <CompanySelect
               id="contracts-filter-company"
               value={companyId}
               onChange={(value) => setFilter("company_id", value)}
               emptyLabel={t("custom_apps:contracts.filters.any_company")}
             />
-          </div>
+          </WithHelp>
           {filtered && (
             <Button
               variant="ghost"

@@ -21,6 +21,7 @@ import {Pagination} from "@/components/admin/pagination.tsx";
 import {WorkLogDialog} from "@/pages/custom-apps/components/work-log/work-log-dialog.tsx";
 import type {WorkLogPreset} from "@/pages/custom-apps/components/work-log/work-log-dialog.tsx";
 import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const PAGE_SIZE = 25;
 
@@ -52,6 +53,7 @@ export const WorkLogPanel = ({
   description?: string;
 }) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const language = i18n.language;
   const {notify} = useToast();
   const {workKinds} = useServiceVocabulary();
@@ -230,7 +232,11 @@ export const WorkLogPanel = ({
       }
     >
       <div className="mb-5 flex flex-wrap items-end gap-3">
-        <Field label={t("custom_apps:work_log.filters.kind")} htmlFor={`work-log-kind-${scope.kind}`}>
+        <Field
+          label={t("custom_apps:work_log.filters.kind")}
+          htmlFor={`work-log-kind-${scope.kind}`}
+          help={help.field("work_log.filter_help.kind")}
+        >
           <Select
             id={`work-log-kind-${scope.kind}`}
             value={kind}
@@ -245,7 +251,11 @@ export const WorkLogPanel = ({
             ))}
           </Select>
         </Field>
-        <Field label={t("custom_apps:work_log.filters.from")} htmlFor={`work-log-from-${scope.kind}`}>
+        <Field
+          label={t("custom_apps:work_log.filters.from")}
+          htmlFor={`work-log-from-${scope.kind}`}
+          help={help.field("work_log.filter_help.from")}
+        >
           <Input
             id={`work-log-from-${scope.kind}`}
             type="date"
@@ -255,7 +265,11 @@ export const WorkLogPanel = ({
             className="h-9 w-auto text-[13px]"
           />
         </Field>
-        <Field label={t("custom_apps:work_log.filters.to")} htmlFor={`work-log-to-${scope.kind}`}>
+        <Field
+          label={t("custom_apps:work_log.filters.to")}
+          htmlFor={`work-log-to-${scope.kind}`}
+          help={help.field("work_log.filter_help.to")}
+        >
           <Input
             id={`work-log-to-${scope.kind}`}
             type="date"
