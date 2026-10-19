@@ -10,6 +10,7 @@ import {MarketplaceProvider} from "@/lib/marketplace/marketplace-provider.tsx";
 import {NotFound} from "@/pages/not-found/not-found.tsx";
 import {
   Callback,
+  DonationSettingsScreen,
   MarketplaceLayout,
   ProductEditor,
   ProductList,
@@ -66,6 +67,8 @@ export const marketplaceRoutes: RouteObject = {
         {index: true, element: <ProductList />},
         /* `new` is literal and must stay ahead of `:id`. */
         {path: "new", element: <ProductEditor />},
+        /* The donation link's switches. Its sales and receipts are the `general` fund's, below. */
+        {path: "donations", element: <DonationSettingsScreen />},
         {path: ":id", element: <ProductEditor />},
         {path: ":id/releases", element: <ReleaseList />},
         {path: ":id/releases/new", element: <ReleaseEditor />},

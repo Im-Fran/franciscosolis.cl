@@ -84,6 +84,13 @@ export const SaleDetail = () => {
     ? [
         {key: "status", value: <StatusBadge status={sale.status}/>},
         {key: "amount", value: formatAmount(sale.amount, sale.currency, locale)},
+        /* What a donor chose in their own currency, and what they wrote — only when there is one. */
+        ...(sale.pledged
+          ? [{key: "pledged", value: formatAmount(sale.pledged.amount, sale.pledged.currency, locale)}]
+          : []),
+        ...(sale.message
+          ? [{key: "message", value: <span className="whitespace-pre-line">{sale.message}</span>}]
+          : []),
         {
           key: "source",
           value: (

@@ -11,7 +11,40 @@
     "releases": "Releases",
     "wiki": "Wiki",
     "sales": "Sales",
-    "vouchers": "Receipts"
+    "vouchers": "Receipts",
+    "donation_settings": "Settings"
+  },
+  "general_fund": {
+    "name": "the donation link",
+    "open": "Donations"
+  },
+  "donations": {
+    "title": "Donations",
+    "description": "The donation link at /donate: support for the projects in general. Its payments are under Sales and Receipts.",
+    "open_page": "Open the donation page",
+    "panel_title": "Settings",
+    "updated": "Last changed {{when}} by {{who}}.",
+    "never_updated": "Still on the defaults: open, no minimum, no maximum, no messages.",
+    "enabled_label": "Accept donations",
+    "enabled_on": "The donation page takes donations.",
+    "enabled_off": "The donation page says donations are closed and takes none.",
+    "minimum_label": "Minimum (CLP)",
+    "no_minimum": "No minimum",
+    "minimum_hint_none": "Leave it empty for no minimum. Compared with the amount charged in pesos, after converting other currencies.",
+    "minimum_hint_set": "Donations under {{amount}} are refused, after converting other currencies to pesos.",
+    "maximum_enabled_label": "Limit the largest donation",
+    "maximum_enabled_hint": "Switching it off keeps the amount below, so switching it back on does not lose it.",
+    "maximum_label": "Maximum (CLP)",
+    "maximum_hint_off": "Not in force while the limit is switched off.",
+    "maximum_hint_set": "Donations over {{amount}} are refused, after converting other currencies to pesos.",
+    "messages_label": "Let donors leave a message",
+    "messages_hint": "Up to {{count}} characters, shown only here, on the sale. Never published.",
+    "save": "Save settings",
+    "saved": "Donation settings saved.",
+    "cache_note": "The donation page picks changes up within a minute.",
+    "invalid_amount": "Amounts are whole pesos, written with digits only.",
+    "maximum_needed": "A maximum that is switched on needs an amount.",
+    "minimum_above_maximum": "The minimum cannot be larger than the maximum."
   },
   "sign_in": {
     "title": "Marketplace console",
@@ -444,7 +477,9 @@
         "account": "Account",
         "recorded_by": "Recorded by",
         "email": "Buyer's email",
-        "note": "Note"
+        "note": "Note",
+        "pledged": "Donor chose",
+        "message": "Donor message"
       }
     },
     "refund": {

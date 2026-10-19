@@ -12,6 +12,7 @@ import {customAppsRoutes} from "@/pages/custom-apps/custom-apps-routes.tsx";
 import {legacyProductRoutes, productRoutes} from "@/pages/product/product-routes.tsx";
 import {CmsLegacyRedirect} from "@/pages/cms/components/legacy-redirect.tsx";
 import {Legal} from "@/pages/legal/lazy-screens.tsx";
+import {donateRoutes} from "@/pages/donate/donate-routes.tsx";
 
 const routes = [
   {
@@ -37,6 +38,8 @@ const routes = [
           </Suspense>
         ),
       },
+      /* The donation link — support for the projects in general, rather than for one product */
+      ...donateRoutes,
       /* Auth — the sign-in hand-off, the OAuth callback and the administration console */
       authRoutes,
       /* Your account, at the top level: it is a page of this site, not part of the issuer */
