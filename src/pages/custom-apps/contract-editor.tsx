@@ -5,6 +5,7 @@ import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {FloppyDisk} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
+import {FieldLegend, FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 import {Field, Input, Select, Textarea} from "@/components/ui/input.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -27,8 +28,10 @@ import type {
 } from "@/lib/custom-apps/types.ts";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {CompanySelect} from "@/pages/custom-apps/components/app-form-fields.tsx";
+import {CheckboxField} from "@/pages/custom-apps/components/checkbox-field.tsx";
 import {CheckboxGroup} from "@/pages/custom-apps/components/checkbox-group.tsx";
 import {hoursToMinutes, minutesToHours} from "@/pages/custom-apps/components/contracts/contract-format.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const NAME_MAX = 160;
 const GRACE_MESSAGE_MAX = 1000;
@@ -154,6 +157,7 @@ export const ContractEditor = () => {
   const {notify} = useToast();
   const vocabulary = useServiceVocabulary();
   const {contractLimits, timezone} = vocabulary;
+  const help = useHelp();
   const today = dayIn(new Date(), timezone);
 
   const initial = useMemo(
@@ -370,6 +374,7 @@ export const ContractEditor = () => {
       back={back}
       actions={
         <>
+          <FormHelpButton help={help.form("contract_editor.form_help")} />
           {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
           <Button type="submit" form={formId} disabled={save.pending || cancelled}>
             {save.pending ? <Spinner size={16} /> : <FloppyDisk size={16} />}
@@ -384,7 +389,7 @@ export const ContractEditor = () => {
     return (
       <>
         {header}
-        <Panel title={t("custom_apps:contract_editor.plan")}>
+        <Panel title={t("custom_apps:contract_editor.scope")}>
           <PanelState loading={record.loading} error={record.error} forbidden={record.status === 403} onRetry={record.reload} ns="admin">
             {null}
           </PanelState>
@@ -411,23 +416,16 @@ export const ContractEditor = () => {
           </Alert>
         )}
 
-        <Section title={t("custom_apps:contract_editor.plan")} description={t("custom_apps:contract_editor.plan_hint")}>
-          <Field label={t("custom_apps:contract_editor.fields.name")} htmlFor="contract-name" error={errors.name} hint={t("custom_apps:contract_editor.hints.name")}>
-            <Input
-              id="contract-name"
-              value={form.name}
-              onChange={(event) => set("name", event.target.value)}
-              maxLength={NAME_MAX}
-              aria-invalid={Boolean(errors.name)}
-              autoComplete="off"
-              required
-            />
-          </Field>
+        <RequiredLegend />
+
+        <Section title={t("custom_apps:contract_editor.scope")} description={t("custom_apps:contract_editor.scope_hint")}>
           <Field
             label={t("custom_apps:contract_editor.fields.company")}
             htmlFor="contract-company"
             error={errors.companyId}
             hint={contractId ? t("custom_apps:contract_editor.hints.company_fixed") : undefined}
+            help={help.field("contract_editor.help.company")}
+            required={!contractId}
           >
             <CompanySelect
               id="contract-company"
@@ -440,7 +438,150 @@ export const ContractEditor = () => {
               invalid={Boolean(errors.companyId)}
             />
           </Field>
-          <Field label={t("custom_apps:contract_editor.fields.amount")} htmlFor="contract-amount" error={errors.amount}>
+          <Field
+            label={t("custom_apps:contract_editor.fields.name")}
+            htmlFor="contract-name"
+            error={errors.name}
+            hint={t("custom_apps:contract_editor.hints.name")}
+            help={help.field("contract_editor.help.name")}
+            required
+          >
+            <Input
+              id="contract-name"
+              value={form.name}
+              onChange={(event) => set("name", event.target.value)}
+              maxLength={NAME_MAX}
+              aria-invalid={Boolean(errors.name)}
+              autoComplete="off"
+              required
+            />
+          </Field>
+          <fieldset className="flex flex-col gap-1.5 sm:col-span-2">
+            <FieldLegend label={t("custom_apps:contract_editor.apps")} help={help.field("contract_editor.help.apps")} />
+            <p className="-mt-1 mb-1 text-xs text-neutral-500">{t("custom_apps:contract_editor.apps_hint")}</p>
+            {!form.companyId ? (
+              <p className="rounded-[var(--radius-md)] border border-dashed border-neutral-800 px-3 py-3 text-sm text-neutral-500">
+                {t("custom_apps:contract_editor.apps_pick_company")}
+              </p>
+            ) : companyApps.loading && !companyApps.data ? (
+              <p className="text-sm text-neutral-500">{t("admin:common.loading")}</p>
+            ) : appRows.length === 0 ? (
+              <p className="text-sm text-neutral-500">{t("custom_apps:contract_editor.apps_empty")}</p>
+            ) : (
+              <CheckboxGroup
+                idPrefix="contract-apps"
+                options={appRows.map((app) => ({
+                  value: app.id,
+                  label: app.name,
+                  hint: `${t(`custom_apps:kinds.${app.kind}`, {defaultValue: app.kind})} · ${t(`custom_apps:states.${app.state}`, {defaultValue: app.state})}`,
+                }))}
+                value={form.appIds}
+                onChange={(value) => set("appIds", value)}
+              />
+            )}
+          </fieldset>
+        </Section>
+
+        <Section title={t("custom_apps:contract_editor.term")} description={t("custom_apps:contract_editor.term_hint")}>
+          <Field
+            label={t("custom_apps:contract_editor.fields.starts_on")}
+            htmlFor="contract-starts"
+            error={errors.startsOn}
+            hint={hasCycles ? t("custom_apps:contract_editor.hints.anchored") : undefined}
+            help={help.field("contract_editor.help.starts_on")}
+            required
+          >
+            <Input
+              id="contract-starts"
+              type="date"
+              value={form.startsOn}
+              onChange={(event) => set("startsOn", event.target.value)}
+              disabled={hasCycles}
+              aria-invalid={Boolean(errors.startsOn)}
+              required
+            />
+          </Field>
+          <Field
+            label={t("custom_apps:contract_editor.fields.ends_on")}
+            htmlFor="contract-ends"
+            error={errors.endsOn}
+            hint={t("custom_apps:contract_editor.hints.ends_on")}
+            help={help.field("contract_editor.help.ends_on")}
+          >
+            <Input
+              id="contract-ends"
+              type="date"
+              value={form.endsOn}
+              min={form.startsOn || undefined}
+              onChange={(event) => set("endsOn", event.target.value)}
+              aria-invalid={Boolean(errors.endsOn)}
+            />
+          </Field>
+          <CheckboxField
+            id="contract-auto-renew"
+            label={t("custom_apps:contract_editor.fields.auto_renew")}
+            hint={
+              form.autoRenew && !form.endsOn
+                ? t("custom_apps:contract_editor.hints.auto_renew_no_end")
+                : t("custom_apps:contract_editor.hints.auto_renew")
+            }
+            checked={form.autoRenew}
+            onChange={(checked) => set("autoRenew", checked)}
+            help={help.field("contract_editor.help.auto_renew")}
+            className="sm:col-span-2"
+          />
+          {form.autoRenew && (
+            <Field
+              label={t("custom_apps:contract_editor.fields.renewal_months")}
+              htmlFor="contract-renewal"
+              error={errors.renewalMonths}
+              hint={t("custom_apps:rules.range", RENEWAL_MONTHS)}
+              help={help.field("contract_editor.help.renewal_months")}
+              required
+            >
+              <Input
+                id="contract-renewal"
+                type="number"
+                inputMode="numeric"
+                min={RENEWAL_MONTHS.min}
+                max={RENEWAL_MONTHS.max}
+                value={form.renewalMonths}
+                onChange={(event) => set("renewalMonths", event.target.value)}
+                aria-invalid={Boolean(errors.renewalMonths)}
+                className="font-mono"
+              />
+            </Field>
+          )}
+          <Field
+            label={t("custom_apps:contract_editor.fields.notice_days")}
+            htmlFor="contract-notice"
+            error={errors.noticeDays}
+            hint={t("custom_apps:contract_editor.hints.notice_days", {max: contractLimits.max_notice_days})}
+            help={help.field("contract_editor.help.notice_days", {max: contractLimits.max_notice_days})}
+            required
+          >
+            <Input
+              id="contract-notice"
+              type="number"
+              inputMode="numeric"
+              min={0}
+              max={contractLimits.max_notice_days}
+              value={form.noticeDays}
+              onChange={(event) => set("noticeDays", event.target.value)}
+              aria-invalid={Boolean(errors.noticeDays)}
+              className="font-mono"
+            />
+          </Field>
+        </Section>
+
+        <Section title={t("custom_apps:contract_editor.price")} description={t("custom_apps:contract_editor.price_hint")}>
+          <Field
+            label={t("custom_apps:contract_editor.fields.amount")}
+            htmlFor="contract-amount"
+            error={errors.amount}
+            help={help.field("contract_editor.help.amount")}
+            required
+          >
             <div className="flex gap-2">
               <Input
                 id="contract-amount"
@@ -467,7 +608,11 @@ export const ContractEditor = () => {
               </Select>
             </div>
           </Field>
-          <Field label={t("custom_apps:contract_editor.fields.billing_period")} htmlFor="contract-billing">
+          <Field
+            label={t("custom_apps:contract_editor.fields.billing_period")}
+            htmlFor="contract-billing"
+            help={help.field("contract_editor.help.billing_period")}
+          >
             <Select id="contract-billing" value={form.billingPeriod} onChange={(event) => set("billingPeriod", event.target.value as BillingPeriod)}>
               {vocabulary.billingPeriods.map((period) => (
                 <option key={period} value={period}>
@@ -478,99 +623,12 @@ export const ContractEditor = () => {
           </Field>
         </Section>
 
-        <Section title={t("custom_apps:contract_editor.term")} description={t("custom_apps:contract_editor.term_hint")}>
-          <Field
-            label={t("custom_apps:contract_editor.fields.starts_on")}
-            htmlFor="contract-starts"
-            error={errors.startsOn}
-            hint={hasCycles ? t("custom_apps:contract_editor.hints.anchored") : undefined}
-          >
-            <Input
-              id="contract-starts"
-              type="date"
-              value={form.startsOn}
-              onChange={(event) => set("startsOn", event.target.value)}
-              disabled={hasCycles}
-              aria-invalid={Boolean(errors.startsOn)}
-              required
-            />
-          </Field>
-          <Field
-            label={t("custom_apps:contract_editor.fields.ends_on")}
-            htmlFor="contract-ends"
-            error={errors.endsOn}
-            hint={t("custom_apps:contract_editor.hints.ends_on")}
-          >
-            <Input
-              id="contract-ends"
-              type="date"
-              value={form.endsOn}
-              min={form.startsOn || undefined}
-              onChange={(event) => set("endsOn", event.target.value)}
-              aria-invalid={Boolean(errors.endsOn)}
-            />
-          </Field>
-          <label className="flex cursor-pointer items-start gap-2.5 rounded-[var(--radius-md)] border border-neutral-800 px-3 py-2.5 sm:col-span-2">
-            <input
-              type="checkbox"
-              checked={form.autoRenew}
-              onChange={(event) => set("autoRenew", event.target.checked)}
-              className="mt-0.5 size-4 shrink-0 accent-[var(--color-accent)]"
-            />
-            <span className="min-w-0">
-              <span className="block text-sm text-text">{t("custom_apps:contract_editor.fields.auto_renew")}</span>
-              <span className="mt-0.5 block text-[12px] leading-relaxed text-neutral-500">
-                {form.autoRenew && !form.endsOn
-                  ? t("custom_apps:contract_editor.hints.auto_renew_no_end")
-                  : t("custom_apps:contract_editor.hints.auto_renew")}
-              </span>
-            </span>
-          </label>
-          {form.autoRenew && (
-            <Field
-              label={t("custom_apps:contract_editor.fields.renewal_months")}
-              htmlFor="contract-renewal"
-              error={errors.renewalMonths}
-              hint={t("custom_apps:rules.range", RENEWAL_MONTHS)}
-            >
-              <Input
-                id="contract-renewal"
-                type="number"
-                inputMode="numeric"
-                min={RENEWAL_MONTHS.min}
-                max={RENEWAL_MONTHS.max}
-                value={form.renewalMonths}
-                onChange={(event) => set("renewalMonths", event.target.value)}
-                aria-invalid={Boolean(errors.renewalMonths)}
-                className="font-mono"
-              />
-            </Field>
-          )}
-          <Field
-            label={t("custom_apps:contract_editor.fields.notice_days")}
-            htmlFor="contract-notice"
-            error={errors.noticeDays}
-            hint={t("custom_apps:contract_editor.hints.notice_days", {max: contractLimits.max_notice_days})}
-          >
-            <Input
-              id="contract-notice"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={contractLimits.max_notice_days}
-              value={form.noticeDays}
-              onChange={(event) => set("noticeDays", event.target.value)}
-              aria-invalid={Boolean(errors.noticeDays)}
-              className="font-mono"
-            />
-          </Field>
-        </Section>
-
         <Section title={t("custom_apps:contract_editor.hours")} description={t("custom_apps:contract_editor.hours_hint")}>
           <Field
             label={t("custom_apps:contract_editor.fields.cycle_period")}
             htmlFor="contract-cycle"
             hint={hasCycles ? t("custom_apps:contract_editor.hints.anchored") : t("custom_apps:contract_editor.hints.cycle_period")}
+            help={help.field("contract_editor.help.cycle_period")}
           >
             <Select
               id="contract-cycle"
@@ -590,6 +648,8 @@ export const ContractEditor = () => {
             htmlFor="contract-included"
             error={errors.includedHours}
             hint={t("custom_apps:contract_editor.hints.included_hours")}
+            help={help.field("contract_editor.help.included_hours")}
+            required
           >
             <Input
               id="contract-included"
@@ -608,6 +668,8 @@ export const ContractEditor = () => {
             htmlFor="contract-overage"
             error={errors.overageRate}
             hint={t("custom_apps:contract_editor.hints.overage_rate")}
+            help={help.field("contract_editor.help.overage_rate")}
+            required
           >
             <Input
               id="contract-overage"
@@ -621,18 +683,15 @@ export const ContractEditor = () => {
               className="font-mono"
             />
           </Field>
-          <label className="flex cursor-pointer items-start gap-2.5 rounded-[var(--radius-md)] border border-neutral-800 px-3 py-2.5 sm:col-span-2">
-            <input
-              type="checkbox"
-              checked={form.rolloverEnabled}
-              onChange={(event) => set("rolloverEnabled", event.target.checked)}
-              className="mt-0.5 size-4 shrink-0 accent-[var(--color-accent)]"
-            />
-            <span className="min-w-0">
-              <span className="block text-sm text-text">{t("custom_apps:contract_editor.fields.rollover")}</span>
-              <span className="mt-0.5 block text-[12px] leading-relaxed text-neutral-500">{t("custom_apps:contract_editor.hints.rollover")}</span>
-            </span>
-          </label>
+          <CheckboxField
+            id="contract-rollover"
+            label={t("custom_apps:contract_editor.fields.rollover")}
+            hint={t("custom_apps:contract_editor.hints.rollover")}
+            checked={form.rolloverEnabled}
+            onChange={(checked) => set("rolloverEnabled", checked)}
+            help={help.field("contract_editor.help.rollover")}
+            className="sm:col-span-2"
+          />
           {form.rolloverEnabled && (
             <>
               <Field
@@ -640,6 +699,7 @@ export const ContractEditor = () => {
                 htmlFor="contract-rollover-hours"
                 error={errors.rolloverMaxHours}
                 hint={t("custom_apps:contract_editor.hints.rollover_max_hours")}
+                help={help.field("contract_editor.help.rollover_max_hours")}
               >
                 <Input
                   id="contract-rollover-hours"
@@ -659,6 +719,7 @@ export const ContractEditor = () => {
                 htmlFor="contract-rollover-cycles"
                 error={errors.rolloverMaxCycles}
                 hint={t("custom_apps:contract_editor.hints.rollover_max_cycles")}
+                help={help.field("contract_editor.help.rollover_max_cycles")}
               >
                 <Input
                   id="contract-rollover-cycles"
@@ -683,6 +744,8 @@ export const ContractEditor = () => {
             htmlFor="contract-grace-days"
             error={errors.graceDays}
             hint={t("custom_apps:contract_editor.hints.grace_days", {max: contractLimits.max_grace_days})}
+            help={help.field("contract_editor.help.grace_days", {max: contractLimits.max_grace_days})}
+            required
           >
             <Input
               id="contract-grace-days"
@@ -697,7 +760,7 @@ export const ContractEditor = () => {
             />
           </Field>
           <fieldset className="flex flex-col gap-1.5 sm:col-span-2">
-            <legend className="mb-1.5 text-sm font-medium text-neutral-300">{t("custom_apps:contract_editor.fields.grace_allows")}</legend>
+            <FieldLegend label={t("custom_apps:contract_editor.fields.grace_allows")} help={help.field("contract_editor.help.grace_allows")} />
             <CheckboxGroup
               idPrefix="contract-grace-allows"
               options={vocabulary.graceAllowances.map((value) => ({
@@ -714,6 +777,7 @@ export const ContractEditor = () => {
             htmlFor="contract-grace-message"
             error={errors.graceMessage}
             hint={t("custom_apps:contract_editor.hints.grace_message")}
+            help={help.field("contract_editor.help.grace_message")}
             className="sm:col-span-2"
           >
             <Textarea
@@ -727,29 +791,14 @@ export const ContractEditor = () => {
           </Field>
         </Section>
 
-        <Panel title={t("custom_apps:contract_editor.apps")} description={t("custom_apps:contract_editor.apps_hint")}>
-          {!form.companyId ? (
-            <p className="text-sm text-neutral-500">{t("custom_apps:contract_editor.apps_pick_company")}</p>
-          ) : companyApps.loading && !companyApps.data ? (
-            <p className="text-sm text-neutral-500">{t("admin:common.loading")}</p>
-          ) : appRows.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t("custom_apps:contract_editor.apps_empty")}</p>
-          ) : (
-            <CheckboxGroup
-              idPrefix="contract-apps"
-              options={appRows.map((app) => ({
-                value: app.id,
-                label: app.name,
-                hint: `${t(`custom_apps:kinds.${app.kind}`, {defaultValue: app.kind})} · ${t(`custom_apps:states.${app.state}`, {defaultValue: app.state})}`,
-              }))}
-              value={form.appIds}
-              onChange={(value) => set("appIds", value)}
-            />
-          )}
-        </Panel>
-
         <Panel title={t("custom_apps:fields.notes")}>
-          <Field label={t("custom_apps:fields.notes")} htmlFor="contract-notes" error={errors.notes} hint={t("custom_apps:contract_editor.hints.notes")}>
+          <Field
+            label={t("custom_apps:fields.notes")}
+            htmlFor="contract-notes"
+            error={errors.notes}
+            hint={t("custom_apps:contract_editor.hints.notes")}
+            help={help.field("contract_editor.help.notes")}
+          >
             <Textarea
               id="contract-notes"
               value={form.notes}

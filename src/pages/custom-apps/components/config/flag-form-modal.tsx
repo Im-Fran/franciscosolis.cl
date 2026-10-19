@@ -14,6 +14,8 @@ import type {Flag, FlagValue, InstallationSummary, TargetScope} from "@/lib/cust
 import {flagKindOf} from "@/pages/custom-apps/components/config/flag-kind.ts";
 import type {FlagKind} from "@/pages/custom-apps/components/config/flag-kind.ts";
 import {ScopeFields} from "@/pages/custom-apps/components/scope-fields.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {RequiredLegend} from "@/components/ui/help.tsx";
 
 /** The service's own pattern for a key: lowercase, digits, `_`, `.` and `-`, up to 64 characters. */
 const FLAG_KEY = /^[a-z0-9][a-z0-9_.-]{0,63}$/;
@@ -79,6 +81,7 @@ export const FlagFormModal = ({
   installationsLoading: boolean;
 }) => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const [form, setForm] = useState<Form>(() => formOf(draft ?? {mode: "create"}));
   const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
 
@@ -141,9 +144,19 @@ export const FlagFormModal = ({
             : t("custom_apps:flags.create_title")
       }
       className="max-w-lg"
+      help={help.form("flags.form_help")}
     >
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-        <Field label={t("custom_apps:flags.key")} htmlFor="flag-key" hint={t("custom_apps:flags.key_hint")} error={errors.key}>
+        {(!editing || form.kind === "number") && <RequiredLegend className="-mt-2" />}
+
+        <Field
+          label={t("custom_apps:flags.key")}
+          htmlFor="flag-key"
+          hint={t("custom_apps:flags.key_hint")}
+          error={errors.key}
+          help={help.field("flags.help.key")}
+          required={!editing}
+        >
           <Input
             id="flag-key"
             value={form.key}
@@ -157,8 +170,24 @@ export const FlagFormModal = ({
           />
         </Field>
 
+        <Field
+          label={t("custom_apps:flags.description")}
+          htmlFor="flag-description"
+          hint={t("custom_apps:flags.description_hint")}
+          help={help.field("flags.help.description")}
+        >
+          <Input
+            id="flag-description"
+            value={form.description}
+            onChange={(event) => set("description", event.target.value)}
+            maxLength={DESCRIPTION_MAX}
+            disabled={save.pending}
+            autoComplete="off"
+          />
+        </Field>
+
         <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-          <Field label={t("custom_apps:flags.kind")} htmlFor="flag-kind">
+          <Field label={t("custom_apps:flags.kind")} htmlFor="flag-kind" help={help.field("flags.help.kind")}>
             <Select
               id="flag-kind"
               value={form.kind}
@@ -177,7 +206,13 @@ export const FlagFormModal = ({
             </Select>
           </Field>
 
-          <Field label={t("custom_apps:flags.value")} htmlFor="flag-value" error={errors.value}>
+          <Field
+            label={t("custom_apps:flags.value")}
+            htmlFor="flag-value"
+            error={errors.value}
+            help={help.field("flags.help.value")}
+            required={form.kind === "number"}
+          >
             {form.kind === "boolean" ? (
               <Select id="flag-value" value={form.value} disabled={save.pending} onChange={(event) => set("value", event.target.value)}>
                 <option value="true">true</option>
@@ -215,17 +250,6 @@ export const FlagFormModal = ({
             />
           </div>
         )}
-
-        <Field label={t("custom_apps:flags.description")} htmlFor="flag-description" hint={t("custom_apps:flags.description_hint")}>
-          <Input
-            id="flag-description"
-            value={form.description}
-            onChange={(event) => set("description", event.target.value)}
-            maxLength={DESCRIPTION_MAX}
-            disabled={save.pending}
-            autoComplete="off"
-          />
-        </Field>
 
         {save.error && (
           <Alert tone="error" title={t("admin:common.failed")}>

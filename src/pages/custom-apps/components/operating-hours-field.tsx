@@ -1,9 +1,11 @@
 import {useTranslation} from "react-i18next";
 import {Copy, Plus, X} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
+import type {FieldHelp} from "@/components/ui/help.tsx";
 import {Field, Input} from "@/components/ui/input.tsx";
 import {DEFAULT_TIMEZONE, WEEKDAYS} from "@/lib/custom-apps/types.ts";
 import type {OperatingHours, TimeWindow, Weekday} from "@/lib/custom-apps/types.ts";
+import {CheckboxField} from "@/pages/custom-apps/components/checkbox-field.tsx";
 import {validateHours} from "@/pages/custom-apps/components/operating-hours.ts";
 
 const WORKDAYS: Weekday[] = ["mon", "tue", "wed", "thu", "fri"];
@@ -30,11 +32,14 @@ export const OperatingHoursField = ({
   onChange,
   disabled,
   defaultTimezone = DEFAULT_TIMEZONE,
+  help,
 }: {
   value: OperatingHours | null;
   onChange: (value: OperatingHours | null) => void;
   disabled?: boolean;
   defaultTimezone?: string;
+  /** The help behind the on/off switch and the time zone. */
+  help?: {enabled?: FieldHelp; timezone?: FieldHelp};
 }) => {
   const {t} = useTranslation("custom_apps");
   const problems = validateHours(value);
@@ -46,28 +51,34 @@ export const OperatingHoursField = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <label className="flex items-center gap-2.5 text-sm text-neutral-300">
-        <input
-          type="checkbox"
-          checked={value !== null}
-          disabled={disabled}
-          onChange={(event) =>
-            onChange(
-              event.target.checked
-                ? {timezone: defaultTimezone, days: Object.fromEntries(WORKDAYS.map((day) => [day, [DEFAULT_WINDOW]]))}
-                : null,
-            )
-          }
-          className="size-4 accent-[var(--color-accent)]"
-        />
-        {t("hours.enabled")}
-      </label>
+      <CheckboxField
+        variant="plain"
+        id="hours-enabled"
+        label={t("hours.enabled")}
+        checked={value !== null}
+        disabled={disabled}
+        onChange={(checked) =>
+          onChange(
+            checked
+              ? {timezone: defaultTimezone, days: Object.fromEntries(WORKDAYS.map((day) => [day, [DEFAULT_WINDOW]]))}
+              : null,
+          )
+        }
+        help={help?.enabled}
+      />
 
       {value === null ? (
         <p className="text-[13px] leading-relaxed text-neutral-500">{t("hours.none")}</p>
       ) : (
         <>
-          <Field label={t("hours.timezone")} htmlFor="hours-timezone" hint={t("hours.timezone_hint")} className="max-w-sm">
+          <Field
+            label={t("hours.timezone")}
+            htmlFor="hours-timezone"
+            hint={t("hours.timezone_hint")}
+            help={help?.timezone}
+            required
+            className="max-w-sm"
+          >
             <Input
               id="hours-timezone"
               value={value.timezone}

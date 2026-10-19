@@ -17,6 +17,8 @@ import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {useApp} from "@/pages/custom-apps/components/app-context.ts";
 import {Snippet} from "@/pages/custom-apps/components/releases/ci-upload-help.tsx";
 import {KEYGEN_SNIPPET, isReleasePublicKey} from "@/pages/custom-apps/components/releases/release-format.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 
 type Form = {
   key: string;
@@ -55,6 +57,7 @@ const NUMBER_FIELDS = [
  */
 export const ReleaseSettingsPanel = () => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {notify} = useToast();
   const {app, replace} = useApp();
 
@@ -124,6 +127,7 @@ export const ReleaseSettingsPanel = () => {
           description={t("custom_apps:release_settings.description")}
           action={
             <>
+              <FormHelpButton help={help.form("release_settings.form_help")} />
               {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
               <Button type="submit" size="sm" disabled={save.pending || !dirty}>
                 {save.pending ? <Spinner size={14} /> : <FloppyDisk size={14} />}
@@ -145,9 +149,12 @@ export const ReleaseSettingsPanel = () => {
               </Alert>
             )}
 
+            <RequiredLegend />
+
             <Field
               label={t("custom_apps:release_settings.key")}
               htmlFor="release-key"
+              help={help.field("release_settings.help.key")}
               error={errors.key}
               hint={t("custom_apps:release_settings.key_hint")}
             >
@@ -179,6 +186,8 @@ export const ReleaseSettingsPanel = () => {
               <Field
                 label={t("custom_apps:release_settings.health_timeout")}
                 htmlFor="release-health-timeout"
+                required
+              help={help.field("release_settings.help.health_timeout")}
                 error={errors.healthTimeout}
                 hint={
                   Number.isFinite(timeout) && timeout > 0
@@ -202,6 +211,8 @@ export const ReleaseSettingsPanel = () => {
               <Field
                 label={t("custom_apps:release_settings.max_failures")}
                 htmlFor="release-max-failures"
+                required
+              help={help.field("release_settings.help.max_failures")}
                 error={errors.maxFailures}
                 hint={t("custom_apps:release_settings.max_failures_hint")}
               >
@@ -221,6 +232,8 @@ export const ReleaseSettingsPanel = () => {
               <Field
                 label={t("custom_apps:release_settings.pause_rollback")}
                 htmlFor="release-pause-rollback"
+                required
+              help={help.field("release_settings.help.pause_rollback")}
                 error={errors.pauseRollback}
                 hint={t("custom_apps:release_settings.pause_rollback_hint")}
               >
@@ -240,6 +253,8 @@ export const ReleaseSettingsPanel = () => {
               <Field
                 label={t("custom_apps:release_settings.pause_crash")}
                 htmlFor="release-pause-crash"
+                required
+              help={help.field("release_settings.help.pause_crash")}
                 error={errors.pauseCrash}
                 hint={t("custom_apps:release_settings.pause_crash_hint")}
               >

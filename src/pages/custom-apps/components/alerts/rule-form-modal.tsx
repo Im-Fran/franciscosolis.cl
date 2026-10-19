@@ -20,6 +20,9 @@ import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {useServiceVocabulary} from "@/lib/custom-apps/custom-apps-context.ts";
 import type {AlertKind, AlertRule} from "@/lib/custom-apps/types.ts";
 import {AppSelect} from "@/pages/custom-apps/components/alerts/app-select.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {RequiredLegend} from "@/components/ui/help.tsx";
+import {CheckboxField} from "@/pages/custom-apps/components/checkbox-field.tsx";
 
 const NAME_MAX = 120;
 
@@ -63,6 +66,7 @@ export const RuleFormModal = ({
 }) => {
   const {t} = useTranslation(["custom_apps", "admin"]);
   const {alertKinds} = useServiceVocabulary();
+  const help = useHelp();
   const [form, setForm] = useState<Form>(() => formOf(draft ?? {mode: "create"}));
   const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
 
@@ -136,19 +140,17 @@ export const RuleFormModal = ({
       onClose={save.pending ? () => undefined : onClose}
       title={editing ? t("custom_apps:rules.edit_title") : t("custom_apps:rules.create_title")}
       className="max-w-lg"
+      help={help.form("rules.form_help")}
     >
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-        <Field label={t("custom_apps:rules.fields.app")} htmlFor="rule-app" hint={isContractKind(form.kind) ? t("custom_apps:rules.hints.app_contracts") : t("custom_apps:rules.hints.app")}>
-          <AppSelect
-            id="rule-app"
-            value={form.appId}
-            onChange={(value) => set("appId", value)}
-            emptyLabel={t("custom_apps:rules.every_app")}
-            disabled={editing || save.pending}
-          />
-        </Field>
+        <RequiredLegend className="-mt-2" />
 
-        <Field label={t("custom_apps:rules.fields.kind")} htmlFor="rule-kind" hint={t(`custom_apps:alert_kinds_hint.${form.kind}`, {defaultValue: ""})}>
+        <Field
+          label={t("custom_apps:rules.fields.kind")}
+          htmlFor="rule-kind"
+          hint={t(`custom_apps:alert_kinds_hint.${form.kind}`, {defaultValue: ""})}
+          help={help.field("rules.help.kind")}
+        >
           <Select
             id="rule-kind"
             value={form.kind}
@@ -167,16 +169,18 @@ export const RuleFormModal = ({
           </Select>
         </Field>
 
-        <Field label={t("custom_apps:rules.fields.name")} htmlFor="rule-name" error={errors.name}>
-          <Input
-            id="rule-name"
-            value={form.name}
-            onChange={(event) => set("name", event.target.value)}
-            maxLength={NAME_MAX}
-            placeholder={t(`custom_apps:alert_kinds.${form.kind}`, {defaultValue: form.kind})}
-            disabled={save.pending}
-            aria-invalid={Boolean(errors.name)}
-            autoComplete="off"
+        <Field
+          label={t("custom_apps:rules.fields.app")}
+          htmlFor="rule-app"
+          hint={isContractKind(form.kind) ? t("custom_apps:rules.hints.app_contracts") : t("custom_apps:rules.hints.app")}
+          help={help.field("rules.help.app")}
+        >
+          <AppSelect
+            id="rule-app"
+            value={form.appId}
+            onChange={(value) => set("appId", value)}
+            emptyLabel={t("custom_apps:rules.every_app")}
+            disabled={editing || save.pending}
           />
         </Field>
 
@@ -186,6 +190,8 @@ export const RuleFormModal = ({
             htmlFor="rule-threshold"
             error={errors.threshold}
             hint={t(`custom_apps:rules.threshold_hint.${form.kind}`, {defaultValue: t("custom_apps:rules.range", bounds)})}
+            help={help.field("rules.help.threshold")}
+            required
           >
             <Input
               id="rule-threshold"
@@ -207,6 +213,8 @@ export const RuleFormModal = ({
               htmlFor="rule-window"
               error={errors.window}
               hint={t("custom_apps:rules.hints.window", {min: WINDOW_BOUNDS.min, max: WINDOW_BOUNDS.max})}
+              help={help.field("rules.help.window", {min: WINDOW_BOUNDS.min, max: WINDOW_BOUNDS.max})}
+              required
             >
               <Input
                 id="rule-window"
@@ -224,17 +232,28 @@ export const RuleFormModal = ({
           )}
         </div>
 
-        <label htmlFor="rule-enabled" className="flex cursor-pointer items-center gap-2.5 text-sm text-text">
-          <input
-            id="rule-enabled"
-            type="checkbox"
-            checked={form.enabled}
+        <Field label={t("custom_apps:rules.fields.name")} htmlFor="rule-name" error={errors.name} help={help.field("rules.help.name")} required>
+          <Input
+            id="rule-name"
+            value={form.name}
+            onChange={(event) => set("name", event.target.value)}
+            maxLength={NAME_MAX}
+            placeholder={t(`custom_apps:alert_kinds.${form.kind}`, {defaultValue: form.kind})}
             disabled={save.pending}
-            onChange={(event) => set("enabled", event.target.checked)}
-            className="size-4 accent-[var(--color-accent)]"
+            aria-invalid={Boolean(errors.name)}
+            autoComplete="off"
           />
-          {t("custom_apps:rules.fields.enabled")}
-        </label>
+        </Field>
+
+        <CheckboxField
+          variant="plain"
+          id="rule-enabled"
+          label={t("custom_apps:rules.fields.enabled")}
+          checked={form.enabled}
+          disabled={save.pending}
+          onChange={(checked) => set("enabled", checked)}
+          help={help.field("rules.help.enabled")}
+        />
 
         {!editing && <p className="text-[12px] leading-relaxed text-neutral-500">{t("custom_apps:rules.hints.notify")}</p>}
 

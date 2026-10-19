@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {FloppyDisk, Trash} from "@phosphor-icons/react";
 import {Alert} from "@/components/ui/alert.tsx";
 import {Button} from "@/components/ui/button/button.tsx";
+import {FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 import {Panel} from "@/components/ui/panel.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useMutation} from "@/lib/admin/useMutation.ts";
@@ -17,6 +18,7 @@ import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {useApp} from "@/pages/custom-apps/components/app-context.ts";
 import {appFormChanges, appToForm, validateAppForm} from "@/pages/custom-apps/components/app-form.ts";
 import type {AppForm, AppFormErrors, AppFormField} from "@/pages/custom-apps/components/app-form.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 import {AppFormFields} from "@/pages/custom-apps/components/app-form-fields.tsx";
 import {AppKeysPanel} from "@/pages/custom-apps/components/app-keys-panel.tsx";
 import {CiTokensPanel} from "@/pages/custom-apps/components/releases/ci-tokens-panel.tsx";
@@ -31,6 +33,7 @@ import {SupportAssigneePanel} from "@/pages/custom-apps/components/tickets/suppo
  */
 export const AppSettings = () => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const navigate = useNavigate();
   const {notify} = useToast();
   const {app, replace} = useApp();
@@ -89,6 +92,7 @@ export const AppSettings = () => {
           description={t("custom_apps:settings.description")}
           action={
             <>
+              <FormHelpButton help={help.form("apps.form_help_edit")} />
               {dirty && <span className="text-[13px] text-amber-300">{t("admin:common.unsaved")}</span>}
               <Button type="submit" size="sm" disabled={save.pending || !dirty}>
                 {save.pending ? <Spinner size={14} /> : <FloppyDisk size={14} />}
@@ -103,6 +107,7 @@ export const AppSettings = () => {
                 {t(`admin:errors.${save.error}`, {defaultValue: save.error})}
               </Alert>
             )}
+            <RequiredLegend />
             <AppFormFields form={form} set={set} errors={errors} disabled={save.pending} mode="edit" />
             <div className="flex justify-end">
               <Button type="submit" disabled={save.pending || !dirty}>

@@ -26,6 +26,8 @@ import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx
 import {WorkLogPanel} from "@/pages/custom-apps/components/work-log/work-log-panel.tsx";
 import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
 import {cn} from "@/lib/utils.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FormHelpButton, HelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 
 const REFRESH_MS = 30_000;
 
@@ -82,6 +84,7 @@ export const TicketDetail = () => {
   const {ticketId = ""} = useParams<{ticketId: string}>();
   const {notify} = useToast();
   const {ticketStatuses} = useServiceVocabulary();
+  const help = useHelp();
   const language = i18n.language;
 
   const record = useResource(useCallback((signal: AbortSignal) => customAppsApi.tickets.get(ticketId, signal), [ticketId]));
@@ -215,6 +218,7 @@ export const TicketDetail = () => {
             >
               <PencilSimple size={14} /> {t("custom_apps:tickets.edit_subject")}
             </Button>
+            <HelpButton label={t("custom_apps:tickets.status")} help={help.field("tickets.help.status")} />
             <Select
               value={current.status}
               onChange={(event) => void changeStatus(event.target.value as TicketStatus)}
@@ -235,7 +239,11 @@ export const TicketDetail = () => {
       <div className="flex flex-col gap-6">
         <div className="grid gap-6 xl:grid-cols-3">
           <div className="flex flex-col gap-6 xl:col-span-2">
-            <Panel title={t("custom_apps:tickets.conversation")} description={t("custom_apps:tickets.conversation_description")}>
+            <Panel
+              title={t("custom_apps:tickets.conversation")}
+              description={t("custom_apps:tickets.conversation_description")}
+              action={<FormHelpButton help={help.form("tickets.form_help")} />}
+            >
               {(current.messages ?? []).length === 0 ? (
                 <p className="py-2 text-sm text-neutral-500">{t("custom_apps:tickets.no_messages")}</p>
               ) : (
@@ -252,7 +260,14 @@ export const TicketDetail = () => {
                     {t("custom_apps:tickets.closed_notice")}
                   </Alert>
                 )}
-                <Field label={t("custom_apps:tickets.reply")} htmlFor="ticket-reply" hint={t("custom_apps:tickets.reply_hint")}>
+                <RequiredLegend />
+                <Field
+                  label={t("custom_apps:tickets.reply")}
+                  htmlFor="ticket-reply"
+                  hint={t("custom_apps:tickets.reply_hint")}
+                  help={help.field("tickets.help.reply")}
+                  required
+                >
                   <Textarea
                     id="ticket-reply"
                     value={reply}
@@ -269,7 +284,7 @@ export const TicketDetail = () => {
                   </Alert>
                 )}
                 <div className="flex flex-wrap items-end justify-between gap-3">
-                  <Field label={t("custom_apps:tickets.status_after")} htmlFor="ticket-reply-status">
+                  <Field label={t("custom_apps:tickets.status_after")} htmlFor="ticket-reply-status" help={help.field("tickets.help.status_after")}>
                     <Select
                       id="ticket-reply-status"
                       value={after}
@@ -417,9 +432,10 @@ export const TicketDetail = () => {
         onClose={update.pending ? () => undefined : () => setEditingSubject(false)}
         title={t("custom_apps:tickets.edit_subject")}
         className="max-w-md"
+        help={help.form("tickets.subject_form_help")}
       >
         <form onSubmit={saveSubject} className="flex flex-col gap-5" noValidate>
-          <Field label={t("custom_apps:tickets.subject")} htmlFor="ticket-subject">
+          <Field label={t("custom_apps:tickets.subject")} htmlFor="ticket-subject" help={help.field("tickets.help.subject")} required>
             <Input
               id="ticket-subject"
               value={subject}

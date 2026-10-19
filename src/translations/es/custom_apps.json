@@ -249,7 +249,64 @@
     "delete_body": "Se eliminará «{{name}}» y sus vínculos con contactos. Los contactos se mantienen. Un cliente que todavía tiene apps, contratos o entradas de bitácora no se puede eliminar: elimínalos o muévelos primero.",
     "contracts_title": "Contratos",
     "contracts_description": "Lo que paga este cliente y las horas de trabajo que incluye cada ciclo.",
-    "contracts_empty": "Este cliente todavía no tiene contratos."
+    "contracts_empty": "Este cliente todavía no tiene contratos.",
+    "sections": {
+      "identification": "Identificación",
+      "location": "Ubicación",
+      "notes": "Notas"
+    },
+    "help": {
+      "kind": {
+        "what": "Si el cliente es una empresa (persona jurídica) o una persona natural. Cambia cómo se llama el nombre principal: razón social o nombre completo.",
+        "how": "Elige «Empresa» si factura con razón social y RUT de empresa; «Persona natural» si es alguien que contrata a su nombre. Se puede cambiar después.",
+        "example": "Empresa"
+      },
+      "rut": {
+        "what": "El Rol Único Tributario del cliente, el identificador del SII. Sirve para facturar y para distinguir dos clientes con nombres parecidos.",
+        "how": "Escríbelo con o sin puntos y con guion antes del dígito verificador (que puede ser K). Al salir del campo se valida el dígito y se guarda normalizado, sin puntos. Opcional, pero dos clientes no pueden tener el mismo RUT.",
+        "example": "76.123.456-7 (se guarda como 76123456-7)"
+      },
+      "legal_name": {
+        "what": "El nombre legal de la empresa, el que aparece en sus facturas y en el SII.",
+        "how": "Cópialo tal como aparece en una factura, incluido el tipo de sociedad (SpA, Ltda., S.A.). Obligatorio, hasta 200 caracteres. Es el nombre que aparece en el panel cuando el cliente no tiene nombre de fantasía.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "full_name": {
+        "what": "El nombre de la persona natural que contrata, tal como aparece en su cédula.",
+        "how": "Nombres y apellidos completos. Obligatorio, hasta 200 caracteres.",
+        "example": "Juan Pablo Rojas Soto"
+      },
+      "trade_name": {
+        "what": "El nombre con que la gente conoce de verdad al cliente, si es distinto de la razón social.",
+        "how": "Escríbelo como lo usa el cliente en su marca. Si lo llenas, el panel muestra este nombre primero y la razón social entre paréntesis. Opcional, hasta 200 caracteres.",
+        "example": "Panadería Los Andes"
+      },
+      "business_activity": {
+        "what": "El giro: la actividad económica con que el cliente está registrado en el SII.",
+        "how": "Cópialo de una factura o de la carpeta tributaria. Texto libre y opcional.",
+        "example": "Elaboración y venta de productos de panadería"
+      },
+      "address": {
+        "what": "La dirección comercial del cliente: casa matriz o donde se hace el trabajo.",
+        "how": "Calle, número, oficina y comuna, en una línea. Texto libre y opcional.",
+        "example": "Av. Apoquindo 4500, piso 12, Las Condes, Santiago"
+      },
+      "notes": {
+        "what": "Lo que conviene saber de este cliente y que no tiene otro lugar: acuerdos, preferencias, contexto.",
+        "how": "Texto libre y opcional. Solo se ve en este panel; el cliente nunca lo ve.",
+        "example": "Factura a 30 días. Las mantenciones se coordinan con el área de TI los martes."
+      }
+    },
+    "form_help": {
+      "what": "Registra para quién se construyen las apps: una empresa o una persona natural. Del cliente cuelgan sus contactos, sus apps, sus contratos y su bitácora.",
+      "can_do": [
+        "Guardar cómo se identifica: tipo, RUT, razón social o nombre, nombre de fantasía y giro.",
+        "Anotar su dirección y notas internas.",
+        "Una vez creado, vincular contactos con sus roles, registrar apps, crear contratos y anotar trabajo.",
+        "Eliminarlo, si ya no tiene apps, contratos ni entradas de bitácora."
+      ],
+      "on_save": "Al crearlo pasas a su página, donde aparecen los paneles de contactos, apps, contratos y bitácora. Al editarlo solo se envía lo que cambió, el RUT normalizado. No se le avisa nada al cliente y el cambio queda en el registro de auditoría."
+    }
   },
   "company_contacts": {
     "title": "Contactos",
@@ -273,7 +330,32 @@
     "edit_aria": "Editar los roles de {{name}}",
     "unlink_aria": "Desvincular a {{name}}",
     "empty_title": "Nadie vinculado todavía",
-    "empty_description": "Vincula a las personas con las que tratas en este cliente, con sus roles."
+    "empty_description": "Vincula a las personas con las que tratas en este cliente, con sus roles.",
+    "help": {
+      "pick": {
+        "what": "La persona que vas a vincular a este cliente. Tiene que existir antes como contacto.",
+        "how": "Busca por nombre, correo o teléfono y haz clic en la persona. Los que ya están vinculados aparecen desactivados. Si no está, créala primero con «Nuevo contacto» y vuelve.",
+        "example": "Buscar «gonzalez» y elegir a María José González"
+      },
+      "roles": {
+        "what": "Para qué está esta persona en este cliente. Los roles son de la relación, no de la persona: alguien puede ser técnico en un cliente y dueño en otro.",
+        "how": "Marca todos los que correspondan; puedes no marcar ninguno. Dueño decide sobre la app, Técnico ve código, servidores y equipos, Facturación recibe facturas y pagos, y Aprueba mantenciones autoriza las ventanas de mantención.",
+        "example": "Técnico y Aprueba mantenciones"
+      },
+      "primary": {
+        "what": "Marca a la primera persona a quien llamar en este cliente. Aparece arriba de la lista con una estrella.",
+        "how": "Actívalo para la persona de referencia. Solo puede haber un contacto principal por cliente: al marcar a esta persona, el anterior deja de serlo."
+      }
+    },
+    "form_help": {
+      "what": "Vincula a una persona con este cliente y dice qué hace ahí, o cambia los roles de alguien ya vinculado.",
+      "can_do": [
+        "Elegir un contacto existente (solo al vincular).",
+        "Marcar sus roles en este cliente.",
+        "Hacerlo el contacto principal."
+      ],
+      "on_save": "El vínculo se guarda completo cada vez. Si lo marcas como principal, el principal anterior deja de serlo. La persona no recibe ningún aviso y el cambio queda en el registro de auditoría."
+    }
   },
   "contacts": {
     "title": "Contactos",
@@ -302,7 +384,7 @@
       "updated": "Actualizado"
     },
     "fields": {
-      "name": "Nombre",
+      "name": "Nombre y apellido",
       "emails": "Correos",
       "phones": "Teléfonos"
     },
@@ -314,7 +396,50 @@
     "companies_empty": "No está vinculado a ningún cliente",
     "companies_empty_description": "Abre un cliente y usa «Vincular un contacto».",
     "delete_title": "¿Eliminar este contacto?",
-    "delete_body": "Se eliminará «{{name}}» y se desvinculará de todos los clientes."
+    "delete_body": "Se eliminará «{{name}}» y se desvinculará de todos los clientes.",
+    "sections": {
+      "person": "Persona",
+      "contact": "Contacto",
+      "address": "Dirección",
+      "notes": "Notas"
+    },
+    "help": {
+      "name": {
+        "what": "El nombre de la persona tal como la conoces: nombre y apellido en un solo campo. Es lo que aparece en la lista de contactos y en cada cliente al que la vincules.",
+        "how": "Escribe el nombre y al menos un apellido, para distinguirla de otras personas con el mismo nombre. Hasta 200 caracteres. Es el único dato obligatorio del contacto.",
+        "example": "María José González Pérez"
+      },
+      "emails": {
+        "what": "Las direcciones de correo de la persona. Puede tener varias: la del trabajo, una personal, la de un área.",
+        "how": "Escribe una dirección y presiona Enter o una coma para agregarla; repite con las demás. La x de cada una la quita. Cada dirección se revisa antes de guardar y puede tener hasta 254 caracteres. Opcional.",
+        "example": "maria.gonzalez@empresa.cl, soporte@empresa.cl"
+      },
+      "phones": {
+        "what": "Los teléfonos donde ubicar a la persona: celular, fijo o anexo.",
+        "how": "Escribe un número y presiona Enter o una coma para agregarlo. Se aceptan dígitos, espacios, paréntesis, puntos, guiones y un + inicial, entre 6 y 20 caracteres. Conviene incluir el código de país para que se pueda marcar desde cualquier lado. Opcional.",
+        "example": "+56 9 1234 5678, +56 2 2345 6789"
+      },
+      "address": {
+        "what": "Dónde trabaja o se ubica la persona, por si hay que ir a verla o enviarle algo.",
+        "how": "Calle, número, oficina y comuna, en una sola línea. Texto libre y opcional; no se valida.",
+        "example": "Av. Providencia 1234, oficina 501, Providencia, Santiago"
+      },
+      "notes": {
+        "what": "Lo que conviene recordar sobre la persona y que no cabe en los otros campos.",
+        "how": "Texto libre y opcional. Solo se ve en este panel: nunca llega al cliente ni a sus apps.",
+        "example": "Prefiere WhatsApp antes que correo. No disponible los viernes en la tarde."
+      }
+    },
+    "form_help": {
+      "what": "Guarda a una persona de tus clientes y cómo ubicarla. Una misma persona puede estar vinculada a varios clientes, con roles distintos en cada uno.",
+      "can_do": [
+        "Registrar su nombre, correos y teléfonos.",
+        "Anotar una dirección y notas internas.",
+        "Ver a qué clientes está vinculada y con qué roles (los roles se editan desde la página del cliente).",
+        "Eliminar el contacto, lo que lo desvincula de todos los clientes."
+      ],
+      "on_save": "Al crearlo pasas a su página, desde donde puedes seguir editándolo. Al editarlo solo se envía lo que cambió. Nada se le comunica a la persona, y el cambio queda en el registro de auditoría. Para vincularla a un cliente, abre el cliente y usa «Vincular un contacto»."
+    }
   },
   "apps": {
     "title": "Apps",
@@ -382,6 +507,96 @@
       "presence_web": "Los sitios web siempre usan ping: una página no puede mantener la conexión en vivo, así que socket no cambia nada en una app web.",
       "log_level": "La entrada menos grave que envían las instalaciones. Cada equipo puede cambiarlo desde su propia página.",
       "screenshots": "Desactivadas por defecto. Una captura puede mostrar a los propios clientes del cliente, lo que la convierte en un dato personal (ley 21.719): actívalas solo donde el contrato lo permita. Además, cada equipo tiene que permitirlas."
+    },
+    "sections": {
+      "identity": "Identidad",
+      "reports": "Qué reporta",
+      "connection": "Conexión"
+    },
+    "help": {
+      "company": {
+        "what": "El cliente para quien se construyó la app. Une la app con sus contactos, contratos y bitácora.",
+        "how": "Elige el cliente de la lista. Si no aparece, créalo primero en Clientes. Obligatorio.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "name": {
+        "what": "Cómo se llama la app en este panel, en las alertas y en el registro de auditoría.",
+        "how": "Un nombre corto que distinga esta app de las demás del mismo cliente. Obligatorio, hasta 120 caracteres.",
+        "example": "Kiosco de autoatención"
+      },
+      "kind": {
+        "what": "En qué corre la app: un sitio web, una app de escritorio, una app de Android o un kiosco.",
+        "how": "Elige el tipo que corresponde. Cambia lo que se ofrece: solo un kiosco puede reiniciar el equipo con un comando, y una app web siempre reporta con ping (carga el SDK con una etiqueta script que aparece en el resumen).",
+        "example": "Kiosco"
+      },
+      "domain": {
+        "what": "Para apps web, el nombre de host desde el que se sirve el sitio. El servicio lo compara con el origen de cada solicitud.",
+        "how": "Escribe solo el nombre de host: sin https://, sin ruta y sin puerto. Se guarda en minúsculas. Déjalo vacío en apps que no son web.",
+        "example": "pedidos.losandes.cl"
+      },
+      "description": {
+        "what": "Qué hace la app y para quién, en pocas líneas.",
+        "how": "Texto libre y opcional. Sirve para recordar el contexto meses después; solo se ve en este panel.",
+        "example": "Kiosco donde los clientes del local arman y pagan su pedido sin pasar por caja."
+      },
+      "repository": {
+        "what": "Dónde está el código de la app.",
+        "how": "Una dirección completa que empiece con https:// (o http://). Opcional.",
+        "example": "https://github.com/franciscosolis/kiosco-los-andes"
+      },
+      "modules": {
+        "what": "Lo que la app reporta y lo que se puede hacer con ella además del latido, que siempre está activo. Cada módulo agrega su pestaña o su panel.",
+        "how": "Marca solo lo que la app del cliente implementa: métricas y eventos vienen marcados por defecto. Un módulo apagado oculta su pestaña y el servicio rechaza lo que dependa de él (por ejemplo, comandos sin «commands»). Los logs y los fallos se guardan 30 días.",
+        "example": "Métricas, Eventos, Logs y Comandos"
+      },
+      "log_level": {
+        "what": "La entrada de log menos grave que envían las instalaciones. Lo menos grave se descarta en el equipo.",
+        "how": "Elige un nivel: debug envía todo, info lo normal, warning solo advertencias y peores, y así. Cada equipo puede tener un nivel propio desde su página. Las instalaciones lo toman en su próximo latido.",
+        "example": "Info en producción; Debug mientras se investiga un problema"
+      },
+      "screenshots": {
+        "what": "El interruptor de la app para tomar capturas de pantalla de sus equipos con el comando «Tomar una captura».",
+        "how": "Viene desactivado. Actívalo solo si el contrato del cliente lo permite: una captura puede mostrar a los clientes del cliente y es un dato personal (ley 21.719). Además, cada equipo tiene su propio permiso: se necesitan los dos."
+      },
+      "presence": {
+        "what": "Cómo avisan las instalaciones que siguen vivas: con un latido periódico (ping) o con una conexión en vivo (socket).",
+        "how": "Usa ping para la mayoría de las apps. Usa socket en kioscos y puntos de venta cuya app nativa mantenga un WebSocket: los comandos les llegan al instante en vez de en el próximo latido. Los sitios web siempre usan ping, aunque elijas socket.",
+        "example": "Conexión en vivo (socket) para un kiosco"
+      },
+      "heartbeat": {
+        "what": "Cada cuántos segundos se reporta cada instalación. De eso depende qué tan rápido se ve si está conectada y qué tan rápido le llegan los cambios.",
+        "how": "Un número entero entre {{min}} y {{max}}. Una instalación cuenta como conectada hasta que pierde {{intervals}} latidos seguidos. Un intervalo corto muestra todo antes pero genera más tráfico; para kioscos y escritorio suele bastar un minuto. Obligatorio.",
+        "example": "60"
+      },
+      "hours": {
+        "what": "El horario en que el cliente usa la app, por día de la semana. El mapa de uso lo marca encima, para ver dónde cabe una mantención.",
+        "how": "Actívalo para definir tramos por día; viene con lunes a viernes de 09:00 a 18:00. Agrega o quita tramos por día, y usa «Copiar a días hábiles» para repetir el lunes. Un día sin tramos queda cerrado. Las horas van en formato de 24 horas y un turno de noche se divide en dos días. Desactivado significa «sin definir», que no es lo mismo que cerrado.",
+        "example": "Lunes a viernes 09:00–13:00 y 14:00–18:00; sábado 10:00–14:00"
+      },
+      "timezone": {
+        "what": "La zona horaria en que se leen los tramos del horario.",
+        "how": "El nombre IANA de la zona, con mayúsculas y barra. Obligatorio mientras el horario esté activo.",
+        "example": "America/Santiago"
+      }
+    },
+    "form_help_create": {
+      "what": "Registra una app construida para un cliente, para que sus instalaciones se puedan inscribir y reportar.",
+      "can_do": [
+        "Decir de qué cliente es, cómo se llama y qué tipo de app es.",
+        "Elegir qué módulos reporta y cada cuánto late.",
+        "Definir el horario de operación del cliente."
+      ],
+      "on_save": "Se crea la app junto con su primera llave (cak_…) y se muestran la llave y la dirección de ingesta para ponerlas en la app del cliente. La presencia, el nivel de log y las capturas quedan con sus valores por defecto (ping, info y desactivadas) y se cambian después en Configuración. La creación queda en el registro de auditoría."
+    },
+    "form_help_edit": {
+      "what": "Cambia los datos de la app y cómo se comportan sus instalaciones.",
+      "can_do": [
+        "Corregir el cliente, el nombre, el tipo, el dominio, la descripción o el repositorio.",
+        "Encender o apagar módulos, que muestran u ocultan sus pestañas.",
+        "Fijar el nivel de log, permitir capturas, elegir la presencia y el intervalo de latido.",
+        "Definir el horario de operación."
+      ],
+      "on_save": "Solo se envía lo que cambió. Las instalaciones toman los cambios que les afectan (módulos, nivel de log, presencia, intervalo) en su próximo latido. El cambio queda en el registro de auditoría. Las llaves, las actualizaciones y los tokens de CI se guardan en sus propios paneles, más abajo."
     }
   },
   "app_nav": {
@@ -544,7 +759,38 @@
     "grace_past": "El fin del período de gracia tiene que estar en el futuro.",
     "grace_too_far_one": "Como máximo {{count}} día hacia adelante.",
     "grace_too_far_other": "Como máximo {{count}} días hacia adelante.",
-    "grace_until_value": "se suspende automáticamente el {{date}}"
+    "grace_until_value": "se suspende automáticamente el {{date}}",
+    "help": {
+      "state": {
+        "what": "Lo que se le dice a cada instalación de la app en su próximo latido: seguir, avisar que se va a detener, mostrar una mantención o detenerse.",
+        "how": "Activa funciona normal. En gracia sigue funcionando con un aviso y se suspende sola en la fecha que pongas (para un pago atrasado). Mantenimiento muestra una pantalla de mantención hasta que la reactives. Suspendida deja de funcionar y pide confirmación. Un equipo puede tener un estado propio desde su página.",
+        "example": "En gracia hasta el viernes, por una factura impaga"
+      },
+      "message": {
+        "what": "El texto que la app le muestra a quien la usa mientras está en gracia, en mantención o suspendida.",
+        "how": "Escríbelo para los usuarios del cliente, en su idioma, diciendo qué pasa y a quién acudir. Opcional, hasta 500 caracteres. Si lo dejas vacío, la app usa su propio texto.",
+        "example": "Estamos actualizando el sistema. Volvemos a las 15:00."
+      },
+      "until": {
+        "what": "Hasta cuándo se espera que dure el estado. Se le muestra al usuario.",
+        "how": "Elige fecha y hora, en tu hora local. Opcional e informativa: cuando se cumple no cambia nada solo; tienes que volver a activar la app.",
+        "example": "15-03-2026 15:00"
+      },
+      "until_grace": {
+        "what": "El momento en que termina la gracia. Cuando se cumple, el servicio suspende la app automáticamente.",
+        "how": "Elige fecha y hora en el futuro, como máximo {{days}} días hacia adelante. Obligatoria en gracia. Para darle más tiempo al cliente, vuelve aquí y corre la fecha.",
+        "example": "20-03-2026 23:59"
+      }
+    },
+    "form_help": {
+      "what": "El interruptor de corte: decide si la app sigue funcionando en todas sus instalaciones.",
+      "can_do": [
+        "Dejar la app Activa, En gracia, Mantenimiento o Suspendida.",
+        "Escribir el mensaje que ven los usuarios.",
+        "Poner hasta cuándo dura; en gracia, la fecha en que se suspende sola (máximo {{days}} días)."
+      ],
+      "on_save": "Cada instalación recibe el estado en su próximo latido (al instante si mantiene el socket). Suspender pide confirmación, porque deja fuera a quien esté usando la app; reactivarla no. En gracia, el servicio suspende la app solo al cumplirse la fecha. El cambio queda en el registro de auditoría."
+    }
   },
   "settings": {
     "title": "Configuración",
@@ -584,7 +830,21 @@
     "revoke_body": "«{{key}}» dejará de inscribir equipos nuevos. Los equipos ya inscritos no se ven afectados. Esto no se puede deshacer.",
     "empty": "Esta app no tiene llaves.",
     "none_active_title": "No hay ninguna llave activa",
-    "none_active_body": "Ningún equipo nuevo se puede inscribir hasta que crees una llave."
+    "none_active_body": "Ningún equipo nuevo se puede inscribir hasta que crees una llave.",
+    "help": {
+      "label": {
+        "what": "Un nombre para reconocer la llave en la lista: para qué compilación, instalador o sucursal es.",
+        "how": "Texto libre y opcional, hasta 80 caracteres. No cambia lo que la llave puede hacer.",
+        "example": "Instalador de Windows 2.x"
+      }
+    },
+    "form_help": {
+      "what": "Crea una llave nueva (cak_…) con la que la app del cliente inscribe equipos.",
+      "can_do": [
+        "Ponerle una etiqueta para reconocerla."
+      ],
+      "on_save": "La llave aparece de inmediato en la lista y se puede copiar siempre: es pública por diseño porque va dentro de la app. Cualquiera que la tenga puede inscribir un equipo, y cada equipo nuevo queda marcado para revisión. Revocarla después solo detiene las inscripciones nuevas. La creación queda en el registro de auditoría."
+    }
   },
   "installation": {
     "loading_title": "Instalación",
@@ -632,7 +892,55 @@
     "log_level_follow_value": "Seguir a la app ({{level}})",
     "screenshots": "Permitir capturas en este equipo",
     "screenshots_hint": "Se necesita además del interruptor de la app. Una captura puede mostrar a quien esté usando el equipo.",
-    "screenshots_app_off": "La app tiene las capturas desactivadas, así que esto por sí solo no las permite."
+    "screenshots_app_off": "La app tiene las capturas desactivadas, así que esto por sí solo no las permite.",
+    "help": {
+      "channel": {
+        "what": "Qué línea de versiones se le ofrece a este equipo: la estable o la beta.",
+        "how": "Elige Beta solo para equipos de prueba o clientes que aceptan versiones tempranas. Los flags y mensajes por canal también siguen este valor.",
+        "example": "Beta para el kiosco de la oficina, Estable para los demás"
+      },
+      "override": {
+        "what": "Un estado solo para este equipo, distinto del estado de la app.",
+        "how": "Deja «Seguir a la app» para que haga lo mismo que las demás. Elige otro estado para, por ejemplo, poner en mantención solo un kiosco o suspender un equipo robado. Al elegir uno aparece el campo del mensaje.",
+        "example": "Mantención, solo para el kiosco del segundo piso"
+      },
+      "log_level": {
+        "what": "El nivel de log de este equipo, por encima del de la app.",
+        "how": "Deja «Seguir a la app» o elige un nivel más detallado (debug) para investigar un problema en este equipo sin llenar los logs de toda la flota.",
+        "example": "Debug durante una semana para el equipo que falla"
+      },
+      "screenshots": {
+        "what": "El permiso de este equipo para tomar capturas de pantalla.",
+        "how": "Actívalo solo si quien usa el equipo puede ser capturado según el contrato. Hace falta además el interruptor de la app en Configuración: sin los dos, el comando de captura se rechaza."
+      },
+      "message": {
+        "what": "El texto que muestra este equipo mientras está en su estado propio.",
+        "how": "Escríbelo para quien usa el equipo. Opcional, hasta 500 caracteres.",
+        "example": "Este kiosco está en mantención. Usa el de la entrada."
+      },
+      "alias": {
+        "what": "Un nombre propio para este equipo, más fácil de reconocer que el nombre de host.",
+        "how": "Escribe dónde está o para qué se usa. Hasta 80 caracteres. Vacío vuelve a mostrar el nombre de host.",
+        "example": "Kiosco entrada · Sucursal Ñuñoa"
+      }
+    },
+    "form_help": {
+      "what": "Ajusta este equipo por encima de la configuración de la app.",
+      "can_do": [
+        "Elegir su canal de actualizaciones.",
+        "Darle un estado propio, con su mensaje.",
+        "Cambiar su nivel de log.",
+        "Permitir capturas de pantalla en él."
+      ],
+      "on_save": "Solo se envía lo que cambió. El equipo lo toma en su próximo latido (al instante si mantiene el socket). Un equipo revocado no se puede ajustar. El cambio queda en el registro de auditoría."
+    },
+    "rename_form_help": {
+      "what": "Le pone un alias a este equipo para reconocerlo en las listas.",
+      "can_do": [
+        "Escribir un alias o borrarlo para volver al nombre de host."
+      ],
+      "on_save": "El alias aparece en todo el panel en lugar del nombre de host. No cambia nada en el equipo. Queda en el registro de auditoría."
+    }
   },
   "snapshot": {
     "title": "En este momento",
@@ -981,7 +1289,24 @@
     "pick_installation": "Elige una instalación",
     "app_short": "Toda la app",
     "channel_short": "Canal · {{channel}}",
-    "installation_short": "Equipo ·"
+    "installation_short": "Equipo ·",
+    "help": {
+      "scope": {
+        "what": "A quién se aplica: a toda la app, a los equipos de un canal de actualizaciones o a un solo equipo.",
+        "how": "Elige el alcance; según lo que elijas aparece un selector de canal o de instalación. No se puede cambiar una vez creado.",
+        "example": "Un canal: Beta"
+      },
+      "channel": {
+        "what": "El canal de actualizaciones cuyos equipos quedan alcanzados.",
+        "how": "Elige Estable o Beta. Alcanza a cada equipo que esté en ese canal en ese momento. Obligatorio con este alcance.",
+        "example": "Beta"
+      },
+      "installation": {
+        "what": "El único equipo alcanzado.",
+        "how": "Elígelo de la lista de instalaciones de la app. Obligatorio con este alcance.",
+        "example": "Kiosco entrada · Sucursal Ñuñoa"
+      }
+    }
   },
   "logs": {
     "title": "Logs",
@@ -1055,7 +1380,40 @@
     "cancelled": "Comando cancelado.",
     "empty": "Todavía no hay comandos",
     "empty_description": "Los comandos enviados a este equipo aparecen aquí, con lo que respondió.",
-    "no_matches": "No hay comandos con este estado."
+    "no_matches": "No hay comandos con este estado.",
+    "help": {
+      "type": {
+        "what": "Qué se le pide al equipo: reiniciar la app o el equipo, recargar la configuración, limpiar la caché, tomar una captura, subir los logs o buscar actualizaciones.",
+        "how": "Elige el comando; la línea de abajo explica qué hace. Las opciones que no aplican aparecen desactivadas: reiniciar el equipo es solo para kioscos y la captura necesita el permiso de la app y del equipo. Reiniciar la app hace perder lo que el usuario no haya guardado.",
+        "example": "Recargar la configuración"
+      },
+      "expires": {
+        "what": "Cuánto tiempo espera el comando a que el equipo lo recoja antes de vencer.",
+        "how": "Elige entre 5 minutos y 7 días; por defecto 1 hora. Un equipo apagado lo recoge al volver si aún no vence. Para algo que solo tiene sentido ahora, usa un plazo corto.",
+        "example": "1 hora"
+      },
+      "payload": {
+        "what": "Datos extra que la app recibe junto con el comando.",
+        "how": "Abre «Agregar un payload» y escribe un objeto JSON, entre { y }. Opcional: la mayoría de los comandos no lo necesita. Qué campos lee depende de la app del cliente.",
+        "example": "{\"motivo\": \"prueba de impresora\"}"
+      }
+    },
+    "form_help": {
+      "what": "Envía un comando del catálogo a este equipo.",
+      "can_do": [
+        "Elegir el comando.",
+        "Fijar cuánto espera a que el equipo lo recoja.",
+        "Agregar un payload JSON opcional."
+      ],
+      "on_save": "El comando queda pendiente hasta que el equipo lo recoge: en su próximo latido, o al instante si mantiene el socket. Termina completado, fallido, expirado o cancelado, y se puede cancelar mientras esté pendiente o entregado. El servicio rechaza comandos a un equipo revocado o a una app sin el módulo de comandos. Queda en el registro de auditoría."
+    },
+    "filter_help": {
+      "status": {
+        "what": "Muestra solo los comandos en un estado.",
+        "how": "Pendiente (esperando al equipo), entregado, completado, falló, expirado o cancelado; «Todos los estados» quita el filtro.",
+        "example": "Fallido"
+      }
+    }
   },
   "screenshots": {
     "title": "Capturas de pantalla",
@@ -1104,7 +1462,38 @@
     "delete_aria": "Eliminar {{key}}",
     "delete_title": "¿Eliminar este flag?",
     "delete_body_app": "«{{key}}» deja de estar definido para toda la app. Las excepciones de canales o equipos se mantienen.",
-    "delete_body_override": "Se elimina esta excepción de «{{key}}»; los equipos que cubría vuelven al siguiente valor hacia arriba."
+    "delete_body_override": "Se elimina esta excepción de «{{key}}»; los equipos que cubría vuelven al siguiente valor hacia arriba.",
+    "help": {
+      "key": {
+        "what": "El nombre con que la app lee el flag. Tiene que coincidir con lo que busca el código.",
+        "how": "Minúsculas, dígitos, «_», «.» y «-», empezando por letra o dígito, hasta 64 caracteres. Obligatorio. No se puede cambiar una vez creado; una excepción usa la misma clave que el flag de la app.",
+        "example": "checkout.nuevo_flujo"
+      },
+      "description": {
+        "what": "Qué hace el flag, para quien lo lea después.",
+        "how": "Una frase. Opcional, hasta 500 caracteres. La app no la recibe.",
+        "example": "Activa el nuevo flujo de pago con Webpay"
+      },
+      "kind": {
+        "what": "El tipo de valor del flag: sí/no, texto o número.",
+        "how": "Elige el tipo que espera la app. Al cambiarlo, el valor vuelve a uno por defecto (true, vacío o 0).",
+        "example": "Sí / no"
+      },
+      "value": {
+        "what": "El valor que recibe cada equipo dentro del alcance del flag.",
+        "how": "Para sí/no elige true o false; para texto escribe lo que sea (puede quedar vacío); para número escribe un número, con decimales si hace falta (obligatorio en ese tipo).",
+        "example": "true, o 0.15 para un porcentaje de descuento"
+      }
+    },
+    "form_help": {
+      "what": "Crea un feature flag, agrega una excepción para un canal o un equipo, o cambia el valor de uno.",
+      "can_do": [
+        "Elegir la clave y describir qué hace.",
+        "Fijar el tipo y el valor.",
+        "Decidir a quién se aplica: toda la app, un canal o una instalación."
+      ],
+      "on_save": "Los equipos reciben el flag en su próximo latido o con «Recargar la configuración». En cada equipo gana el valor más específico: su instalación, luego su canal y luego la app. Una misma clave no puede definirse dos veces en el mismo alcance. La clave y el alcance no cambian después; editar solo cambia el valor y la descripción. Queda en el registro de auditoría."
+    }
   },
   "config": {
     "title": "Configuración remota",
@@ -1132,7 +1521,33 @@
     "restore": "Restaurar",
     "restore_title": "¿Restaurar la versión {{version}}?",
     "restore_body": "La versión {{version}} se vuelve a publicar como la más nueva. No se pierde nada: la actual queda en el historial.",
-    "restored": "Versión {{from}} restaurada como versión {{version}}."
+    "restored": "Versión {{from}} restaurada como versión {{version}}.",
+    "help": {
+      "document": {
+        "what": "El objeto JSON que recibe cada instalación como su configuración remota. La app lo lee mientras funciona.",
+        "how": "Escribe un objeto JSON válido, entre { y }; el error de sintaxis aparece debajo mientras escribes y «Formatear» lo ordena. Obligatorio: usa {} para uno vacío. Si hay esquema, el documento tiene que cumplirlo.",
+        "example": "{\"carrito\": {\"maxItems\": 20}, \"mensajeBienvenida\": \"¡Hola!\"}"
+      },
+      "schema": {
+        "what": "Un JSON Schema opcional que el documento debe cumplir, para que nadie publique una configuración que la app no entiende.",
+        "how": "Escribe un objeto JSON Schema con las palabras clave admitidas que se listan debajo. Si usa otras, o el documento no lo cumple, el servicio rechaza la versión y muestra los problemas. Vaciarlo lo elimina.",
+        "example": "{\"type\": \"object\", \"required\": [\"carrito\"], \"properties\": {\"carrito\": {\"type\": \"object\"}}}"
+      },
+      "note": {
+        "what": "Una nota para el historial: qué cambió y por qué.",
+        "how": "Una frase corta. Opcional, hasta 200 caracteres. Aparece junto a la versión en el historial.",
+        "example": "Sube el máximo del carrito a 20 por pedido del cliente"
+      }
+    },
+    "form_help": {
+      "what": "Publica la configuración remota de la app: un documento JSON que las instalaciones aplican sin publicar una versión nueva.",
+      "can_do": [
+        "Editar el documento y, opcionalmente, su esquema.",
+        "Dejar una nota para el historial.",
+        "Descartar los cambios sin publicar."
+      ],
+      "on_save": "Publicar crea una versión nueva numerada; las anteriores quedan en el historial y se pueden restaurar. Si alguien publicó mientras editabas, el servicio lo rechaza en vez de sobrescribir y puedes cargar la más reciente. Las instalaciones reciben la versión en su próximo latido o con el comando «Recargar la configuración». Queda en el registro de auditoría."
+    }
   },
   "messages": {
     "title": "Mensajes en la app",
@@ -1184,6 +1599,54 @@
       "active": "No hay mensajes activos.",
       "scheduled": "No hay mensajes programados.",
       "ended": "No hay mensajes terminados."
+    },
+    "sections": {
+      "content": "Contenido",
+      "presentation": "Presentación",
+      "audience": "A quién",
+      "when": "Cuándo"
+    },
+    "help": {
+      "title": {
+        "what": "El encabezado del mensaje, lo primero que ve el usuario.",
+        "how": "Corto y claro, en el idioma de los usuarios del cliente. Obligatorio, hasta 200 caracteres.",
+        "example": "Mantención programada el sábado"
+      },
+      "body": {
+        "what": "El texto completo del mensaje.",
+        "how": "Explica qué pasa, cuándo y qué tiene que hacer el usuario. Obligatorio, hasta 4000 caracteres.",
+        "example": "El sábado 14 entre las 08:00 y las 10:00 el sistema no estará disponible. Cierra tus pedidos antes de esa hora."
+      },
+      "severity": {
+        "what": "Qué tan importante es el mensaje. La app lo usa para el color y el ícono.",
+        "how": "Información para avisos, Advertencia para algo que el usuario debería atender y Crítico para algo urgente.",
+        "example": "Advertencia"
+      },
+      "display": {
+        "what": "Cómo aparece el mensaje dentro de la app.",
+        "how": "Banner muestra una franja arriba y deja seguir trabajando; Diálogo interrumpe hasta que el usuario lo cierra. Usa el diálogo solo para lo que de verdad no puede pasar inadvertido.",
+        "example": "Banner"
+      },
+      "starts_at": {
+        "what": "Desde cuándo se muestra el mensaje.",
+        "how": "Elige fecha y hora, en tu hora local. Vacío lo muestra desde que se publica. Un mensaje con inicio futuro queda programado.",
+        "example": "13-03-2026 09:00"
+      },
+      "ends_at": {
+        "what": "Hasta cuándo se muestra el mensaje.",
+        "how": "Elige fecha y hora posteriores al inicio. Vacío lo mantiene hasta que uses «Terminar ahora».",
+        "example": "14-03-2026 10:00"
+      }
+    },
+    "form_help": {
+      "what": "Escribe un mensaje que las personas que usan la app ven dentro de ella: un aviso de mantención, un cambio, un pedido.",
+      "can_do": [
+        "Escribir el título y el texto.",
+        "Elegir la gravedad y si se muestra como banner o diálogo.",
+        "Decidir a quién va: toda la app, un canal o un equipo (solo al crearlo).",
+        "Programar cuándo empieza y cuándo termina."
+      ],
+      "on_save": "Los equipos alcanzados lo reciben en su próximo latido y lo muestran dentro de las fechas. Cada equipo que lo muestra deja una confirmación de lectura, que ves en «Visto». A quién va no se puede cambiar después. Terminarlo no lo borra, así que las confirmaciones se conservan. Queda en el registro de auditoría."
     }
   },
   "crashes": {
@@ -1291,7 +1754,21 @@
     "resolved_body": "Resuelta el {{date}} por {{by}}.",
     "open_contract": "Ver contrato",
     "cycle_usage": "Horas del ciclo",
-    "cycle_usage_value": "{{used}} usadas de {{available}}"
+    "cycle_usage_value": "{{used}} usadas de {{available}}",
+    "help": {
+      "note": {
+        "what": "Qué se hizo con la alerta, para quien la vea después.",
+        "how": "Una o dos frases. Opcional, hasta 500 caracteres. Queda guardada con la alerta.",
+        "example": "Se reinició el router de la sucursal; el kiosco volvió a reportar."
+      }
+    },
+    "resolve_form_help": {
+      "what": "Marca la alerta como resuelta, con una nota opcional.",
+      "can_do": [
+        "Anotar qué se hizo."
+      ],
+      "on_save": "La alerta sale de la bandeja. Si la condición se sigue cumpliendo en la próxima evaluación, el servicio la vuelve a abrir y avisa otra vez. Queda en el registro de auditoría."
+    }
   },
   "rules": {
     "title": "Reglas",
@@ -1372,7 +1849,47 @@
     "delete_body_other": "«{{name}}» y todas las alertas que generó se eliminan para siempre ({{count}} siguen abiertas). Para detenerla por un tiempo, silénciala o desactívala.",
     "empty": "Todavía no hay reglas",
     "empty_app": "Ninguna regla vigila esta app",
-    "empty_description": "Crea una para enterarte cuando un equipo deja de reportarse, se recalienta o falla más de lo normal."
+    "empty_description": "Crea una para enterarte cuando un equipo deja de reportarse, se recalienta o falla más de lo normal.",
+    "help": {
+      "kind": {
+        "what": "Qué vigila la regla: un equipo desconectado, CPU o memoria altas, alzas de fallos, errores, inscripciones o rollbacks, un contrato por vencer o pocas horas en el ciclo.",
+        "how": "Elige el tipo; el umbral cambia de unidad y de valor sugerido según el tipo, y algunos tipos usan además una ventana. No se puede cambiar una vez creada: para vigilar otra cosa, crea otra regla.",
+        "example": "Instalación desconectada"
+      },
+      "app": {
+        "what": "La app que vigila la regla, o todas.",
+        "how": "Elige una app, o deja «Todas las apps» para vigilar todas, incluidas las que se creen después. En los tipos de contrato, con una app solo se vigilan los contratos que la cubren. No se puede cambiar una vez creada.",
+        "example": "Kiosco de autoatención"
+      },
+      "threshold": {
+        "what": "El valor desde el que la regla abre una alerta. Su unidad depende del tipo.",
+        "how": "Minutos sin reportarse (1 a 10.080) para desconexión; porcentaje (1 a 100) para CPU y memoria; cantidad dentro de la ventana para las alzas; días antes del término (1 a 365) para contratos; porcentaje de horas restantes (0 a 100) para el ciclo. Obligatorio.",
+        "example": "30 minutos desconectada, o 90 % de CPU"
+      },
+      "window": {
+        "what": "El período que se mira hacia atrás para medir el umbral: el promedio de CPU o memoria, o cuántos eventos hubo.",
+        "how": "Un número entero de minutos entre {{min}} y {{max}}. Obligatorio en los tipos que lo usan. Una ventana corta reacciona antes; una larga ignora picos breves.",
+        "example": "15"
+      },
+      "name": {
+        "what": "Cómo se llama la regla en la lista y en los avisos.",
+        "how": "Una descripción corta de lo que vigila. Obligatorio, hasta 120 caracteres.",
+        "example": "Kioscos sin conexión más de 30 min"
+      },
+      "enabled": {
+        "what": "Si la regla se evalúa. Una regla desactivada no abre alertas.",
+        "how": "Déjala activa para que empiece a vigilar. Desactívala para pausarla sin borrarla; para pausarla un tiempo definido, usa «Silenciar» en la lista."
+      }
+    },
+    "form_help": {
+      "what": "Crea o ajusta una regla de alerta: qué se vigila, en qué app y desde qué valor se avisa.",
+      "can_do": [
+        "Elegir qué vigila y en qué app (solo al crearla).",
+        "Fijar el umbral y, en los tipos que la usan, la ventana.",
+        "Ponerle nombre y activarla o desactivarla."
+      ],
+      "on_save": "El servicio la evalúa periódicamente. Cuando se cumple, abre una alerta y avisa a quien creó la regla por el centro de notificaciones del sitio (campana, push y correo, según sus preferencias); otra persona puede tomarla con «Avisarme a mí». El tipo y la app no cambian después. Queda en el registro de auditoría."
+    }
   },
   "releases": {
     "title": "Releases",
@@ -1541,6 +2058,78 @@
       "withdrawn_by_rollback": "Se retiró al revertir la línea a la versión {{version}}. Los equipos que la ejecutan reciben esa versión como rollback obligatorio.",
       "rolled_back_title": "Línea revertida a esta versión por {{by}} el {{date}}",
       "rolled_back_body": "Se publicó al 100 % de la línea y las releases más nuevas quedaron retiradas."
+    },
+    "help": {
+      "percent": {
+        "what": "Qué parte de la línea (app, canal, plataforma y arquitectura) recibe la release.",
+        "how": "Mueve el control, escribe un número de 0 a 100 o usa los atajos. Los equipos se reparten por un número fijo, así que el primer 10 % son siempre los mismos. Empieza con poco y amplía cuando los primeros se reporten sanos. Con 0 % y sin equipos con nombre no se le ofrece a nadie.",
+        "example": "10"
+      },
+      "named": {
+        "what": "Equipos a los que se les ofrece la release sin importar el porcentaje: los canarios.",
+        "how": "Marca los equipos de prueba (por ejemplo, el kiosco de la oficina). Se listan los equipos activos del canal y la plataforma de la release. Opcional.",
+        "example": "Kiosco oficina · Casa matriz"
+      },
+      "reason": {
+        "what": "Por qué se hace esta acción, para quien lea la release después.",
+        "how": "Una frase concreta. Opcional, hasta 500 caracteres. Queda en la release y en el registro de auditoría.",
+        "example": "Falla el driver de la impresora en los kioscos de Lo Barnechea"
+      },
+      "notes": {
+        "what": "Lo que cambió en esta versión. El actualizador de la app puede mostrarlo antes de instalar.",
+        "how": "Texto libre, una línea por cambio, en el idioma de los usuarios. Opcional, hasta 10.000 caracteres.",
+        "example": "- Corrige la impresión de boletas\n- Pantalla de pago más rápida"
+      },
+      "min_version": {
+        "what": "La versión mínima: los equipos con una versión menor tienen que actualizar antes de seguir usando la app.",
+        "how": "Una versión semántica (mayor.menor.parche) que no sea mayor que esta release. Vacío no obliga a nadie. Úsala para versiones con un problema grave o incompatibles con el servidor.",
+        "example": "1.4.0"
+      }
+    },
+    "edit_form_help": {
+      "what": "Edita las notas y la versión mínima de esta release.",
+      "can_do": [
+        "Escribir o corregir las notas de la versión.",
+        "Fijar o quitar la versión mínima."
+      ],
+      "on_save": "Solo se envía lo que cambió. Con una versión mínima, los equipos por debajo reciben la oferta como obligatoria en su próximo latido. El archivo y la firma no cambian. Queda en el registro de auditoría."
+    },
+    "form_help_publish": {
+      "what": "Publica este borrador y elige a qué equipos de su línea se les ofrece.",
+      "can_do": [
+        "Elegir el porcentaje de la línea.",
+        "Nombrar equipos canario que la reciben siempre."
+      ],
+      "on_save": "La release pasa a publicada. Los equipos alcanzados la ven ofrecida en su próximo latido (al instante si mantienen el socket), la descargan, la verifican con la llave pública e informan cada paso. Si las tasas de rollback o de fallos pasan los umbrales de la app, el despliegue se pausa solo. Queda en el registro de auditoría."
+    },
+    "form_help_rollout": {
+      "what": "Cambia a cuántos equipos de la línea se les ofrece esta release.",
+      "can_do": [
+        "Ampliar o reducir el porcentaje.",
+        "Agregar o quitar equipos con nombre."
+      ],
+      "on_save": "Ampliarlo la ofrece a más equipos en su próximo latido. Reducirlo deja de ofrecerla fuera del nuevo alcance, pero no la desinstala de ningún equipo. Queda en el registro de auditoría."
+    },
+    "form_help_pause": {
+      "what": "Pausa el despliegue de esta release.",
+      "can_do": [
+        "Anotar por qué se pausa."
+      ],
+      "on_save": "Deja de ofrecerse a equipos nuevos; los que ya la instalaron la conservan. Se puede reanudar después con el mismo despliegue. El motivo queda en la release y en el registro de auditoría."
+    },
+    "form_help_withdraw": {
+      "what": "Retira esta release de su línea.",
+      "can_do": [
+        "Anotar por qué se retira."
+      ],
+      "on_save": "Nadie más la recibe, y cada equipo que la ejecuta recibe la versión anterior más nueva de su línea como rollback obligatorio. Una release retirada no se puede volver a publicar. El motivo queda en la release y en el registro de auditoría."
+    },
+    "form_help_rollback": {
+      "what": "Vuelve la línea a esta release.",
+      "can_do": [
+        "Anotar por qué se revierte."
+      ],
+      "on_save": "Toda release publicada o pausada más nueva de la línea queda retirada y esta se publica al 100 %. Los equipos con una versión más nueva la reciben como rollback obligatorio en su próximo latido. El motivo queda en la release y en el registro de auditoría."
     }
   },
   "release_settings": {
@@ -1568,7 +2157,43 @@
     "replace_confirm": "Reemplazar",
     "clear_title": "¿Quitar la llave pública?",
     "clear_body": "El servicio rechazará toda subida del CI hasta que guardes otra. Las releases ya subidas no cambian.",
-    "clear_confirm": "Quitar"
+    "clear_confirm": "Quitar",
+    "help": {
+      "key": {
+        "what": "La llave pública Ed25519 contra la que se verifica la firma de cada build que sube el CI. La misma llave va dentro de la app, para que su actualizador verifique lo que descarga.",
+        "how": "Pega los 32 bytes crudos de la llave pública en base64: 44 caracteres, normalmente terminados en «=» (también se acepta base64url). No sirve un PEM ni hexadecimal. Vacío la quita, y sin llave el servicio rechaza toda subida. Reemplazarla pide confirmación: hazlo solo cuando ya esté desplegada una compilación que lleve la nueva.",
+        "example": "BwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSY="
+      },
+      "health_timeout": {
+        "what": "Cuánto espera un equipo a que la versión nueva se reporte sana antes de volver a la anterior.",
+        "how": "Un número entero de segundos entre 30 y 86.400 (24 horas); por defecto 600 (10 minutos). Súbelo si la app tarda en arrancar. Obligatorio.",
+        "example": "600"
+      },
+      "max_failures": {
+        "what": "Cuántas veces intenta un equipo instalar la misma release antes de rendirse.",
+        "how": "Un número entero entre 1 y 100; por defecto 3. Obligatorio.",
+        "example": "3"
+      },
+      "pause_rollback": {
+        "what": "El porcentaje de rollbacks con que un despliegue se pausa solo.",
+        "how": "Un entero de 1 a 100; por defecto 20. Se mide sobre los equipos que terminaron de actualizar y necesita al menos tres equipos detrás para pausar. Obligatorio.",
+        "example": "20 (si 2 de 10 equipos vuelven atrás, se pausa)"
+      },
+      "pause_crash": {
+        "what": "El porcentaje de equipos con fallos en la versión nueva con que un despliegue se pausa solo.",
+        "how": "Un entero de 1 a 100; por defecto 20. Se mide sobre los equipos que la instalaron y necesita al menos tres equipos detrás. Obligatorio.",
+        "example": "20"
+      }
+    },
+    "form_help": {
+      "what": "Configura el actualizador de la app: la llave con que se verifican las releases y los números con que corre cada despliegue.",
+      "can_do": [
+        "Guardar, reemplazar o quitar la llave pública de releases.",
+        "Fijar la espera de salud y los intentos fallidos de cada equipo.",
+        "Fijar las tasas de rollback y de fallos que pausan un despliegue."
+      ],
+      "on_save": "Solo se envía lo que cambió. Reemplazar o quitar la llave pide confirmación, porque las compilaciones instaladas verifican con la anterior. Los números se aplican a los despliegues desde ahora. El cambio queda en el registro de auditoría."
+    }
   },
   "ci_tokens": {
     "title": "Tokens de CI",
@@ -1595,7 +2220,21 @@
     "revoke_title": "¿Revocar este token?",
     "revoke_body": "«{{token}}» dejará de poder subir releases. Las releases que ya subió no cambian. Esto no se puede deshacer.",
     "empty": "Esta app no tiene tokens de CI",
-    "empty_description": "Crea uno para que el CI pueda subir releases."
+    "empty_description": "Crea uno para que el CI pueda subir releases.",
+    "help": {
+      "label": {
+        "what": "Un nombre para reconocer el token: qué repositorio o qué flujo de CI lo usa.",
+        "how": "Texto libre y opcional, hasta 120 caracteres. Después solo se ve el comienzo del token, así que la etiqueta es lo que lo identifica.",
+        "example": "GitHub Actions · main"
+      }
+    },
+    "form_help": {
+      "what": "Crea un token secreto (cic_…) con el que el CI sube releases a esta app.",
+      "can_do": [
+        "Ponerle una etiqueta para saber dónde se usa."
+      ],
+      "on_save": "El token se muestra una sola vez, en el diálogo siguiente: cópialo como secreto del CI. El servicio solo guarda su hash, así que si se pierde hay que revocarlo y crear otro. La creación queda en el registro de auditoría."
+    }
   },
   "update_reports": {
     "title": "Reportes de actualización",
@@ -1792,18 +2431,47 @@
     },
     "delete_title": "¿Eliminar este contrato?",
     "delete_body": "Se eliminará «{{name}}» para siempre. Solo se puede eliminar un contrato sin ciclos cerrados ni trabajo registrado; si no, cancélalo.",
-    "delete_refused": "Este contrato tiene ciclos cerrados o trabajo registrado, así que es historia: cancélalo en vez de eliminarlo."
+    "delete_refused": "Este contrato tiene ciclos cerrados o trabajo registrado, así que es historia: cancélalo en vez de eliminarlo.",
+    "help": {
+      "renew_until": {
+        "what": "El nuevo último día cubierto por el contrato, incluido.",
+        "how": "Elige un día posterior al último día actual y no anterior a hoy, o usa los atajos de meses. Obligatorio salvo que marques «Sin fecha de término».",
+        "example": "28-02-2028 (un año más)"
+      },
+      "renew_open_ended": {
+        "what": "Renueva el contrato sin fecha de término: queda indefinido.",
+        "how": "Actívalo cuando el acuerdo siga hasta que alguien lo cancele. Un contrato indefinido no vence ni envía avisos de término."
+      },
+      "cancel_reason": {
+        "what": "Por qué se cancela el contrato, para quien revise el historial después.",
+        "how": "Una o dos frases. Opcional, hasta 500 caracteres. Queda en el registro de auditoría y en el historial del contrato; el cliente no la ve.",
+        "example": "El cliente cambió de proveedor a partir de abril."
+      }
+    },
+    "renew_form_help": {
+      "what": "Extiende la vigencia del contrato hasta un nuevo último día, o lo deja indefinido.",
+      "can_do": [
+        "Elegir el nuevo último día, a mano o con los atajos de meses.",
+        "Dejarlo sin fecha de término."
+      ],
+      "on_save": "El contrato queda activo hasta la nueva fecha. Si ya había vencido, las apps que quedaron en gracia o suspendidas por ese vencimiento vuelven a quedar activas. Los ciclos de horas siguen desde donde iban. La renovación queda en el registro de auditoría."
+    },
+    "cancel_form_help": {
+      "what": "Cancela el contrato desde hoy, con un motivo opcional.",
+      "can_do": [
+        "Anotar por qué se cancela."
+      ],
+      "on_save": "Desde hoy no empiezan ciclos nuevos y no se envían más avisos; el ciclo en curso se cierra en su fecha normal. Las apps quedan como están: para suspenderlas usa el interruptor de cada app. La cancelación queda en el registro de auditoría y no se puede deshacer: un contrato cancelado no se edita ni se renueva."
+    }
   },
   "contract_editor": {
     "new_title": "Nuevo contrato",
     "edit_title": "Editar «{{name}}»",
     "description": "Las horas se escriben en horas y se guardan en minutos exactos.",
     "cancelled_title": "Contrato cancelado",
-    "plan": "Plan y precio",
-    "plan_hint": "Qué se cobra y cada cuánto.",
-    "term": "Vigencia y renovación",
+    "term": "Vigencia",
     "term_hint": "Las fechas son días calendario en la zona del servicio.",
-    "hours": "Horas por ciclo y acumulación",
+    "hours": "Horas por ciclo",
     "hours_hint": "Cuántas horas de trabajo incluye cada ciclo, qué cuesta pasarse y qué pasa con las que sobran.",
     "grace": "Fin de contrato y gracia",
     "grace_hint": "Qué pasa con las apps cuando el contrato vence sin renovarse.",
@@ -1861,6 +2529,121 @@
       "cancelled": "Un contrato cancelado no se puede editar ni renovar. Crea uno nuevo.",
       "ends_before_cycle": "Ya hay un ciclo que empieza después de ese último día.",
       "foreign_app": "Todas las apps tienen que ser del mismo cliente del contrato."
+    },
+    "scope": "Cliente y alcance",
+    "scope_hint": "A quién se le cobra, cómo se llama el contrato y qué apps cubre.",
+    "price": "Precio",
+    "price_hint": "Cuánto se cobra y cada cuánto.",
+    "help": {
+      "company": {
+        "what": "El cliente que paga este contrato. Define qué apps se pueden cubrir.",
+        "how": "Elígelo de la lista. Al cambiarlo se desmarcan las apps cubiertas, porque eran del cliente anterior. Obligatorio al crear; después ya no se puede cambiar: para otro cliente, crea otro contrato.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "name": {
+        "what": "Cómo se llama el contrato en el panel, en los avisos y en las alertas.",
+        "how": "Usa el nombre que pondrías en la factura, con el año si se renueva por períodos. Obligatorio, hasta 160 caracteres.",
+        "example": "Mantención y soporte 2026"
+      },
+      "apps": {
+        "what": "Las apps del cliente a las que se aplica el contrato: sus horas, su aviso de término y su período de gracia.",
+        "how": "Primero elige el cliente; aparecen sus apps. Marca las que cubre. Puedes no marcar ninguna: entonces las horas son del cliente en general. Una app no puede estar en dos contratos con fechas que se superponen; el servicio lo rechaza y dice cuál.",
+        "example": "Kiosco de autoatención y App de ventas"
+      },
+      "starts_on": {
+        "what": "El primer día cubierto. Los ciclos de horas se cuentan desde este día.",
+        "how": "Elige un día del calendario (se interpreta en la zona horaria del servicio, America/Santiago). Obligatorio. Cuando ya existe un ciclo, no se puede cambiar: los ciclos se calculan desde él.",
+        "example": "01-03-2026"
+      },
+      "ends_on": {
+        "what": "El último día cubierto, incluido. Desde él se cuentan los días de aviso y la gracia.",
+        "how": "Elige un día igual o posterior al primero. Déjalo vacío para un contrato indefinido, que no vence ni avisa.",
+        "example": "28-02-2027 (un año desde el 01-03-2026)"
+      },
+      "auto_renew": {
+        "what": "Si el contrato se extiende solo al llegar a su último día, por los meses que indiques.",
+        "how": "Actívalo para contratos que siguen mientras nadie diga lo contrario. Un contrato que se renueva solo nunca vence, así que no se le envía aviso de término al cliente. Sin último día no tiene efecto: un contrato indefinido ya sigue solo."
+      },
+      "renewal_months": {
+        "what": "Cuántos meses se extiende el contrato cada vez que se renueva solo.",
+        "how": "Un número entero entre 1 y 120. Obligatorio mientras «Se renueva solo» esté activo.",
+        "example": "12"
+      },
+      "notice_days": {
+        "what": "Cuántos días antes del último día se avisa que el contrato termina.",
+        "how": "Un número entero de 0 a {{max}}. Ese día el servicio le envía un correo al cliente y las apps cubiertas muestran el aviso; el panel marca el contrato como «por vencer». Con 0 no se avisa. No aplica si el contrato se renueva solo.",
+        "example": "30"
+      },
+      "amount": {
+        "what": "Lo que se cobra por el contrato en cada período de cobro, y la moneda.",
+        "how": "Escribe el monto y elige la moneda al lado. En CLP van pesos enteros, sin decimales; en UF hasta dos decimales. Obligatorio: usa 0 si no se cobra un monto fijo. Cambiar la moneda reinterpreta también el valor de la hora extra.",
+        "example": "450000 CLP al mes, o 12,5 UF al mes"
+      },
+      "billing_period": {
+        "what": "Cada cuánto se cobra el monto: mensual, anual o una sola vez.",
+        "how": "Elige la periodicidad acordada con el cliente. Se muestra junto al monto y no tiene que coincidir con la duración del ciclo de horas: un contrato anual puede tener ciclos mensuales.",
+        "example": "Mensual"
+      },
+      "cycle_period": {
+        "what": "El largo de cada ciclo de horas: diario, semanal o mensual. Las horas incluidas se renuevan en cada ciclo.",
+        "how": "Elige el período del acuerdo. Los ciclos parten el primer día del contrato. Cuando ya existe un ciclo no se puede cambiar.",
+        "example": "Mensual: del 1 de cada mes al último día del mes, si el contrato parte un día 1"
+      },
+      "included_hours": {
+        "what": "Las horas de trabajo que incluye cada ciclo, contra las que se descuenta la bitácora.",
+        "how": "Un número de horas, 0 o más; acepta decimales (12,5 son 12 h 30 min) y se guarda en minutos exactos. Obligatorio: usa 0 si todo se cobra por hora.",
+        "example": "10"
+      },
+      "overage_rate": {
+        "what": "Lo que se cobra por cada hora trabajada sobre las disponibles del ciclo, en la moneda del contrato.",
+        "how": "Un monto con las mismas reglas que el precio: pesos enteros en CLP, hasta dos decimales en UF. Obligatorio: usa 0 si las horas extra no se cobran. El panel lo usa para estimar el costo del exceso del ciclo.",
+        "example": "35000 CLP, o 1,2 UF"
+      },
+      "rollover": {
+        "what": "Si las horas que no se usan en un ciclo pasan al siguiente.",
+        "how": "Actívalo si el acuerdo permite acumular horas. Aparecen dos límites opcionales: cuántas horas se pueden acumular y por cuántos ciclos duran. Si lo desactivas, esos límites se borran al guardar."
+      },
+      "rollover_max_hours": {
+        "what": "El tope de horas acumuladas que un ciclo puede traer de los anteriores.",
+        "how": "Un número de horas, con decimales si quieres. Vacío significa sin tope.",
+        "example": "20"
+      },
+      "rollover_max_cycles": {
+        "what": "Cuántos ciclos sobrevive una hora acumulada antes de vencer.",
+        "how": "Un número entero entre 1 y 120. Vacío significa que no vencen.",
+        "example": "3 (las horas de marzo se pueden usar hasta junio)"
+      },
+      "grace_days": {
+        "what": "Cuántos días siguen funcionando las apps cubiertas cuando el contrato vence sin renovarse.",
+        "how": "Un número entero de 0 a {{max}}. Durante la gracia las apps avisan que se van a detener; al terminar, el servicio las suspende. Con 0 se suspenden apenas vence el contrato.",
+        "example": "7"
+      },
+      "grace_allows": {
+        "what": "Lo que las apps pueden seguir haciendo mientras están en gracia.",
+        "how": "Marca lo que quieras mantener: «Actualizaciones» deja que sigan recibiendo versiones nuevas y «Soporte» deja que sigan abriendo y continuando tickets. Sin marcar nada, ambas cosas se detienen durante la gracia.",
+        "example": "Soporte"
+      },
+      "grace_message": {
+        "what": "El texto que muestran las apps cubiertas mientras están en gracia.",
+        "how": "Escríbelo para las personas que usan la app, en su idioma, diciendo qué pasa y a quién contactar. Opcional, hasta 1000 caracteres.",
+        "example": "El contrato de mantención venció. La app dejará de funcionar el 10 de marzo; contacta a tu administrador."
+      },
+      "notes": {
+        "what": "Notas internas sobre el contrato: condiciones especiales, acuerdos verbales, contexto.",
+        "how": "Texto libre y opcional, hasta 5000 caracteres. Solo se ve en este panel; el cliente no lo ve.",
+        "example": "Incluye dos visitas presenciales al año. Precio congelado hasta 2027."
+      }
+    },
+    "form_help": {
+      "what": "Define lo que paga un cliente: qué apps cubre, por cuánto tiempo, cuánto cuesta, cuántas horas de trabajo incluye cada ciclo y qué pasa con las apps cuando vence.",
+      "can_do": [
+        "Elegir el cliente y las apps cubiertas.",
+        "Fijar las fechas, la renovación automática y los días de aviso.",
+        "Poner el precio y su periodicidad.",
+        "Definir las horas por ciclo, el valor de la hora extra y la acumulación.",
+        "Decidir cuántos días de gracia tienen las apps y qué pueden hacer durante ellos."
+      ],
+      "on_save": "Al crearlo pasas a la página del contrato y el servicio empieza a llevar sus ciclos de horas. Al editarlo solo se envía lo que cambió. Antes del último día el servicio le envía un correo al cliente y las apps cubiertas muestran el aviso; si vence sin renovarse, las apps entran en gracia o se suspenden. Todo queda en el registro de auditoría. Con un ciclo ya creado, el primer día y la duración del ciclo no se pueden cambiar, y el cliente nunca se puede cambiar."
     }
   },
   "cycle": {
@@ -1914,7 +2697,21 @@
     "bill_body_overage": "El ciclo {{range}} tuvo {{time}} de exceso por {{amount}}. Queda como facturado.",
     "reference": "Referencia",
     "reference_hint": "El número de factura o boleta. Opcional.",
-    "billed_toast": "Ciclo marcado como facturado."
+    "billed_toast": "Ciclo marcado como facturado.",
+    "help": {
+      "reference": {
+        "what": "El documento con que se cobró el ciclo, para encontrarlo después.",
+        "how": "Escribe el número de la factura o boleta, con su tipo si ayuda. Opcional, hasta 500 caracteres.",
+        "example": "Factura electrónica N° 1234"
+      }
+    },
+    "bill_form_help": {
+      "what": "Marca un ciclo cerrado como facturado, con la referencia del documento.",
+      "can_do": [
+        "Anotar el número de factura o boleta."
+      ],
+      "on_save": "El ciclo pasa a «facturado» y deja de contar en el resumen como ciclo con exceso por facturar. Su balance ya era final; esto no lo cambia. Queda en el registro de auditoría."
+    }
   },
   "work_log": {
     "title": "Bitácora",
@@ -1984,7 +2781,63 @@
       "ticket": "Ese ticket es de otro cliente: elige uno de este cliente o ninguno."
     },
     "ticket": "Ticket #{{number}}",
-    "no_ticket": "Sin ticket"
+    "no_ticket": "Sin ticket",
+    "sections": {
+      "what": "Para qué",
+      "when": "Cuándo y cuánto"
+    },
+    "help": {
+      "app": {
+        "what": "La app sobre la que fue el trabajo, si fue sobre una.",
+        "how": "Elige la app, o «Cliente en general» si el trabajo fue para el cliente como un todo (una reunión, un informe). Decide bajo qué contrato se registra y qué tickets se pueden elegir.",
+        "example": "Kiosco de autoatención"
+      },
+      "ticket": {
+        "what": "El ticket de soporte que respondió este trabajo.",
+        "how": "Elige uno de los tickets de la app (o del cliente, si es trabajo general). Opcional. El servicio rechaza un ticket de otro cliente. Vincularlo no cambia bajo qué contrato se registra: solo dice qué respondió.",
+        "example": "#42 · La impresora del kiosco no imprime boletas"
+      },
+      "kind": {
+        "what": "Qué tipo de trabajo fue.",
+        "how": "Mantención para lo que mantiene funcionando lo existente, Soporte para atender a usuarios, Desarrollo para funciones nuevas y Otro para lo demás. Sirve para filtrar y para entender en qué se gastan las horas.",
+        "example": "Soporte"
+      },
+      "description": {
+        "what": "Qué se hizo, para el cliente y para ti dentro de unos meses.",
+        "how": "Una o dos frases concretas. Obligatorio, hasta 2000 caracteres.",
+        "example": "Corregí el driver de la impresora térmica y reinstalé la app en el kiosco de la entrada."
+      },
+      "day": {
+        "what": "El día en que se hizo el trabajo. Decide en qué contrato y en qué ciclo se descuentan las horas.",
+        "how": "Elige un día de hoy o anterior; no se aceptan días futuros. Desde la página de un contrato, tiene que estar dentro de su vigencia. Un día dentro de un ciclo ya cerrado se rechaza, porque su balance es final. Obligatorio.",
+        "example": "12-03-2026"
+      },
+      "duration": {
+        "what": "Cuánto tiempo tomó el trabajo, en horas y minutos.",
+        "how": "Escribe horas y minutos (0 a 59). Entre 1 minuto y {{max}} horas por entrada; si fue más, divídelo en varios días. Obligatorio.",
+        "example": "1 h 30 min"
+      },
+      "link": {
+        "what": "Un enlace a lo que respalda el trabajo: un pull request, un ticket del cliente, un documento.",
+        "how": "Una dirección completa que empiece con https:// o http://. Opcional.",
+        "example": "https://github.com/franciscosolis/kiosco-los-andes/pull/87"
+      },
+      "contract": {
+        "what": "Bajo qué contrato se registra la entrada, cuando más de uno cubre ese día.",
+        "how": "Solo aparece cuando varios contratos cubren la app (o el cliente) ese día; entonces es obligatorio elegir uno. Normalmente el servicio lo elige solo y el diálogo dice cuál será.",
+        "example": "Mantención y soporte 2026"
+      }
+    },
+    "form_help": {
+      "what": "Registra el trabajo hecho para un cliente, que se descuenta de las horas de su contrato.",
+      "can_do": [
+        "Decir sobre qué app y qué ticket fue, de qué tipo y qué se hizo.",
+        "Anotar el día y cuánto duró.",
+        "Agregar un enlace que lo respalde.",
+        "Elegir el contrato si más de uno cubre ese día."
+      ],
+      "on_save": "El servicio registra la entrada bajo el contrato que cubre la app (o el cliente) ese día y en el ciclo en que cae; el diálogo dice antes cuál será. Las horas se descuentan del ciclo y se ven en el contrato, la app, el cliente y el ticket. Al editar solo se envía lo que cambió. Una entrada en un ciclo cerrado ya no se puede cambiar. Queda en el registro de auditoría."
+    }
   },
   "app_contract": {
     "title": "Contrato",
@@ -2102,6 +2955,43 @@
     },
     "hint_one": "{{count}} ticket espera una respuesta",
     "hint_other": "{{count}} tickets esperan una respuesta",
-    "hint_link": "Ver tickets"
+    "hint_link": "Ver tickets",
+    "help": {
+      "status": {
+        "what": "El estado del ticket, que dice de quién es el turno.",
+        "how": "Abierto espera una respuesta nuestra; Pendiente ya se respondió y espera al solicitante; Resuelto terminó, pero se reabre si el solicitante vuelve a escribir; Cerrado terminó para siempre. Cambiarlo aquí no le escribe a nadie; para reabrir uno, elige Abierto.",
+        "example": "Resuelto, cuando el solicitante confirmó que quedó funcionando"
+      },
+      "reply": {
+        "what": "La respuesta al solicitante, que la app muestra dentro de su pantalla de soporte.",
+        "how": "Escribe en el idioma del solicitante y explica qué se hizo o qué necesitas de él. Obligatoria para enviar, hasta 5000 caracteres. No se envía correo: la app la muestra la próxima vez que consulte el ticket.",
+        "example": "Hola Carolina, ya corregimos el error de impresión. Reinicia el kiosco y nos cuentas si sigue pasando."
+      },
+      "status_after": {
+        "what": "En qué estado queda el ticket después de enviar la respuesta.",
+        "how": "Pendiente (por defecto) cuando esperas que el solicitante conteste; Resuelto cuando la respuesta lo soluciona; Cerrado cuando no hay nada más que hacer y no se debe reabrir.",
+        "example": "Resuelto"
+      },
+      "subject": {
+        "what": "El asunto del ticket: de qué trata, en una línea.",
+        "how": "Corrígelo para que se entienda en la bandeja. Obligatorio, hasta 200 caracteres. También lo ve la app del cliente al listar sus tickets.",
+        "example": "La impresora del kiosco no imprime boletas"
+      }
+    },
+    "form_help": {
+      "what": "Responde al solicitante del ticket desde el panel; la app del cliente muestra la respuesta en su pantalla de soporte.",
+      "can_do": [
+        "Escribir la respuesta.",
+        "Elegir en qué estado queda el ticket después."
+      ],
+      "on_save": "La respuesta se agrega a la conversación y dice si la app ya la leyó. No se envía correo. El ticket queda en el estado elegido (Pendiente por defecto). Queda en el registro de auditoría. Para anotar las horas que tomó, usa «Registrar trabajo» en el panel de horas del ticket."
+    },
+    "subject_form_help": {
+      "what": "Corrige el asunto del ticket.",
+      "can_do": [
+        "Reescribir el asunto para que se entienda en la bandeja."
+      ],
+      "on_save": "El asunto nuevo aparece en el panel y en la app del cliente. No se le avisa al solicitante. Queda en el registro de auditoría."
+    }
   }
 }

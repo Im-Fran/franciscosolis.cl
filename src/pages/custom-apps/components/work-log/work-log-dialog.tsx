@@ -17,6 +17,9 @@ import type {Contract, NewWorkLog, WorkKind, WorkLogEntry, WorkLogPayload} from 
 import {coversDay} from "@/pages/custom-apps/components/contracts/contract-format.ts";
 import {scopeCompanyId} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
 import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FieldLegend, RequiredLegend} from "@/components/ui/help.tsx";
+import {FormSection} from "@/pages/custom-apps/components/form-section.tsx";
 
 const DESCRIPTION_MAX = 2000;
 
@@ -97,6 +100,7 @@ export const WorkLogDialog = ({
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const language = i18n.language;
   const {workKinds, contractLimits, timezone} = useServiceVocabulary();
+  const help = useHelp();
   const today = dayIn(new Date(), timezone);
   const companyId = scopeCompanyId(scope);
   /* Primitive keys, so a parent passing a fresh scope object on every render reloads nothing. */
@@ -336,10 +340,99 @@ export const WorkLogDialog = ({
       onClose={pending ? () => undefined : onClose}
       title={entry ? t("custom_apps:work_log.edit_title") : t("custom_apps:work_log.create_title")}
       className="max-w-xl"
+      help={help.form("work_log.form_help")}
     >
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Field label={t("custom_apps:work_log.fields.day")} htmlFor="work-log-day" error={errors.day}>
+        <RequiredLegend className="-mt-2" />
+
+        <FormSection title={t("custom_apps:work_log.sections.what")} bodyClassName="sm:grid-cols-2">
+          {scope.kind !== "app" && (
+            <Field
+              label={t("custom_apps:work_log.fields.app")}
+              htmlFor="work-log-app"
+              hint={t("custom_apps:work_log.hints.app")}
+              help={help.field("work_log.help.app")}
+            >
+              <Select
+                id="work-log-app"
+                value={form.appId}
+                onChange={(event) => set("appId", event.target.value)}
+                disabled={pending || (scope.kind === "company" && appsResource.loading)}
+              >
+                <option value="">{t("custom_apps:work_log.whole_company")}</option>
+                {appOptions.map((app) => (
+                  <option key={app.id} value={app.id}>
+                    {app.name}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          )}
+
+          <Field
+            label={t("custom_apps:work_log.fields.ticket")}
+            htmlFor="work-log-ticket"
+            error={errors.ticketId}
+            hint={t("custom_apps:work_log.hints.ticket")}
+            help={help.field("work_log.help.ticket")}
+            className={scope.kind === "app" ? "sm:col-span-2" : undefined}
+          >
+            <Select
+              id="work-log-ticket"
+              value={form.ticketId}
+              onChange={(event) => set("ticketId", event.target.value)}
+              disabled={pending || (ticketsResource.loading && !ticketsResource.data)}
+              aria-invalid={Boolean(errors.ticketId)}
+            >
+              <option value="">{t("custom_apps:work_log.no_ticket")}</option>
+              {ticketOptions.map((ticket) => (
+                <option key={ticket.id} value={ticket.id}>
+                  {ticket.number ? `#${ticket.number}` : t("custom_apps:work_log.fields.ticket")}
+                  {ticket.subject ? ` · ${ticket.subject}` : ""}
+                </option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label={t("custom_apps:work_log.fields.kind")} htmlFor="work-log-kind" help={help.field("work_log.help.kind")}>
+            <Select
+              id="work-log-kind"
+              value={form.kind}
+              onChange={(event) => set("kind", event.target.value as WorkKind)}
+              disabled={pending}
+            >
+              {workKinds.map((kind) => (
+                <option key={kind} value={kind}>
+                  {t(`custom_apps:work_kinds.${kind}`, {defaultValue: kind})}
+                </option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field
+            label={t("custom_apps:work_log.fields.description")}
+            htmlFor="work-log-description"
+            error={errors.description}
+            help={help.field("work_log.help.description")}
+            required
+            className="sm:col-span-2"
+          >
+            <Textarea
+              id="work-log-description"
+              value={form.description}
+              onChange={(event) => set("description", event.target.value)}
+              maxLength={DESCRIPTION_MAX}
+              rows={4}
+              disabled={pending}
+              aria-invalid={Boolean(errors.description)}
+              className="resize-y"
+              required
+            />
+          </Field>
+        </FormSection>
+
+        <FormSection title={t("custom_apps:work_log.sections.when")} bodyClassName="sm:grid-cols-2">
+          <Field label={t("custom_apps:work_log.fields.day")} htmlFor="work-log-day" error={errors.day} help={help.field("work_log.help.day")} required>
             <Input
               id="work-log-day"
               type="date"
@@ -354,7 +447,11 @@ export const WorkLogDialog = ({
           </Field>
 
           <fieldset className="flex flex-col gap-1.5">
-            <legend className="mb-1.5 text-sm font-medium text-neutral-300">{t("custom_apps:work_log.fields.duration")}</legend>
+            <FieldLegend
+              label={t("custom_apps:work_log.fields.duration")}
+              help={help.field("work_log.help.duration", {max: contractLimits.max_work_log_minutes / 60})}
+              required
+            />
             <div className="flex items-center gap-2">
               <Input
                 type="number"
@@ -387,127 +484,52 @@ export const WorkLogDialog = ({
             {errors.hours && <p className="text-xs text-red-400">{errors.hours}</p>}
           </fieldset>
 
-          <Field label={t("custom_apps:work_log.fields.kind")} htmlFor="work-log-kind">
+          {destination && <p className="-mt-1 text-[12px] leading-relaxed text-neutral-500 sm:col-span-2">{destination}</p>}
+        </FormSection>
+
+        <Field
+          label={t("custom_apps:work_log.fields.link")}
+          htmlFor="work-log-link"
+          error={errors.link}
+          hint={t("custom_apps:work_log.hints.link")}
+          help={help.field("work_log.help.link")}
+        >
+          <Input
+            id="work-log-link"
+            type="url"
+            value={form.link}
+            onChange={(event) => set("link", event.target.value)}
+            placeholder="https://"
+            disabled={pending}
+            aria-invalid={Boolean(errors.link)}
+          />
+        </Field>
+
+        {showPicker && (
+          <Field
+            label={t("custom_apps:work_log.fields.contract")}
+            htmlFor="work-log-contract"
+            error={errors.contractId}
+            hint={t("custom_apps:work_log.hints.contract", {day: formatDay(form.day, language)})}
+            help={help.field("work_log.help.contract")}
+            required
+          >
             <Select
-              id="work-log-kind"
-              value={form.kind}
-              onChange={(event) => set("kind", event.target.value as WorkKind)}
+              id="work-log-contract"
+              value={chosen}
+              onChange={(event) => set("contractId", event.target.value)}
               disabled={pending}
+              aria-invalid={Boolean(errors.contractId)}
             >
-              {workKinds.map((kind) => (
-                <option key={kind} value={kind}>
-                  {t(`custom_apps:work_kinds.${kind}`, {defaultValue: kind})}
+              <option value="">{t("custom_apps:work_log.pick_contract")}</option>
+              {candidates.map((contract) => (
+                <option key={contract.id} value={contract.id}>
+                  {contract.name}
                 </option>
               ))}
             </Select>
           </Field>
-
-          {scope.kind !== "app" && (
-            <Field label={t("custom_apps:work_log.fields.app")} htmlFor="work-log-app" hint={t("custom_apps:work_log.hints.app")}>
-              <Select
-                id="work-log-app"
-                value={form.appId}
-                onChange={(event) => set("appId", event.target.value)}
-                disabled={pending || (scope.kind === "company" && appsResource.loading)}
-              >
-                <option value="">{t("custom_apps:work_log.whole_company")}</option>
-                {appOptions.map((app) => (
-                  <option key={app.id} value={app.id}>
-                    {app.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-          )}
-
-          <Field
-            label={t("custom_apps:work_log.fields.ticket")}
-            htmlFor="work-log-ticket"
-            error={errors.ticketId}
-            hint={t("custom_apps:work_log.hints.ticket")}
-            className="sm:col-span-2"
-          >
-            <Select
-              id="work-log-ticket"
-              value={form.ticketId}
-              onChange={(event) => set("ticketId", event.target.value)}
-              disabled={pending || (ticketsResource.loading && !ticketsResource.data)}
-              aria-invalid={Boolean(errors.ticketId)}
-            >
-              <option value="">{t("custom_apps:work_log.no_ticket")}</option>
-              {ticketOptions.map((ticket) => (
-                <option key={ticket.id} value={ticket.id}>
-                  {ticket.number ? `#${ticket.number}` : t("custom_apps:work_log.fields.ticket")}
-                  {ticket.subject ? ` · ${ticket.subject}` : ""}
-                </option>
-              ))}
-            </Select>
-          </Field>
-
-          <Field
-            label={t("custom_apps:work_log.fields.description")}
-            htmlFor="work-log-description"
-            error={errors.description}
-            className="sm:col-span-2"
-          >
-            <Textarea
-              id="work-log-description"
-              value={form.description}
-              onChange={(event) => set("description", event.target.value)}
-              maxLength={DESCRIPTION_MAX}
-              rows={4}
-              disabled={pending}
-              aria-invalid={Boolean(errors.description)}
-              className="resize-y"
-              required
-            />
-          </Field>
-
-          <Field
-            label={t("custom_apps:work_log.fields.link")}
-            htmlFor="work-log-link"
-            error={errors.link}
-            hint={t("custom_apps:work_log.hints.link")}
-            className="sm:col-span-2"
-          >
-            <Input
-              id="work-log-link"
-              type="url"
-              value={form.link}
-              onChange={(event) => set("link", event.target.value)}
-              placeholder="https://"
-              disabled={pending}
-              aria-invalid={Boolean(errors.link)}
-            />
-          </Field>
-
-          {showPicker && (
-            <Field
-              label={t("custom_apps:work_log.fields.contract")}
-              htmlFor="work-log-contract"
-              error={errors.contractId}
-              hint={t("custom_apps:work_log.hints.contract", {day: formatDay(form.day, language)})}
-              className="sm:col-span-2"
-            >
-              <Select
-                id="work-log-contract"
-                value={chosen}
-                onChange={(event) => set("contractId", event.target.value)}
-                disabled={pending}
-                aria-invalid={Boolean(errors.contractId)}
-              >
-                <option value="">{t("custom_apps:work_log.pick_contract")}</option>
-                {candidates.map((contract) => (
-                  <option key={contract.id} value={contract.id}>
-                    {contract.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-          )}
-        </div>
-
-        {destination && <p className="-mt-1 text-[12px] leading-relaxed text-neutral-500">{destination}</p>}
+        )}
 
         {failure && (
           <Alert tone="error" title={t("admin:common.failed")}>

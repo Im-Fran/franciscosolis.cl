@@ -20,6 +20,7 @@ import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {LifecycleBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {CopyField} from "@/pages/custom-apps/components/copy-button.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 
 const LABEL_MAX = 120;
 
@@ -33,6 +34,7 @@ const LABEL_MAX = 120;
  */
 export const CiTokensPanel = ({appId}: {appId: string}) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const {notify} = useToast();
   const language = i18n.language;
   const [creating, setCreating] = useState(false);
@@ -149,9 +151,15 @@ export const CiTokensPanel = ({appId}: {appId: string}) => {
         onClose={create.pending ? () => undefined : () => setCreating(false)}
         title={t("custom_apps:ci_tokens.create_title")}
         className="max-w-md"
+        help={help.form("ci_tokens.form_help")}
       >
         <form onSubmit={submitCreate} className="flex flex-col gap-5" noValidate>
-          <Field label={t("custom_apps:ci_tokens.label")} htmlFor="ci-token-label" hint={t("custom_apps:ci_tokens.label_hint")}>
+          <Field
+            label={t("custom_apps:ci_tokens.label")}
+            htmlFor="ci-token-label"
+            hint={t("custom_apps:ci_tokens.label_hint")}
+            help={help.field("ci_tokens.help.label")}
+          >
             <Input
               id="ci-token-label"
               value={label}

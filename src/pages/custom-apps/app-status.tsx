@@ -18,6 +18,8 @@ import {cn} from "@/lib/utils.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {useApp} from "@/pages/custom-apps/components/app-context.ts";
 import {StateBadge} from "@/pages/custom-apps/components/badges.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FieldLegend, FormHelpButton, RequiredLegend} from "@/components/ui/help.tsx";
 
 const MESSAGE_MAX = 500;
 
@@ -40,6 +42,7 @@ export const AppStatus = () => {
   const {app, replace} = useApp();
   const {notify} = useToast();
   const {states, heartbeat, graceMaxDays} = useServiceVocabulary();
+  const help = useHelp();
 
   const [state, setState] = useState<AppState>(app.state);
   const [message, setMessage] = useState(app.state_message ?? "");
@@ -107,7 +110,12 @@ export const AppStatus = () => {
         <Panel
           title={t("custom_apps:status.title")}
           description={t("custom_apps:status.description", {interval: app.heartbeat_interval_seconds || heartbeat.default})}
-          action={<StateBadge state={app.state} />}
+          action={
+            <>
+              <FormHelpButton help={help.form("status.form_help", {days: graceMaxDays})} />
+              <StateBadge state={app.state} />
+            </>
+          }
         >
           <div className="flex flex-col gap-5">
             {save.error && !confirming && (
@@ -117,7 +125,7 @@ export const AppStatus = () => {
             )}
 
             <fieldset>
-              <legend className="mb-2 text-sm font-medium text-neutral-300">{t("custom_apps:status.state")}</legend>
+              <FieldLegend label={t("custom_apps:status.state")} help={help.field("status.help.state")} className="mb-2" />
               <div className="grid gap-2 sm:grid-cols-2">
                 {states.map((option) => (
                   <label
@@ -154,12 +162,15 @@ export const AppStatus = () => {
               </div>
             </fieldset>
 
+            {state === "grace" && <RequiredLegend />}
+
             {state !== "active" && (
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field
                   label={t("custom_apps:status.message")}
                   htmlFor="status-message"
                   hint={t("custom_apps:status.message_hint", {count: message.length, max: MESSAGE_MAX})}
+                  help={help.field("status.help.message")}
                   className="sm:col-span-2"
                 >
                   <Textarea
@@ -183,6 +194,8 @@ export const AppStatus = () => {
                       : t("custom_apps:status.until_hint")
                   }
                   error={untilError}
+                  help={help.field(state === "grace" ? "status.help.until_grace" : "status.help.until", {days: graceMaxDays})}
+                  required={state === "grace"}
                 >
                   <Input
                     id="status-until"

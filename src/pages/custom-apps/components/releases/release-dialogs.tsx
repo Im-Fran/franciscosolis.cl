@@ -14,6 +14,9 @@ import type {InstallationSummary, ReleaseDetail} from "@/lib/custom-apps/types.t
 import {cn} from "@/lib/utils.ts";
 import {installationLabel} from "@/pages/custom-apps/components/installation-label.ts";
 import {SearchBox} from "@/pages/custom-apps/components/search-box.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {FieldLegend} from "@/components/ui/help.tsx";
+import type {FormHelp} from "@/components/ui/help.tsx";
 
 const REASON_MAX = 500;
 const PRESETS = [1, 10, 25, 50, 100] as const;
@@ -33,11 +36,14 @@ export const ReasonDialog = ({
   error,
   onConfirm,
   onClose,
+  formHelp,
 }: {
   open: boolean;
   title: string;
   body: ReactNode;
   confirmLabel: string;
+  /** What this particular action does, behind the dialog's "How does it work?". */
+  formHelp?: FormHelp;
   /** Draws the confirm button in the destructive tone. */
   danger?: boolean;
   pending: boolean;
@@ -46,6 +52,7 @@ export const ReasonDialog = ({
   onClose: () => void;
 }) => {
   const {t} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const [reason, setReason] = useState("");
 
   useEffect(() => {
@@ -58,10 +65,15 @@ export const ReasonDialog = ({
   };
 
   return (
-    <Modal open={open} onClose={pending ? () => undefined : onClose} title={title} className="max-w-md">
+    <Modal open={open} onClose={pending ? () => undefined : onClose} title={title} className="max-w-md" help={formHelp}>
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
         <div className="text-sm leading-relaxed text-neutral-300">{body}</div>
-        <Field label={t("custom_apps:release.reason")} htmlFor="release-reason" hint={t("custom_apps:release.reason_hint")}>
+        <Field
+          label={t("custom_apps:release.reason")}
+          htmlFor="release-reason"
+          hint={t("custom_apps:release.reason_hint")}
+          help={help.field("release.help.reason")}
+        >
           <Textarea
             id="release-reason"
             value={reason}
@@ -130,6 +142,7 @@ export const RolloutDialog = ({
   onDone: (release: ReleaseDetail) => void;
 }) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
+  const help = useHelp();
   const language = i18n.language;
   const [percent, setPercent] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
@@ -183,13 +196,14 @@ export const RolloutDialog = ({
       onClose={save.pending ? () => undefined : onClose}
       title={mode === "publish" ? t("custom_apps:release.publish_title", {version: release.version}) : t("custom_apps:release.rollout_title")}
       className="max-w-xl"
+      help={help.form(mode === "publish" ? "release.form_help_publish" : "release.form_help_rollout")}
     >
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
         <p className="text-[13px] leading-relaxed text-neutral-400">
           {mode === "publish" ? t("custom_apps:release.publish_body") : t("custom_apps:release.rollout_body")}
         </p>
 
-        <Field label={t("custom_apps:release.percent")} htmlFor="release-percent">
+        <Field label={t("custom_apps:release.percent")} htmlFor="release-percent" help={help.field("release.help.percent")}>
           <div className="flex items-center gap-3">
             <input
               id="release-percent"
@@ -241,14 +255,13 @@ export const RolloutDialog = ({
         </div>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-1.5 text-sm font-medium text-neutral-300">
-            {t("custom_apps:release.named")}
+          <FieldLegend label={t("custom_apps:release.named")} help={help.field("release.help.named")}>
             {selected.length > 0 && (
-              <span className="ml-2 text-[12px] font-normal text-neutral-500">
+              <span className="text-[12px] font-normal text-neutral-500">
                 {t("custom_apps:release.named_count", {count: selected.length})}
               </span>
             )}
-          </legend>
+          </FieldLegend>
           <p className="text-[12px] leading-relaxed text-neutral-500">{t("custom_apps:release.named_hint")}</p>
           {candidates.length > 8 && (
             <SearchBox value={search} onChange={setSearch} placeholder={t("custom_apps:release.named_search")} />

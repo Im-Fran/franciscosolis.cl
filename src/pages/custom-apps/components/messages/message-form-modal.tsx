@@ -20,6 +20,9 @@ import type {
   TargetScope,
 } from "@/lib/custom-apps/types.ts";
 import {ScopeFields} from "@/pages/custom-apps/components/scope-fields.tsx";
+import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {RequiredLegend} from "@/components/ui/help.tsx";
+import {FormSection} from "@/pages/custom-apps/components/form-section.tsx";
 
 export const TITLE_MAX = 200;
 export const BODY_MAX = 4000;
@@ -73,6 +76,7 @@ export const MessageFormModal = ({
 }) => {
   const {t} = useTranslation(["custom_apps", "admin"]);
   const {messageSeverities, messageDisplays} = useServiceVocabulary();
+  const help = useHelp();
   const [form, setForm] = useState<Form>(() => formOf(draft ?? {mode: "create"}));
   const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
 
@@ -147,45 +151,54 @@ export const MessageFormModal = ({
       onClose={save.pending ? () => undefined : onClose}
       title={editing ? t("custom_apps:messages.edit_title") : t("custom_apps:messages.create_title")}
       className="max-w-2xl"
+      help={help.form("messages.form_help")}
     >
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-        <Field
-          label={t("custom_apps:messages.fields.title")}
-          htmlFor="message-title"
-          error={errors.title}
-          hint={t("custom_apps:messages.count", {count: form.title.length, max: TITLE_MAX})}
-        >
-          <Input
-            id="message-title"
-            value={form.title}
-            onChange={(event) => set("title", event.target.value)}
-            maxLength={TITLE_MAX}
-            disabled={save.pending}
-            aria-invalid={Boolean(errors.title)}
-            autoComplete="off"
-          />
-        </Field>
+        <RequiredLegend className="-mt-2" />
 
-        <Field
-          label={t("custom_apps:messages.fields.body")}
-          htmlFor="message-body"
-          error={errors.body}
-          hint={t("custom_apps:messages.body_hint", {count: form.body.length, max: BODY_MAX})}
-        >
-          <Textarea
-            id="message-body"
-            value={form.body}
-            onChange={(event) => set("body", event.target.value)}
-            maxLength={BODY_MAX}
-            rows={5}
-            disabled={save.pending}
-            aria-invalid={Boolean(errors.body)}
-            className="resize-y"
-          />
-        </Field>
+        <FormSection title={t("custom_apps:messages.sections.content")}>
+          <Field
+            label={t("custom_apps:messages.fields.title")}
+            htmlFor="message-title"
+            error={errors.title}
+            hint={t("custom_apps:messages.count", {count: form.title.length, max: TITLE_MAX})}
+            help={help.field("messages.help.title")}
+            required
+          >
+            <Input
+              id="message-title"
+              value={form.title}
+              onChange={(event) => set("title", event.target.value)}
+              maxLength={TITLE_MAX}
+              disabled={save.pending}
+              aria-invalid={Boolean(errors.title)}
+              autoComplete="off"
+            />
+          </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={t("custom_apps:messages.fields.severity")} htmlFor="message-severity">
+          <Field
+            label={t("custom_apps:messages.fields.body")}
+            htmlFor="message-body"
+            error={errors.body}
+            hint={t("custom_apps:messages.body_hint", {count: form.body.length, max: BODY_MAX})}
+            help={help.field("messages.help.body")}
+            required
+          >
+            <Textarea
+              id="message-body"
+              value={form.body}
+              onChange={(event) => set("body", event.target.value)}
+              maxLength={BODY_MAX}
+              rows={5}
+              disabled={save.pending}
+              aria-invalid={Boolean(errors.body)}
+              className="resize-y"
+            />
+          </Field>
+        </FormSection>
+
+        <FormSection title={t("custom_apps:messages.sections.presentation")} bodyClassName="gap-4 sm:grid-cols-2">
+          <Field label={t("custom_apps:messages.fields.severity")} htmlFor="message-severity" help={help.field("messages.help.severity")}>
             <Select
               id="message-severity"
               value={form.severity}
@@ -204,6 +217,7 @@ export const MessageFormModal = ({
             label={t("custom_apps:messages.fields.display")}
             htmlFor="message-display"
             hint={t(`custom_apps:messages.display_hint.${form.display}`, {defaultValue: ""})}
+            help={help.field("messages.help.display")}
           >
             <Select
               id="message-display"
@@ -218,8 +232,10 @@ export const MessageFormModal = ({
               ))}
             </Select>
           </Field>
+        </FormSection>
 
-          {!editing && (
+        {!editing && (
+          <FormSection title={t("custom_apps:messages.sections.audience")} bodyClassName="gap-4 sm:grid-cols-2">
             <ScopeFields
               idPrefix="message"
               scope={form.scope}
@@ -231,9 +247,16 @@ export const MessageFormModal = ({
               disabled={save.pending}
               error={errors.scopeValue}
             />
-          )}
+          </FormSection>
+        )}
 
-          <Field label={t("custom_apps:messages.fields.starts_at")} htmlFor="message-starts" hint={t("custom_apps:messages.starts_hint")}>
+        <FormSection title={t("custom_apps:messages.sections.when")} bodyClassName="gap-4 sm:grid-cols-2">
+          <Field
+            label={t("custom_apps:messages.fields.starts_at")}
+            htmlFor="message-starts"
+            hint={t("custom_apps:messages.starts_hint")}
+            help={help.field("messages.help.starts_at")}
+          >
             <Input
               id="message-starts"
               type="datetime-local"
@@ -248,6 +271,7 @@ export const MessageFormModal = ({
             htmlFor="message-ends"
             hint={t("custom_apps:messages.ends_hint")}
             error={errors.endsAt}
+            help={help.field("messages.help.ends_at")}
           >
             <Input
               id="message-ends"
@@ -259,7 +283,7 @@ export const MessageFormModal = ({
               aria-invalid={Boolean(errors.endsAt)}
             />
           </Field>
-        </div>
+        </FormSection>
 
         {save.error && (
           <Alert tone="error" title={t("admin:common.failed")}>
