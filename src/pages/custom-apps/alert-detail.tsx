@@ -190,9 +190,15 @@ export const AlertDetail = () => {
               </Detail>
             )}
             <Detail label={t("custom_apps:alerts.rule")}>
-              <Link to={customAppsRoute.alertRules} className="hover:underline">
-                {current.rule_name ?? current.rule_id}
-              </Link>
+              {current.rule_deleted ? (
+                <span>
+                  {current.rule_name ?? "—"} <span className="text-neutral-500">· {t("custom_apps:alerts.rule_deleted")}</span>
+                </span>
+              ) : (
+                <Link to={customAppsRoute.alertRules} className="hover:underline">
+                  {current.rule_name ?? current.rule_id}
+                </Link>
+              )}
             </Detail>
             <Detail label={t("custom_apps:alerts.columns.occurrences")}>{current.occurrences}</Detail>
             <Detail label={t("custom_apps:alerts.opened")}>{formatDateTime(current.opened_at, language)}</Detail>

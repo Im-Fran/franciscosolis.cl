@@ -67,7 +67,6 @@ export const CurrentCycleCard = ({contract}: {contract: ContractDetail}) => {
           <Figure
             label={t("custom_apps:cycle.remaining")}
             value={formatMinutes(cycle.remaining_minutes)}
-            tone={cycle.remaining_minutes < 0 ? "bad" : undefined}
           />
           <Figure label={t("custom_apps:cycle.overage")} value={formatMinutes(cycle.overage_minutes)} tone={over ? "bad" : undefined} />
         </div>

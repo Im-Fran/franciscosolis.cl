@@ -885,8 +885,10 @@ export type AlertQueryStatus = AlertStatus | "unresolved";
 
 export type AlertEntry = {
   id: string;
-  rule_id: string;
+  /** Null once the rule was deleted; the alert stays as history with its rule's last name and kind. */
+  rule_id: string | null;
   rule_name: string | null;
+  rule_deleted: boolean;
   kind: AlertKind;
   app_id: string | null;
   app_name: string | null;
@@ -896,7 +898,8 @@ export type AlertEntry = {
   subject_name: string | null;
   status: AlertStatus;
   value: number | null;
-  threshold: number;
+  /** Null when the rule was deleted. */
+  threshold: number | null;
   details: Record<string, unknown> | null;
   occurrences: number;
   opened_at: string;
@@ -1160,6 +1163,8 @@ export type Contract = {
   lapsed_at: string | null;
   cancelled_at: string | null;
   cancelled_by: string | null;
+  /** Why it was cancelled, when somebody said. */
+  cancel_reason: string | null;
   notes: string | null;
   apps: ContractApp[];
   /** The cycle running today, or null before the contract starts. */
@@ -1338,17 +1343,8 @@ export type Ticket = {
   messages?: TicketMessage[];
 };
 
-/** Work logged against a ticket, in short. */
-export type TicketWorkLog = {
-  id: string;
-  occurred_on: string;
-  minutes: number;
-  kind: WorkKind;
-  description: string;
-  created_by: string | null;
-};
-
-export type TicketDetail = Ticket & {messages: TicketMessage[]; work_logs: TicketWorkLog[]};
+/** Work logged against the ticket, in the same shape the work log routes answer. */
+export type TicketDetail = Ticket & {messages: TicketMessage[]; work_logs: WorkLogEntry[]};
 
 export type TicketQuery = {
   status?: TicketStatusFilter;
