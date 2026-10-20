@@ -14,7 +14,12 @@ export type HeatmapProps = {
   describe: (row: number, column: number) => string;
   /** Cells to outline — the app's operating hours, so usage outside them stands out. */
   outline?: (row: number, column: number) => boolean;
-  legend: {low: string; high: string; outline?: string};
+  /**
+   * Cells to mark with a label of their own — the hours a suggested maintenance window covers, with
+   * its rank. Null leaves a cell unmarked.
+   */
+  mark?: (row: number, column: number) => string | null;
+  legend: {low: string; high: string; outline?: string; mark?: string};
   label: string;
   /** Shown under the grid until a cell is pointed at. */
   hint: string;
@@ -46,6 +51,7 @@ export const Heatmap = ({
   showColumnLabel,
   describe,
   outline,
+  mark,
   legend,
   label,
   hint,
@@ -76,18 +82,22 @@ export const Heatmap = ({
               {columnLabels.map((text, column) => {
                 const value = cells[row]?.[column] ?? 0;
                 const active = hover !== null && hover[0] === row && hover[1] === column;
+                const marked = mark?.(row, column) ?? null;
                 return (
                   <span
                     key={text}
                     title={describe(row, column)}
                     onPointerEnter={() => setHover([row, column])}
                     className={cn(
-                      "h-[22px] rounded-[3px] bg-neutral-800/70",
+                      "flex h-[22px] items-center justify-center rounded-[3px] bg-neutral-800/70",
                       outline?.(row, column) && "ring-1 ring-neutral-400/70 ring-inset",
+                      marked !== null && "ring-2 ring-emerald-400 ring-inset",
                       active && "ring-2 ring-text ring-inset",
                     )}
                     style={{background: shade(value, max)}}
-                  />
+                  >
+                    {marked && <span className="text-[10px] leading-none font-semibold text-emerald-200 tabular-nums">{marked}</span>}
+                  </span>
                 );
               })}
             </div>
@@ -113,6 +123,12 @@ export const Heatmap = ({
             />
             {legend.high}
           </span>
+          {legend.mark && (
+            <span className="flex items-center gap-1.5">
+              <span aria-hidden="true" className="size-3 rounded-[3px] bg-neutral-800/70 ring-2 ring-emerald-400 ring-inset" />
+              {legend.mark}
+            </span>
+          )}
           {legend.outline && (
             <span className="flex items-center gap-1.5">
               <span aria-hidden="true" className="size-3 rounded-[3px] bg-neutral-800/70 ring-1 ring-neutral-400/70 ring-inset" />

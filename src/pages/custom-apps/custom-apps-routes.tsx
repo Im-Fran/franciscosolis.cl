@@ -18,6 +18,7 @@ import {
   AppInstallations,
   AppLayout,
   AppList,
+  AppMaintenances,
   AppMessages,
   AppReleases,
   AppSettings,
@@ -37,6 +38,8 @@ import {
   CrashDetail,
   CustomAppsLayout,
   InstallationDetail,
+  MaintenanceDetail,
+  Maintenances,
   Overview,
   ReleaseDetail,
   SignIn,
@@ -69,6 +72,11 @@ import {
  * `tickets/:ticketId` is a contract in the same way `alerts/:alertId` is: the notification centre
  * links each new ticket and each requester message there. Tickets sit beside the apps rather than
  * under one because the inbox crosses apps, like the alerts.
+ *
+ * `maintenances/:maintenanceId` is the third such contract: every `custom_apps.maintenance_*`
+ * notification links there. Maintenances sit beside the apps for the same reason — the list and its
+ * calendar cross apps — and each app has a tab listing its own. The page a client approves one on is
+ * not here at all: it is public, at `/mantencion/:token` (see `src/pages/maintenance-approval/`).
  */
 export const customAppsRoutes: RouteObject = {
   path: "custom-apps",
@@ -116,6 +124,7 @@ export const customAppsRoutes: RouteObject = {
             {path: "diagnostics", element: <AppDiagnostics />},
             {path: "releases", element: <AppReleases />},
             {path: "work-log", element: <AppWorkLog />},
+            {path: "maintenances", element: <AppMaintenances />},
             {path: "settings", element: <AppSettings />},
           ],
         },
@@ -128,6 +137,8 @@ export const customAppsRoutes: RouteObject = {
         {path: "releases/:releaseId", element: <ReleaseDetail />},
         {path: "tickets", element: <Tickets />},
         {path: "tickets/:ticketId", element: <TicketDetail />},
+        {path: "maintenances", element: <Maintenances />},
+        {path: "maintenances/:maintenanceId", element: <MaintenanceDetail />},
         /* `rules` is literal and must stay ahead of `:alertId`. */
         {path: "alerts", element: <Alerts />},
         {path: "alerts/rules", element: <AlertRules />},

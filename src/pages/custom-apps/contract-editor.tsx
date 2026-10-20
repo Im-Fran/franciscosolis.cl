@@ -61,13 +61,14 @@ type Form = {
   graceDays: string;
   graceAllows: GraceAllowance[];
   graceMessage: string;
+  securityPatchDays: string;
   notes: string;
   appIds: string[];
 };
 
 type FieldName = keyof Form;
 
-const emptyForm = (companyId: string, today: string, noticeDays: number): Form => ({
+const emptyForm = (companyId: string, today: string, noticeDays: number, securityPatchDays: number): Form => ({
   name: "",
   companyId,
   amount: "0",
@@ -87,6 +88,7 @@ const emptyForm = (companyId: string, today: string, noticeDays: number): Form =
   graceDays: "0",
   graceAllows: [],
   graceMessage: "",
+  securityPatchDays: String(securityPatchDays),
   notes: "",
   appIds: [],
 });
@@ -111,6 +113,8 @@ const toForm = (source: ContractDetail): Form => ({
   graceDays: String(source.grace_days),
   graceAllows: [...source.grace_allows].sort(),
   graceMessage: source.grace_message ?? "",
+  /* A service that predates maintenances sends none; the default stands in so saving changes nothing. */
+  securityPatchDays: String(source.security_patch_days ?? 3),
   notes: source.notes ?? "",
   appIds: source.apps.map((app) => app.id).sort(),
 });
@@ -161,7 +165,7 @@ export const ContractEditor = () => {
   const today = dayIn(new Date(), timezone);
 
   const initial = useMemo(
-    () => emptyForm(params.get("company_id") ?? "", today, contractLimits.default_notice_days),
+    () => emptyForm(params.get("company_id") ?? "", today, contractLimits.default_notice_days, contractLimits.default_security_patch_days),
     // Only the first render's prefill: a later change of the address is not a reset of the form.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -265,6 +269,10 @@ export const ContractEditor = () => {
     if (!(grace >= 0 && grace <= contractLimits.max_grace_days)) {
       found.graceDays = t("custom_apps:rules.range", {min: 0, max: contractLimits.max_grace_days});
     }
+    const patchDays = parseInteger(form.securityPatchDays);
+    if (!(patchDays >= 1 && patchDays <= contractLimits.max_security_patch_days)) {
+      found.securityPatchDays = t("custom_apps:rules.range", {min: 1, max: contractLimits.max_security_patch_days});
+    }
     if (form.graceMessage.trim().length > GRACE_MESSAGE_MAX) found.graceMessage = t("custom_apps:validation.too_long", {max: GRACE_MESSAGE_MAX});
     if (form.notes.trim().length > NOTES_MAX) found.notes = t("custom_apps:validation.too_long", {max: NOTES_MAX});
     return found;
@@ -290,6 +298,7 @@ export const ContractEditor = () => {
     grace_days: parseInteger(form.graceDays),
     grace_allows: form.graceAllows,
     grace_message: orNull(form.graceMessage),
+    security_patch_days: parseInteger(form.securityPatchDays),
     notes: orNull(form.notes),
     app_ids: form.appIds,
   });
@@ -314,6 +323,7 @@ export const ContractEditor = () => {
       ["rolloverMaxCycles", "rollover_max_cycles"],
       ["graceDays", "grace_days"],
       ["graceMessage", "grace_message"],
+      ["securityPatchDays", "security_patch_days"],
       ["notes", "notes"],
     ];
     const assign = <K extends keyof ContractPayload>(key: K) => {
@@ -736,6 +746,29 @@ export const ContractEditor = () => {
               </Field>
             </>
           )}
+          <Field
+            label={t("custom_apps:contract_editor.fields.security_patch_days")}
+            htmlFor="contract-security-patch-days"
+            error={errors.securityPatchDays}
+            hint={t("custom_apps:contract_editor.hints.security_patch_days", {max: contractLimits.max_security_patch_days})}
+            help={help.field("contract_editor.help.security_patch_days", {
+              max: contractLimits.max_security_patch_days,
+              default: contractLimits.default_security_patch_days,
+            })}
+            required
+          >
+            <Input
+              id="contract-security-patch-days"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={contractLimits.max_security_patch_days}
+              value={form.securityPatchDays}
+              onChange={(event) => set("securityPatchDays", event.target.value)}
+              aria-invalid={Boolean(errors.securityPatchDays)}
+              className="font-mono"
+            />
+          </Field>
         </Section>
 
         <Section title={t("custom_apps:contract_editor.grace")} description={t("custom_apps:contract_editor.grace_hint")}>

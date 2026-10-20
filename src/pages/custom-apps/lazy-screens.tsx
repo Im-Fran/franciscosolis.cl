@@ -73,6 +73,15 @@ export const Tickets = lazy(() => import("@/pages/custom-apps/tickets.tsx").then
 export const TicketDetail = lazy(() =>
   import("@/pages/custom-apps/ticket-detail.tsx").then((m) => ({default: m.TicketDetail})),
 );
+export const Maintenances = lazy(() =>
+  import("@/pages/custom-apps/maintenances.tsx").then((m) => ({default: m.Maintenances})),
+);
+export const MaintenanceDetail = lazy(() =>
+  import("@/pages/custom-apps/maintenance-detail.tsx").then((m) => ({default: m.MaintenanceDetail})),
+);
+export const AppMaintenances = lazy(() =>
+  import("@/pages/custom-apps/app-maintenances.tsx").then((m) => ({default: m.AppMaintenances})),
+);
 export const CrashDetail = lazy(() =>
   import("@/pages/custom-apps/crash-detail.tsx").then((m) => ({default: m.CrashDetail})),
 );

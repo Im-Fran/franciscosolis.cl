@@ -38,6 +38,7 @@ const RESOURCE_TYPES = [
   "alert",
   "contract",
   "ticket",
+  "maintenance",
 ] as const;
 
 /** Where a resource lives in this panel, for the types that have a screen. */
@@ -62,6 +63,8 @@ const resourceRoute = (type: string | null, id: string | null) => {
       return customAppsRoute.contract(id);
     case "ticket":
       return customAppsRoute.ticket(id);
+    case "maintenance":
+      return customAppsRoute.maintenance(id);
     default:
       return null;
   }
@@ -74,6 +77,15 @@ const resourceRoute = (type: string | null, id: string | null) => {
  */
 const releaseOf = (metadata: AuditEntry["metadata"]) =>
   typeof metadata?.release_id === "string" && metadata.release_id ? metadata.release_id : null;
+
+/**
+ * The maintenance an entry was caused by, when it was filed under something else: a release a
+ * maintenance published or withdrew, the work log entry a completed one filed.
+ */
+const maintenanceOf = (entry: AuditEntry) =>
+  entry.resource_type !== "maintenance" && typeof entry.metadata?.maintenance_id === "string" && entry.metadata.maintenance_id
+    ? entry.metadata.maintenance_id
+    : null;
 
 /**
  * The contract an app's state change came from, when a contract's lapse or its renewal switched the
@@ -263,6 +275,7 @@ export const AuditLog = () => {
                       const route = resourceRoute(entry.resource_type, entry.resource_id);
                       const releaseId = entry.event.startsWith("release.") && entry.event !== "release.deleted" ? releaseOf(entry.metadata) : null;
                       const contractId = contractOf(entry);
+                      const maintenanceId = maintenanceOf(entry);
                       const reason = typeof entry.metadata?.reason === "string" ? entry.metadata.reason : null;
                       const resource = [entry.resource_type, entry.resource_id].filter(Boolean).join(" ");
                       return (
@@ -304,6 +317,14 @@ export const AuditLog = () => {
                                 className="mt-1 block text-[12px] text-neutral-400 hover:text-text hover:underline"
                               >
                                 {t("custom_apps:audit.open_contract")}
+                              </Link>
+                            )}
+                            {maintenanceId && (
+                              <Link
+                                to={customAppsRoute.maintenance(maintenanceId)}
+                                className="mt-1 block text-[12px] text-neutral-400 hover:text-text hover:underline"
+                              >
+                                {t("custom_apps:audit.open_maintenance")}
                               </Link>
                             )}
                             {releaseId && (

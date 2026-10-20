@@ -233,7 +233,7 @@ export const ContractDetail = () => {
               by: current.cancelled_by ?? t("custom_apps:audit.system"),
             })}
             {current.cancel_reason && (
-              <span className="mt-1 block">{t("custom_apps:contract.cancel_reason", {reason: current.cancel_reason})}</span>
+              <span className="mt-1 block">{t("custom_apps:contract.cancel_reason_value", {reason: current.cancel_reason})}</span>
             )}
           </Alert>
         )}
@@ -299,6 +299,9 @@ export const ContractDetail = () => {
                     .filter(Boolean)
                     .join(" · ")
                 : t("custom_apps:contract.rollover_off")}
+            </Detail>
+            <Detail label={t("custom_apps:contract_editor.fields.security_patch_days")}>
+              {current.security_patch_days !== undefined ? t("custom_apps:contract.days", {count: current.security_patch_days}) : null}
             </Detail>
             <Detail label={t("custom_apps:contract.grace")}>
               {current.grace_days > 0

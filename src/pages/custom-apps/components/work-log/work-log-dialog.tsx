@@ -36,10 +36,18 @@ type Form = {
   contractId: string;
   /** Empty: not about a support ticket. */
   ticketId: string;
+  /** Empty: not a scheduled maintenance. */
+  maintenanceId: string;
 };
 
-/** What a new entry starts with, for the ticket page's "log time" shortcut. */
-export type WorkLogPreset = {ticketId?: string; ticketNumber?: number; kind?: WorkKind};
+/** What a new entry starts with, for the "log time" shortcut of a ticket's or a maintenance's page. */
+export type WorkLogPreset = {
+  ticketId?: string;
+  ticketNumber?: number;
+  maintenanceId?: string;
+  maintenanceTitle?: string;
+  kind?: WorkKind;
+};
 
 type FieldName = keyof Form;
 
@@ -53,6 +61,7 @@ const formOf = (entry: WorkLogEntry | null, today: string, fixedAppId: string, p
   appId: fixedAppId || (entry?.app_id ?? ""),
   contractId: entry?.contract_id ?? "",
   ticketId: entry ? (entry.ticket_id ?? "") : (preset?.ticketId ?? ""),
+  maintenanceId: entry ? (entry.maintenance_id ?? "") : (preset?.maintenanceId ?? ""),
 });
 
 const isHttpUrl = (value: string) => {
@@ -79,6 +88,8 @@ const asksForContract = (message: string | null) => Boolean(message && /contract
  *
  * An entry may name the support ticket it answered — one of the app's tickets, or of the company's
  * when the work is about the company as a whole. The service refuses a ticket of another company.
+ * In the same way it may name the scheduled maintenance it was — the app's, or the company's — which
+ * a completed maintenance does on its own for the entry it files.
  */
 export const WorkLogDialog = ({
   open,
@@ -181,6 +192,32 @@ export const WorkLogDialog = ({
     }
     return rows;
   }, [ticketsResource.data, entry, preset]);
+  /*
+   * The maintenances the entry could be: the app's when it names one, the company's otherwise. The
+   * hundred newest cover anything still being worked on.
+   */
+  const maintenancesResource = useResource(
+    useCallback(
+      (signal: AbortSignal) =>
+        ticketAppId
+          ? customAppsApi.maintenances.listForApp(ticketAppId, {limit: 100}, signal)
+          : customAppsApi.maintenances.list({company_id: companyId, limit: 100}, signal),
+      [ticketAppId, companyId],
+    ),
+  );
+  const maintenanceOptions = useMemo(() => {
+    const rows = (maintenancesResource.data?.data ?? [])
+      .filter((maintenance) => maintenance.status !== "cancelled" || maintenance.id === (entry?.maintenance_id ?? preset?.maintenanceId))
+      .map((maintenance) => ({id: maintenance.id, title: maintenance.title, status: maintenance.status}));
+    const linked = entry?.maintenance_id
+      ? {id: entry.maintenance_id, title: entry.maintenance_title ?? ""}
+      : preset?.maintenanceId
+        ? {id: preset.maintenanceId, title: preset.maintenanceTitle ?? ""}
+        : null;
+    if (linked && !rows.some((row) => row.id === linked.id)) rows.unshift({id: linked.id, title: linked.title, status: "completed" as const});
+    return rows;
+  }, [maintenancesResource.data, entry, preset]);
+
   const showPicker = scope.kind !== "contract" && (candidates.length > 1 || mustChoose);
 
   const save = useMutation(
@@ -249,6 +286,7 @@ export const WorkLogDialog = ({
       link_url: orNull(form.link),
     };
     if (form.ticketId) body.ticket_id = form.ticketId;
+    if (form.maintenanceId) body.maintenance_id = form.maintenanceId;
     if (scope.kind !== "app") {
       body.company_id = companyId;
       if (form.appId) body.app_id = form.appId;
@@ -270,6 +308,7 @@ export const WorkLogDialog = ({
     if (scope.kind !== "app" && (form.appId || null) !== current.app_id) body.app_id = form.appId || null;
     /* Linking a ticket files nothing again: it only says what the work answered. */
     if ((form.ticketId || null) !== (current.ticket_id ?? null)) body.ticket_id = form.ticketId || null;
+    if ((form.maintenanceId || null) !== (current.maintenance_id ?? null)) body.maintenance_id = form.maintenanceId || null;
 
     const refiled = body.occurred_on !== undefined || body.app_id !== undefined;
     if (scope.kind === "contract") {
@@ -286,6 +325,7 @@ export const WorkLogDialog = ({
     if (status === 409) return t("custom_apps:work_log.errors.closed_cycle");
     if (status === 422 && /does not cover/i.test(message)) return t("custom_apps:work_log.errors.not_covered");
     if (status === 422 && /ticket_id/i.test(message)) return t("custom_apps:work_log.errors.ticket");
+    if (status === 422 && /maintenance_id/i.test(message)) return t("custom_apps:work_log.errors.maintenance");
     if (status === 400 && /future/i.test(message)) return t("custom_apps:work_log.errors.future");
     return t(`admin:errors.${message}`, {defaultValue: message});
   };
@@ -389,6 +429,29 @@ export const WorkLogDialog = ({
                 <option key={ticket.id} value={ticket.id}>
                   {ticket.number ? `#${ticket.number}` : t("custom_apps:work_log.fields.ticket")}
                   {ticket.subject ? ` · ${ticket.subject}` : ""}
+                </option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field
+            label={t("custom_apps:work_log.fields.maintenance")}
+            htmlFor="work-log-maintenance"
+            hint={t("custom_apps:work_log.hints.maintenance")}
+            help={help.field("work_log.help.maintenance")}
+            className="sm:col-span-2"
+          >
+            <Select
+              id="work-log-maintenance"
+              value={form.maintenanceId}
+              onChange={(event) => set("maintenanceId", event.target.value)}
+              disabled={pending || (maintenancesResource.loading && !maintenancesResource.data)}
+            >
+              <option value="">{t("custom_apps:work_log.no_maintenance")}</option>
+              {maintenanceOptions.map((maintenance) => (
+                <option key={maintenance.id} value={maintenance.id}>
+                  {maintenance.title || t("custom_apps:work_log.fields.maintenance")}
+                  {maintenance.status ? ` · ${t(`custom_apps:maintenance_statuses.${maintenance.status}`, {defaultValue: maintenance.status})}` : ""}
                 </option>
               ))}
             </Select>

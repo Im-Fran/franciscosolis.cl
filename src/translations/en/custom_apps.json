@@ -10,7 +10,8 @@
     "sign_out": "Sign out",
     "alerts": "Alerts",
     "contracts": "Contracts",
-    "tickets": "Tickets"
+    "tickets": "Tickets",
+    "maintenances": "Maintenances"
   },
   "sign_in": {
     "title": "Custom apps",
@@ -199,7 +200,15 @@
     "tickets_pending": "Waiting on client",
     "tickets_pending_detail": "Answered; waiting on the requester.",
     "tickets_unread": "Unread tickets",
-    "tickets_unread_detail": "Tickets with at least one requester message nobody has opened yet."
+    "tickets_unread_detail": "Tickets with at least one requester message nobody has opened yet.",
+    "maintenances_pending": "Maintenances to approve",
+    "maintenances_pending_detail": "Waiting for the client to pick a window",
+    "maintenances_upcoming": "Maintenances this week",
+    "maintenances_upcoming_detail": "Scheduled to start in the next 7 days",
+    "maintenances_in_progress": "Maintenances in progress",
+    "maintenances_in_progress_detail": "With installations in maintenance right now",
+    "maintenances_attention": "Maintenances to review",
+    "maintenances_attention_detail": "No answer, failed in the last 7 days, or rejected by the client"
   },
   "companies": {
     "title": "Companies",
@@ -648,7 +657,8 @@
     "messages": "Messages",
     "diagnostics": "Crashes & logs",
     "releases": "Releases",
-    "work_log": "Work log"
+    "work_log": "Work log",
+    "maintenances": "Maintenances"
   },
   "summary": {
     "connected": "Connected now",
@@ -1144,7 +1154,8 @@
       "alert_rule": "Alert rule",
       "alert": "Alert",
       "contract": "Contract",
-      "ticket": "Ticket"
+      "ticket": "Ticket",
+      "maintenance": "Maintenance"
     },
     "events": {
       "company": {
@@ -1248,6 +1259,26 @@
         "opened": "Ticket opened from the app",
         "replied": "Ticket answered",
         "status_changed": "Ticket status changed"
+      },
+      "maintenance": {
+        "created": "Maintenance planned",
+        "updated": "Maintenance edited",
+        "deleted": "Maintenance deleted",
+        "window_added": "Window offered",
+        "window_updated": "Window moved",
+        "window_removed": "Window removed",
+        "sent": "Approval request sent",
+        "resent": "Approval request sent again",
+        "approved": "Maintenance approved by the client",
+        "rejected": "Maintenance rejected by the client",
+        "auto_applied": "Maintenance applied without an answer",
+        "no_response": "Maintenance got no answer",
+        "scheduled": "Security patch scheduled",
+        "reminded": "Maintenance reminder sent",
+        "started": "Maintenance started",
+        "completed": "Maintenance completed",
+        "failed": "Maintenance failed",
+        "cancelled": "Maintenance cancelled"
       }
     },
     "automatic": "Automatic",
@@ -1256,7 +1287,12 @@
       "rollback_rate": "The rollback rate crossed the threshold",
       "crash_rate": "The crash rate crossed the threshold",
       "contract_lapsed": "The contract lapsed without renewal",
-      "contract_renewed": "The contract was renewed"
+      "contract_renewed": "The contract was renewed",
+      "grace": "The app was in grace and its contract does not allow maintenances",
+      "suspended": "The app was suspended",
+      "missed": "The window passed without the maintenance starting",
+      "health_check": "The installations did not report a healthy update",
+      "release_unavailable": "The release could no longer be installed"
     },
     "open_release": "Release {{version}}",
     "open_contract": "Open contract",
@@ -1286,7 +1322,8 @@
         "how": "Pick a day on or after \"From\"; empty sets no later limit.",
         "example": "2026-03-31"
       }
-    }
+    },
+    "open_maintenance": "Open the maintenance"
   },
   "module_off": {
     "title": "{{modules}}: off for this app",
@@ -2492,11 +2529,13 @@
   },
   "grace_allowances": {
     "updates": "Updates",
-    "support": "Support"
+    "support": "Support",
+    "maintenance": "Scheduled maintenances"
   },
   "grace_allowances_hint": {
     "updates": "During grace the apps keep receiving updates.",
-    "support": "During grace the app can still open and continue support tickets."
+    "support": "During grace the app can still open and continue support tickets.",
+    "maintenance": "During grace, scheduled maintenances are still sent, scheduled and run."
   },
   "work_kinds": {
     "maintenance": "Maintenance",
@@ -2580,10 +2619,10 @@
     "cancel_title": "Cancel “{{name}}”?",
     "cancel_body": "From today no new cycles start and nothing more is sent about this contract. The running cycle closes at its normal end. The apps are left as they are — use each app's kill switch to suspend them. This cannot be undone.",
     "cancel_reason": "Reason",
+    "cancel_reason_value": "Reason: {{reason}}",
     "cancel_reason_hint": "Optional. It is kept in the audit log.",
     "cancelled_title": "Contract cancelled",
     "cancelled_body": "Cancelled on {{date}} by {{by}}. It can no longer be edited or renewed — create a new contract to carry on.",
-    "cancel_reason": "Reason: {{reason}}",
     "grace_title": "In grace period",
     "grace_body": "The contract ended without renewal and its apps are in grace until {{date}}; they are suspended after that. Renewing it reactivates them.",
     "grace_body_short": "The contract ended without renewal and its apps are in grace. Renewing it reactivates them.",
@@ -2704,7 +2743,8 @@
       "rollover_max_cycles": "Cycles they last",
       "grace_days": "Grace days",
       "grace_allows": "Allowed during grace",
-      "grace_message": "Message during grace"
+      "grace_message": "Message during grace",
+      "security_patch_days": "Days for security patches"
     },
     "hints": {
       "name": "As you would name it on an invoice, e.g. “Maintenance 2026”.",
@@ -2722,7 +2762,8 @@
       "rollover_max_cycles": "How many cycles carried hours survive. Empty, no limit.",
       "grace_days": "0 to {{max}}. At 0 the apps are suspended as soon as it lapses.",
       "grace_message": "What the apps show while in grace. Optional.",
-      "notes": "For this panel only; the client never sees them."
+      "notes": "For this panel only; the client never sees them.",
+      "security_patch_days": "Within how many days a security patch is applied without asking for approval. 1 to {{max}}."
     },
     "errors": {
       "money_clp": "An amount in pesos, with no decimals.",
@@ -2824,9 +2865,9 @@
         "example": "7"
       },
       "grace_allows": {
-        "what": "What the apps may still do while in grace.",
-        "how": "Tick what you want to keep: \"Updates\" lets them keep receiving new versions and \"Support\" lets them keep opening and continuing tickets. With nothing ticked, both stop during grace.",
-        "example": "Support"
+        "what": "What the apps can still do while in grace.",
+        "how": "Tick what to keep: “Updates” lets them keep receiving new versions, “Support” lets them keep opening and continuing tickets, and “Scheduled maintenances” keeps maintenances being sent, scheduled and run. With nothing ticked, all of that stops during grace.",
+        "example": "Support and Scheduled maintenances"
       },
       "grace_message": {
         "what": "The text the covered apps show while in grace.",
@@ -2837,6 +2878,11 @@
         "what": "Internal notes about the contract: special terms, verbal agreements, context.",
         "how": "Free text and optional, up to 5000 characters. Only shown in this panel; the client does not see it.",
         "example": "Includes two on-site visits a year. Price frozen until 2027."
+      },
+      "security_patch_days": {
+        "what": "How soon a security patch is applied to the covered apps, without waiting for the client's approval.",
+        "how": "A whole number of days, 1 to {{max}} ({{default}} by default). When a patch is scheduled, the system looks for the first unused window from two hours ahead up to that limit, inside the app's operating hours; if none is unused, it picks the least used. An app without a contract uses {{default}} days.",
+        "example": "3"
       }
     },
     "form_help": {
@@ -2846,7 +2892,8 @@
         "Set the dates, automatic renewal and notice days.",
         "Set the price and how often it is charged.",
         "Define the hours per cycle, the overage rate and rollover.",
-        "Decide how many grace days the apps get and what they may do during them."
+        "Decide how many grace days the apps get and what they may do during them.",
+        "Set within how many days a security patch is applied without approval."
       ],
       "on_save": "Creating it takes you to the contract's page and the service starts keeping its hour cycles. Editing sends only what changed. Before the last day the service emails the client and the covered apps show the notice; if it ends without renewal, the apps go into grace or are suspended. Everything is written to the audit log. Once a cycle exists, the first day and the cycle length cannot be changed, and the client never can."
     }
@@ -2967,13 +3014,15 @@
       "description": "What was done",
       "link": "Link",
       "contract": "Contract",
-      "ticket": "Ticket"
+      "ticket": "Ticket",
+      "maintenance": "Maintenance"
     },
     "hints": {
       "app": "Empty when the work was for the client as a whole.",
       "link": "A pull request, a ticket or a document. Optional.",
       "contract": "More than one contract covers {{day}}: pick the one it is filed under.",
-      "ticket": "The support ticket this work answered. Optional."
+      "ticket": "The support ticket this work answered. Optional.",
+      "maintenance": "The scheduled maintenance this work was. Optional."
     },
     "errors": {
       "future": "Work cannot be logged on a future day.",
@@ -2983,7 +3032,8 @@
       "choose_contract": "More than one contract covers that day: pick one.",
       "closed_cycle": "That day falls in a cycle that is already closed: its balance is final, and no work can be logged or changed in it.",
       "not_covered": "That contract does not cover that day.",
-      "ticket": "That ticket belongs to another client: pick one of this client's, or none."
+      "ticket": "That ticket belongs to another client: pick one of this client's, or none.",
+      "maintenance": "That maintenance belongs to another client: pick one of this client's, or none."
     },
     "ticket": "Ticket #{{number}}",
     "no_ticket": "No ticket",
@@ -3031,6 +3081,11 @@
         "what": "Which contract the entry is filed under, when more than one covers that day.",
         "how": "It only appears when several contracts cover the app (or the client) on that day; choosing one is then required. Normally the service picks it and the dialog says which.",
         "example": "Maintenance and support 2026"
+      },
+      "maintenance": {
+        "what": "The scheduled maintenance this work belongs to.",
+        "how": "Pick one of the app's maintenances (or the client's, for work about the client as a whole). Optional. A completed maintenance already logs its own hours; use this for the extra work it took to prepare or fix it. The service refuses a maintenance of another client.",
+        "example": "Kiosk update to version 2.4"
       }
     },
     "form_help": {
@@ -3039,7 +3094,8 @@
         "Say which app and ticket it was about, what kind it was and what was done.",
         "Note the day and how long it took.",
         "Add a link that backs it.",
-        "Pick the contract if more than one covers that day."
+        "Pick the contract if more than one covers that day.",
+        "Link it to a scheduled maintenance."
       ],
       "on_save": "The service files the entry under the contract covering the app (or the client) on that day and in the cycle the day falls in; the dialog says beforehand which it will be. The hours are counted against the cycle and show on the contract, the app, the client and the ticket. Editing sends only what changed. An entry in a closed cycle can no longer be changed. It is written to the audit log."
     },
@@ -3059,7 +3115,8 @@
         "how": "Pick a day on or after \"From\"; empty sets no later limit.",
         "example": "2026-03-31"
       }
-    }
+    },
+    "no_maintenance": "No maintenance"
   },
   "app_contract": {
     "title": "Contract",
@@ -3236,6 +3293,504 @@
         "how": "Pick the client; \"Every client\" removes the filter. It is kept in the address.",
         "example": "Comercial Los Andes SpA"
       }
+    }
+  },
+  "maintenance_statuses": {
+    "draft": "Draft",
+    "pending_approval": "Awaiting approval",
+    "scheduled": "Scheduled",
+    "in_progress": "In progress",
+    "completed": "Completed",
+    "failed": "Failed",
+    "no_response": "No answer",
+    "cancelled": "Cancelled"
+  },
+  "maintenance_kinds": {
+    "normal": "Normal",
+    "security": "Security patch"
+  },
+  "maintenance_kinds_hint": {
+    "normal": "Sent to the client, who picks one of the windows offered or rejects it.",
+    "security": "Applied without approval, in the first unused window within the days the contract sets; the client gets a notice."
+  },
+  "maintenance_window_sources": {
+    "suggested": "Suggested",
+    "manual": "Manual"
+  },
+  "maintenances": {
+    "title": "Maintenances",
+    "description": "Work scheduled on clients' devices: what will be done, in which window, who approved it and how it went.",
+    "panel_title": "Maintenances",
+    "count_one": "{{count}} maintenance",
+    "count_other": "{{count}} maintenances",
+    "timezone_note": "Dates and times in {{timezone}}.",
+    "view_label": "View",
+    "views": {
+      "list": "List",
+      "calendar": "Calendar"
+    },
+    "empty": "No maintenances yet",
+    "empty_description": "Plan one from an app's “Maintenances” tab.",
+    "no_matches": "No maintenance matches the filters.",
+    "filters": {
+      "status": "Status",
+      "any_status": "Any status",
+      "upcoming": "Upcoming (scheduled or in progress)",
+      "pending": "Waiting on the client",
+      "attention": "To review",
+      "kind": "Kind",
+      "any_kind": "Any kind",
+      "app": "App",
+      "any_app": "Every app",
+      "company": "Client",
+      "any_company": "Every client",
+      "from": "From",
+      "to": "To"
+    },
+    "filter_help": {
+      "status": {
+        "what": "Where the maintenance is in its life.",
+        "how": "Pick a status, or one of the groupings: “Upcoming” is scheduled and in progress together; “Waiting on the client” is sent and not answered yet; “To review” gathers those nobody answered, those that failed in the last 7 days and those the client rejected.",
+        "example": "To review"
+      },
+      "kind": {
+        "what": "Whether it is a normal maintenance, which the client approves, or a security patch, applied without approval.",
+        "how": "Pick a kind or leave “Any kind”.",
+        "example": "Security patch"
+      },
+      "app": {
+        "what": "Shows only one app's maintenances.",
+        "how": "Pick the app from the list. It combines with the other filters.",
+        "example": "Self-service kiosk · Comercial Los Andes"
+      },
+      "company": {
+        "what": "Shows only the maintenances of one client's apps.",
+        "how": "Pick the client from the list.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "from": {
+        "what": "The first day of the range looked at.",
+        "how": "Pick a day (Santiago time). It lists the maintenances whose window — the chosen one or, until there is one, any offered — touches the range. Empty, no limit backwards.",
+        "example": "2026-11-01"
+      },
+      "to": {
+        "what": "The last day of the range looked at, included.",
+        "how": "Pick a day on or after “From”. Empty, no limit forwards.",
+        "example": "2026-11-30"
+      }
+    },
+    "columns": {
+      "maintenance": "Maintenance",
+      "app": "App and client",
+      "status": "Status",
+      "window": "Window",
+      "sends": "Sends",
+      "result": "Result"
+    },
+    "results": {
+      "succeeded": "Completed",
+      "failed": "Failed"
+    },
+    "auto_applied_short": "Applied without an answer",
+    "no_windows_short": "No windows",
+    "windows_offered_one": "Proposal · {{count}} window offered",
+    "windows_offered_other": "Proposal · {{count}} windows offered",
+    "sends_title_one": "Sent {{count}} time",
+    "sends_title_other": "Sent {{count}} times",
+    "rejected_badge": "Rejected",
+    "calendar": {
+      "title": "Calendar",
+      "label": "Maintenance calendar",
+      "proposal": "Proposal, not approved",
+      "more_one": "+{{count}} more",
+      "more_other": "+{{count}} more",
+      "empty": "No windows this month.",
+      "previous": "Previous month",
+      "next": "Next month",
+      "today": "This month"
+    },
+    "app_title": "The app's maintenances",
+    "app_description": "Work scheduled on this app's installations.",
+    "app_empty": "This app has no maintenances",
+    "app_empty_description": "A maintenance says what will be done and what the client will notice, how long it takes and, when there is one, which release it installs. It is offered in windows the client approves.",
+    "new": "New maintenance",
+    "open_calendar": "See it on the calendar",
+    "created": "Created",
+    "create_title": "New maintenance",
+    "edit_title": "Edit maintenance",
+    "create": "Create draft",
+    "sections": {
+      "what": "What will be done",
+      "where": "Where"
+    },
+    "fields": {
+      "kind": "Kind",
+      "title": "Title",
+      "description": "Description for the client",
+      "duration": "Estimated duration",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "release": "Release to install",
+      "installations": "Installations"
+    },
+    "hints": {
+      "title": "One line the client understands. It is the email's subject.",
+      "description": "What will be done and what the client will notice. They read it as written, in the email and on the approval page.",
+      "duration": "Between {{min}} minutes and {{max}} hours.",
+      "release": "Optional. Installed on the included installations during the window.",
+      "release_none": "This app has no draft or published releases.",
+      "release_unavailable": "The app's releases could not be loaded (it may not have the updates module).",
+      "installations_all": "Every active installation of the app when it starts, including any added before then."
+    },
+    "no_release": "No release",
+    "release_option": "{{version}} · {{channel}} · {{platform}}/{{arch}} ({{status}})",
+    "installations_all": "Every active installation",
+    "installations_pick": "Pick installations",
+    "installations_count_one": "{{count}} installation",
+    "installations_count_other": "{{count}} installations",
+    "installations_search": "Search by name, version or architecture",
+    "installations_empty": "This app has no active installations.",
+    "off_line": "Off the release's line",
+    "security_notice": "A security patch asks for no approval: when it is scheduled, the system picks the first unused window (from {{lead}} hours ahead and within the days the contract sets) and emails the client a notice.",
+    "errors": {
+      "duration": "Between {{min}} minutes and {{max}} hours.",
+      "pick_one": "Pick at least one installation, or leave every one.",
+      "off_line_one": "{{count}} picked installation is not on the release's line (channel, platform and architecture), so it would never get it. Remove it or change the release.",
+      "off_line_other": "{{count}} picked installations are not on the release's line (channel, platform and architecture), so they would never get it. Remove them or change the release.",
+      "off_line_service": "Some installation is not on the release's line. ({{detail}})",
+      "release": "The release has to be this app's, and a draft or published.",
+      "installations": "The installations have to be active installations of this app.",
+      "window_too_short": "Some offered windows are shorter than that duration: lengthen or remove them first.",
+      "not_editable": "This maintenance can no longer be edited: only a draft or one nobody answered can. Cancel it and plan another.",
+      "paused_suspended": "The app is suspended: maintenances are paused until it is reactivated.",
+      "paused_grace": "The app is in grace and its contract does not allow maintenances: they are paused until it is renewed.",
+      "security_send": "A security patch is not sent for approval: schedule it.",
+      "normal_schedule": "Only a security patch is scheduled without approval: send this one to the client.",
+      "changed": "The maintenance changed meanwhile. Reload the page. ({{detail}})",
+      "no_recipients": "The client has no contact with an email address to send it to. Add a contact with the “Approves maintenances” role (or a primary one) on the client's page.",
+      "no_windows": "Offer at least one window before sending it.",
+      "window_started": "Some offered window already started: move or remove it before sending.",
+      "no_fit": "No window of that duration fits the operating hours within the contract's days. ({{detail}})",
+      "release_unusable": "The release can no longer be installed (it is paused or withdrawn). Pick another or remove it.",
+      "mail": "The email could not be sent to anybody, so nothing was sent. Try again later."
+    },
+    "help": {
+      "kind": {
+        "what": "Whether the client has to approve the maintenance or it is applied without their approval.",
+        "how": "Normal: the client gets an email with the windows to pick one or reject it. Security patch: no approval is asked; when it is scheduled, the system picks the first unused window within the days the contract sets and the client gets a notice. Use a security patch only for urgent security fixes.",
+        "example": "Normal"
+      },
+      "title": {
+        "what": "The maintenance's name, which the client sees as the email's subject and on the approval page.",
+        "how": "A short line saying what will be done, without internal jargon. Required, up to 200 characters.",
+        "example": "Kiosk update to version 2.4"
+      },
+      "description": {
+        "what": "The explanation for the client: what will be done and what they will notice while it lasts.",
+        "how": "Write in the client's language and say whether the app will be unavailable, whether the device restarts, or whether anything their staff use changes. Required, up to 5000 characters. The client reads it as written.",
+        "example": "We will install version 2.4, which fixes receipt printing. During the window the kiosk shows a maintenance screen and cannot be used."
+      },
+      "duration": {
+        "what": "How long the work is expected to take. It is the minimum length of every window, and what the work log records when it completes.",
+        "how": "Type hours and minutes: between {{min}} minutes and {{max}} hours in total. If you lengthen it later, every offered window must still fit.",
+        "example": "1 h 30 min"
+      },
+      "release": {
+        "what": "The app version the maintenance installs on the included installations.",
+        "how": "Pick a draft or published release of this app, or “No release” when the work installs nothing. During the window it is offered only to the included installations on its line; if any does not install it well, the maintenance fails and the release is withdrawn.",
+        "example": "2.4.0 · Stable · Windows/x86_64 (Draft)"
+      },
+      "installations": {
+        "what": "Which devices the maintenance is done on: they go into maintenance during the window and get the release, if there is one.",
+        "how": "Leave “Every active installation” for the whole app, or pick some (up to {{max}}). With a release, you can only pick installations on its line (channel, platform and architecture). Window suggestions are scored on the included installations' usage.",
+        "example": "Entrance kiosk and Food court kiosk"
+      }
+    },
+    "form_help_create": {
+      "what": "Plans a maintenance of this app: what will be done, how long it takes, which release it installs and on which installations.",
+      "can_do": [
+        "Choose whether it is normal (the client approves it) or a security patch.",
+        "Write the title and the description the client reads.",
+        "Set the estimated duration.",
+        "Pick the release to install and the included installations."
+      ],
+      "on_save": "It is created as a draft and its page opens, where you offer the windows (with suggestions from usage). Nothing reaches the client until you press “Send to the client”. With no answer it is sent again after {{resend}} hours and then applied in the first window still more than {{lead}} hours away. It is recorded in the audit log."
+    },
+    "form_help_edit": {
+      "what": "Corrects a maintenance that is still a draft or got no answer.",
+      "can_do": [
+        "Change the kind, the title and the description.",
+        "Change the duration: lengthening it requires every offered window to still fit.",
+        "Change the release and the included installations."
+      ],
+      "on_save": "Only what changed is sent. If it had been sent and nobody answered, send it again so the client sees the changes. It is recorded in the audit log."
+    },
+    "back": "Back to maintenances",
+    "loading_title": "Maintenance",
+    "summary": "Summary",
+    "updated": "Last changed",
+    "rejected_title": "{{name}} rejected the maintenance",
+    "the_client": "The client",
+    "reschedule_hint": "To reschedule it, adjust the windows (or the rest of the maintenance) and send it to the client again.",
+    "no_response_title": "Nobody answered",
+    "no_response_body": "Nobody answered after {{sends}} sends, and no offered window was still more than {{lead}} hours away. Offer new windows and send it again.",
+    "failed_title": "The maintenance failed",
+    "cancelled_title": "Maintenance cancelled",
+    "cancelled_body": "Cancelled on {{date}} by {{by}}.",
+    "pending_title": "Waiting for the client's answer",
+    "pending_body": "The email's links work until {{expires}}. With no answer it is sent again after {{resend}} hours and, {{resend}} hours later, applied in the first window still more than {{lead}} hours away.",
+    "security_title": "Security patch",
+    "security_body": "It is not sent for approval. When it is scheduled, the system replaces the windows with the first unused one (from {{lead}} hours ahead and within the days the contract sets) and emails the client a notice.",
+    "window_started_title": "Some windows already started",
+    "notice_title": "Notice to the client",
+    "approval_title": "Approval",
+    "chosen_window": "Chosen window",
+    "how": {
+      "approved": "Approved by the client",
+      "auto_applied": "Applied without an answer, in the first eligible window",
+      "security": "Chosen by the system (security patch)"
+    },
+    "sends": "Sends",
+    "sends_value_one": "{{count}} send · the last on {{date}}",
+    "sends_value_other": "{{count}} sends · the last on {{date}}",
+    "recipients": "Recipients",
+    "link_expires": "Links expire",
+    "responded": "Answered by",
+    "rejected_at": "Rejected",
+    "scheduled_at": "Scheduled on",
+    "reminder_sent_at": "Reminder sent",
+    "run_title": "Run",
+    "run_empty": "It has not started yet.",
+    "started_at": "Started",
+    "finished_at": "Finished",
+    "note": "Note",
+    "result": {
+      "installations_one": "{{count}} installation in maintenance",
+      "installations_other": "{{count}} installations in maintenance",
+      "targets_one": "{{count}} was to install the release",
+      "targets_other": "{{count}} were to install the release",
+      "already_on_version_one": "{{count}} already had that version",
+      "already_on_version_other": "{{count}} already had that version",
+      "off_line_one": "{{count}} off the release's line",
+      "off_line_other": "{{count}} off the release's line",
+      "skipped_one": "{{count}} skipped (suspended or in grace on its own)",
+      "skipped_other": "{{count}} skipped (suspended or in grace on their own)",
+      "failing_one": "{{count}} did not finish well",
+      "failing_other": "{{count}} did not finish well",
+      "none": "None",
+      "statuses": {
+        "no_report": "No report"
+      },
+      "release_published": "The maintenance published release v{{version}} for its installations only.",
+      "release_extended_one": "The maintenance added {{count}} installation to release v{{version}}.",
+      "release_extended_other": "The maintenance added {{count}} installations to release v{{version}}.",
+      "open_release": "Open the release",
+      "withdrawn_title": "Release withdrawn",
+      "withdrawn_body": "Release v{{version}} was withdrawn: the devices go back to the previous version.",
+      "mail_failures_title": "Emails that could not be sent"
+    },
+    "mail_stages": {
+      "approved": "Confirmation",
+      "auto_applied": "Applied-without-answer notice",
+      "security": "Security patch notice",
+      "reminder": "Reminder",
+      "completed": "Closing",
+      "failed": "Failure notice"
+    },
+    "cancel_reasons": {
+      "grace": "The app was in grace and its contract does not allow maintenances.",
+      "suspended": "The app was suspended.",
+      "missed": "The window passed without the maintenance starting."
+    },
+    "failure_reasons": {
+      "health_check": "Some installation did not report a healthy update in time.",
+      "release_unavailable": "The release was already paused or withdrawn when it started.",
+      "manual": "Marked as failed by hand.",
+      "failed": "It failed."
+    },
+    "causes": {
+      "no_answer": "Nobody answered",
+      "link_expired": "The links expired"
+    },
+    "included_title": "Included installations",
+    "included_all": "Every active installation of the app, as they are now.",
+    "included_named_one": "The picked installation, if it is still active.",
+    "included_named_other": "The {{count}} picked installations that are still active.",
+    "included_empty": "It includes no active installation.",
+    "work_log_title": "Logged hours",
+    "work_log_description": "A completed maintenance logs its duration in the work log on its own. You can also log the extra work it took here.",
+    "history_title": "History",
+    "history_empty": "No events yet.",
+    "via_link": "Through the email's link: {{name}}",
+    "sent_to": "To: {{list}}",
+    "not_sent_to": "Not delivered to: {{list}}"
+  },
+  "maintenance_windows": {
+    "title": "Windows",
+    "description": "The windows offered, in {{timezone}} time.",
+    "description_editable_one": "{{count}} of {{max}} windows, in the order the client sees them. {{timezone}} time.",
+    "description_editable_other": "{{count}} of {{max}} windows, in the order the client sees them. {{timezone}} time.",
+    "empty": "No windows were offered.",
+    "empty_editable": "No windows yet: add one by hand or pick a suggestion.",
+    "chosen": "Chosen",
+    "started": "Already started: move or remove it before sending",
+    "move_up": "Move window {{position}} up",
+    "move_down": "Move window {{position}} down",
+    "remove": "Remove window {{position}}",
+    "add_title": "Add a window",
+    "fields": {
+      "start": "Start",
+      "end": "End"
+    },
+    "hints": {
+      "start": "{{timezone}} time.",
+      "end": "By default, the start plus {{duration}}. It can be longer."
+    },
+    "help": {
+      "start": {
+        "what": "When the window starts: from then on, the included installations are in maintenance.",
+        "how": "Pick the day and time in {{timezone}} time, even if you are in another zone: it is the time the client reads. It must be in the future and must not overlap another window of the same maintenance.",
+        "example": "Tuesday 2026-11-10, 02:00"
+      },
+      "end": {
+        "what": "When the window ends.",
+        "how": "It fills itself in with the start plus the estimated duration ({{duration}}); you can lengthen it for some margin, but not shorten it below the duration. Empty uses the start plus the duration.",
+        "example": "Tuesday 2026-11-10, 04:00"
+      }
+    },
+    "add": "Add window",
+    "errors": {
+      "overlap": "That window overlaps another one of this maintenance.",
+      "too_many": "This maintenance already offers the most windows it can.",
+      "past": "The window has to start in the future.",
+      "too_short": "The window has to last at least the estimated duration.",
+      "too_short_value": "It has to last at least {{duration}}.",
+      "order": "The end has to be after the start."
+    },
+    "form_help": {
+      "what": "The windows in which the client can choose to have the maintenance done.",
+      "can_do": [
+        "Add a window by hand, with its start and end in Santiago time.",
+        "Add one of the suggestions scored on the last 30 days of usage.",
+        "Change the order with the arrows: the client sees them in that order.",
+        "Remove a window."
+      ],
+      "on_save": "Every change is saved at once and recorded in the audit log. The client sees nothing until you send the maintenance. If nobody answers, it is applied in the first window of the list still more than {{lead}} hours away, so put the one you prefer on top."
+    },
+    "suggest_title": "Suggestions",
+    "suggest_description": "The least-used blocks of the next {{days}} days, {{lead}} hours or more from now, from the last {{heatmap}} days of usage (each block scored over {{hours}} h).",
+    "suggest_again": "Suggest again",
+    "hours_applied": "They respect the app's operating hours.",
+    "hours_not_applied": "The app declares no operating hours: all 24 hours are considered.",
+    "heatmap_scope_note_one": "The map shows the whole app; the suggestions are scored on the included installation only.",
+    "heatmap_scope_note_other": "The map shows the whole app; the suggestions are scored on the {{count}} included installations only.",
+    "no_suggestions_title": "No suggestions",
+    "no_suggestions_body": "No block of that duration is left in the coming days that avoids the offered windows and respects the operating hours. Add a window by hand.",
+    "expected_use": "Expected use: {{time}}",
+    "expected_none": "Unused over the last 30 days",
+    "added": "Added",
+    "add_suggestion": "Add",
+    "suggestion_cell": "suggestion {{rank}}",
+    "legend_suggestion": "Suggestion",
+    "heatmap_label": "Usage by hour of the week, with the suggestions marked"
+  },
+  "maintenance_actions": {
+    "edit": "Edit",
+    "send": "Send to the client",
+    "resend": "Send again",
+    "schedule": "Schedule patch",
+    "complete": "Mark completed",
+    "fail": "Mark failed",
+    "cancel": "Cancel maintenance",
+    "send_title": "Send to the client",
+    "send_body_one": "The client's maintenance approvers get an email, each with a link of their own to pick the window or reject it. With no answer it is sent again after {{resend}} hours.",
+    "send_body_other": "The client's maintenance approvers get an email with the {{count}} windows, each with a link of their own to pick one or reject it. With no answer it is sent again after {{resend}} hours.",
+    "resend_title": "Send the request again",
+    "resend_body": "It is sent again now, with fresh links; the earlier links stop working. It counts as a send: after the second, if nobody answers, it is applied on its own.",
+    "schedule_title": "Schedule the security patch",
+    "schedule_body": "The system picks the first unused window from {{lead}} hours ahead and within the days the contract sets, replaces the offered windows and emails the client the notice at once.",
+    "delete_title": "Delete the maintenance",
+    "delete_body": "“{{title}}” is deleted with its windows. This cannot be undone.",
+    "send_done": "Request sent to the client",
+    "resend_done": "Request sent again",
+    "schedule_done": "Security patch scheduled",
+    "cancel_done": "Maintenance cancelled",
+    "complete_done": "Maintenance completed",
+    "fail_done": "Maintenance marked as failed",
+    "cancel_title": "Cancel “{{title}}”",
+    "cancel_body": "The email's links stop working and any notice the apps show is taken down. The client is not emailed about it.",
+    "cancel_field": "Reason",
+    "cancel_hint": "Optional. Kept in the history.",
+    "cancel_confirm": "Cancel maintenance",
+    "complete_title": "Complete “{{title}}”",
+    "complete_body": "The installations leave maintenance, the duration is logged in the work log and the client gets the closing email.",
+    "complete_field": "Note",
+    "complete_hint": "Optional. Kept in the result and the history.",
+    "complete_confirm": "Mark completed",
+    "fail_title": "Mark “{{title}}” as failed",
+    "fail_body": "The installations leave maintenance and the client gets an email saying everything stayed as it was.",
+    "fail_body_release": "The installations leave maintenance, release v{{version}} is withdrawn so the devices go back to the previous version, and the client gets an email explaining it.",
+    "fail_field": "What failed",
+    "fail_hint": "Required. Kept in the result and the history.",
+    "fail_confirm": "Mark failed",
+    "help": {
+      "cancel": {
+        "what": "Why the maintenance is cancelled.",
+        "how": "Write one line for whoever reads the history. Optional, up to {{max}} characters. The client does not see it.",
+        "example": "The client asked to postpone it until after the month-end close."
+      },
+      "complete": {
+        "what": "A note on how the maintenance ended.",
+        "how": "Optional, up to {{max}} characters. Kept in the result; the client does not see it.",
+        "example": "All installed; the food court kiosk was restarted by hand."
+      },
+      "fail": {
+        "what": "What went wrong, for whoever reviews the maintenance later.",
+        "how": "Required, up to {{max}} characters. Kept in the result and the history; the client gets a generic email that does not include it.",
+        "example": "Version 2.4 does not start on the Windows 10 kiosks."
+      }
+    },
+    "form_help_send": {
+      "what": "Sends the approval request to the client.",
+      "can_do": [
+        "Confirm sending the email with the offered windows."
+      ],
+      "on_save": "Every contact with the “Approves maintenances” role (else the primary one, else anyone with an address) gets an email with a link of their own to the approval page, which works until the first window starts. The maintenance becomes “Awaiting approval” and can no longer be edited. With no answer it is sent again after {{resend}} hours and then applied in the first window still more than {{lead}} hours away. It is recorded in the audit log."
+    },
+    "form_help_resend": {
+      "what": "Sends the approval request again, with fresh links.",
+      "can_do": [
+        "Confirm sending it again."
+      ],
+      "on_save": "The earlier links stop working and each recipient gets a new one. It counts as a send: after the second, if nobody answers within {{resend}} hours, it is applied in the first window still more than {{lead}} hours away. It is recorded in the audit log."
+    },
+    "form_help_schedule": {
+      "what": "Schedules a security patch without asking for approval.",
+      "can_do": [
+        "Confirm that the system picks the window and notifies the client."
+      ],
+      "on_save": "The system looks for the first unused window from {{lead}} hours ahead and within the contract's days for security patches (3 without a contract), inside the operating hours; with none unused, the least used. It replaces the offered windows, the maintenance becomes scheduled and the client gets the notice at once. It is recorded in the audit log."
+    },
+    "form_help_cancel": {
+      "what": "Cancels a maintenance that has not started yet.",
+      "can_do": [
+        "Write down the reason, if you want."
+      ],
+      "on_save": "The maintenance is cancelled: its links stop working and any notice the apps show ends. It can be deleted afterwards. It is recorded in the audit log."
+    },
+    "form_help_complete": {
+      "what": "Closes a maintenance in progress as completed now, without waiting for it to be evaluated at the end of the window.",
+      "can_do": [
+        "Add a note."
+      ],
+      "on_save": "The installations leave maintenance, the estimated duration is logged in the work log under the contract covering the app, and the client gets the closing email. It is recorded in the audit log."
+    },
+    "form_help_fail": {
+      "what": "Closes a maintenance in progress as failed now.",
+      "can_do": [
+        "Explain what failed."
+      ],
+      "on_save": "The installations leave maintenance; if the maintenance installed a release, it is withdrawn and the devices go back to the previous version. The client gets an email saying everything stayed as it was, and you get a notification in the bell. It is recorded in the audit log."
     }
   }
 }
