@@ -312,7 +312,7 @@ an entry as support work linked to the ticket.
 message in the website's bell (`custom_apps.ticket_opened` and `custom_apps.ticket_message`, in the
 `custom_apps` notification category), until somebody presses *Take this app's tickets* in the app's
 settings. The summary says who receives them and how many are waiting for an answer. The overview
-counts open tickets, tickets waiting on the client and unread requester messages, and the audit log
+counts open tickets, tickets waiting on the client and tickets with an unread requester message, and the audit log
 labels `ticket.opened`, `ticket.replied` and `ticket.status_changed`, linking each to its ticket.
 
 ## In-form help and required fields

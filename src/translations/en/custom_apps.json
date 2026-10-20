@@ -192,14 +192,14 @@
     "contracts_grace_detail": "Ended without renewal; their apps are in a grace period.",
     "cycles_exceeded": "Cycles over budget",
     "cycles_exceeded_detail": "Running cycles that already used more hours than they have.",
-    "cycles_to_bill": "To bill",
-    "cycles_to_bill_detail": "Closed cycles with overage not marked as billed yet.",
+    "cycles_to_bill": "Overage to charge",
+    "cycles_to_bill_detail": "Closed cycles with overage still to charge. Cycles without overage have nothing to bill.",
     "tickets_open": "Open tickets",
     "tickets_open_detail": "Waiting for an answer from us.",
     "tickets_pending": "Waiting on client",
     "tickets_pending_detail": "Answered; waiting on the requester.",
-    "tickets_unread": "Unread messages",
-    "tickets_unread_detail": "Requester messages nobody has opened yet."
+    "tickets_unread": "Unread tickets",
+    "tickets_unread_detail": "Tickets with at least one requester message nobody has opened yet."
   },
   "companies": {
     "title": "Companies",
@@ -2915,7 +2915,7 @@
       "can_do": [
         "Note the invoice or receipt number."
       ],
-      "on_save": "The cycle becomes \"billed\" and no longer counts in the overview as a cycle with overage to bill. Its balance was already final; this does not change it. It is written to the audit log."
+      "on_save": "The cycle becomes \"billed\" and no longer counts in the overview under \"Overage to charge\". Its balance was already final; this does not change it. It is written to the audit log."
     }
   },
   "work_log": {

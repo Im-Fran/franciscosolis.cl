@@ -1379,8 +1379,10 @@ export type Overview = {
   /** Optional for the same reason. `expiring` ends within its notice period without renewing. */
   contracts?: {active: number; expiring: number; in_grace: number};
   /** Open cycles over budget, and closed cycles with overage not billed yet. */
+  /** `to_bill`: closed cycles with overage not yet marked billed (cycles without overage have nothing to bill). */
   cycles?: {exceeded: number; to_bill: number};
   /** Tickets waiting on us and on the client, and requester messages nobody opened. Optional likewise. */
+  /** `unread`: tickets with at least one requester message nobody opened yet. */
   tickets?: {open: number; pending: number; unread: number};
 };
 

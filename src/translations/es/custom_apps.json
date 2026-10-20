@@ -192,14 +192,14 @@
     "contracts_grace_detail": "Vencieron sin renovarse; sus apps están en período de gracia.",
     "cycles_exceeded": "Ciclos excedidos",
     "cycles_exceeded_detail": "Ciclos en curso que ya usaron más horas de las disponibles.",
-    "cycles_to_bill": "Por facturar",
-    "cycles_to_bill_detail": "Ciclos cerrados con horas extra que aún no se marcan como facturados.",
+    "cycles_to_bill": "Excedentes por cobrar",
+    "cycles_to_bill_detail": "Ciclos cerrados con horas extra por cobrar. Los ciclos sin excedente no tienen nada que facturar.",
     "tickets_open": "Tickets abiertos",
     "tickets_open_detail": "Esperan una respuesta nuestra.",
     "tickets_pending": "Esperando al cliente",
     "tickets_pending_detail": "Respondidos; esperan al solicitante.",
-    "tickets_unread": "Mensajes sin leer",
-    "tickets_unread_detail": "Mensajes de solicitantes que nadie ha abierto todavía."
+    "tickets_unread": "Tickets sin leer",
+    "tickets_unread_detail": "Tickets con al menos un mensaje del solicitante que nadie ha abierto todavía."
   },
   "companies": {
     "title": "Clientes",
@@ -2915,7 +2915,7 @@
       "can_do": [
         "Anotar el número de factura o boleta."
       ],
-      "on_save": "El ciclo pasa a «facturado» y deja de contar en el resumen como ciclo con exceso por facturar. Su balance ya era final; esto no lo cambia. Queda en el registro de auditoría."
+      "on_save": "El ciclo pasa a «facturado» y deja de contar en el resumen en «Excedentes por cobrar». Su balance ya era final; esto no lo cambia. Queda en el registro de auditoría."
     }
   },
   "work_log": {
