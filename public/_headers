@@ -26,6 +26,16 @@
   X-Frame-Options: DENY
   Content-Security-Policy: frame-ancestors 'none'
 
+# The public maintenance approval page. Its address carries a single-use credential (the token in
+# the path), so it is never indexed, never framed, and never sent anywhere in a Referer — not even the
+# origin, which the site-wide policy above would allow. Cloudflare joins the two Referrer-Policy values
+# with a comma, and a browser honours the last one it understands: `no-referrer`.
+/mantencion/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  Referrer-Policy: no-referrer
+  X-Robots-Tag: noindex, nofollow
+
 # The service worker. Browsers already revalidate it on every update check, but an edge or proxy
 # cache in between would still hand out a stale copy — and a stale worker is the one asset whose
 # fix cannot reach anybody until it expires. It sits at the root, so its default scope is already

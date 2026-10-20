@@ -12,6 +12,7 @@ import {customAppsRoutes} from "@/pages/custom-apps/custom-apps-routes.tsx";
 import {legacyProductRoutes, productRoutes} from "@/pages/product/product-routes.tsx";
 import {CmsLegacyRedirect} from "@/pages/cms/components/legacy-redirect.tsx";
 import {Legal} from "@/pages/legal/lazy-screens.tsx";
+import {MaintenanceApproval} from "@/pages/maintenance-approval/lazy-screens.tsx";
 
 const routes = [
   {
@@ -34,6 +35,19 @@ const routes = [
         element: (
           <Suspense fallback={<AuthLoading/>}>
             <Legal/>
+          </Suspense>
+        ),
+      },
+      /*
+       * A client approving (or rejecting) a scheduled maintenance, from the link in the email the
+       * custom-apps service sent. Public and outside every `AuthProvider`: the link is the credential,
+       * and the address is the service's (`MAINTENANCE_LINK_BASE_URL`), so it must not move.
+       */
+      {
+        path: "mantencion/:token",
+        element: (
+          <Suspense fallback={<AuthLoading/>}>
+            <MaintenanceApproval/>
           </Suspense>
         ),
       },

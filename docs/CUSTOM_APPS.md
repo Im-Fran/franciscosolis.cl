@@ -17,7 +17,9 @@ what each client pays for: contracts with their renewal and grace period, the ho
 includes and what is left of them, the work log (bitácora) those hours are spent on, and the
 support tickets opened from inside the apps, answered here. See
 [Contracts, hours and the work log](#contracts-hours-and-the-work-log) and
-[Support tickets](#support-tickets).
+[Support tickets](#support-tickets). Phase 4b — **scheduled maintenances** — adds work done on a
+client's devices in a window the client approved (or, for a security patch, one the system chose),
+with a public page the client approves it on. See [Scheduled maintenances](#scheduled-maintenances).
 
 | Route                                        | What it is                                                     |
 | -------------------------------------------- | -------------------------------------------------------------- |
@@ -43,6 +45,10 @@ support tickets opened from inside the apps, answered here. See
 | `/custom-apps/crashes/:id`                   | One crash group, its status and every report with its stack    |
 | `/custom-apps/tickets`                       | **Support inbox**, opening on what needs somebody (open and waiting on the client), filterable by status, app, client and installation (in the address) and searchable by subject, requester or `#number` |
 | `/custom-apps/tickets/:id`                   | One ticket — where the notification centre's links land: the conversation, answer (and the status it leaves), status and subject, the device's context, and the time logged against it |
+| `/custom-apps/maintenances`                  | **Maintenances** across apps, as a list or a month calendar (`?view=calendar&month=YYYY-MM`), filtered by status (including `upcoming`, `pending` and `attention`), kind, app, client and days (in the address) |
+| `/custom-apps/maintenances/:id`              | One maintenance — where the notification centre's links land: status and actions, the windows (editable, with suggestions over the heatmap), approval, run and result, included installations, its work log and history |
+| `/custom-apps/apps/:id/maintenances`         | **Maintenances** of one app, and "New maintenance" (always shown: it is not a module) |
+| `/mantencion/:token`                         | The **public approval page** a client opens from the email — outside the panel, no login |
 | `/custom-apps/alerts`                        | **Alert inbox**, filterable by status, app, rule and installation (in the address) |
 | `/custom-apps/alerts/rules`                  | The alert rules: create, tune, silence, disable, take over notifications |
 | `/custom-apps/alerts/:id`                    | One alert — where the notification centre's links land; acknowledge or resolve |
@@ -314,6 +320,85 @@ message in the website's bell (`custom_apps.ticket_opened` and `custom_apps.tick
 settings. The summary says who receives them and how many are waiting for an answer. The overview
 counts open tickets, tickets waiting on the client and tickets with an unread requester message, and the audit log
 labels `ticket.opened`, `ticket.replied` and `ticket.status_changed`, linking each to its ticket.
+
+## Scheduled maintenances
+
+Phase 4b is panel API plus one public page. A **maintenance** says what will be done and what the
+client will notice (the client reads the title and description as written), how long it takes
+(15 min – 24 h, typed as hours and minutes and sent as minutes), optionally the **release** it installs
+(a draft or published release of the app) and on which **installations** (every active one, or some —
+with a release, only those on its line: the form marks the others instead of letting the save fail).
+It is planned from the app's *Maintenances* tab, as a draft, in a dialog with the full help system.
+
+**Kinds.** A `normal` maintenance is sent to the client for approval. A `security` patch is not: its
+page offers *Schedule patch*, and the service picks the first unused block from two hours ahead within
+the contract's `security_patch_days` (1–30, 3 by default — a field of the contract form, in *Hours per
+cycle*), replaces the windows with it and emails the client a notice. Security patches are painted red
+in every list and in the calendar.
+
+**Windows.** While a maintenance is a draft or nobody answered (`no_response`), its page edits the
+windows it is offered in: added by hand (a `datetime-local` **typed on Santiago's clock**, whatever zone
+the browser is in — `src/lib/custom-apps/zoned-time.ts` converts both ways; the end follows the start
+plus the duration until typed over), reordered with up/down arrows (the client sees them in that order,
+and with no answer the first one still 24 h away is the one applied), and removed. Every write answers
+the whole list. The **suggestions** panel asks `/windows/suggest` (which saves nothing) for the
+least-used blocks of the next 14 days and draws them, numbered by rank, on the week-by-hour heatmap
+(the `Heatmap` chart gained a `mark` prop); *Add* offers one as a `suggested` window.
+
+**Approval.** *Send to the client* emails every `maintenance_approver` contact (else the primary, else
+anybody with an address) a link of their own, valid until the first window starts; with no answer the
+service resends after 48 h and applies it 48 h later. The page shows the recipients, the sends, when the
+links expire, who answered and when, the chosen window and how it was chosen. A **rejection** brings the
+maintenance back to draft with `rejected: true`: the list badges it *Rejected*, and its page opens with
+the client's reason quoted in full and the hint to adjust the windows and send it again. Each refusal of
+the service (app suspended or in grace without the `maintenance` allowance, no recipients, a window
+already started, no email delivered) is explained in words.
+
+**Run and result.** In progress it can be closed by hand — *Mark completed* (optional note) or *Mark
+failed* (required note, which withdraws the release). The run panel lists the installations put in
+maintenance, the update targets, those already on the version, off the release's line or skipped, the
+ones that failed and what they last reported, the release the maintenance published or extended, the
+withdrawal, and any notice email that could not be sent. A completed maintenance files its own work log
+entry; the page shows the work log narrowed to it, and any entry can name a maintenance (the work log
+dialog has a maintenance selector, and lists link `maintenance_title` to it). Cancelling (anything not
+started) takes an optional reason; a draft or a cancelled one can be deleted.
+
+**Lists.** `/custom-apps/maintenances` lists every maintenance with its kind, status, the chosen window
+(or the first offered, marked as a proposal), sends and result, and toggles to a **month calendar** of
+windows (`from`/`to` on the service) — the chosen window of each, and the offered ones of a request
+still waiting on the client, dashed; below `sm` the calendar is an agenda. `attention` is built here,
+from three requests: no answer, failed in the last 7 days, and drafts the client rejected — the same
+three the overview counts. The **overview** has four cards: waiting on the client, scheduled this week
+(`status=scheduled` with `from`/`to`), in progress, and needing attention.
+
+**Notifications and audit.** `custom_apps.maintenance_approved` / `_rejected` / `_no_response` /
+`_failed` / `_completed` reach the owner's bell in the `custom_apps` category, linking to
+`/custom-apps/maintenances/<id>` — a contract with the service, like tickets and alerts. The audit log
+labels every `maintenance.*` event, links resource type `maintenance` to its page, and links a release
+or work log event caused by a maintenance (`metadata.maintenance_id`) to it too; a maintenance's page
+shows its own history. A contract's *During grace* now offers **Scheduled maintenances**: without it,
+maintenances of an app in grace are paused.
+
+### The public approval page
+
+`/mantencion/:token` (`src/pages/maintenance-approval/`) is routed at the top level of the site, inside
+the public layout and outside every `AuthProvider`: the client's contact has no account here, and the
+link is the credential. The address is the service's (`MAINTENANCE_LINK_BASE_URL` + token), so it must
+not move. The page calls `GET /custom-apps/v1/public/maintenances/:token` and its `approve` / `reject`
+through `src/lib/custom-apps/maintenance-approval.ts` — plain `fetch` against
+`VITE_CUSTOM_APPS_BASE_URL` (`api-dev` on the development build), no bearer token, `credentials: omit`
+and `referrerPolicy: no-referrer` — and imports nothing of the panel. `public/_headers` serves the path
+`noindex`, unframeable and with `Referrer-Policy: no-referrer`.
+
+It shows the client and app, the title, the description and the duration, and the windows as selectable
+cards on Santiago's clock (a window that already started is disabled); *Approve this window* schedules
+it, *Reject* asks for a reason (required, ≤ 1000) and an optional name goes with either. Once answered —
+here or through another link — or when the link cannot answer, it says why: answered, superseded by a
+newer email, expired when the first window started, or closed, with the outcome (approved, applied
+without an answer, rejected with the reason, cancelled). A 404 reads as an invalid link, a 410 as the
+state it carries, a 422 as "that window is no longer available" (and reloads), a 429 as "wait a minute".
+It is bilingual like the rest of the site (the `maintenance_approval` namespace, Spanish for a Chilean
+browser) and works one-handed on a phone.
 
 ## In-form help and required fields
 
