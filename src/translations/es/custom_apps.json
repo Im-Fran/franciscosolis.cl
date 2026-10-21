@@ -10,7 +10,8 @@
     "sign_out": "Cerrar sesión",
     "alerts": "Alertas",
     "contracts": "Contratos",
-    "tickets": "Tickets"
+    "tickets": "Tickets",
+    "maintenances": "Mantenciones"
   },
   "sign_in": {
     "title": "Apps a medida",
@@ -199,7 +200,15 @@
     "tickets_pending": "Esperando al cliente",
     "tickets_pending_detail": "Respondidos; esperan al solicitante.",
     "tickets_unread": "Tickets sin leer",
-    "tickets_unread_detail": "Tickets con al menos un mensaje del solicitante que nadie ha abierto todavía."
+    "tickets_unread_detail": "Tickets con al menos un mensaje del solicitante que nadie ha abierto todavía.",
+    "maintenances_pending": "Mantenciones por aprobar",
+    "maintenances_pending_detail": "Esperando que el cliente elija una ventana",
+    "maintenances_upcoming": "Mantenciones esta semana",
+    "maintenances_upcoming_detail": "Programadas para empezar en los próximos 7 días",
+    "maintenances_in_progress": "Mantenciones en curso",
+    "maintenances_in_progress_detail": "Con instalaciones en mantención ahora",
+    "maintenances_attention": "Mantenciones por revisar",
+    "maintenances_attention_detail": "Sin respuesta, fallidas en los últimos 7 días o rechazadas por el cliente"
   },
   "companies": {
     "title": "Clientes",
@@ -648,7 +657,8 @@
     "messages": "Mensajes",
     "diagnostics": "Fallos y logs",
     "releases": "Releases",
-    "work_log": "Bitácora"
+    "work_log": "Bitácora",
+    "maintenances": "Mantenciones"
   },
   "summary": {
     "connected": "Conectadas ahora",
@@ -1144,7 +1154,8 @@
       "alert_rule": "Regla de alerta",
       "alert": "Alerta",
       "contract": "Contrato",
-      "ticket": "Ticket"
+      "ticket": "Ticket",
+      "maintenance": "Mantención"
     },
     "events": {
       "company": {
@@ -1248,6 +1259,26 @@
         "opened": "Ticket abierto desde la app",
         "replied": "Ticket respondido",
         "status_changed": "Cambió el estado de un ticket"
+      },
+      "maintenance": {
+        "created": "Mantención planificada",
+        "updated": "Mantención editada",
+        "deleted": "Mantención eliminada",
+        "window_added": "Ventana ofrecida",
+        "window_updated": "Ventana movida",
+        "window_removed": "Ventana quitada",
+        "sent": "Solicitud de aprobación enviada",
+        "resent": "Solicitud de aprobación reenviada",
+        "approved": "Mantención aprobada por el cliente",
+        "rejected": "Mantención rechazada por el cliente",
+        "auto_applied": "Mantención aplicada sin respuesta",
+        "no_response": "Mantención sin respuesta",
+        "scheduled": "Parche de seguridad programado",
+        "reminded": "Recordatorio de mantención enviado",
+        "started": "Mantención iniciada",
+        "completed": "Mantención completada",
+        "failed": "Mantención fallida",
+        "cancelled": "Mantención cancelada"
       }
     },
     "automatic": "Automático",
@@ -1256,7 +1287,12 @@
       "rollback_rate": "La tasa de rollback superó el umbral",
       "crash_rate": "La tasa de fallos superó el umbral",
       "contract_lapsed": "El contrato venció sin renovarse",
-      "contract_renewed": "Se renovó el contrato"
+      "contract_renewed": "Se renovó el contrato",
+      "grace": "La app estaba en gracia y su contrato no permite mantenciones",
+      "suspended": "La app estaba suspendida",
+      "missed": "La ventana pasó sin que la mantención empezara",
+      "health_check": "Las instalaciones no reportaron una actualización sana",
+      "release_unavailable": "La release ya no se podía instalar"
     },
     "open_release": "Release {{version}}",
     "open_contract": "Ver contrato",
@@ -1286,7 +1322,8 @@
         "how": "Elige un día igual o posterior a «Desde»; vacío no pone límite hacia adelante.",
         "example": "31-03-2026"
       }
-    }
+    },
+    "open_maintenance": "Ver la mantención"
   },
   "module_off": {
     "title": "{{modules}}: desactivado en esta app",
@@ -2492,11 +2529,13 @@
   },
   "grace_allowances": {
     "updates": "Actualizaciones",
-    "support": "Soporte"
+    "support": "Soporte",
+    "maintenance": "Mantenciones programadas"
   },
   "grace_allowances_hint": {
     "updates": "Durante la gracia las apps siguen recibiendo actualizaciones.",
-    "support": "Durante la gracia la app sigue pudiendo abrir y continuar tickets de soporte."
+    "support": "Durante la gracia la app sigue pudiendo abrir y continuar tickets de soporte.",
+    "maintenance": "Durante la gracia las mantenciones programadas se siguen enviando, programando y ejecutando."
   },
   "work_kinds": {
     "maintenance": "Mantención",
@@ -2580,10 +2619,10 @@
     "cancel_title": "¿Cancelar «{{name}}»?",
     "cancel_body": "Desde hoy no empiezan ciclos nuevos y no se envía nada más sobre este contrato. El ciclo en curso se cierra en su fecha normal. Las apps quedan como están: para suspenderlas usa el interruptor de cada app. Esto no se puede deshacer.",
     "cancel_reason": "Motivo",
+    "cancel_reason_value": "Motivo: {{reason}}",
     "cancel_reason_hint": "Opcional. Queda en el registro de auditoría.",
     "cancelled_title": "Contrato cancelado",
     "cancelled_body": "Cancelado el {{date}} por {{by}}. Ya no se puede editar ni renovar: para seguir, crea un contrato nuevo.",
-    "cancel_reason": "Motivo: {{reason}}",
     "grace_title": "En período de gracia",
     "grace_body": "El contrato venció sin renovarse y sus apps están en gracia hasta el {{date}}; después se suspenden. Renovarlo las reactiva.",
     "grace_body_short": "El contrato venció sin renovarse y sus apps están en gracia. Renovarlo las reactiva.",
@@ -2704,7 +2743,8 @@
       "rollover_max_cycles": "Ciclos que duran",
       "grace_days": "Días de gracia",
       "grace_allows": "Durante la gracia se permite",
-      "grace_message": "Mensaje durante la gracia"
+      "grace_message": "Mensaje durante la gracia",
+      "security_patch_days": "Días para parches de seguridad"
     },
     "hints": {
       "name": "Como lo nombrarías en una factura, por ejemplo «Mantención 2026».",
@@ -2722,7 +2762,8 @@
       "rollover_max_cycles": "Cuántos ciclos sobreviven las horas acumuladas. Vacío, sin límite.",
       "grace_days": "De 0 a {{max}}. Con 0, al vencer las apps se suspenden de inmediato.",
       "grace_message": "Lo que muestran las apps mientras están en gracia. Opcional.",
-      "notes": "Solo para este panel; el cliente no las ve."
+      "notes": "Solo para este panel; el cliente no las ve.",
+      "security_patch_days": "En cuántos días se aplica un parche de seguridad sin pedir aprobación. De 1 a {{max}}."
     },
     "errors": {
       "money_clp": "Un monto en pesos, sin decimales.",
@@ -2825,8 +2866,8 @@
       },
       "grace_allows": {
         "what": "Lo que las apps pueden seguir haciendo mientras están en gracia.",
-        "how": "Marca lo que quieras mantener: «Actualizaciones» deja que sigan recibiendo versiones nuevas y «Soporte» deja que sigan abriendo y continuando tickets. Sin marcar nada, ambas cosas se detienen durante la gracia.",
-        "example": "Soporte"
+        "how": "Marca lo que quieras mantener: «Actualizaciones» deja que sigan recibiendo versiones nuevas, «Soporte» deja que sigan abriendo y continuando tickets y «Mantenciones programadas» deja que se sigan enviando, programando y ejecutando. Sin marcar nada, todo eso se detiene durante la gracia.",
+        "example": "Soporte y Mantenciones programadas"
       },
       "grace_message": {
         "what": "El texto que muestran las apps cubiertas mientras están en gracia.",
@@ -2837,6 +2878,11 @@
         "what": "Notas internas sobre el contrato: condiciones especiales, acuerdos verbales, contexto.",
         "how": "Texto libre y opcional, hasta 5000 caracteres. Solo se ve en este panel; el cliente no lo ve.",
         "example": "Incluye dos visitas presenciales al año. Precio congelado hasta 2027."
+      },
+      "security_patch_days": {
+        "what": "El plazo en que se aplica un parche de seguridad en las apps cubiertas, sin esperar la aprobación del cliente.",
+        "how": "Un número entero de días, de 1 a {{max}} (por defecto {{default}}). Al programar un parche, el sistema busca la primera ventana sin uso desde dos horas después hasta ese plazo, dentro del horario de operación de la app; si no encuentra una sin uso, elige la menos usada. Una app sin contrato usa {{default}} días.",
+        "example": "3"
       }
     },
     "form_help": {
@@ -2846,7 +2892,8 @@
         "Fijar las fechas, la renovación automática y los días de aviso.",
         "Poner el precio y su periodicidad.",
         "Definir las horas por ciclo, el valor de la hora extra y la acumulación.",
-        "Decidir cuántos días de gracia tienen las apps y qué pueden hacer durante ellos."
+        "Decidir cuántos días de gracia tienen las apps y qué pueden hacer durante ellos.",
+        "Fijar en cuántos días se aplica un parche de seguridad sin aprobación."
       ],
       "on_save": "Al crearlo pasas a la página del contrato y el servicio empieza a llevar sus ciclos de horas. Al editarlo solo se envía lo que cambió. Antes del último día el servicio le envía un correo al cliente y las apps cubiertas muestran el aviso; si vence sin renovarse, las apps entran en gracia o se suspenden. Todo queda en el registro de auditoría. Con un ciclo ya creado, el primer día y la duración del ciclo no se pueden cambiar, y el cliente nunca se puede cambiar."
     }
@@ -2967,13 +3014,15 @@
       "description": "Qué se hizo",
       "link": "Enlace",
       "contract": "Contrato",
-      "ticket": "Ticket"
+      "ticket": "Ticket",
+      "maintenance": "Mantención"
     },
     "hints": {
       "app": "Vacío si el trabajo fue para el cliente en general.",
       "link": "Un pull request, un ticket o un documento. Opcional.",
       "contract": "Más de un contrato cubre el {{day}}: elige bajo cuál se registra.",
-      "ticket": "El ticket de soporte que respondió este trabajo. Opcional."
+      "ticket": "El ticket de soporte que respondió este trabajo. Opcional.",
+      "maintenance": "La mantención programada que fue este trabajo. Opcional."
     },
     "errors": {
       "future": "No se puede registrar trabajo en un día futuro.",
@@ -2983,7 +3032,8 @@
       "choose_contract": "Más de un contrato cubre ese día: elige uno.",
       "closed_cycle": "Ese día cae en un ciclo ya cerrado: su balance es final y no se puede registrar ni cambiar trabajo en él.",
       "not_covered": "Ese contrato no cubre ese día.",
-      "ticket": "Ese ticket es de otro cliente: elige uno de este cliente o ninguno."
+      "ticket": "Ese ticket es de otro cliente: elige uno de este cliente o ninguno.",
+      "maintenance": "Esa mantención es de otro cliente: elige una de este cliente o ninguna."
     },
     "ticket": "Ticket #{{number}}",
     "no_ticket": "Sin ticket",
@@ -3031,6 +3081,11 @@
         "what": "Bajo qué contrato se registra la entrada, cuando más de uno cubre ese día.",
         "how": "Solo aparece cuando varios contratos cubren la app (o el cliente) ese día; entonces es obligatorio elegir uno. Normalmente el servicio lo elige solo y el diálogo dice cuál será.",
         "example": "Mantención y soporte 2026"
+      },
+      "maintenance": {
+        "what": "La mantención programada a la que corresponde este trabajo.",
+        "how": "Elige una de las mantenciones de la app (o del cliente, si es trabajo general). Opcional. Una mantención completada ya registra sus horas sola; usa esto para el trabajo extra que tomó prepararla o corregirla. El servicio rechaza una mantención de otro cliente.",
+        "example": "Actualización a la versión 2.4 del kiosco"
       }
     },
     "form_help": {
@@ -3039,7 +3094,8 @@
         "Decir sobre qué app y qué ticket fue, de qué tipo y qué se hizo.",
         "Anotar el día y cuánto duró.",
         "Agregar un enlace que lo respalde.",
-        "Elegir el contrato si más de uno cubre ese día."
+        "Elegir el contrato si más de uno cubre ese día.",
+        "Vincularlo a una mantención programada."
       ],
       "on_save": "El servicio registra la entrada bajo el contrato que cubre la app (o el cliente) ese día y en el ciclo en que cae; el diálogo dice antes cuál será. Las horas se descuentan del ciclo y se ven en el contrato, la app, el cliente y el ticket. Al editar solo se envía lo que cambió. Una entrada en un ciclo cerrado ya no se puede cambiar. Queda en el registro de auditoría."
     },
@@ -3059,7 +3115,8 @@
         "how": "Elige un día igual o posterior a «Desde»; vacío no pone límite hacia adelante.",
         "example": "31-03-2026"
       }
-    }
+    },
+    "no_maintenance": "Ninguna mantención"
   },
   "app_contract": {
     "title": "Contrato",
@@ -3236,6 +3293,504 @@
         "how": "Elige el cliente; «Todos los clientes» quita el filtro. Queda en la dirección.",
         "example": "Comercial Los Andes SpA"
       }
+    }
+  },
+  "maintenance_statuses": {
+    "draft": "Borrador",
+    "pending_approval": "Esperando aprobación",
+    "scheduled": "Programada",
+    "in_progress": "En curso",
+    "completed": "Completada",
+    "failed": "Fallida",
+    "no_response": "Sin respuesta",
+    "cancelled": "Cancelada"
+  },
+  "maintenance_kinds": {
+    "normal": "Normal",
+    "security": "Parche de seguridad"
+  },
+  "maintenance_kinds_hint": {
+    "normal": "Se le envía al cliente para que elija una de las ventanas ofrecidas o la rechace.",
+    "security": "Se aplica sin pedir aprobación, en la primera ventana sin uso dentro de los días que fija el contrato; el cliente recibe un aviso."
+  },
+  "maintenance_window_sources": {
+    "suggested": "Sugerida",
+    "manual": "Manual"
+  },
+  "maintenances": {
+    "title": "Mantenciones",
+    "description": "Trabajo programado en los equipos de los clientes: qué se hará, en qué ventana, quién la aprobó y cómo resultó.",
+    "panel_title": "Mantenciones",
+    "count_one": "{{count}} mantención",
+    "count_other": "{{count}} mantenciones",
+    "timezone_note": "Fechas y horas en {{timezone}}.",
+    "view_label": "Vista",
+    "views": {
+      "list": "Lista",
+      "calendar": "Calendario"
+    },
+    "empty": "Todavía no hay mantenciones",
+    "empty_description": "Planifica una desde la pestaña «Mantenciones» de una app.",
+    "no_matches": "Ninguna mantención coincide con los filtros.",
+    "filters": {
+      "status": "Estado",
+      "any_status": "Cualquier estado",
+      "upcoming": "Próximas (programadas o en curso)",
+      "pending": "Esperando al cliente",
+      "attention": "Por revisar",
+      "kind": "Tipo",
+      "any_kind": "Cualquier tipo",
+      "app": "App",
+      "any_app": "Todas las apps",
+      "company": "Cliente",
+      "any_company": "Todos los clientes",
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "filter_help": {
+      "status": {
+        "what": "En qué parte de su vida está la mantención.",
+        "how": "Elige un estado, o una de las agrupaciones: «Próximas» junta las programadas y las en curso; «Esperando al cliente» son las enviadas sin respuesta todavía; «Por revisar» junta las que nadie respondió, las que fallaron en los últimos 7 días y las que el cliente rechazó.",
+        "example": "Por revisar"
+      },
+      "kind": {
+        "what": "Si es una mantención normal, que el cliente aprueba, o un parche de seguridad, que se aplica sin aprobación.",
+        "how": "Elige un tipo o deja «Cualquier tipo».",
+        "example": "Parche de seguridad"
+      },
+      "app": {
+        "what": "Muestra solo las mantenciones de una app.",
+        "how": "Elige la app de la lista. Se combina con los demás filtros.",
+        "example": "Kiosco de autoatención · Comercial Los Andes"
+      },
+      "company": {
+        "what": "Muestra solo las mantenciones de las apps de un cliente.",
+        "how": "Elige el cliente de la lista.",
+        "example": "Comercial Los Andes SpA"
+      },
+      "from": {
+        "what": "El primer día del rango que se revisa.",
+        "how": "Elige un día (hora de Santiago). Se muestran las mantenciones cuya ventana —la elegida o, mientras no haya una, cualquiera de las ofrecidas— toca ese rango. Vacío, sin límite hacia atrás.",
+        "example": "01-11-2026"
+      },
+      "to": {
+        "what": "El último día del rango que se revisa, incluido.",
+        "how": "Elige un día igual o posterior al de «Desde». Vacío, sin límite hacia adelante.",
+        "example": "30-11-2026"
+      }
+    },
+    "columns": {
+      "maintenance": "Mantención",
+      "app": "App y cliente",
+      "status": "Estado",
+      "window": "Ventana",
+      "sends": "Envíos",
+      "result": "Resultado"
+    },
+    "results": {
+      "succeeded": "Completada",
+      "failed": "Fallida"
+    },
+    "auto_applied_short": "Aplicada sin respuesta",
+    "no_windows_short": "Sin ventanas",
+    "windows_offered_one": "Propuesta · {{count}} ventana ofrecida",
+    "windows_offered_other": "Propuesta · {{count}} ventanas ofrecidas",
+    "sends_title_one": "Enviada {{count}} vez",
+    "sends_title_other": "Enviada {{count}} veces",
+    "rejected_badge": "Rechazada",
+    "calendar": {
+      "title": "Calendario",
+      "label": "Calendario de mantenciones",
+      "proposal": "Propuesta, sin aprobar",
+      "more_one": "+{{count}} más",
+      "more_other": "+{{count}} más",
+      "empty": "No hay ventanas este mes.",
+      "previous": "Mes anterior",
+      "next": "Mes siguiente",
+      "today": "Este mes"
+    },
+    "app_title": "Mantenciones de la app",
+    "app_description": "El trabajo programado en las instalaciones de esta app.",
+    "app_empty": "Esta app no tiene mantenciones",
+    "app_empty_description": "Una mantención dice qué se hará y qué notará el cliente, cuánto dura y, si corresponde, qué release instala. Se ofrece en ventanas que el cliente aprueba.",
+    "new": "Nueva mantención",
+    "open_calendar": "Ver en el calendario",
+    "created": "Creada",
+    "create_title": "Nueva mantención",
+    "edit_title": "Editar mantención",
+    "create": "Crear borrador",
+    "sections": {
+      "what": "Qué se hará",
+      "where": "Dónde"
+    },
+    "fields": {
+      "kind": "Tipo",
+      "title": "Título",
+      "description": "Descripción para el cliente",
+      "duration": "Duración estimada",
+      "hours": "Horas",
+      "minutes": "Minutos",
+      "release": "Release a instalar",
+      "installations": "Instalaciones"
+    },
+    "hints": {
+      "title": "Una línea que el cliente entienda. Va en el asunto del correo.",
+      "description": "Qué se hará y qué notará el cliente. Lo lee tal cual en el correo y en la página de aprobación.",
+      "duration": "Entre {{min}} minutos y {{max}} horas.",
+      "release": "Opcional. Se instala en las instalaciones incluidas durante la ventana.",
+      "release_none": "Esta app no tiene releases en borrador ni publicadas.",
+      "release_unavailable": "No se pudieron cargar las releases de la app (puede que no tenga el módulo de actualizaciones).",
+      "installations_all": "Todas las instalaciones activas de la app en el momento en que empiece, incluidas las que se agreguen antes."
+    },
+    "no_release": "Sin release",
+    "release_option": "{{version}} · {{channel}} · {{platform}}/{{arch}} ({{status}})",
+    "installations_all": "Todas las instalaciones activas",
+    "installations_pick": "Elegir instalaciones",
+    "installations_count_one": "{{count}} instalación",
+    "installations_count_other": "{{count}} instalaciones",
+    "installations_search": "Buscar por nombre, versión o arquitectura",
+    "installations_empty": "Esta app no tiene instalaciones activas.",
+    "off_line": "Fuera de la línea de la release",
+    "security_notice": "Un parche de seguridad no pide aprobación: al programarlo, el sistema elige la primera ventana sin uso (desde {{lead}} horas después y dentro de los días que fija el contrato) y le avisa al cliente por correo.",
+    "errors": {
+      "duration": "Entre {{min}} minutos y {{max}} horas.",
+      "pick_one": "Elige al menos una instalación, o deja todas.",
+      "off_line_one": "{{count}} instalación elegida no está en la línea de la release (canal, plataforma y arquitectura), así que nunca la recibiría. Quítala o cambia la release.",
+      "off_line_other": "{{count}} instalaciones elegidas no están en la línea de la release (canal, plataforma y arquitectura), así que nunca la recibirían. Quítalas o cambia la release.",
+      "off_line_service": "Alguna instalación no está en la línea de la release. ({{detail}})",
+      "release": "La release tiene que ser de esta app y estar en borrador o publicada.",
+      "installations": "Las instalaciones tienen que ser instalaciones activas de esta app.",
+      "window_too_short": "Hay ventanas ofrecidas más cortas que esa duración: alárgalas o quítalas primero.",
+      "not_editable": "Esta mantención ya no se puede editar: solo un borrador o una que quedó sin respuesta. Cancélala y planifica otra.",
+      "paused_suspended": "La app está suspendida: las mantenciones quedan en pausa hasta que se reactive.",
+      "paused_grace": "La app está en gracia y su contrato no permite mantenciones: quedan en pausa hasta que se renueve.",
+      "security_send": "Un parche de seguridad no se envía a aprobación: prográmalo.",
+      "normal_schedule": "Solo un parche de seguridad se programa sin aprobación: envía esta al cliente.",
+      "changed": "La mantención cambió mientras tanto. Recarga la página. ({{detail}})",
+      "no_recipients": "El cliente no tiene ningún contacto con correo a quien enviarla. Agrega un contacto con el rol «Aprueba mantenciones» (o uno principal) en la ficha del cliente.",
+      "no_windows": "Ofrece al menos una ventana antes de enviarla.",
+      "window_started": "Alguna ventana ofrecida ya empezó: muévela o quítala antes de enviar.",
+      "no_fit": "No hay una ventana de esa duración dentro del horario de operación en el plazo del contrato. ({{detail}})",
+      "release_unusable": "La release ya no se puede instalar (está pausada o retirada). Elige otra o quítala.",
+      "mail": "No se pudo enviar el correo a nadie, así que no se envió nada. Inténtalo más tarde."
+    },
+    "help": {
+      "kind": {
+        "what": "Si el cliente tiene que aprobar la mantención o si se aplica sin su aprobación.",
+        "how": "Normal: se le envía un correo con las ventanas para que elija una o la rechace. Parche de seguridad: no se pide aprobación; al programarlo, el sistema elige la primera ventana sin uso dentro de los días que fija el contrato y el cliente recibe un aviso. Usa parche de seguridad solo para correcciones urgentes de seguridad.",
+        "example": "Normal"
+      },
+      "title": {
+        "what": "El nombre de la mantención, que el cliente ve en el asunto del correo y en la página de aprobación.",
+        "how": "Una línea corta que diga qué se hará, sin jerga interna. Obligatorio, hasta 200 caracteres.",
+        "example": "Actualización del kiosco a la versión 2.4"
+      },
+      "description": {
+        "what": "La explicación para el cliente: qué se hará y qué va a notar mientras dure.",
+        "how": "Escribe en el idioma del cliente y di si la app no estará disponible, si se reiniciará el equipo o si cambia algo que use su gente. Obligatoria, hasta 5000 caracteres. El cliente la lee tal cual.",
+        "example": "Instalaremos la versión 2.4, que corrige la impresión de boletas. Durante la ventana el kiosco mostrará una pantalla de mantención y no se podrá usar."
+      },
+      "duration": {
+        "what": "Cuánto se estima que dura el trabajo. Es el largo mínimo de cada ventana y lo que se registra en la bitácora al completarse.",
+        "how": "Escribe horas y minutos: entre {{min}} minutos y {{max}} horas en total. Si la alargas después, todas las ventanas ofrecidas tienen que seguir cabiendo.",
+        "example": "1 h 30 min"
+      },
+      "release": {
+        "what": "La versión de la app que la mantención instala en las instalaciones incluidas.",
+        "how": "Elige una release de esta app en borrador o publicada, u «Sin release» si el trabajo no instala nada. Durante la ventana se ofrece solo a las instalaciones incluidas que están en su línea; si alguna no la instala bien, la mantención falla y la release se retira.",
+        "example": "2.4.0 · Estable · Windows/x86_64 (Borrador)"
+      },
+      "installations": {
+        "what": "En qué equipos se hace la mantención: entran en estado de mantención durante la ventana y reciben la release, si hay una.",
+        "how": "Deja «Todas las instalaciones activas» para toda la app, o elige algunas (hasta {{max}}). Con una release, solo puedes elegir instalaciones en su línea (canal, plataforma y arquitectura). Las sugerencias de ventana se calculan con el uso de las instalaciones incluidas.",
+        "example": "Kiosco entrada y Kiosco patio de comidas"
+      }
+    },
+    "form_help_create": {
+      "what": "Planifica una mantención de esta app: qué se hará, cuánto dura, qué release instala y en qué instalaciones.",
+      "can_do": [
+        "Elegir si es normal (la aprueba el cliente) o un parche de seguridad.",
+        "Escribir el título y la descripción que lee el cliente.",
+        "Fijar la duración estimada.",
+        "Elegir la release a instalar y las instalaciones incluidas."
+      ],
+      "on_save": "Se crea como borrador y pasas a su página, donde ofreces las ventanas (con sugerencias según el uso). No se le envía nada al cliente hasta que presiones «Enviar al cliente». Sin respuesta, se reenvía a las {{resend}} horas y luego se aplica en la primera ventana que siga a más de {{lead}} horas. Queda en el registro de auditoría."
+    },
+    "form_help_edit": {
+      "what": "Corrige una mantención que todavía es borrador o que quedó sin respuesta.",
+      "can_do": [
+        "Cambiar el tipo, el título y la descripción.",
+        "Cambiar la duración: alargarla exige que todas las ventanas ofrecidas sigan cabiendo.",
+        "Cambiar la release y las instalaciones incluidas."
+      ],
+      "on_save": "Solo se envía lo que cambió. Si ya se había enviado y nadie respondió, vuelve a enviarla para que el cliente vea los cambios. Queda en el registro de auditoría."
+    },
+    "back": "Volver a mantenciones",
+    "loading_title": "Mantención",
+    "summary": "Resumen",
+    "updated": "Última modificación",
+    "rejected_title": "{{name}} rechazó la mantención",
+    "the_client": "El cliente",
+    "reschedule_hint": "Para reprogramarla, ajusta las ventanas (o lo demás de la mantención) y vuelve a enviarla al cliente.",
+    "no_response_title": "Nadie respondió",
+    "no_response_body": "Nadie respondió después de {{sends}} envíos y ninguna ventana ofrecida quedaba a más de {{lead}} horas. Ofrece ventanas nuevas y vuelve a enviarla.",
+    "failed_title": "La mantención falló",
+    "cancelled_title": "Mantención cancelada",
+    "cancelled_body": "Cancelada el {{date}} por {{by}}.",
+    "pending_title": "Esperando la respuesta del cliente",
+    "pending_body": "Los enlaces del correo funcionan hasta el {{expires}}. Sin respuesta, se reenvía a las {{resend}} horas y, {{resend}} horas después, se aplica en la primera ventana que siga a más de {{lead}} horas.",
+    "security_title": "Parche de seguridad",
+    "security_body": "No se envía a aprobación. Al programarlo, el sistema reemplaza las ventanas por la primera sin uso (desde {{lead}} horas después y dentro de los días que fija el contrato) y le envía un aviso al cliente.",
+    "window_started_title": "Hay ventanas que ya empezaron",
+    "notice_title": "Aviso al cliente",
+    "approval_title": "Aprobación",
+    "chosen_window": "Ventana elegida",
+    "how": {
+      "approved": "Aprobada por el cliente",
+      "auto_applied": "Aplicada sin respuesta, en la primera ventana elegible",
+      "security": "Elegida por el sistema (parche de seguridad)"
+    },
+    "sends": "Envíos",
+    "sends_value_one": "{{count}} envío · el último el {{date}}",
+    "sends_value_other": "{{count}} envíos · el último el {{date}}",
+    "recipients": "Destinatarios",
+    "link_expires": "Los enlaces vencen",
+    "responded": "Respondió",
+    "rejected_at": "Rechazada",
+    "scheduled_at": "Programada el",
+    "reminder_sent_at": "Recordatorio enviado",
+    "run_title": "Ejecución",
+    "run_empty": "Todavía no empieza.",
+    "started_at": "Empezó",
+    "finished_at": "Terminó",
+    "note": "Nota",
+    "result": {
+      "installations_one": "{{count}} instalación en mantención",
+      "installations_other": "{{count}} instalaciones en mantención",
+      "targets_one": "{{count}} debía instalar la release",
+      "targets_other": "{{count}} debían instalar la release",
+      "already_on_version_one": "{{count}} ya tenía esa versión",
+      "already_on_version_other": "{{count}} ya tenían esa versión",
+      "off_line_one": "{{count}} fuera de la línea de la release",
+      "off_line_other": "{{count}} fuera de la línea de la release",
+      "skipped_one": "{{count}} omitida (suspendida o en gracia por su cuenta)",
+      "skipped_other": "{{count}} omitidas (suspendidas o en gracia por su cuenta)",
+      "failing_one": "{{count}} no terminó bien",
+      "failing_other": "{{count}} no terminaron bien",
+      "none": "Ninguna",
+      "statuses": {
+        "no_report": "Sin reporte"
+      },
+      "release_published": "La mantención publicó la release v{{version}} solo para sus instalaciones.",
+      "release_extended_one": "La mantención agregó {{count}} instalación a la release v{{version}}.",
+      "release_extended_other": "La mantención agregó {{count}} instalaciones a la release v{{version}}.",
+      "open_release": "Ver la release",
+      "withdrawn_title": "Release retirada",
+      "withdrawn_body": "La release v{{version}} se retiró: los equipos vuelven a la versión anterior.",
+      "mail_failures_title": "Correos que no se pudieron enviar"
+    },
+    "mail_stages": {
+      "approved": "Confirmación",
+      "auto_applied": "Aviso de aplicación sin respuesta",
+      "security": "Aviso del parche de seguridad",
+      "reminder": "Recordatorio",
+      "completed": "Cierre",
+      "failed": "Aviso de falla"
+    },
+    "cancel_reasons": {
+      "grace": "La app estaba en gracia y su contrato no permite mantenciones.",
+      "suspended": "La app estaba suspendida.",
+      "missed": "La ventana pasó sin que la mantención empezara."
+    },
+    "failure_reasons": {
+      "health_check": "Alguna instalación no reportó una actualización sana a tiempo.",
+      "release_unavailable": "La release ya estaba pausada o retirada al empezar.",
+      "manual": "Se marcó como fallida a mano.",
+      "failed": "Falló."
+    },
+    "causes": {
+      "no_answer": "Nadie respondió",
+      "link_expired": "Los enlaces vencieron"
+    },
+    "included_title": "Instalaciones incluidas",
+    "included_all": "Todas las instalaciones activas de la app, tal como están ahora.",
+    "included_named_one": "La instalación elegida, si sigue activa.",
+    "included_named_other": "Las {{count}} instalaciones elegidas que siguen activas.",
+    "included_empty": "No incluye ninguna instalación activa.",
+    "work_log_title": "Horas registradas",
+    "work_log_description": "Una mantención completada registra su duración en la bitácora por su cuenta. Aquí también puedes anotar el trabajo extra que tomó.",
+    "history_title": "Historial",
+    "history_empty": "Sin eventos todavía.",
+    "via_link": "Por el enlace del correo: {{name}}",
+    "sent_to": "A: {{list}}",
+    "not_sent_to": "No llegó a: {{list}}"
+  },
+  "maintenance_windows": {
+    "title": "Ventanas",
+    "description": "Las ventanas ofrecidas, en hora de {{timezone}}.",
+    "description_editable_one": "{{count}} de {{max}} ventanas, en el orden en que el cliente las ve. Hora de {{timezone}}.",
+    "description_editable_other": "{{count}} de {{max}} ventanas, en el orden en que el cliente las ve. Hora de {{timezone}}.",
+    "empty": "No se ofrecieron ventanas.",
+    "empty_editable": "Todavía no hay ventanas: agrega una a mano o elige una sugerencia.",
+    "chosen": "Elegida",
+    "started": "Ya empezó: muévela o quítala antes de enviar",
+    "move_up": "Subir la ventana {{position}}",
+    "move_down": "Bajar la ventana {{position}}",
+    "remove": "Quitar la ventana {{position}}",
+    "add_title": "Agregar una ventana",
+    "fields": {
+      "start": "Inicio",
+      "end": "Término"
+    },
+    "hints": {
+      "start": "Hora de {{timezone}}.",
+      "end": "Por defecto, el inicio más {{duration}}. Puede ser más larga."
+    },
+    "help": {
+      "start": {
+        "what": "Cuándo empieza la ventana: desde ese momento las instalaciones incluidas entran en mantención.",
+        "how": "Elige el día y la hora en hora de {{timezone}}, aunque estés en otra zona: es la hora que lee el cliente. Tiene que ser en el futuro y no puede cruzarse con otra ventana de la misma mantención.",
+        "example": "Martes 10-11-2026, 02:00"
+      },
+      "end": {
+        "what": "Cuándo termina la ventana.",
+        "how": "Se completa sola con el inicio más la duración estimada ({{duration}}); puedes alargarla si quieres darte margen, pero no acortarla por debajo de la duración. Vacío usa el inicio más la duración.",
+        "example": "Martes 10-11-2026, 04:00"
+      }
+    },
+    "add": "Agregar ventana",
+    "errors": {
+      "overlap": "Esa ventana se cruza con otra de esta mantención.",
+      "too_many": "Esta mantención ya ofrece el máximo de ventanas.",
+      "past": "La ventana tiene que empezar en el futuro.",
+      "too_short": "La ventana tiene que durar al menos la duración estimada.",
+      "too_short_value": "Tiene que durar al menos {{duration}}.",
+      "order": "El término tiene que ser después del inicio."
+    },
+    "form_help": {
+      "what": "Las ventanas en que el cliente puede elegir que se haga la mantención.",
+      "can_do": [
+        "Agregar una ventana a mano, con inicio y término en hora de Santiago.",
+        "Agregar una de las sugerencias calculadas con el uso de los últimos 30 días.",
+        "Cambiar el orden con las flechas: el cliente las ve en ese orden.",
+        "Quitar una ventana."
+      ],
+      "on_save": "Cada cambio se guarda de inmediato y queda en el registro de auditoría. El cliente no ve nada hasta que envías la mantención. Si nadie responde, se aplica en la primera ventana de la lista que siga a más de {{lead}} horas, así que pon arriba la que prefieras."
+    },
+    "suggest_title": "Sugerencias",
+    "suggest_description": "Los bloques menos usados de los próximos {{days}} días, a {{lead}} horas o más desde ahora, según el uso de los últimos {{heatmap}} días (cada bloque se evalúa en {{hours}} h).",
+    "suggest_again": "Volver a sugerir",
+    "hours_applied": "Respetan el horario de operación de la app.",
+    "hours_not_applied": "La app no declara horario de operación: se consideran las 24 horas.",
+    "heatmap_scope_note_one": "El mapa muestra toda la app; las sugerencias se calculan solo con la instalación incluida.",
+    "heatmap_scope_note_other": "El mapa muestra toda la app; las sugerencias se calculan solo con las {{count}} instalaciones incluidas.",
+    "no_suggestions_title": "No hay sugerencias",
+    "no_suggestions_body": "No queda ningún bloque de esa duración en los próximos días que no se cruce con las ventanas ofrecidas y respete el horario de operación. Agrega una ventana a mano.",
+    "expected_use": "Uso esperado: {{time}}",
+    "expected_none": "Sin uso en los últimos 30 días",
+    "added": "Agregada",
+    "add_suggestion": "Agregar",
+    "suggestion_cell": "sugerencia {{rank}}",
+    "legend_suggestion": "Sugerencia",
+    "heatmap_label": "Uso por hora de la semana, con las sugerencias marcadas"
+  },
+  "maintenance_actions": {
+    "edit": "Editar",
+    "send": "Enviar al cliente",
+    "resend": "Reenviar",
+    "schedule": "Programar parche",
+    "complete": "Marcar completada",
+    "fail": "Marcar fallida",
+    "cancel": "Cancelar mantención",
+    "send_title": "Enviar al cliente",
+    "send_body_one": "Se le enviará un correo a quienes aprueban mantenciones en el cliente, cada uno con su propio enlace para elegir la ventana o rechazarla. Sin respuesta, se reenvía a las {{resend}} horas.",
+    "send_body_other": "Se le enviará un correo con las {{count}} ventanas a quienes aprueban mantenciones en el cliente, cada uno con su propio enlace para elegir una o rechazarla. Sin respuesta, se reenvía a las {{resend}} horas.",
+    "resend_title": "Reenviar la solicitud",
+    "resend_body": "Se envía de nuevo ahora, con enlaces nuevos; los enlaces anteriores dejan de funcionar. Cuenta como envío: después del segundo, si nadie responde, se aplica sola.",
+    "schedule_title": "Programar el parche de seguridad",
+    "schedule_body": "El sistema elige la primera ventana sin uso desde {{lead}} horas después y dentro de los días que fija el contrato, reemplaza las ventanas ofrecidas y le envía el aviso al cliente de inmediato.",
+    "delete_title": "Eliminar la mantención",
+    "delete_body": "Se elimina «{{title}}» con sus ventanas. No se puede deshacer.",
+    "send_done": "Solicitud enviada al cliente",
+    "resend_done": "Solicitud reenviada",
+    "schedule_done": "Parche de seguridad programado",
+    "cancel_done": "Mantención cancelada",
+    "complete_done": "Mantención completada",
+    "fail_done": "Mantención marcada como fallida",
+    "cancel_title": "Cancelar «{{title}}»",
+    "cancel_body": "Los enlaces del correo dejan de funcionar y se retira el aviso que muestren las apps. El cliente no recibe un correo por esto.",
+    "cancel_field": "Motivo",
+    "cancel_hint": "Opcional. Queda en el historial.",
+    "cancel_confirm": "Cancelar mantención",
+    "complete_title": "Completar «{{title}}»",
+    "complete_body": "Las instalaciones salen de mantención, la duración se registra en la bitácora y el cliente recibe el correo de cierre.",
+    "complete_field": "Nota",
+    "complete_hint": "Opcional. Queda en el resultado y en el historial.",
+    "complete_confirm": "Marcar completada",
+    "fail_title": "Marcar «{{title}}» como fallida",
+    "fail_body": "Las instalaciones salen de mantención y el cliente recibe un correo que dice que todo quedó como estaba.",
+    "fail_body_release": "Las instalaciones salen de mantención, la release v{{version}} se retira para que los equipos vuelvan a la versión anterior y el cliente recibe un correo que lo explica.",
+    "fail_field": "Qué falló",
+    "fail_hint": "Obligatorio. Queda en el resultado y en el historial.",
+    "fail_confirm": "Marcar fallida",
+    "help": {
+      "cancel": {
+        "what": "Por qué se cancela la mantención.",
+        "how": "Escribe una línea para quien lea el historial. Opcional, hasta {{max}} caracteres. El cliente no la ve.",
+        "example": "El cliente pidió posponerla para después del cierre de mes."
+      },
+      "complete": {
+        "what": "Una nota sobre cómo terminó la mantención.",
+        "how": "Opcional, hasta {{max}} caracteres. Se guarda en el resultado; el cliente no la ve.",
+        "example": "Todo instalado; se reinició el kiosco del patio a mano."
+      },
+      "fail": {
+        "what": "Qué salió mal, para quien revise la mantención después.",
+        "how": "Obligatorio, hasta {{max}} caracteres. Se guarda en el resultado y en el historial; el cliente recibe un correo genérico que no la incluye.",
+        "example": "La versión 2.4 no inicia en los kioscos con Windows 10."
+      }
+    },
+    "form_help_send": {
+      "what": "Envía la solicitud de aprobación al cliente.",
+      "can_do": [
+        "Confirmar el envío del correo con las ventanas ofrecidas."
+      ],
+      "on_save": "Cada contacto con el rol «Aprueba mantenciones» (o el principal, o cualquiera con correo) recibe un correo con un enlace propio a la página de aprobación, que funciona hasta que empiece la primera ventana. La mantención queda «Esperando aprobación» y ya no se puede editar. Sin respuesta, se reenvía a las {{resend}} horas y luego se aplica en la primera ventana que siga a más de {{lead}} horas. Queda en el registro de auditoría."
+    },
+    "form_help_resend": {
+      "what": "Vuelve a enviar la solicitud de aprobación, con enlaces nuevos.",
+      "can_do": [
+        "Confirmar el reenvío."
+      ],
+      "on_save": "Los enlaces anteriores dejan de funcionar y cada destinatario recibe uno nuevo. Cuenta como envío: después del segundo, si nadie responde en {{resend}} horas, se aplica en la primera ventana que siga a más de {{lead}} horas. Queda en el registro de auditoría."
+    },
+    "form_help_schedule": {
+      "what": "Programa un parche de seguridad sin pedir aprobación.",
+      "can_do": [
+        "Confirmar que el sistema elija la ventana y avise al cliente."
+      ],
+      "on_save": "El sistema busca la primera ventana sin uso desde {{lead}} horas después y dentro de los días para parches de seguridad del contrato (3 sin contrato), dentro del horario de operación; si no hay una sin uso, la menos usada. Reemplaza las ventanas ofrecidas, la mantención queda programada y el cliente recibe el aviso de inmediato. Queda en el registro de auditoría."
+    },
+    "form_help_cancel": {
+      "what": "Cancela una mantención que todavía no empieza.",
+      "can_do": [
+        "Anotar el motivo, si quieres."
+      ],
+      "on_save": "La mantención queda cancelada: sus enlaces dejan de funcionar y termina el aviso que muestren las apps. Después se puede eliminar. Queda en el registro de auditoría."
+    },
+    "form_help_complete": {
+      "what": "Cierra ahora, como completada, una mantención en curso, sin esperar a que se evalúe sola al final de la ventana.",
+      "can_do": [
+        "Agregar una nota."
+      ],
+      "on_save": "Las instalaciones salen de mantención, la duración estimada se registra en la bitácora bajo el contrato que cubre la app y el cliente recibe el correo de cierre. Queda en el registro de auditoría."
+    },
+    "form_help_fail": {
+      "what": "Cierra ahora, como fallida, una mantención en curso.",
+      "can_do": [
+        "Explicar qué falló."
+      ],
+      "on_save": "Las instalaciones salen de mantención; si la mantención instalaba una release, se retira y los equipos vuelven a la versión anterior. El cliente recibe un correo que dice que todo quedó como estaba, y tú, un aviso en la campana. Queda en el registro de auditoría."
     }
   }
 }

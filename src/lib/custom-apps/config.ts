@@ -123,4 +123,30 @@ export const customAppsRoute = {
    */
   contract: (id: string) => `${CUSTOM_APPS_ROUTE}/contracts/${encodeURIComponent(id)}`,
   contractEdit: (id: string) => `${CUSTOM_APPS_ROUTE}/contracts/${encodeURIComponent(id)}/edit`,
+  /**
+   * Every scheduled maintenance, optionally filtered — `view=calendar` opens the month grid, `month`
+   * (`YYYY-MM`) picks which month.
+   */
+  maintenances: (
+    filters: {status?: string; kind?: string; app_id?: string; company_id?: string; from?: string; to?: string; view?: string; month?: string} = {},
+  ) => {
+    const search = new URLSearchParams(
+      Object.entries(filters).filter((entry): entry is [string, string] => Boolean(entry[1])),
+    ).toString();
+    return `${CUSTOM_APPS_ROUTE}/maintenances${search ? `?${search}` : ""}`;
+  },
+  /**
+   * One maintenance. The notification centre links every `custom_apps.maintenance_*` notification as
+   * `/custom-apps/maintenances/<id>`, so that shape is a contract with the service, not a choice here.
+   */
+  maintenance: (id: string) => `${CUSTOM_APPS_ROUTE}/maintenances/${encodeURIComponent(id)}`,
+  /** The app's maintenances tab. */
+  appMaintenances: (id: string) => `${CUSTOM_APPS_ROUTE}/apps/${encodeURIComponent(id)}/maintenances`,
 } as const;
+
+/**
+ * The public approval page a client opens from the email, outside the panel and without a login.
+ * The service builds the address (`MAINTENANCE_LINK_BASE_URL` + token), so this path is a contract
+ * with it.
+ */
+export const MAINTENANCE_APPROVAL_ROUTE = "/mantencion";

@@ -6,6 +6,7 @@ import {
   ArrowClockwise,
   Bell,
   Buildings,
+  CalendarCheck,
   CalendarX,
   ChatCircleDots,
   CheckCircle,
@@ -19,12 +20,17 @@ import {
   Timer,
   Users,
   Warning,
+  WarningOctagon,
+  Wrench,
+  EnvelopeSimple,
 } from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
+import {useServiceVocabulary} from "@/lib/custom-apps/custom-apps-context.ts";
+import {addDays, dayIn} from "@/lib/custom-apps/format.ts";
 import {useAutoRefresh} from "@/lib/custom-apps/use-auto-refresh.ts";
 import {APP_STATES} from "@/lib/custom-apps/types.ts";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
@@ -39,7 +45,8 @@ const REFRESH_MS = 30_000;
 /**
  * What the panel opens on: how many installations are connected right now, which ones are waiting
  * for a look, what was enrolled lately — and, beside the contracts, the support tickets waiting on
- * us, waiting on the client and not opened yet.
+ * us, waiting on the client and not opened yet, and the scheduled maintenances waiting on a client,
+ * starting this week, running, or needing somebody.
  *
  * It is one request — the service aggregates — so the whole screen loads and refreshes as one, and
  * a refresh keeps the figures on screen rather than flashing a spinner every thirty seconds.
@@ -47,6 +54,8 @@ const REFRESH_MS = 30_000;
 export const Overview = () => {
   const {t} = useTranslation(["custom_apps", "admin"]);
   const overview = useResource(useCallback((signal: AbortSignal) => customAppsApi.overview(signal), []));
+  const {timezone} = useServiceVocabulary();
+  const today = dayIn(new Date(), timezone);
   useAutoRefresh(overview.reload, REFRESH_MS);
 
   const data = overview.data;
@@ -227,6 +236,41 @@ export const Overview = () => {
                   attention={data.tickets.unread > 0}
                   to={customAppsRoute.tickets()}
                   detail={t("custom_apps:overview.tickets_unread_detail")}
+                />
+              </div>
+            )}
+
+            {/* Scheduled maintenances: optional, so a service that predates them still renders. */}
+            {data.maintenances && (
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <StatCard
+                  label={t("custom_apps:overview.maintenances_pending")}
+                  icon={<EnvelopeSimple size={18} />}
+                  value={data.maintenances.pending_approval}
+                  to={customAppsRoute.maintenances({status: "pending"})}
+                  detail={t("custom_apps:overview.maintenances_pending_detail")}
+                />
+                <StatCard
+                  label={t("custom_apps:overview.maintenances_upcoming")}
+                  icon={<CalendarCheck size={18} />}
+                  value={data.maintenances.upcoming}
+                  to={customAppsRoute.maintenances({status: "scheduled", from: today, to: addDays(today, 7)})}
+                  detail={t("custom_apps:overview.maintenances_upcoming_detail")}
+                />
+                <StatCard
+                  label={t("custom_apps:overview.maintenances_in_progress")}
+                  icon={<Wrench size={18} />}
+                  value={data.maintenances.in_progress}
+                  to={customAppsRoute.maintenances({status: "in_progress"})}
+                  detail={t("custom_apps:overview.maintenances_in_progress_detail")}
+                />
+                <StatCard
+                  label={t("custom_apps:overview.maintenances_attention")}
+                  icon={<WarningOctagon size={18} />}
+                  value={data.maintenances.needs_attention}
+                  attention={data.maintenances.needs_attention > 0}
+                  to={customAppsRoute.maintenances({status: "attention"})}
+                  detail={t("custom_apps:overview.maintenances_attention_detail")}
                 />
               </div>
             )}

@@ -52,6 +52,13 @@ import type {
   InstallationUpdates,
   LogEntry,
   LogQuery,
+  Maintenance,
+  MaintenanceInstallation,
+  MaintenancePayload,
+  MaintenanceQuery,
+  MaintenanceSuggestions,
+  MaintenanceWindow,
+  MaintenanceWindowPayload,
   MessagePayload,
   MessageReceipt,
   MetricSeries,
@@ -61,6 +68,8 @@ import type {
   NewFlag,
   NewCiToken,
   NewContract,
+  NewMaintenance,
+  NewMaintenanceWindow,
   NewMessage,
   NewWorkLog,
   Overview,
@@ -594,6 +603,81 @@ export const customAppsApi = {
       http.request<{app_id: string; support_assignee_email: string | null}>(`/v1/apps/${seg(appId)}/support/assignee`, {
         method: "POST",
       }),
+  },
+
+  /* ── Scheduled maintenances ─────────────────────────────────────────── */
+
+  /**
+   * Work on a client's devices in a window the client approved — or, for a security patch, one the
+   * service chose. Editing (the fields and the windows) is allowed while `draft` or `no_response`;
+   * every other write is refused with a 409 from a status it does not apply to, and answers with the
+   * maintenance as it now stands.
+   */
+  maintenances: {
+    /** Newest first. `from`/`to` keep those whose window overlaps the range, for a calendar. */
+    list: (params: MaintenanceQuery = {}, signal?: AbortSignal) =>
+      page<Maintenance>(`/v1/maintenances${query({...params})}`, signal),
+
+    listForApp: (appId: string, params: Omit<MaintenanceQuery, "app_id"> = {}, signal?: AbortSignal) =>
+      page<Maintenance>(`/v1/apps/${seg(appId)}/maintenances${query({...params})}`, signal),
+
+    get: (id: string, signal?: AbortSignal) => http.request<Maintenance>(`/v1/maintenances/${seg(id)}`, {signal}),
+
+    /** As a draft. 422 for a release or installation that is not the app's (or not on the release's line). */
+    create: (appId: string, body: NewMaintenance) =>
+      http.request<Maintenance>(`/v1/apps/${seg(appId)}/maintenances`, {method: "POST", json: body}),
+
+    /** Draft or no answer only. A longer duration must still fit every window offered (422). */
+    update: (id: string, body: MaintenancePayload) =>
+      http.request<Maintenance>(`/v1/maintenances/${seg(id)}`, {method: "PATCH", json: body}),
+
+    /** A draft or a cancelled one only: anything else is history. */
+    remove: (id: string) => http.request<Deleted>(`/v1/maintenances/${seg(id)}`, {method: "DELETE"}),
+
+    windows: (id: string, signal?: AbortSignal) =>
+      http.request<MaintenanceWindow[]>(`/v1/maintenances/${seg(id)}/windows`, {signal}),
+
+    /** Answers the whole list. 409 overlapping or too many; 422 in the past or shorter than the estimate. */
+    addWindow: (id: string, body: NewMaintenanceWindow) =>
+      http.request<MaintenanceWindow[]>(`/v1/maintenances/${seg(id)}/windows`, {method: "POST", json: body}),
+
+    /** Moves or reorders one; answers the whole list. */
+    updateWindow: (id: string, windowId: string, body: MaintenanceWindowPayload) =>
+      http.request<MaintenanceWindow[]>(`/v1/maintenances/${seg(id)}/windows/${seg(windowId)}`, {method: "PATCH", json: body}),
+
+    removeWindow: (id: string, windowId: string) =>
+      http.request<MaintenanceWindow[]>(`/v1/maintenances/${seg(id)}/windows/${seg(windowId)}`, {method: "DELETE"}),
+
+    /** The least-used blocks of the coming days on the usage heatmap. Saves nothing. */
+    suggest: (id: string, signal?: AbortSignal) =>
+      http.request<MaintenanceSuggestions>(`/v1/maintenances/${seg(id)}/windows/suggest`, {signal}),
+
+    /** What it includes right now, and whether the release's line reaches each. */
+    installations: (id: string, signal?: AbortSignal) =>
+      http.request<MaintenanceInstallation[]>(`/v1/maintenances/${seg(id)}/installations`, {signal}),
+
+    /**
+     * Emails the approval request. 409 for a security patch or a paused app; 422 without windows, with
+     * one already started or nobody to send it to; 502 when no email went out.
+     */
+    send: (id: string) => http.request<Maintenance>(`/v1/maintenances/${seg(id)}/send`, {method: "POST"}),
+
+    /** Sends it again with fresh links; every earlier link stops working. */
+    resend: (id: string) => http.request<Maintenance>(`/v1/maintenances/${seg(id)}/resend`, {method: "POST"}),
+
+    /** A security patch only: the service picks its window and notifies the client. 422 when nothing fits. */
+    schedule: (id: string) => http.request<Maintenance>(`/v1/maintenances/${seg(id)}/schedule`, {method: "POST"}),
+
+    cancel: (id: string, reason?: string | null) =>
+      http.request<Maintenance>(`/v1/maintenances/${seg(id)}/cancel`, {method: "POST", json: reason ? {reason} : {}}),
+
+    /** In progress only: closes it now as completed, logging the hours. */
+    complete: (id: string, note?: string | null) =>
+      http.request<Maintenance>(`/v1/maintenances/${seg(id)}/complete`, {method: "POST", json: note ? {note} : {}}),
+
+    /** In progress only: closes it as failed and withdraws its release. */
+    fail: (id: string, note: string) =>
+      http.request<Maintenance>(`/v1/maintenances/${seg(id)}/fail`, {method: "POST", json: {note}}),
   },
 
   /* ── Audit log ──────────────────────────────────────────────────────── */

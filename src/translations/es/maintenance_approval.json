@@ -1,0 +1,104 @@
+{
+  "eyebrow": "Mantención programada",
+  "eyebrow_security": "Parche de seguridad",
+  "loading_title": "Cargando la solicitud",
+  "loading_body": "Un momento…",
+  "back_home": "Ir a franciscosolis.cl",
+  "retry": "Intentar de nuevo",
+  "what_title": "Qué se hará",
+  "duration": "Duración estimada: {{duration}}",
+  "security_note": "Es una corrección de seguridad: se aplica igual en la ventana indicada, este aviso es para que sepas cuándo.",
+  "choose_window": "Elige cuándo prefieres que se haga",
+  "timezone_note": "Horario de Chile continental (America/Santiago).",
+  "no_windows": "Esta solicitud no ofrece ventanas.",
+  "window_unavailable": "Ya empezó: no se puede elegir.",
+  "next_day": "(termina al día siguiente)",
+  "name_label": "Tu nombre",
+  "name_hint": "Opcional. Para que sepamos quién respondió.",
+  "approve": "Aprobar esta ventana",
+  "reject": "Rechazar",
+  "pick_first": "Elige una ventana para poder aprobarla.",
+  "expires": "Puedes responder hasta el {{date}}.",
+  "reject_intro": "Cuéntanos por qué no te acomoda. Con tu respuesta la reprogramamos y te enviamos ventanas nuevas.",
+  "reason_label": "Motivo",
+  "reason_hint": "Obligatorio, hasta {{max}} caracteres.",
+  "reason_required": "Escribe el motivo del rechazo.",
+  "reason_too_long": "Hasta {{max}} caracteres.",
+  "reject_send": "Enviar rechazo",
+  "reject_back": "Volver a las ventanas",
+  "thanks": "¡Gracias por responder!",
+  "failed_title": "No se pudo enviar tu respuesta",
+  "responded_at": "Respondido el {{date}}.",
+  "outcome": {
+    "approved": {
+      "title": "Mantención aprobada",
+      "body": "Se hará el {{window}}.",
+      "body_here": "Aprobaste la mantención: se hará el {{window}}. Te llegará un correo de confirmación."
+    },
+    "auto_applied": {
+      "title": "Mantención programada",
+      "body": "Como no hubo respuesta, quedó programada para el {{window}}.",
+      "body_here": "Como no hubo respuesta, quedó programada para el {{window}}."
+    },
+    "rejected": {
+      "title": "Mantención rechazada",
+      "body": "La solicitud fue rechazada. Te enviaremos una propuesta nueva.",
+      "body_here": "Rechazaste la solicitud. Te enviaremos una propuesta nueva con otras ventanas."
+    },
+    "cancelled": {
+      "title": "Mantención cancelada",
+      "body": "Esta mantención se canceló: no hay nada que responder.",
+      "body_here": "Esta mantención se canceló: no hay nada que responder."
+    },
+    "no_response": {
+      "title": "Solicitud sin respuesta",
+      "body": "Esta solicitud quedó sin respuesta y ninguna ventana sigue disponible. Te enviaremos una propuesta nueva.",
+      "body_here": "Esta solicitud quedó sin respuesta y ninguna ventana sigue disponible. Te enviaremos una propuesta nueva."
+    }
+  },
+  "states": {
+    "answered": {
+      "title": "Ya respondiste",
+      "body": "Esta solicitud ya se respondió desde este enlace."
+    },
+    "closed": {
+      "title": "Solicitud cerrada",
+      "body": "Esta mantención ya no espera una respuesta: alguien más la respondió, se programó o se canceló."
+    },
+    "superseded": {
+      "title": "Hay una solicitud más reciente",
+      "body": "Te enviamos un correo más nuevo sobre esta mantención. Usa el enlace de ese correo."
+    },
+    "expired": {
+      "title": "El enlace venció",
+      "body": "El enlace dejó de funcionar cuando empezó la primera ventana ofrecida."
+    }
+  },
+  "errors": {
+    "not_found": {
+      "title": "Enlace no válido",
+      "body": "Este enlace no corresponde a ninguna solicitud de mantención. Revisa que lo hayas copiado completo desde el correo."
+    },
+    "gone": {
+      "title": "El enlace ya no responde",
+      "body": "Este enlace ya no puede responder la solicitud."
+    },
+    "invalid": {
+      "title": "No se pudo responder",
+      "body": "Revisa lo que escribiste e inténtalo de nuevo."
+    },
+    "rate_limited": {
+      "title": "Demasiados intentos",
+      "body": "Hubo demasiados intentos desde tu conexión. Espera un minuto e inténtalo de nuevo."
+    },
+    "network": {
+      "title": "Sin conexión",
+      "body": "No pudimos conectarnos. Revisa tu conexión a internet e inténtalo de nuevo."
+    },
+    "unexpected": {
+      "title": "Algo salió mal",
+      "body": "No pudimos cargar la solicitud. Inténtalo de nuevo en unos minutos."
+    },
+    "window_taken": "Esa ventana ya no está disponible (puede que ya haya empezado). Elige otra."
+  }
+}

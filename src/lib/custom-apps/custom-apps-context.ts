@@ -21,6 +21,10 @@ import {
   GRACE_ALLOWANCES,
   GRACE_MAX_DAYS,
   LOG_LEVELS,
+  MAINTENANCE_KINDS,
+  MAINTENANCE_LIMITS,
+  MAINTENANCE_STATUSES,
+  MAINTENANCE_WINDOW_SOURCES,
   MESSAGE_DISPLAYS,
   MESSAGE_SEVERITIES,
   PLATFORMS,
@@ -112,5 +116,11 @@ export const useServiceVocabulary = () => {
     workKinds: service?.work_kinds?.length ? service.work_kinds : [...WORK_KINDS],
     contractLimits: {...CONTRACT_LIMITS, ...service?.contract_limits},
     ticketStatuses: service?.ticket_statuses?.length ? service.ticket_statuses : [...TICKET_STATUSES],
+    maintenanceStatuses: service?.maintenance_statuses?.length ? service.maintenance_statuses : [...MAINTENANCE_STATUSES],
+    maintenanceKinds: service?.maintenance_kinds?.length ? service.maintenance_kinds : [...MAINTENANCE_KINDS],
+    maintenanceWindowSources: service?.maintenance_window_sources?.length
+      ? service.maintenance_window_sources
+      : [...MAINTENANCE_WINDOW_SOURCES],
+    maintenanceLimits: {...MAINTENANCE_LIMITS, ...service?.maintenance_limits},
   };
 };

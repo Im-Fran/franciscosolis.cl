@@ -1,7 +1,7 @@
 import {useCallback, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
-import {ArrowSquareOut, Lifebuoy, LockSimple, Notebook, PencilSimple, Plus, Trash} from "@phosphor-icons/react";
+import {ArrowSquareOut, Lifebuoy, LockSimple, Notebook, PencilSimple, Plus, Trash, Wrench} from "@phosphor-icons/react";
 import {Button} from "@/components/ui/button/button.tsx";
 import {Field, Input, Select} from "@/components/ui/input.tsx";
 import {Panel, PanelState} from "@/components/ui/panel.tsx";
@@ -38,16 +38,22 @@ const PAGE_SIZE = 25;
  * `ticket` narrows it to the work logged against one support ticket, and a new entry starts linked
  * to that ticket as support work — the ticket's own page shows its time this way. Elsewhere an entry
  * linked to a ticket says so, and links to it.
+ *
+ * `maintenance` does the same for a scheduled maintenance: its page lists the entry the service filed
+ * when it completed, and any work logged against it by hand, which starts as maintenance work linked
+ * to it. Elsewhere an entry that was a maintenance links to it by title.
  */
 export const WorkLogPanel = ({
   scope,
   ticket,
+  maintenance,
   onChanged,
   title,
   description,
 }: {
   scope: WorkLogScope;
   ticket?: {id: string; number: number};
+  maintenance?: {id: string; title: string};
   onChanged?: () => void;
   title?: string;
   description?: string;
@@ -69,10 +75,17 @@ export const WorkLogPanel = ({
   const companyId = scope.kind === "company" ? scope.companyId : "";
   const ticketId = ticket?.id ?? "";
   const ticketNumber = ticket?.number ?? 0;
+  const maintenanceId = maintenance?.id ?? "";
+  const maintenanceTitle = maintenance?.title ?? "";
   /* Built from primitives: the dialog resets its form whenever the preset changes identity. */
   const preset = useMemo<WorkLogPreset | undefined>(
-    () => (ticketId ? {ticketId, ticketNumber, kind: "support"} : undefined),
-    [ticketId, ticketNumber],
+    () =>
+      ticketId
+        ? {ticketId, ticketNumber, kind: "support"}
+        : maintenanceId
+          ? {maintenanceId, maintenanceTitle, kind: "maintenance"}
+          : undefined,
+    [ticketId, ticketNumber, maintenanceId, maintenanceTitle],
   );
 
   const entries = useResource(
@@ -83,13 +96,14 @@ export const WorkLogPanel = ({
           from: from || undefined,
           to: to || undefined,
           ticket_id: ticketId || undefined,
+          maintenance_id: maintenanceId || undefined,
           limit: PAGE_SIZE,
           offset,
         };
         if (appId) return customAppsApi.workLogs.listForApp(appId, filters, signal);
         return customAppsApi.workLogs.list({...filters, contract_id: contractId || undefined, company_id: companyId || undefined}, signal);
       },
-      [appId, contractId, companyId, ticketId, kind, from, to, offset],
+      [appId, contractId, companyId, ticketId, maintenanceId, kind, from, to, offset],
     ),
   );
 
@@ -163,6 +177,16 @@ export const WorkLogPanel = ({
                   {row.ticket_number ? t("custom_apps:work_log.ticket", {number: row.ticket_number}) : t("custom_apps:work_log.fields.ticket")}
                 </Link>
               )}
+              {row.maintenance_id && row.maintenance_id !== maintenanceId && (
+                <Link
+                  to={customAppsRoute.maintenance(row.maintenance_id)}
+                  className="inline-flex min-w-0 items-center gap-1 hover:text-text hover:underline"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Wrench size={12} aria-hidden="true" />
+                  <span className="max-w-[16rem] truncate">{row.maintenance_title ?? t("custom_apps:work_log.fields.maintenance")}</span>
+                </Link>
+              )}
             </p>
             <p className="mt-1 text-[13px] leading-relaxed whitespace-pre-line text-neutral-300">{row.description}</p>
             {(row.link_url || row.created_by) && (
@@ -215,7 +239,7 @@ export const WorkLogPanel = ({
       },
     ];
     return list;
-  }, [language, resetRemove, scope.kind, ticketId, t]);
+  }, [language, resetRemove, scope.kind, ticketId, maintenanceId, t]);
 
   return (
     <Panel

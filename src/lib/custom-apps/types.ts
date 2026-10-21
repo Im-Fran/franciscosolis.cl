@@ -1,6 +1,6 @@
 /**
  * The custom-apps service's vocabulary and shapes, as its phase-one, phase-two, phase-three and
- * phase-four contracts describe them.
+ * phase-four contracts describe them — phase 4b's scheduled maintenances included.
  *
  * The vocabularies are also served by `GET /`, and the panel prefers those when it has them (see
  * `useServiceVocabulary`). The constants here are the fallback for a service that did not answer —
@@ -151,8 +151,11 @@ export type CycleStatus = (typeof CYCLE_STATUSES)[number];
 export const CONTRACT_STATUSES = ["scheduled", "active", "grace", "ended", "cancelled"] as const;
 export type ContractStatus = (typeof CONTRACT_STATUSES)[number];
 
-/** What a lapsed contract still lets its apps do while in grace. */
-export const GRACE_ALLOWANCES = ["updates", "support"] as const;
+/**
+ * What a lapsed contract still lets its apps do while in grace. `maintenance` keeps scheduled
+ * maintenances running; without it, sending, scheduling and starting one are paused in grace.
+ */
+export const GRACE_ALLOWANCES = ["updates", "support", "maintenance"] as const;
 export type GraceAllowance = (typeof GRACE_ALLOWANCES)[number];
 
 export const WORK_KINDS = ["maintenance", "support", "development", "other"] as const;
@@ -185,6 +188,8 @@ export const CONTRACT_LIMITS = {
   max_notice_days: 180,
   default_notice_days: 30,
   max_work_log_minutes: 1440,
+  default_security_patch_days: 3,
+  max_security_patch_days: 30,
 } as const;
 
 export type ContractLimits = {
@@ -193,7 +198,80 @@ export type ContractLimits = {
   default_notice_days: number;
   /** The largest single work log entry, in minutes. */
   max_work_log_minutes: number;
+  /** Days within which a security patch is applied without approval, by default and at most. */
+  default_security_patch_days: number;
+  max_security_patch_days: number;
 };
+
+/* ── Phase 4b: scheduled maintenances ─────────────────────────────────── */
+
+/**
+ * A maintenance's lifecycle:
+ *
+ * - `draft`: being prepared. A client's rejection brings it back here with `rejected: true`.
+ * - `pending_approval`: the request was emailed; waiting for the client to pick a window or reject.
+ * - `scheduled`: a window is fixed — approved, applied for lack of an answer, or a security patch.
+ * - `in_progress`: the window started; the installations are in maintenance.
+ * - `completed` / `failed`: how it ended.
+ * - `no_response`: nobody answered and no window was far enough away. Editable again.
+ * - `cancelled`: by hand, or by the service when its window passed while the app was paused.
+ */
+export const MAINTENANCE_STATUSES = [
+  "draft",
+  "pending_approval",
+  "scheduled",
+  "in_progress",
+  "completed",
+  "failed",
+  "no_response",
+  "cancelled",
+] as const;
+export type MaintenanceStatus = (typeof MAINTENANCE_STATUSES)[number];
+
+/**
+ * The list filter adds two groupings the service understands — `upcoming` (scheduled or in progress)
+ * and `pending` (waiting on the client) — and one this panel builds itself, `attention`: what the
+ * overview's "needs attention" counts (no answer, failed in the last 7 days, sent back by the client).
+ */
+export type MaintenanceStatusFilter = MaintenanceStatus | "upcoming" | "pending";
+
+/** `normal` goes through the client's approval; `security` is applied without it, after a notice. */
+export const MAINTENANCE_KINDS = ["normal", "security"] as const;
+export type MaintenanceKind = (typeof MAINTENANCE_KINDS)[number];
+
+/** Where an offered window came from: the heatmap's suggestion, or typed in by hand. */
+export const MAINTENANCE_WINDOW_SOURCES = ["suggested", "manual"] as const;
+export type MaintenanceWindowSource = (typeof MAINTENANCE_WINDOW_SOURCES)[number];
+
+/** Statuses a maintenance can be edited in, and its windows changed. */
+export const MAINTENANCE_EDITABLE: MaintenanceStatus[] = ["draft", "no_response"];
+/** Statuses a maintenance can be cancelled from: anything that has not started. */
+export const MAINTENANCE_CANCELLABLE: MaintenanceStatus[] = ["draft", "pending_approval", "scheduled", "no_response"];
+
+/** The service's bounds for maintenances, until `GET /` says otherwise. */
+export const MAINTENANCE_LIMITS = {
+  min_lead_hours: 24,
+  resend_after_hours: 48,
+  reminder_before_hours: 24,
+  suggest_days: 14,
+  suggest_count: 5,
+  security_min_lead_minutes: 120,
+  min_estimated_minutes: 15,
+  max_estimated_minutes: 1440,
+  max_windows: 20,
+} as const;
+
+export type MaintenanceLimits = {[K in keyof typeof MAINTENANCE_LIMITS]: number};
+
+/** The text bounds the service validates, which `GET /` does not state. */
+export const MAINTENANCE_TEXT_LIMITS = {
+  maxTitleLength: 200,
+  maxDescriptionLength: 5000,
+  maxRejectionLength: 1000,
+  maxCancelReasonLength: 500,
+  maxNoteLength: 1000,
+  maxInstallations: 500,
+} as const;
 
 export const CONTACT_ROLES = ["owner", "technical", "billing", "maintenance_approver"] as const;
 export type ContactRole = (typeof CONTACT_ROLES)[number];
@@ -250,6 +328,10 @@ export type ServiceStatus = {
   work_kinds?: WorkKind[];
   contract_limits?: ContractLimits;
   ticket_statuses?: TicketStatus[];
+  maintenance_statuses?: MaintenanceStatus[];
+  maintenance_kinds?: MaintenanceKind[];
+  maintenance_window_sources?: MaintenanceWindowSource[];
+  maintenance_limits?: MaintenanceLimits;
 };
 
 export type Account = {
@@ -1154,6 +1236,11 @@ export type Contract = {
   grace_days: number;
   grace_allows: GraceAllowance[];
   grace_message: string | null;
+  /**
+   * Days within which a security patch of a covered app is applied without the client's approval.
+   * Optional so a service that predates maintenances still renders.
+   */
+  security_patch_days?: number;
   status: ContractStatus;
   /** Days from today to `ends_on`; null when open-ended or cancelled. */
   days_left: number | null;
@@ -1199,6 +1286,8 @@ export type ContractPayload = {
   grace_days?: number;
   grace_allows?: GraceAllowance[];
   grace_message?: string | null;
+  /** 1 to `max_security_patch_days`. */
+  security_patch_days?: number;
   notes?: string | null;
   /** Replaces the covered apps. */
   app_ids?: string[];
@@ -1235,6 +1324,9 @@ export type WorkLogEntry = {
   /** The support ticket the work answered. Optional so a service that predates tickets still renders. */
   ticket_id?: string | null;
   ticket_number?: number | null;
+  /** The scheduled maintenance the work was. A completed maintenance logs its own entry. */
+  maintenance_id?: string | null;
+  maintenance_title?: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -1252,6 +1344,8 @@ export type WorkLogPayload = {
   link_url?: string | null;
   /** A ticket of the same company (422 otherwise); null unlinks it. */
   ticket_id?: string | null;
+  /** A maintenance of the same company (422 otherwise); null unlinks it. */
+  maintenance_id?: string | null;
 };
 
 export type NewWorkLog = WorkLogPayload & {
@@ -1268,6 +1362,7 @@ export type WorkLogQuery = {
   contract_id?: string;
   cycle_id?: string;
   ticket_id?: string;
+  maintenance_id?: string;
   kind?: WorkKind;
   from?: string;
   to?: string;
@@ -1361,6 +1456,179 @@ export type TicketReply = {message: string; status?: ReplyStatus};
 
 export type TicketPayload = {status?: TicketStatus; subject?: string};
 
+/* ── Scheduled maintenances ───────────────────────────────────────────── */
+
+/** One window a maintenance is offered in (or runs in, once `chosen`). Instants, ISO 8601. */
+export type MaintenanceWindow = {
+  id: string;
+  starts_at: string;
+  ends_at: string;
+  source: MaintenanceWindowSource;
+  /** The order the client sees them in, from 0. */
+  position: number;
+  chosen: boolean;
+};
+
+/**
+ * What a run recorded. Every key is optional: the shape grows as the maintenance goes — the start
+ * fills the installations and targets, a failure its reason, closing by hand its note.
+ */
+export type MaintenanceResultDetail = {
+  /** Installations put in maintenance at the start. */
+  installations?: string[];
+  /** Included but left alone: suspended or in grace on their own. */
+  skipped?: Array<{id: string; reason: string}>;
+  /** Installations expected to install the release and report healthy. */
+  targets?: string[];
+  /** Included and already on the release's version. */
+  already_on_version?: string[];
+  /** Included but on another line than the release, so never offered it. */
+  off_line?: string[];
+  release?: {id: string; version: string; status_before: string; published_by_maintenance: boolean; added_installations: string[]};
+  /** `health_check`, `release_unavailable`, `manual`… and the targets that were not fine. */
+  failure?: {reason: string; installations?: Array<{id: string; status: string}>};
+  note?: string;
+  /** Recipients a notice could not be emailed to, per stage. */
+  mail_failures?: Array<{stage: string; recipients: string[]}>;
+  withdrawn?: boolean;
+  [key: string]: unknown;
+};
+
+export type MaintenanceRelease = {
+  id: string;
+  version: string;
+  channel: Channel;
+  platform: Platform;
+  arch: Arch;
+  status: ReleaseStatus;
+};
+
+export type Maintenance = {
+  id: string;
+  app_id: string;
+  app_name: string | null;
+  company_id: string;
+  company_name: string | null;
+  kind: MaintenanceKind;
+  title: string;
+  /** What will be done and what the client will notice. The client reads it. */
+  description: string;
+  estimated_minutes: number;
+  release_id: string | null;
+  release: MaintenanceRelease | null;
+  /** Empty: every active installation of the app (`all_installations`). */
+  installation_ids: string[];
+  all_installations: boolean;
+  status: MaintenanceStatus;
+  /** A draft the client sent back; `rejection_reason` says why. */
+  rejected: boolean;
+  rejection_reason: string | null;
+  rejected_at: string | null;
+  /** Sends of the current round: 2 is the automatic resend. */
+  sends: number;
+  last_sent_at: string | null;
+  /** Who the latest request went to. */
+  recipients: string[];
+  /** When the latest request's links stop working: the first window's start. */
+  link_expires_at: string | null;
+  windows: MaintenanceWindow[];
+  chosen_window: MaintenanceWindow | null;
+  scheduled_at: string | null;
+  /** Applied in the first eligible window because nobody answered. */
+  auto_applied: boolean;
+  responded_by: string | null;
+  responded_by_name: string | null;
+  responded_at: string | null;
+  approved_by: string | null;
+  reminder_sent_at: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  result: "succeeded" | "failed" | null;
+  result_detail: MaintenanceResultDetail;
+  /** Who closed it by hand; null when the service evaluated it. */
+  closed_by: string | null;
+  /** The work log entry a completed maintenance filed. */
+  work_log_id: string | null;
+  cancelled_at: string | null;
+  /** Null when the service cancelled it. */
+  cancelled_by: string | null;
+  /** `grace`, `suspended` or `missed` when the service cancelled it; free text when a person did. */
+  cancel_reason: string | null;
+  created_by: string | null;
+  updated_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MaintenanceQuery = {
+  status?: MaintenanceStatusFilter;
+  kind?: MaintenanceKind;
+  app_id?: string;
+  company_id?: string;
+  /** Instants: keeps those whose window (the chosen one, or any offered) overlaps the range. */
+  from?: string;
+  to?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export type NewMaintenance = {
+  kind?: MaintenanceKind;
+  title: string;
+  description: string;
+  estimated_minutes: number;
+  release_id?: string | null;
+  /** Empty: every active installation. */
+  installation_ids?: string[];
+};
+
+export type MaintenancePayload = Partial<NewMaintenance>;
+
+export type NewMaintenanceWindow = {
+  starts_at: string;
+  /** Defaults to `starts_at` plus the estimated duration. */
+  ends_at?: string;
+  position?: number;
+  source?: MaintenanceWindowSource;
+};
+
+export type MaintenanceWindowPayload = {starts_at?: string; ends_at?: string; position?: number};
+
+export type MaintenanceSuggestion = {
+  rank: number;
+  starts_at: string;
+  ends_at: string;
+  /** Seconds of use an average such stretch saw over the last 30 days. Zero is unused. */
+  expected_active_seconds: number;
+};
+
+export type MaintenanceSuggestions = {
+  timezone: string;
+  estimated_minutes: number;
+  /** The hours each block is scored on: the duration rounded up. */
+  scored_hours: number;
+  min_lead_hours: number;
+  days: number;
+  heatmap_days: number;
+  operating_hours_applied: boolean;
+  suggestions: MaintenanceSuggestion[];
+};
+
+/** An installation a maintenance includes right now. */
+export type MaintenanceInstallation = {
+  id: string;
+  alias: string | null;
+  hostname: string | null;
+  device_id: string;
+  platform: Platform;
+  arch: string | null;
+  channel: Channel;
+  app_version: string | null;
+  state_override: AppState | null;
+  /** With a release: whether the release's line reaches it. Null without one. */
+  on_release_line: boolean | null;
+};
+
 /* ── Overview and audit ───────────────────────────────────────────────── */
 
 export type Overview = {
@@ -1384,6 +1652,11 @@ export type Overview = {
   /** Tickets waiting on us and on the client, and requester messages nobody opened. Optional likewise. */
   /** `unread`: tickets with at least one requester message nobody opened yet. */
   tickets?: {open: number; pending: number; unread: number};
+  /**
+   * Scheduled maintenances: waiting on the client, scheduled to start within 7 days, running now, and
+   * needing somebody (no answer, failed in the last 7 days, or sent back by the client). Optional.
+   */
+  maintenances?: {pending_approval: number; upcoming: number; in_progress: number; needs_attention: number};
 };
 
 export type AuditEntry = {

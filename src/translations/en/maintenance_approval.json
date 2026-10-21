@@ -1,0 +1,104 @@
+{
+  "eyebrow": "Scheduled maintenance",
+  "eyebrow_security": "Security patch",
+  "loading_title": "Loading the request",
+  "loading_body": "One moment…",
+  "back_home": "Go to franciscosolis.cl",
+  "retry": "Try again",
+  "what_title": "What will be done",
+  "duration": "Estimated duration: {{duration}}",
+  "security_note": "This is a security fix: it is applied in the window shown either way; this notice lets you know when.",
+  "choose_window": "Choose when you would like it done",
+  "timezone_note": "Mainland Chile time (America/Santiago).",
+  "no_windows": "This request offers no windows.",
+  "window_unavailable": "Already started: it cannot be chosen.",
+  "next_day": "(ends the next day)",
+  "name_label": "Your name",
+  "name_hint": "Optional. So we know who answered.",
+  "approve": "Approve this window",
+  "reject": "Reject",
+  "pick_first": "Choose a window to approve it.",
+  "expires": "You can answer until {{date}}.",
+  "reject_intro": "Tell us why it does not suit you. With your answer we will reschedule it and send you new windows.",
+  "reason_label": "Reason",
+  "reason_hint": "Required, up to {{max}} characters.",
+  "reason_required": "Write the reason for rejecting it.",
+  "reason_too_long": "Up to {{max}} characters.",
+  "reject_send": "Send rejection",
+  "reject_back": "Back to the windows",
+  "thanks": "Thank you for answering!",
+  "failed_title": "Your answer could not be sent",
+  "responded_at": "Answered on {{date}}.",
+  "outcome": {
+    "approved": {
+      "title": "Maintenance approved",
+      "body": "It will be done on {{window}}.",
+      "body_here": "You approved the maintenance: it will be done on {{window}}. A confirmation email is on its way."
+    },
+    "auto_applied": {
+      "title": "Maintenance scheduled",
+      "body": "As there was no answer, it was scheduled for {{window}}.",
+      "body_here": "As there was no answer, it was scheduled for {{window}}."
+    },
+    "rejected": {
+      "title": "Maintenance rejected",
+      "body": "The request was rejected. We will send you a new proposal.",
+      "body_here": "You rejected the request. We will send you a new proposal with other windows."
+    },
+    "cancelled": {
+      "title": "Maintenance cancelled",
+      "body": "This maintenance was cancelled: there is nothing to answer.",
+      "body_here": "This maintenance was cancelled: there is nothing to answer."
+    },
+    "no_response": {
+      "title": "Request not answered",
+      "body": "This request got no answer and no window is still available. We will send you a new proposal.",
+      "body_here": "This request got no answer and no window is still available. We will send you a new proposal."
+    }
+  },
+  "states": {
+    "answered": {
+      "title": "You already answered",
+      "body": "This request was already answered through this link."
+    },
+    "closed": {
+      "title": "Request closed",
+      "body": "This maintenance no longer waits for an answer: someone else answered it, or it was scheduled or cancelled."
+    },
+    "superseded": {
+      "title": "There is a newer request",
+      "body": "We sent you a newer email about this maintenance. Use the link in that email."
+    },
+    "expired": {
+      "title": "The link expired",
+      "body": "The link stopped working when the first window offered started."
+    }
+  },
+  "errors": {
+    "not_found": {
+      "title": "Invalid link",
+      "body": "This link does not match any maintenance request. Check that you copied all of it from the email."
+    },
+    "gone": {
+      "title": "The link no longer answers",
+      "body": "This link can no longer answer the request."
+    },
+    "invalid": {
+      "title": "The answer was refused",
+      "body": "Check what you wrote and try again."
+    },
+    "rate_limited": {
+      "title": "Too many attempts",
+      "body": "There were too many attempts from your connection. Wait a minute and try again."
+    },
+    "network": {
+      "title": "No connection",
+      "body": "We could not connect. Check your internet connection and try again."
+    },
+    "unexpected": {
+      "title": "Something went wrong",
+      "body": "We could not load the request. Try again in a few minutes."
+    },
+    "window_taken": "That window is no longer available (it may have started). Choose another."
+  }
+}

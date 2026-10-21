@@ -232,3 +232,36 @@ export const ExpiringBadge = ({daysLeft}: {daysLeft: number | null}) => {
     </Pill>
   );
 };
+
+/*
+ * A maintenance waiting on the client or on nobody-answered is the one that needs somebody; scheduled
+ * and running are planned rather than wrong; completed is done, failed is bad, cancelled is inert.
+ */
+const MAINTENANCE_TONES: Record<string, Tone> = {
+  draft: "inert",
+  pending_approval: "pending",
+  scheduled: "planned",
+  in_progress: "planned",
+  completed: "good",
+  failed: "bad",
+  no_response: "pending",
+  cancelled: "inert",
+};
+
+/** A maintenance's status — and, for a draft the client sent back, that it was rejected. */
+export const MaintenanceStatusBadge = ({value, rejected, className}: VocabularyBadgeProps & {rejected?: boolean}) => {
+  const {t} = useTranslation("custom_apps");
+  if (rejected && value === "draft") {
+    return (
+      <Pill tone="bad" className={className}>
+        {t("maintenances.rejected_badge")}
+      </Pill>
+    );
+  }
+  return <VocabularyPill prefix="maintenance_statuses" tones={MAINTENANCE_TONES} value={value} className={className} />;
+};
+
+/** Normal or security: a security patch is applied without approval, so it is the one painted. */
+export const MaintenanceKindBadge = ({value, className}: VocabularyBadgeProps) => (
+  <VocabularyPill prefix="maintenance_kinds" tones={{normal: "inert", security: "bad"}} value={value} className={className} />
+);

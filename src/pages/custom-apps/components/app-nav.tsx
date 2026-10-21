@@ -9,6 +9,7 @@ import {
   Notebook,
   Package,
   Power,
+  Wrench,
   SlidersHorizontal,
   SquaresFour,
 } from "@phosphor-icons/react";
@@ -73,6 +74,8 @@ export const AppNav = ({id, needsReview, modules}: {id: string; needsReview: num
     },
     /* Not a module: work is logged on an app whatever the app itself reports. */
     {to: customAppsRoute.appWorkLog(id), label: t("app_nav.work_log"), icon: Notebook, end: false, badge: 0, shown: true},
+    /* Not a module either: a maintenance works through the kill switch and, with a release, the updater. */
+    {to: customAppsRoute.appMaintenances(id), label: t("app_nav.maintenances"), icon: Wrench, end: false, badge: 0, shown: true},
     {to: customAppsRoute.appStatus(id), label: t("app_nav.status"), icon: Power, end: false, badge: 0, shown: true},
     {to: customAppsRoute.appSettings(id), label: t("app_nav.settings"), icon: GearSix, end: false, badge: 0, shown: true},
   ].filter((item) => item.shown);
