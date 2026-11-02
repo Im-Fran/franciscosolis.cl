@@ -523,7 +523,7 @@
       "screenshots": "Allow screenshots"
     },
     "hints": {
-      "domain": "For web apps: the hostname it is served from.",
+      "domain": "The hostname the site is served from.",
       "presence": "How installations say they are alive. Socket is for kiosks and points of sale: the native app holds a live connection, so commands reach it at once. Websites always ping.",
       "heartbeat": "Between {{min}} and {{max}}. An installation counts as connected until {{intervals}} heartbeats are missed.",
       "modules": "The heartbeat is always on; these are what the app reports on top of it.",
@@ -549,12 +549,12 @@
       },
       "kind": {
         "what": "What the app runs on: a website, a desktop app, an Android app or a kiosk.",
-        "how": "Pick the matching kind. It changes what is offered: only a kiosk can restart the device with a command, and a web app always reports by ping (it loads the SDK with a script tag shown on the summary).",
+        "how": "Pick the matching kind. It changes what is offered: only a kiosk can restart the device with a command, and a web app always reports by ping (it loads the SDK with a script tag shown on the summary). The domain is only asked for on web apps.",
         "example": "Kiosk"
       },
       "domain": {
         "what": "For web apps, the hostname the site is served from. The service compares it with each request's origin.",
-        "how": "Type only the hostname: no https://, no path and no port. It is stored in lowercase. Leave it empty for apps that are not web apps.",
+        "how": "Type only the hostname: no https://, no path and no port. It is stored in lowercase. It only appears for web apps: if you change the kind to another one, the domain is removed.",
         "example": "pedidos.losandes.cl"
       },
       "description": {

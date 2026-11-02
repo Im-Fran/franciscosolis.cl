@@ -523,7 +523,7 @@
       "screenshots": "Permitir capturas de pantalla"
     },
     "hints": {
-      "domain": "Para apps web: el nombre de host desde el que se sirve.",
+      "domain": "El nombre de host desde el que se sirve el sitio.",
       "presence": "Cómo avisan las instalaciones que siguen vivas. Socket es para kioscos y puntos de venta: la app nativa mantiene una conexión en vivo, así que los comandos le llegan al instante. Los sitios web siempre usan ping.",
       "heartbeat": "Entre {{min}} y {{max}}. Una instalación cuenta como conectada hasta que se pierden {{intervals}} latidos.",
       "modules": "El latido siempre está activo; esto es lo que la app reporta además de él.",
@@ -549,12 +549,12 @@
       },
       "kind": {
         "what": "En qué corre la app: un sitio web, una app de escritorio, una app de Android o un kiosco.",
-        "how": "Elige el tipo que corresponde. Cambia lo que se ofrece: solo un kiosco puede reiniciar el equipo con un comando, y una app web siempre reporta con ping (carga el SDK con una etiqueta script que aparece en el resumen).",
+        "how": "Elige el tipo que corresponde. Cambia lo que se ofrece: solo un kiosco puede reiniciar el equipo con un comando, y una app web siempre reporta con ping (carga el SDK con una etiqueta script que aparece en el resumen). El dominio solo se pide en las apps web.",
         "example": "Kiosco"
       },
       "domain": {
         "what": "Para apps web, el nombre de host desde el que se sirve el sitio. El servicio lo compara con el origen de cada solicitud.",
-        "how": "Escribe solo el nombre de host: sin https://, sin ruta y sin puerto. Se guarda en minúsculas. Déjalo vacío en apps que no son web.",
+        "how": "Escribe solo el nombre de host: sin https://, sin ruta y sin puerto. Se guarda en minúsculas. Solo aparece para apps web: si cambias el tipo a otro, el dominio se quita.",
         "example": "pedidos.losandes.cl"
       },
       "description": {

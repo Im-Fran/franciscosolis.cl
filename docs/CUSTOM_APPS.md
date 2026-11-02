@@ -87,6 +87,11 @@ apps only — enrollment, heartbeats, metrics, events — and nothing here ever 
 for web apps it builds the `<script>` tag from `GET /v1/apps/:id/sdk`, with the `integrity` hash
 that pins the exact file the service published.
 
+**The domain is a web-app field.** The app form (create and Settings) asks for a domain only when the
+kind is *Web*; for any other kind the field is hidden, a create sends no `domain`, and changing an app
+away from web sends `domain: null` (the PATCH accepts it) so no stale host is kept. The app summary
+shows the domain for web apps, or for any app that still has one stored.
+
 App keys (`cak_…`) are public by design — they ship inside the client app — so the panel shows them
 in full and lets them be copied at any time. Revoking a key stops *new* enrollments only; each
 installation already enrolled holds its own token, and revoking an *installation* is what cuts a
