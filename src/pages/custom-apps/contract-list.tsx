@@ -9,7 +9,6 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {useServiceVocabulary} from "@/lib/custom-apps/custom-apps-context.ts";
-import {formatMoney} from "@/lib/custom-apps/format.ts";
 import type {Contract, ContractStatus} from "@/lib/custom-apps/types.ts";
 import {DataTable} from "@/components/admin/data-table.tsx";
 import type {Column} from "@/components/admin/data-table.tsx";
@@ -22,6 +21,7 @@ import {companyName, contractPeriod} from "@/pages/custom-apps/components/contra
 import {UsageBar} from "@/pages/custom-apps/components/contracts/usage-bar.tsx";
 import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
 import {WithHelp} from "@/components/ui/help.tsx";
+import {Money} from "@/pages/custom-apps/components/money.tsx";
 
 const PAGE_SIZE = 50;
 
@@ -131,7 +131,9 @@ export const ContractList = () => {
         className: "w-36 text-right",
         cell: (row) => (
           <span className="flex flex-col items-end tabular-nums">
-            <span className="text-text">{formatMoney(row.amount, row.currency, language)}</span>
+            <span className="text-text">
+              <Money amount={row.amount} currency={row.currency} />
+            </span>
             <span className="text-[12px] text-neutral-500">{t(`custom_apps:billing_periods.${row.billing_period}`, {defaultValue: row.billing_period})}</span>
           </span>
         ),

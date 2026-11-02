@@ -11,7 +11,7 @@ import {useMutation} from "@/lib/admin/useMutation.ts";
 import {useToast} from "@/lib/admin/toast-context.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
-import {formatDay, formatMinutes, formatMoney} from "@/lib/custom-apps/format.ts";
+import {formatDay, formatMinutes} from "@/lib/custom-apps/format.ts";
 import type {Contract, Cycle} from "@/lib/custom-apps/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {DataTable} from "@/components/admin/data-table.tsx";
@@ -22,6 +22,8 @@ import {CycleStatusBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {TextDialog} from "@/pages/custom-apps/components/contracts/contract-dialogs.tsx";
 import {cycleEnded, cycleRange} from "@/pages/custom-apps/components/contracts/contract-format.ts";
 import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {Money} from "@/pages/custom-apps/components/money.tsx";
+import {useMoneyText} from "@/pages/custom-apps/components/use-money.ts";
 
 const PAGE_SIZE = 12;
 
@@ -109,6 +111,7 @@ export const CyclesPanel = ({
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const help = useHelp();
   const language = i18n.language;
+  const moneyText = useMoneyText(contract.currency);
   const {notify} = useToast();
   const [offset, setOffset] = useState(0);
   const [closing, setClosing] = useState<Cycle | null>(null);
@@ -194,7 +197,7 @@ export const CyclesPanel = ({
               <span>{formatMinutes(row.overage_minutes)}</span>
               {row.overage_amount !== null && (
                 <span className="text-[12px]">
-                  {formatMoney(row.overage_amount, contract.currency, language)}
+                  <Money amount={row.overage_amount} currency={contract.currency} />
                   {row.status === "open" && <span className="text-neutral-500"> · {t("custom_apps:cycle.estimate")}</span>}
                 </span>
               )}
@@ -312,7 +315,7 @@ export const CyclesPanel = ({
             ? billing.overage_minutes > 0 && billing.overage_amount !== null
               ? t("custom_apps:cycle.bill_body_overage", {
                   range: cycleRange(billing, language),
-                  amount: formatMoney(billing.overage_amount, contract.currency, language),
+                  amount: moneyText(billing.overage_amount),
                   time: formatMinutes(billing.overage_minutes),
                 })
               : t("custom_apps:cycle.bill_body", {range: cycleRange(billing, language)})

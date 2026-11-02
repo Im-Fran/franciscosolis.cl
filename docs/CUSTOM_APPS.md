@@ -238,8 +238,16 @@ sends minutes. **Dates are calendar days** (`YYYY-MM-DD`) in the service's zone,
 they are formatted without going through `new Date(day)` — which would read them as UTC midnight and
 show the day before in Santiago. A contract's `ends_on` is its **last day covered**; a cycle's
 `ends_on` is the **first day of the next one**, so a cycle reads as `starts_on – (ends_on − 1 day)`.
-Amounts are in the contract's currency: CLP in whole pesos, UF with up to two decimals. There is no
-CLP equivalent for UF — this site reads no UF indicator to convert with.
+Amounts are in the contract's currency: CLP in whole pesos, UF with up to two decimals. Every UF amount
+— the contract amount, the overage rate, the cycle overage amounts, the cycle billing dialog and the
+editor's live preview under both inputs — carries its approximate peso value at today's UF
+(`UF 12,5 ≈ $474.312`, always in Chilean format), with a tooltip naming the value used (*Valor UF del
+2 nov 2026: $37.945,00*). It is an estimate, never stored or sent anywhere. The UF comes from the
+landing service's public `GET /landing/indicators/uf` on the same API host as the panel (the last
+observation, which is the UF in force today; `VITE_LANDING_BASE_URL` overrides the base), fetched once
+per page load and shared by every amount (`src/lib/custom-apps/uf.ts`). It never blocks rendering: while
+it loads or if it fails (a failure is retried no sooner than a minute later) the UF amount is shown
+alone, with no equivalent.
 
 **A contract** belongs to a client and covers some of its apps — never an app already covered by
 another contract in overlapping dates (409, with the app named). Its form is grouped as the plan
@@ -453,5 +461,6 @@ A form with nothing required shows no legend.
 `VITE_CUSTOM_APPS_BASE_URL` points the panel at the service (default
 `https://api.franciscosolis.cl/custom-apps`; `.env.dev` names `api-dev`). `VITE_CUSTOM_APPS_CLIENT_ID`
 (default `franciscosolis-custom-apps`) and `VITE_CUSTOM_APPS_REDIRECT_PATH` (default
-`/custom-apps/callback`) are the panel's own. The redirect URI is compared byte for byte, so
+`/custom-apps/callback`) are the panel's own. `VITE_LANDING_BASE_URL` (optional) is where the UF is read
+from; unset, it is `/landing` on the host of `VITE_CUSTOM_APPS_BASE_URL`. The redirect URI is compared byte for byte, so
 `<origin>/custom-apps/callback` has to be registered on the application in each auth database.

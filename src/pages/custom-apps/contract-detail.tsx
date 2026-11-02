@@ -12,7 +12,7 @@ import {useToast} from "@/lib/admin/toast-context.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
 import {useServiceVocabulary} from "@/lib/custom-apps/custom-apps-context.ts";
-import {addDays, dayIn, formatDay, formatMinutes, formatMoney} from "@/lib/custom-apps/format.ts";
+import {addDays, dayIn, formatDay, formatMinutes} from "@/lib/custom-apps/format.ts";
 import type {AuditEntry, ContractDetail as Contract} from "@/lib/custom-apps/types.ts";
 import {ConfirmDialog} from "@/components/admin/confirm-dialog.tsx";
 import {PageHeader} from "@/components/admin/page-header.tsx";
@@ -26,6 +26,8 @@ import {Detail, DetailList} from "@/pages/custom-apps/components/detail-list.tsx
 import {WorkLogPanel} from "@/pages/custom-apps/components/work-log/work-log-panel.tsx";
 import type {WorkLogScope} from "@/pages/custom-apps/components/work-log/work-log-scope.ts";
 import {useHelp} from "@/pages/custom-apps/components/use-help.ts";
+import {Money} from "@/pages/custom-apps/components/money.tsx";
+import {useMoneyText} from "@/pages/custom-apps/components/use-money.ts";
 
 /** The line under each entry of the contract's history, read from what the service recorded. */
 const useDescribeHistory = () => {
@@ -106,6 +108,7 @@ export const ContractDetail = () => {
   const remove = useMutation(useCallback(() => customAppsApi.contracts.remove(contractId), [contractId]));
 
   const current = contract && contract.id === contractId ? contract : null;
+  const moneyText = useMoneyText(current?.currency ?? "CLP");
   const reload = record.reload;
 
   /* A work log entry moves the current cycle; a cycle closed or billed moves the history beside it. */
@@ -265,7 +268,7 @@ export const ContractDetail = () => {
               </Link>
             </Detail>
             <Detail label={t("custom_apps:contract_editor.fields.amount")}>
-              {formatMoney(current.amount, current.currency, language)}
+              <Money amount={current.amount} currency={current.currency} />
               <span className="text-neutral-500"> · {t(`custom_apps:billing_periods.${current.billing_period}`, {defaultValue: current.billing_period})}</span>
             </Detail>
             <Detail label={t("custom_apps:contract.period")}>
@@ -286,7 +289,7 @@ export const ContractDetail = () => {
             </Detail>
             <Detail label={t("custom_apps:contract.overage_rate")}>
               {current.overage_rate > 0
-                ? t("custom_apps:contract.per_hour", {amount: formatMoney(current.overage_rate, current.currency, language)})
+                ? t("custom_apps:contract.per_hour", {amount: moneyText(current.overage_rate)})
                 : t("custom_apps:contract.no_overage_rate")}
             </Detail>
             <Detail label={t("custom_apps:contract.rollover")}>

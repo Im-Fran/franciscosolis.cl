@@ -81,6 +81,10 @@
     "android": "Android",
     "kiosk": "Kiosk"
   },
+  "money": {
+    "uf_value": "UF value on {{date}}: {{value}}",
+    "preview": "≈ {{amount}} (estimate)"
+  },
   "kinds_hint": {
     "web": "Runs in a browser and loads the SDK with a script tag.",
     "desktop": "Installed on Windows, macOS or Linux.",
