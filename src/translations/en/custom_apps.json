@@ -3726,9 +3726,10 @@
     "complete_done": "Maintenance completed",
     "fail_done": "Maintenance marked as failed",
     "cancel_title": "Cancel “{{title}}”",
-    "cancel_body": "The email's links stop working and any notice the apps show is taken down. The client is not emailed about it.",
+    "cancel_body": "The email's links stop working and any notice the apps show is taken down.",
+    "cancel_body_notified": "The email's links stop working and any notice the apps show is taken down. The client will be notified by email.",
     "cancel_field": "Reason",
-    "cancel_hint": "Optional. Kept in the history.",
+    "cancel_hint": "Optional. Kept in the history and, if the client is emailed, in the notice.",
     "cancel_confirm": "Cancel maintenance",
     "complete_title": "Complete “{{title}}”",
     "complete_body": "The installations leave maintenance, the duration is logged in the work log and the client gets the closing email.",
@@ -3744,7 +3745,7 @@
     "help": {
       "cancel": {
         "what": "Why the maintenance is cancelled.",
-        "how": "Write one line for whoever reads the history. Optional, up to {{max}} characters. The client does not see it.",
+        "how": "Write one line for whoever reads the history. Optional, up to {{max}} characters. If the client is emailed, the reason appears in the notice: write it with them in mind.",
         "example": "The client asked to postpone it until after the month-end close."
       },
       "complete": {
@@ -3784,7 +3785,14 @@
       "can_do": [
         "Write down the reason, if you want."
       ],
-      "on_save": "The maintenance is cancelled: its links stop working and any notice the apps show ends. It can be deleted afterwards. It is recorded in the audit log."
+      "on_save": "The maintenance is cancelled: its links stop working and any notice the apps show ends. The client did not know about it yet, so no email is sent. It can be deleted afterwards. It is recorded in the audit log."
+    },
+    "form_help_cancel_notified": {
+      "what": "Cancels a maintenance that has not started yet and that the client already knows about.",
+      "can_do": [
+        "Write down the reason, if you want."
+      ],
+      "on_save": "The maintenance is cancelled: its links stop working and any notice the apps show ends. The client is emailed about the cancellation, because they had already received the request, had an approved or scheduled window, or were sent a security patch notice. It can be deleted afterwards. It is recorded in the audit log."
     },
     "form_help_complete": {
       "what": "Closes a maintenance in progress as completed now, without waiting for it to be evaluated at the end of the window.",

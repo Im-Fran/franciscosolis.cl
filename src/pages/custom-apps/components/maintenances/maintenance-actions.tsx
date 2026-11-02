@@ -141,6 +141,12 @@ export const NoteDialog = ({
     if (outcome.ok) onDone(outcome.data);
   };
 
+  /*
+   * Cancelling emails the client when they already knew about the maintenance — a sent request, an
+   * approved or scheduled window, a security notice. A draft never sent has told them nothing.
+   */
+  const notifiesClient = mode === "cancel" && (maintenance.status !== "draft" || maintenance.sends > 0);
+
   const icon = mode === "complete" ? <CheckCircle size={16} /> : mode === "fail" ? <XCircle size={16} /> : <Prohibit size={16} />;
 
   return (
@@ -149,11 +155,11 @@ export const NoteDialog = ({
       onClose={run.pending ? () => undefined : onClose}
       title={t(`custom_apps:maintenance_actions.${mode}_title`, {title: maintenance.title})}
       className="max-w-md"
-      help={help.form(`maintenance_actions.form_help_${mode}`)}
+      help={help.form(`maintenance_actions.form_help_${notifiesClient ? "cancel_notified" : mode}`)}
     >
       <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
         <p className="text-sm leading-relaxed text-neutral-300">
-          {t(`custom_apps:maintenance_actions.${mode}_body${mode === "fail" && maintenance.release ? "_release" : ""}`, {
+          {t(`custom_apps:maintenance_actions.${mode}_body${mode === "fail" && maintenance.release ? "_release" : ""}${notifiesClient ? "_notified" : ""}`, {
             version: maintenance.release?.version,
           })}
         </p>
