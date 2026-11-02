@@ -3590,7 +3590,11 @@
       "release_extended_other": "The maintenance added {{count}} installations to release v{{version}}.",
       "open_release": "Open the release",
       "withdrawn_title": "Release withdrawn",
-      "withdrawn_body": "Release v{{version}} was withdrawn: the devices go back to the previous version.",
+      "withdrawn_body": "The release was withdrawn: every device went back to the previous version.",
+      "paused_title": "Release paused",
+      "paused_body": "The release was paused because it is also on other devices; only this maintenance's devices went back. Decide whether to withdraw or resume it.",
+      "rolled_back_one": "{{count}} device rolled back to the previous version",
+      "rolled_back_other": "{{count}} devices rolled back to the previous version",
       "mail_failures_title": "Emails that could not be sent"
     },
     "mail_stages": {

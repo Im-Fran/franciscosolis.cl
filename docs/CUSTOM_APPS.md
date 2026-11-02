@@ -368,13 +368,21 @@ the service (app suspended or in grace without the `maintenance` allowance, no r
 already started, no email delivered) is explained in words.
 
 **Run and result.** In progress it can be closed by hand — *Mark completed* (optional note) or *Mark
-failed* (required note, which withdraws the release). The run panel lists the installations put in
+failed* (required note, which withdraws the release, or pauses it when other devices also have it). The run panel lists the installations put in
 maintenance, the update targets, those already on the version, off the release's line or skipped, the
-ones that failed and what they last reported, the release the maintenance published or extended, the
-withdrawal, and any notice email that could not be sent. A completed maintenance files its own work log
+ones that failed and what they last reported, the release the maintenance published or extended, what
+became of the release after a failure (`result_detail.release_action`: *withdrawn* — every device went
+back to the previous version — or *paused* — the release is also on other devices, so only the
+maintenance's own went back and a person decides whether to withdraw or resume it; both link to the
+release, and `rolled_back_installations`, when present, lists the devices rolled back one by one), and
+any notice email that could not be sent. A completed maintenance files its own work log
 entry; the page shows the work log narrowed to it, and any entry can name a maintenance (the work log
 dialog has a maintenance selector, and lists link `maintenance_title` to it). Cancelling (anything not
-started) takes an optional reason; a draft or a cancelled one can be deleted.
+started) takes an optional reason; a draft or a cancelled one can be deleted. The service emails the
+client about a cancellation when they already knew of the maintenance (a request was sent, a window was
+approved or scheduled, or a security notice went out), and the reason appears in that email: the
+dialog and its form help say *Se avisará al cliente por correo* when the status is not `draft` or it
+has `sends > 0`, and say nothing of the kind for a draft that was never sent.
 
 **Lists.** `/custom-apps/maintenances` lists every maintenance with its kind, status, the chosen window
 (or the first offered, marked as a proposal), sends and result, and toggles to a **month calendar** of

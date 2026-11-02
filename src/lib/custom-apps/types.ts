@@ -1490,7 +1490,16 @@ export type MaintenanceResultDetail = {
   note?: string;
   /** Recipients a notice could not be emailed to, per stage. */
   mail_failures?: Array<{stage: string; recipients: string[]}>;
+  /** Legacy flag from before `release_action`; a withdrawn release. */
   withdrawn?: boolean;
+  /**
+   * What a failed maintenance did to its release: `withdrawn` (nobody has it any more, every device
+   * went back) or `paused` (the release is also on other devices, so only this maintenance's went
+   * back and the decision is left to a person). Absent when the maintenance had no release.
+   */
+  release_action?: "withdrawn" | "paused";
+  /** Installations rolled back one by one, when the release itself was left running. */
+  rolled_back_installations?: Array<string | {id: string}>;
   [key: string]: unknown;
 };
 

@@ -3590,7 +3590,11 @@
       "release_extended_other": "La mantención agregó {{count}} instalaciones a la release v{{version}}.",
       "open_release": "Ver la release",
       "withdrawn_title": "Release retirada",
-      "withdrawn_body": "La release v{{version}} se retiró: los equipos vuelven a la versión anterior.",
+      "withdrawn_body": "La release se retiró: todos los equipos volvieron a la versión anterior.",
+      "paused_title": "Release pausada",
+      "paused_body": "La release se pausó porque también está en otros equipos; solo los equipos de esta mantención volvieron atrás. Decide si retirarla o reanudarla.",
+      "rolled_back_one": "{{count}} equipo vuelto a la versión anterior",
+      "rolled_back_other": "{{count}} equipos vueltos a la versión anterior",
       "mail_failures_title": "Correos que no se pudieron enviar"
     },
     "mail_stages": {
