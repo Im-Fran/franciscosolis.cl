@@ -87,6 +87,11 @@ apps only — enrollment, heartbeats, metrics, events — and nothing here ever 
 for web apps it builds the `<script>` tag from `GET /v1/apps/:id/sdk`, with the `integrity` hash
 that pins the exact file the service published.
 
+**The domain is a web-app field.** The app form (create and Settings) asks for a domain only when the
+kind is *Web*; for any other kind the field is hidden, a create sends no `domain`, and changing an app
+away from web sends `domain: null` (the PATCH accepts it) so no stale host is kept. The app summary
+shows the domain for web apps, or for any app that still has one stored.
+
 App keys (`cak_…`) are public by design — they ship inside the client app — so the panel shows them
 in full and lets them be copied at any time. Revoking a key stops *new* enrollments only; each
 installation already enrolled holds its own token, and revoking an *installation* is what cuts a
@@ -233,8 +238,16 @@ sends minutes. **Dates are calendar days** (`YYYY-MM-DD`) in the service's zone,
 they are formatted without going through `new Date(day)` — which would read them as UTC midnight and
 show the day before in Santiago. A contract's `ends_on` is its **last day covered**; a cycle's
 `ends_on` is the **first day of the next one**, so a cycle reads as `starts_on – (ends_on − 1 day)`.
-Amounts are in the contract's currency: CLP in whole pesos, UF with up to two decimals. There is no
-CLP equivalent for UF — this site reads no UF indicator to convert with.
+Amounts are in the contract's currency: CLP in whole pesos, UF with up to two decimals. Every UF amount
+— the contract amount, the overage rate, the cycle overage amounts, the cycle billing dialog and the
+editor's live preview under both inputs — carries its approximate peso value at today's UF
+(`UF 12,5 ≈ $474.312`, always in Chilean format), with a tooltip naming the value used (*Valor UF del
+2 nov 2026: $37.945,00*). It is an estimate, never stored or sent anywhere. The UF comes from the
+landing service's public `GET /landing/indicators/uf` on the same API host as the panel (the last
+observation, which is the UF in force today; `VITE_LANDING_BASE_URL` overrides the base), fetched once
+per page load and shared by every amount (`src/lib/custom-apps/uf.ts`). It never blocks rendering: while
+it loads or if it fails (a failure is retried no sooner than a minute later) the UF amount is shown
+alone, with no equivalent.
 
 **A contract** belongs to a client and covers some of its apps — never an app already covered by
 another contract in overlapping dates (409, with the app named). Its form is grouped as the plan
@@ -355,13 +368,21 @@ the service (app suspended or in grace without the `maintenance` allowance, no r
 already started, no email delivered) is explained in words.
 
 **Run and result.** In progress it can be closed by hand — *Mark completed* (optional note) or *Mark
-failed* (required note, which withdraws the release). The run panel lists the installations put in
+failed* (required note, which withdraws the release, or pauses it when other devices also have it). The run panel lists the installations put in
 maintenance, the update targets, those already on the version, off the release's line or skipped, the
-ones that failed and what they last reported, the release the maintenance published or extended, the
-withdrawal, and any notice email that could not be sent. A completed maintenance files its own work log
+ones that failed and what they last reported, the release the maintenance published or extended, what
+became of the release after a failure (`result_detail.release_action`: *withdrawn* — every device went
+back to the previous version — or *paused* — the release is also on other devices, so only the
+maintenance's own went back and a person decides whether to withdraw or resume it; both link to the
+release, and `rolled_back_installations`, when present, lists the devices rolled back one by one), and
+any notice email that could not be sent. A completed maintenance files its own work log
 entry; the page shows the work log narrowed to it, and any entry can name a maintenance (the work log
 dialog has a maintenance selector, and lists link `maintenance_title` to it). Cancelling (anything not
-started) takes an optional reason; a draft or a cancelled one can be deleted.
+started) takes an optional reason; a draft or a cancelled one can be deleted. The service emails the
+client about a cancellation when they already knew of the maintenance (a request was sent, a window was
+approved or scheduled, or a security notice went out), and the reason appears in that email: the
+dialog and its form help say *Se avisará al cliente por correo* when the status is not `draft` or it
+has `sends > 0`, and say nothing of the kind for a draft that was never sent.
 
 **Lists.** `/custom-apps/maintenances` lists every maintenance with its kind, status, the chosen window
 (or the first offered, marked as a proposal), sends and result, and toggles to a **month calendar** of
@@ -448,5 +469,6 @@ A form with nothing required shows no legend.
 `VITE_CUSTOM_APPS_BASE_URL` points the panel at the service (default
 `https://api.franciscosolis.cl/custom-apps`; `.env.dev` names `api-dev`). `VITE_CUSTOM_APPS_CLIENT_ID`
 (default `franciscosolis-custom-apps`) and `VITE_CUSTOM_APPS_REDIRECT_PATH` (default
-`/custom-apps/callback`) are the panel's own. The redirect URI is compared byte for byte, so
+`/custom-apps/callback`) are the panel's own. `VITE_LANDING_BASE_URL` (optional) is where the UF is read
+from; unset, it is `/landing` on the host of `VITE_CUSTOM_APPS_BASE_URL`. The redirect URI is compared byte for byte, so
 `<origin>/custom-apps/callback` has to be registered on the application in each auth database.

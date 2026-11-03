@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_CMS_CLIENT_ID?: string;
   /** Base URL of the custom-apps service's panel API, without a trailing slash. */
   readonly VITE_CUSTOM_APPS_BASE_URL?: string;
+  /** Base URL of the landing service (economic indicators), without a trailing slash. Defaults to the API host of the custom-apps service. */
+  readonly VITE_LANDING_BASE_URL?: string;
   /** Client ID the custom-apps panel is registered under on the auth service. */
   readonly VITE_CUSTOM_APPS_CLIENT_ID?: string;
   /** Redirect URI path the custom-apps panel asks for, when it differs from its callback route. */

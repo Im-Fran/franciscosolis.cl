@@ -6,7 +6,7 @@ import {useResource} from "@/lib/auth/useResource.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {useServiceVocabulary} from "@/lib/custom-apps/custom-apps-context.ts";
 import type {AppKind, AppModule, LogLevel, PresenceMode} from "@/lib/custom-apps/types.ts";
-import {APP_NAME_MAX} from "@/pages/custom-apps/components/app-form.ts";
+import {APP_NAME_MAX, hasDomain} from "@/pages/custom-apps/components/app-form.ts";
 import type {AppForm, AppFormErrors, AppFormField} from "@/pages/custom-apps/components/app-form.ts";
 import {CheckboxField} from "@/pages/custom-apps/components/checkbox-field.tsx";
 import {CheckboxGroup} from "@/pages/custom-apps/components/checkbox-group.tsx";
@@ -138,24 +138,26 @@ export const AppFormFields = ({
           </Select>
         </Field>
 
-        <Field
-          label={t("custom_apps:apps.fields.domain")}
-          htmlFor="app-domain"
-          error={errors.domain}
-          hint={t("custom_apps:apps.hints.domain")}
-          help={help.field("apps.help.domain")}
-        >
-          <Input
-            id="app-domain"
-            value={form.domain}
-            onChange={(event) => set("domain", event.target.value)}
-            placeholder="app.cliente.cl"
-            aria-invalid={Boolean(errors.domain)}
-            disabled={disabled}
-            autoComplete="off"
-            className="font-mono text-[13px]"
-          />
-        </Field>
+        {hasDomain(form.kind) && (
+          <Field
+            label={t("custom_apps:apps.fields.domain")}
+            htmlFor="app-domain"
+            error={errors.domain}
+            hint={t("custom_apps:apps.hints.domain")}
+            help={help.field("apps.help.domain")}
+          >
+            <Input
+              id="app-domain"
+              value={form.domain}
+              onChange={(event) => set("domain", event.target.value)}
+              placeholder="app.cliente.cl"
+              aria-invalid={Boolean(errors.domain)}
+              disabled={disabled}
+              autoComplete="off"
+              className="font-mono text-[13px]"
+            />
+          </Field>
+        )}
 
         <Field
           label={t("custom_apps:apps.fields.description")}

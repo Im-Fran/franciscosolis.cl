@@ -7,11 +7,11 @@ import {Panel, PanelState} from "@/components/ui/panel.tsx";
 import {useResource} from "@/lib/auth/useResource.ts";
 import {customAppsApi} from "@/lib/custom-apps/client.ts";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
-import {formatMoney} from "@/lib/custom-apps/format.ts";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
 import {ContractStatusBadge, ExpiringBadge} from "@/pages/custom-apps/components/badges.tsx";
 import {contractPeriod} from "@/pages/custom-apps/components/contracts/contract-format.ts";
 import {UsageBar} from "@/pages/custom-apps/components/contracts/usage-bar.tsx";
+import {Money} from "@/pages/custom-apps/components/money.tsx";
 
 /** A client's contracts, ending soonest first, with a button to add one already pointed at the client. */
 export const CompanyContractsPanel = ({companyId}: {companyId: string}) => {
@@ -52,7 +52,7 @@ export const CompanyContractsPanel = ({companyId}: {companyId: string}) => {
                       {contract.expiring && <ExpiringBadge daysLeft={contract.days_left} />}
                     </span>
                     <span className="mt-0.5 block text-[12px] text-neutral-500">
-                      {contractPeriod(contract, t, language)} · {formatMoney(contract.amount, contract.currency, language)}{" "}
+                      {contractPeriod(contract, t, language)} · <Money amount={contract.amount} currency={contract.currency} />{" "}
                       {t(`custom_apps:billing_periods.${contract.billing_period}`, {defaultValue: contract.billing_period})}
                       {contract.apps.length > 0 && ` · ${contract.apps.map((app) => app.name).join(", ")}`}
                     </span>

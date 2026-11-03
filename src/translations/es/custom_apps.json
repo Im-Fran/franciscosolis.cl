@@ -81,6 +81,10 @@
     "android": "Android",
     "kiosk": "Kiosco"
   },
+  "money": {
+    "uf_value": "Valor UF del {{date}}: {{value}}",
+    "preview": "≈ {{amount}} (estimado)"
+  },
   "kinds_hint": {
     "web": "Corre en un navegador y carga el SDK con una etiqueta script.",
     "desktop": "Instalada en Windows, macOS o Linux.",
@@ -523,7 +527,7 @@
       "screenshots": "Permitir capturas de pantalla"
     },
     "hints": {
-      "domain": "Para apps web: el nombre de host desde el que se sirve.",
+      "domain": "El nombre de host desde el que se sirve el sitio.",
       "presence": "Cómo avisan las instalaciones que siguen vivas. Socket es para kioscos y puntos de venta: la app nativa mantiene una conexión en vivo, así que los comandos le llegan al instante. Los sitios web siempre usan ping.",
       "heartbeat": "Entre {{min}} y {{max}}. Una instalación cuenta como conectada hasta que se pierden {{intervals}} latidos.",
       "modules": "El latido siempre está activo; esto es lo que la app reporta además de él.",
@@ -549,12 +553,12 @@
       },
       "kind": {
         "what": "En qué corre la app: un sitio web, una app de escritorio, una app de Android o un kiosco.",
-        "how": "Elige el tipo que corresponde. Cambia lo que se ofrece: solo un kiosco puede reiniciar el equipo con un comando, y una app web siempre reporta con ping (carga el SDK con una etiqueta script que aparece en el resumen).",
+        "how": "Elige el tipo que corresponde. Cambia lo que se ofrece: solo un kiosco puede reiniciar el equipo con un comando, y una app web siempre reporta con ping (carga el SDK con una etiqueta script que aparece en el resumen). El dominio solo se pide en las apps web.",
         "example": "Kiosco"
       },
       "domain": {
         "what": "Para apps web, el nombre de host desde el que se sirve el sitio. El servicio lo compara con el origen de cada solicitud.",
-        "how": "Escribe solo el nombre de host: sin https://, sin ruta y sin puerto. Se guarda en minúsculas. Déjalo vacío en apps que no son web.",
+        "how": "Escribe solo el nombre de host: sin https://, sin ruta y sin puerto. Se guarda en minúsculas. Solo aparece para apps web: si cambias el tipo a otro, el dominio se quita.",
         "example": "pedidos.losandes.cl"
       },
       "description": {
@@ -3586,7 +3590,11 @@
       "release_extended_other": "La mantención agregó {{count}} instalaciones a la release v{{version}}.",
       "open_release": "Ver la release",
       "withdrawn_title": "Release retirada",
-      "withdrawn_body": "La release v{{version}} se retiró: los equipos vuelven a la versión anterior.",
+      "withdrawn_body": "La release se retiró: todos los equipos volvieron a la versión anterior.",
+      "paused_title": "Release pausada",
+      "paused_body": "La release se pausó porque también está en otros equipos; solo los equipos de esta mantención volvieron atrás. Decide si retirarla o reanudarla.",
+      "rolled_back_one": "{{count}} equipo vuelto a la versión anterior",
+      "rolled_back_other": "{{count}} equipos vueltos a la versión anterior",
       "mail_failures_title": "Correos que no se pudieron enviar"
     },
     "mail_stages": {
@@ -3718,9 +3726,10 @@
     "complete_done": "Mantención completada",
     "fail_done": "Mantención marcada como fallida",
     "cancel_title": "Cancelar «{{title}}»",
-    "cancel_body": "Los enlaces del correo dejan de funcionar y se retira el aviso que muestren las apps. El cliente no recibe un correo por esto.",
+    "cancel_body": "Los enlaces del correo dejan de funcionar y se retira el aviso que muestren las apps.",
+    "cancel_body_notified": "Los enlaces del correo dejan de funcionar y se retira el aviso que muestren las apps. Se avisará al cliente por correo.",
     "cancel_field": "Motivo",
-    "cancel_hint": "Opcional. Queda en el historial.",
+    "cancel_hint": "Opcional. Queda en el historial y, si se avisa al cliente, también en el correo.",
     "cancel_confirm": "Cancelar mantención",
     "complete_title": "Completar «{{title}}»",
     "complete_body": "Las instalaciones salen de mantención, la duración se registra en la bitácora y el cliente recibe el correo de cierre.",
@@ -3736,7 +3745,7 @@
     "help": {
       "cancel": {
         "what": "Por qué se cancela la mantención.",
-        "how": "Escribe una línea para quien lea el historial. Opcional, hasta {{max}} caracteres. El cliente no la ve.",
+        "how": "Escribe una línea para quien lea el historial. Opcional, hasta {{max}} caracteres. Si se avisa al cliente por correo, el motivo aparece en el aviso: escríbelo pensando en él.",
         "example": "El cliente pidió posponerla para después del cierre de mes."
       },
       "complete": {
@@ -3776,7 +3785,14 @@
       "can_do": [
         "Anotar el motivo, si quieres."
       ],
-      "on_save": "La mantención queda cancelada: sus enlaces dejan de funcionar y termina el aviso que muestren las apps. Después se puede eliminar. Queda en el registro de auditoría."
+      "on_save": "La mantención queda cancelada: sus enlaces dejan de funcionar y termina el aviso que muestren las apps. Como el cliente aún no la conocía, no recibe ningún correo. Después se puede eliminar. Queda en el registro de auditoría."
+    },
+    "form_help_cancel_notified": {
+      "what": "Cancela una mantención que todavía no empieza y que el cliente ya conoce.",
+      "can_do": [
+        "Anotar el motivo, si quieres."
+      ],
+      "on_save": "La mantención queda cancelada: sus enlaces dejan de funcionar y termina el aviso que muestren las apps. El cliente recibe un correo que le avisa de la cancelación, porque ya había recibido la solicitud, tenía una ventana aprobada o programada, o le llegó el aviso de un parche de seguridad. Después se puede eliminar. Queda en el registro de auditoría."
     },
     "form_help_complete": {
       "what": "Cierra ahora, como completada, una mantención en curso, sin esperar a que se evalúe sola al final de la ventana.",

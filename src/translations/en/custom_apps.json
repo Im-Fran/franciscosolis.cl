@@ -81,6 +81,10 @@
     "android": "Android",
     "kiosk": "Kiosk"
   },
+  "money": {
+    "uf_value": "UF value on {{date}}: {{value}}",
+    "preview": "≈ {{amount}} (estimate)"
+  },
   "kinds_hint": {
     "web": "Runs in a browser and loads the SDK with a script tag.",
     "desktop": "Installed on Windows, macOS or Linux.",
@@ -523,7 +527,7 @@
       "screenshots": "Allow screenshots"
     },
     "hints": {
-      "domain": "For web apps: the hostname it is served from.",
+      "domain": "The hostname the site is served from.",
       "presence": "How installations say they are alive. Socket is for kiosks and points of sale: the native app holds a live connection, so commands reach it at once. Websites always ping.",
       "heartbeat": "Between {{min}} and {{max}}. An installation counts as connected until {{intervals}} heartbeats are missed.",
       "modules": "The heartbeat is always on; these are what the app reports on top of it.",
@@ -549,12 +553,12 @@
       },
       "kind": {
         "what": "What the app runs on: a website, a desktop app, an Android app or a kiosk.",
-        "how": "Pick the matching kind. It changes what is offered: only a kiosk can restart the device with a command, and a web app always reports by ping (it loads the SDK with a script tag shown on the summary).",
+        "how": "Pick the matching kind. It changes what is offered: only a kiosk can restart the device with a command, and a web app always reports by ping (it loads the SDK with a script tag shown on the summary). The domain is only asked for on web apps.",
         "example": "Kiosk"
       },
       "domain": {
         "what": "For web apps, the hostname the site is served from. The service compares it with each request's origin.",
-        "how": "Type only the hostname: no https://, no path and no port. It is stored in lowercase. Leave it empty for apps that are not web apps.",
+        "how": "Type only the hostname: no https://, no path and no port. It is stored in lowercase. It only appears for web apps: if you change the kind to another one, the domain is removed.",
         "example": "pedidos.losandes.cl"
       },
       "description": {
@@ -3586,7 +3590,11 @@
       "release_extended_other": "The maintenance added {{count}} installations to release v{{version}}.",
       "open_release": "Open the release",
       "withdrawn_title": "Release withdrawn",
-      "withdrawn_body": "Release v{{version}} was withdrawn: the devices go back to the previous version.",
+      "withdrawn_body": "The release was withdrawn: every device went back to the previous version.",
+      "paused_title": "Release paused",
+      "paused_body": "The release was paused because it is also on other devices; only this maintenance's devices went back. Decide whether to withdraw or resume it.",
+      "rolled_back_one": "{{count}} device rolled back to the previous version",
+      "rolled_back_other": "{{count}} devices rolled back to the previous version",
       "mail_failures_title": "Emails that could not be sent"
     },
     "mail_stages": {
@@ -3718,9 +3726,10 @@
     "complete_done": "Maintenance completed",
     "fail_done": "Maintenance marked as failed",
     "cancel_title": "Cancel “{{title}}”",
-    "cancel_body": "The email's links stop working and any notice the apps show is taken down. The client is not emailed about it.",
+    "cancel_body": "The email's links stop working and any notice the apps show is taken down.",
+    "cancel_body_notified": "The email's links stop working and any notice the apps show is taken down. The client will be notified by email.",
     "cancel_field": "Reason",
-    "cancel_hint": "Optional. Kept in the history.",
+    "cancel_hint": "Optional. Kept in the history and, if the client is emailed, in the notice.",
     "cancel_confirm": "Cancel maintenance",
     "complete_title": "Complete “{{title}}”",
     "complete_body": "The installations leave maintenance, the duration is logged in the work log and the client gets the closing email.",
@@ -3736,7 +3745,7 @@
     "help": {
       "cancel": {
         "what": "Why the maintenance is cancelled.",
-        "how": "Write one line for whoever reads the history. Optional, up to {{max}} characters. The client does not see it.",
+        "how": "Write one line for whoever reads the history. Optional, up to {{max}} characters. If the client is emailed, the reason appears in the notice: write it with them in mind.",
         "example": "The client asked to postpone it until after the month-end close."
       },
       "complete": {
@@ -3776,7 +3785,14 @@
       "can_do": [
         "Write down the reason, if you want."
       ],
-      "on_save": "The maintenance is cancelled: its links stop working and any notice the apps show ends. It can be deleted afterwards. It is recorded in the audit log."
+      "on_save": "The maintenance is cancelled: its links stop working and any notice the apps show ends. The client did not know about it yet, so no email is sent. It can be deleted afterwards. It is recorded in the audit log."
+    },
+    "form_help_cancel_notified": {
+      "what": "Cancels a maintenance that has not started yet and that the client already knows about.",
+      "can_do": [
+        "Write down the reason, if you want."
+      ],
+      "on_save": "The maintenance is cancelled: its links stop working and any notice the apps show ends. The client is emailed about the cancellation, because they had already received the request, had an approved or scheduled window, or were sent a security patch notice. It can be deleted afterwards. It is recorded in the audit log."
     },
     "form_help_complete": {
       "what": "Closes a maintenance in progress as completed now, without waiting for it to be evaluated at the end of the window.",

@@ -77,7 +77,7 @@ export const validateAppForm = (
   if (!name) found.name = t("custom_apps:validation.required");
   else if (name.length > APP_NAME_MAX) found.name = t("custom_apps:validation.too_long", {max: APP_NAME_MAX});
 
-  if (form.domain.trim() && !HOSTNAME.test(form.domain.trim())) found.domain = t("custom_apps:apps.invalid_domain");
+  if (form.kind === "web" && form.domain.trim() && !HOSTNAME.test(form.domain.trim())) found.domain = t("custom_apps:apps.invalid_domain");
 
   const repository = form.repositoryUrl.trim();
   if (repository) {
@@ -101,13 +101,20 @@ export const validateAppForm = (
 };
 
 
+/**
+ * Only a web app has a domain: it is the host the service compares against `Origin`, and nothing
+ * else reports from one. The form keeps whatever was typed, so switching the kind back restores it,
+ * but a non-web app never sends it.
+ */
+export const hasDomain = (kind: AppKind) => kind === "web";
+
 /** Every field as the service takes it. The create screen sends this whole. */
 export const appFormPayload = (form: AppForm) => ({
   company_id: form.companyId,
   name: form.name.trim(),
   kind: form.kind,
   description: orNull(form.description),
-  domain: orNull(form.domain.toLowerCase()),
+  domain: hasDomain(form.kind) ? orNull(form.domain.toLowerCase()) : null,
   repository_url: orNull(form.repositoryUrl),
   presence_mode: form.presenceMode,
   heartbeat_interval_seconds: Number(form.heartbeat),
@@ -125,6 +132,12 @@ export const appFormPayload = (form: AppForm) => ({
 export const appFormChanges = (form: AppForm, baseline: AppForm): AppPayload => {
   const next = appFormPayload(form);
   const before = appFormPayload(baseline);
+  /*
+   * Moving an app away from web clears the domain it had (`null`; the service takes it in a PATCH).
+   * The baseline is read as the service holds it for that comparison, since its own kind is no longer
+   * the one being saved.
+   */
+  if (baseline.kind !== form.kind) before.domain = orNull(baseline.domain.toLowerCase());
   const changed: AppPayload = {};
   for (const key of Object.keys(next) as (keyof typeof next)[]) {
     if (JSON.stringify(next[key]) !== JSON.stringify(before[key])) {
@@ -140,6 +153,7 @@ export const appFormChanges = (form: AppForm, baseline: AppForm): AppPayload => 
  * later, in Settings, once the app and its contract exist.
  */
 export const newAppPayload = (form: AppForm): NewApp => {
-  const {presence_mode: _presence, log_level: _level, screenshots_enabled: _screenshots, ...body} = appFormPayload(form);
-  return body;
+  const {presence_mode: _presence, log_level: _level, screenshots_enabled: _screenshots, domain, ...body} = appFormPayload(form);
+  /* A non-web app is created with no domain at all rather than an explicit null. */
+  return hasDomain(form.kind) ? {...body, domain} : body;
 };

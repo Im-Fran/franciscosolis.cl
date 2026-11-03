@@ -97,9 +97,11 @@ export const AppSummary = () => {
             </Link>
           </Detail>
           <Detail label={t("custom_apps:apps.fields.kind")}>{t(`custom_apps:kinds.${app.kind}`, {defaultValue: app.kind})}</Detail>
-          <Detail label={t("custom_apps:apps.fields.domain")} mono>
-            {app.domain}
-          </Detail>
+          {(app.kind === "web" || app.domain) && (
+            <Detail label={t("custom_apps:apps.fields.domain")} mono>
+              {app.domain}
+            </Detail>
+          )}
           <Detail label={t("custom_apps:apps.fields.repository")}>
             {app.repository_url && (
               <a href={app.repository_url} target="_blank" rel="noopener noreferrer" className="break-all hover:underline">

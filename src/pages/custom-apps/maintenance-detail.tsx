@@ -234,6 +234,12 @@ export const MaintenanceDetail = () => {
       ? current.cancel_reason
       : t(`custom_apps:maintenances.cancel_reasons.${current.cancel_reason}`, {defaultValue: current.cancel_reason})
     : null;
+  /* `withdrawn: true` is how the service said it before it recorded `release_action`. */
+  const releaseAction = detail.release_action ?? (detail.withdrawn ? "withdrawn" : null);
+  const releaseId = detail.release?.id ?? current.release_id ?? null;
+  const rolledBack = Array.isArray(detail.rolled_back_installations)
+    ? detail.rolled_back_installations.map((entry) => (typeof entry === "string" ? entry : entry?.id)).filter((id): id is string => Boolean(id))
+    : [];
   const failureReason = detail.failure?.reason
     ? t(`custom_apps:maintenances.failure_reasons.${detail.failure.reason}`, {defaultValue: detail.failure.reason})
     : null;
@@ -491,13 +497,27 @@ export const MaintenanceDetail = () => {
                       </Link>
                     </p>
                   )}
-                  {detail.withdrawn && current.release_id && (
+                  {releaseAction === "withdrawn" && releaseId && (
                     <Alert tone="error" title={t("custom_apps:maintenances.result.withdrawn_title")}>
-                      {t("custom_apps:maintenances.result.withdrawn_body", {version: current.release?.version ?? ""})}{" "}
-                      <Link to={customAppsRoute.release(current.release_id)} className="underline">
+                      {t("custom_apps:maintenances.result.withdrawn_body")}{" "}
+                      <Link to={customAppsRoute.release(releaseId)} className="underline">
                         {t("custom_apps:maintenances.result.open_release")}
                       </Link>
                     </Alert>
+                  )}
+                  {releaseAction === "paused" && releaseId && (
+                    <Alert tone="info" title={t("custom_apps:maintenances.result.paused_title")}>
+                      {t("custom_apps:maintenances.result.paused_body")}{" "}
+                      <Link to={customAppsRoute.release(releaseId)} className="underline">
+                        {t("custom_apps:maintenances.result.open_release")}
+                      </Link>
+                    </Alert>
+                  )}
+                  {rolledBack.length > 0 && (
+                    <div>
+                      <SubHeading>{t("custom_apps:maintenances.result.rolled_back", {count: rolledBack.length})}</SubHeading>
+                      <InstallationList ids={rolledBack} names={names} />
+                    </div>
                   )}
                 </div>
               )}

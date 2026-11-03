@@ -3,7 +3,8 @@ import {Link} from "react-router-dom";
 import {HourglassMedium} from "@phosphor-icons/react";
 import {Panel} from "@/components/ui/panel.tsx";
 import {customAppsRoute} from "@/lib/custom-apps/config.ts";
-import {formatDay, formatMinutes, formatMoney} from "@/lib/custom-apps/format.ts";
+import {useMoneyText} from "@/pages/custom-apps/components/use-money.ts";
+import {formatDay, formatMinutes} from "@/lib/custom-apps/format.ts";
 import type {ContractDetail} from "@/lib/custom-apps/types.ts";
 import {cn} from "@/lib/utils.ts";
 import {EmptyState} from "@/components/admin/empty-state.tsx";
@@ -28,6 +29,7 @@ const Figure = ({label, value, tone}: {label: string; value: string | null; tone
 export const CurrentCycleCard = ({contract}: {contract: ContractDetail}) => {
   const {t, i18n} = useTranslation(["custom_apps", "admin"]);
   const language = i18n.language;
+  const moneyText = useMoneyText(contract.currency);
   const cycle = contract.current_cycle;
 
   if (!cycle) {
@@ -75,8 +77,8 @@ export const CurrentCycleCard = ({contract}: {contract: ContractDetail}) => {
           <p className="text-[13px] leading-relaxed text-red-200">
             {cycle.overage_amount !== null && contract.overage_rate > 0
               ? t("custom_apps:cycle.overage_estimate", {
-                  amount: formatMoney(cycle.overage_amount, contract.currency, language),
-                  rate: formatMoney(contract.overage_rate, contract.currency, language),
+                  amount: moneyText(cycle.overage_amount),
+                  rate: moneyText(contract.overage_rate),
                 })
               : t("custom_apps:cycle.overage_no_rate")}
           </p>

@@ -28,6 +28,7 @@ import type {
 } from "@/lib/custom-apps/types.ts";
 import {PageHeader} from "@/components/admin/page-header.tsx";
 import {CompanySelect} from "@/pages/custom-apps/components/app-form-fields.tsx";
+import {UfPreview} from "@/pages/custom-apps/components/money.tsx";
 import {CheckboxField} from "@/pages/custom-apps/components/checkbox-field.tsx";
 import {CheckboxGroup} from "@/pages/custom-apps/components/checkbox-group.tsx";
 import {hoursToMinutes, minutesToHours} from "@/pages/custom-apps/components/contracts/contract-format.ts";
@@ -617,6 +618,7 @@ export const ContractEditor = () => {
                 ))}
               </Select>
             </div>
+            <UfPreview amount={parseMoney(form.amount, form.currency)} currency={form.currency} />
           </Field>
           <Field
             label={t("custom_apps:contract_editor.fields.billing_period")}
@@ -692,6 +694,7 @@ export const ContractEditor = () => {
               aria-invalid={Boolean(errors.overageRate)}
               className="font-mono"
             />
+            <UfPreview amount={parseMoney(form.overageRate, form.currency)} currency={form.currency} />
           </Field>
           <CheckboxField
             id="contract-rollover"

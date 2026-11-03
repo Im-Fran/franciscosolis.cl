@@ -22,6 +22,16 @@ export const CUSTOM_APPS_BASE_URL = trimTrailingSlash(
   import.meta.env.VITE_CUSTOM_APPS_BASE_URL ?? "https://api.franciscosolis.cl/custom-apps",
 );
 
+/**
+ * The landing service's public economic indicators (`GET /landing/indicators/uf`), which the panel
+ * reads only to show the approximate peso value of an amount in UF. It lives on the same API host as
+ * the panel's service, so it follows that host (`api-dev` on the development build) unless
+ * `VITE_LANDING_BASE_URL` points elsewhere.
+ */
+export const LANDING_BASE_URL = trimTrailingSlash(
+  import.meta.env.VITE_LANDING_BASE_URL ?? `${new URL(CUSTOM_APPS_BASE_URL).origin}/landing`,
+);
+
 export const CUSTOM_APPS_CLIENT_ID = import.meta.env.VITE_CUSTOM_APPS_CLIENT_ID ?? "franciscosolis-custom-apps";
 
 /** Base path of the panel, which is its own section of this site. */
